@@ -6896,6 +6896,7 @@ public function payCreditsNew( )
   {
     $input = Input::all();
     $returnObject = new stdClass();
+    $returnObject->admin = false;
 
     if(empty($input['otp_code']) || $input['otp_code'] == null) {
       $returnObject->status = false;
@@ -6910,7 +6911,7 @@ public function payCreditsNew( )
     }
 
     $checker = DB::table('user')
-    ->select('UserID as user_id', 'Name as name', 'member_activated')
+    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Email as email_user')
     ->where('UserID', $input['user_id'])->first();
 
     if(!$checker) {
@@ -6927,8 +6928,16 @@ public function payCreditsNew( )
         return Response::json($returnObject);
     }
 
+    $check_if_admin = DB::table('admin')
+    ->select('AdminID as admin_id', 'Name as name', 'Email as email')
+    ->where('Email', $checker->email_user)->first();
+
     DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
     $returnObject->status = true;
+    // //check if admin user
+    if($check_if_admin) {
+      $returnObject->admin = true;
+    }
     $returnObject->message = 'OTP Code is valid';
     $returnObject->data = $checker;
     return Response::json($returnObject);
@@ -7016,6 +7025,55 @@ public function payCreditsNew( )
 
       $newPassword = [
         'Password' => StringHelper::encode($input['password_confirm']),
+        'member_activated' => 1,
+        'account_update_status' => 1,
+        'account_already_update'  => 1
+      ];
+      
+      DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
+      $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
+      if(!$token->status) {
+        return Response::json($token);
+      }
+      $returnObject->status = true;
+      $returnObject->token = $token->data['access_token'];
+      $returnObject->message = 'Your Password has been created, Account was active!';
+      return Response::json($returnObject);
+  }
+
+  public function createNewPasswordByAdminUser()
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'User ID is required.';
+        return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated', 'Email as email')
+      ->where('UserID', $input['user_id'])->first();
+    
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      if($checker->member_activated) {
+        $returnObject->status = false;
+        $returnObject->message = 'User was active, please sign in!';
+        return Response::json($returnObject);
+      }
+
+      $checker_if_admin = DB::table('admin')
+      ->select('AdminID as admin_id', 'Name as name', 'Password as password_admin', 'Email as email')
+      ->where('Email',  $checker->email)->first();
+
+      $newPassword = [
+        'Password' => $checker_if_admin->password_admin,
         'member_activated' => 1,
         'account_update_status' => 1,
         'account_already_update'  => 1

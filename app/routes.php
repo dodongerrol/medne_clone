@@ -1025,6 +1025,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
+		Route::post('auth/activated-admin-user', 'Api_V1_AuthController@createNewPasswordByAdminUser');
 
 		// for getting member lists
 		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
