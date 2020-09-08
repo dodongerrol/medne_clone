@@ -842,5 +842,22 @@ class CustomerHelper
 		$total_balance = $total_credits - $total_allocated;
 		return ['total_credits' => $total_credits, 'total_allocated' => $total_allocated, 'total_balance' => $total_balance];
 	}
+
+	public static function get_random_password($length)
+	{
+
+		$characters = '0123456789';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
+
+	public static function getEncryptValue(){
+        $encryptValue = sha1(mt_rand(100000,999999).time());
+        return $encryptValue;
+    }
 }
 ?>
