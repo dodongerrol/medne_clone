@@ -163,7 +163,9 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	// get date terms
 	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
 });
-
+	Route::post('employee/add_postal_code_member', 'EmployeeController@addPostalCodeEmployee');
+	Route::post('employee/create_new_password_member', 'EmployeeController@createNewPasswordEmployee');
+	Route::get('employee/check_user_otp_status', 'EmployeeController@checkUserOtp');
 
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
