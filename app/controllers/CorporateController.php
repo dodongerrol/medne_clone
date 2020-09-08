@@ -431,26 +431,51 @@ class CorporateController extends BaseController {
 		$customer_id = $result->customer_buy_start_id;
 
 		$limit = !empty($input['limit']) ? $input['limit'] : 5;
-		$link_accounts = DB::table('company_link_accounts')
+		$search = !empty($input['search']) ? $input['search'] : null;
+
+		if($search) {
+			$link_accounts = DB::table('company_link_accounts')
+							->join('customer_hr_dashboard', 'customer_hr_dashboard.hr_dashboard_id', '=', 'company_link_accounts.hr_id')
+							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'company_link_accounts.customer_id')
+							->join('customer_business_information', 'customer_business_information.customer_buy_start_id', '=', 'customer_hr_dashboard.customer_buy_start_id')
+							->where(function($query) use ($search, $customer_id){
+								$query->where('company_link_accounts.under_customer_id', $customer_id)
+								->where('company_link_accounts.status', 1)
+								->where('customer_business_information.company_name', 'like', '%'.$search.'%');
+							})
+							->orWhere(function($query) use ($search, $customer_id){
+								$query->where('company_link_accounts.under_customer_id', $customer_id)
+								->where('company_link_accounts.status', 1)
+								->where('customer_buy_start.account_name', 'like', '%'.$search.'%');
+							})
+							->get();
+		} else {
+			$link_accounts = DB::table('company_link_accounts')
 							->join('customer_hr_dashboard', 'customer_hr_dashboard.hr_dashboard_id', '=', 'company_link_accounts.hr_id')
 							->where('company_link_accounts.under_customer_id', $customer_id)
 							->where('company_link_accounts.status', 1)
 							->paginate($limit);
+		}
 		
 
-		$pagination['last_page'] = $link_accounts->getLastPage();
-		$pagination['current_page'] = $link_accounts->getCurrentPage();
-		$pagination['total_data'] = $link_accounts->getTotal();
-		$pagination['from'] = $link_accounts->getFrom();
-		$pagination['to'] = $link_accounts->getTo();
-		$pagination['count'] = $link_accounts->count();
+		$total_enrolled_employee_status = !empty($input['total_enrolled_employee_status']) && $input['total_enrolled_employee_status'] === "true" || !empty($input['total_enrolled_employee_status']) && $input['total_enrolled_employee_status'] === true ? true : false;
+		$total_enrolled_dependent_status = !empty($input['total_enrolled_dependent_status']) && $input['total_enrolled_dependent_status'] === "true" || !empty($input['total_enrolled_dependent_status']) && $input['total_enrolled_dependent_status'] === true ? true : false;
+
+		if(!$search) {
+			$pagination['last_page'] = $link_accounts->getLastPage();
+			$pagination['current_page'] = $link_accounts->getCurrentPage();
+			$pagination['total_data'] = $link_accounts->getTotal();
+			$pagination['from'] = $link_accounts->getFrom();
+			$pagination['to'] = $link_accounts->getTo();
+			$pagination['count'] = $link_accounts->count();
+		}
 
 		$format = [];
 		foreach($link_accounts as $key => $account) {
 			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $account->customer_buy_start_id)->first();
 			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $account->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 			
-			$format[] = array(
+			$temp = array(
 				'id'	=> $account->id,
 				'hr_id'	=> $account->hr_dashboard_id,
 				'email' => $account->email,
@@ -459,6 +484,36 @@ class CorporateController extends BaseController {
 				'link_date' => date('d/m/Y', strtotime($customer->created_at)),
 				'plan_type' => \PlanHelper::getAccountType($plan->account_type)
 			);
+
+			if($total_enrolled_employee_status == true || $total_enrolled_dependent_status == true) {
+				if($total_enrolled_employee_status == true) {
+					$employee_status = DB::table('customer_plan_status')
+											->where('customer_plan_id', $plan->customer_plan_id)
+											->orderBy('created_at', 'desc')
+											->first();
+					
+					if($employee_status) {
+						$temp['total_enrolled_employee_status'] = $employee_status->enrolled_employees;
+					} else {
+						$temp['total_enrolled_employee_status'] = 0;
+					}
+				}
+
+				if($total_enrolled_dependent_status == true) {
+					$dependent_status = DB::table('dependent_plan_status')
+											->where('customer_plan_id', $plan->customer_plan_id)
+											->orderBy('created_at', 'desc')
+											->first();
+					
+					if($employee_status) {
+						$temp['total_enrolled_dependent_status'] = $dependent_status->total_enrolled_dependents;
+					} else {
+						$temp['total_enrolled_dependent_status'] = 0;
+					}
+				}
+			}
+
+			$format[] = $temp;
 		}
 
 		$pagination['status'] = true;
