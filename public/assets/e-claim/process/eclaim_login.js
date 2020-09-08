@@ -210,6 +210,32 @@ login.directive('eclaimLogin', [
           });
         };
 
+        scope.country_code_value = 65;
+        scope.country_active = false;
+
+        // testing for flag 
+        // scope.countryData = [
+        //   {
+        //     name: 'Singapore',
+        //     image: 'singapore-flag.png',
+        //   },
+        //   {
+        //     name: 'Malaysia',
+        //     image: 'singapore-flag.png',
+        //   },
+        // ];
+
+        scope.countrySelector = function ( code ) {
+          scope.country_code_value = code;
+          scope.country_active = false;
+          if ( code == 65 ) {
+            console.log('singapore');
+            scope.country_active = true;
+          } else {
+            scope.country_active = false;
+          }
+        }
+
         scope.showLoading = function(){
           $(".circle-loader").fadeIn();
           loading_trap = true;

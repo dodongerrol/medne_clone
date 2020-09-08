@@ -141,14 +141,51 @@
 			
 			<div class="new-login-container med-form">
 				<div ng-if="true">
-					<div ng-if="false" class="form-group">
+					<div ng-if="true" class="form-group mobile-country-code-wrapper">
 						<label for="mobile">Mobile</label>
 						<div class="mobile-input-wrapper display-flex">
-							<input class="form-control med-input">
-							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Mobile Number" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+							<div class="form-control med-input">
+								<img ng-if="country_code_value == 65" src="../assets/images/flag/singapore-flag.png">
+								<img ng-if="country_code_value == 60" src="../assets/images/flag/malaysia-flag.png">
+								<span class="dp-flex-ai">
+									<!-- <span>+</span> -->
+									+<input ng-model="country_code_value">
+								</span>
+							</div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Mobile Number" ng-model="mobile" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+							
+
+							<div class="country-code-wrapper">
+								<span>Select Country</span>
+								<div ng-click="countrySelector(65)" class="country-row-details display-flex">
+									<span class="country-info display-flex">
+										<img src="../assets/images/flag/singapore-flag.png">
+										<span class="country-name">Singapore</span>
+										<span class="country-code">+65</span>
+									</span>
+									<span ng-if="country_code_value == 65" class="blue-check-active">
+										<img src="../assets/images/blue-check.svg">
+									</span>	
+								</div>
+								<div ng-click="countrySelector(60)" class="country-row-details display-flex">
+									<span class="country-info display-flex">
+										<img src="../assets/images/flag/malaysia-flag.png">
+										<span class="country-name">Malaysia</span>
+										<span class="country-code">+60</span>
+									</span>
+									<span ng-if="country_code_value == 60" class="blue-check-active">
+										<img src="../assets/images/blue-check.svg">
+									</span>
+								</div>
+								<!-- for future flag ui -->
+								<!-- <div ng-repeat="list in countryData">
+									<img src="../assets/images/flag/list.image" style="height: 20px; width: 30px;">
+									<div ng-bind="list.name"></div>
+								</div> -->
+							</div>
 						</div>
 					</div>
-					<div ng-if="true" class="otp-container form-group">
+					<div ng-if="false" class="otp-container form-group">
 						<label for="otp">Please enter the OTP we’ve sent to your phone number.</label>
 						<div>
 							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Your OTP" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
@@ -200,12 +237,12 @@
 					</div>
 				</div>
 				<div  class="footer-btn form-group">
-					<button ng-if="false" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Continue</button>
-					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Verify</button>
+					<button ng-if="true" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Continue</button>
+					<button ng-if="false" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Verify</button>
 					<button ng-if="false" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Create</button>
 					<button ng-if="false" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Sign in</button>
 					<button ng-if="false" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Complete and Sign in</button>
-					<div ng-if="true" class="resend-opt-container">
+					<div ng-if="false" class="resend-otp-container">
 						<span>Don't receive OPT? <a>Resend OTP</a>.</span>
 					</div>
 				</div>
