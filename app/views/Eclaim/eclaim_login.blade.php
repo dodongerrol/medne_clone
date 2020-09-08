@@ -116,7 +116,7 @@
 					</div>
 				</div>
 			</div> -->
-			<form class="med-form">
+			<form ng-if="false" class="med-form">
 				<div ng-if="!showPasswordInput" class="form-group">
 					<!-- valid-number pattern="[0-9]*" type="tel" -->
 					<label for="mobile">Mobile</label>
@@ -138,6 +138,78 @@
 				<span ng-if="invalid_credentials">*Please check your login credentials</span>
 				<a ng-if="true" href="javascript:void(0)" class="forgot-password pull-right" ng-click="showForgotPassword()">Forgot password?</a>
 			</form>
+			
+			<div class="new-login-container med-form">
+				<div ng-if="true">
+					<div ng-if="false" class="form-group">
+						<label for="mobile">Mobile</label>
+						<div class="mobile-input-wrapper display-flex">
+							<input class="form-control med-input">
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Mobile Number" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+					<div ng-if="true" class="otp-container form-group">
+						<label for="otp">Please enter the OTP we’ve sent to your phone number.</label>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Your OTP" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+					<div ng-if="false" class="form-group">
+						<label for="password">Please create your password</label>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Your Password" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Confirm Your Password" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+					<div ng-if="false" class="form-group">
+						<label class="pass-created-text" for="password">Your password has been created.</label>
+						<label for="password">Next, register your Postal Code.</label>
+						<p class="postal-code-text">*Postal Code is required to determine health providers in your proximity.</p>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter your Postal Code" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+				</div>
+
+				<div ng-if="false">
+					<div ng-if="false" class="form-group">
+						<label for="mobile">Mobile</label>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Mobile Number" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+					<div ng-if="false">
+						<div class="form-group">
+							<label for="mobile">Password</label>
+							<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)"  style="margin-bottom: 15px">
+						</div>
+						<div ng-if="true" class="checkbox stay-signed-container">
+							<label>
+								<input type="checkbox"> Stay signed in
+							</label>
+						</div>
+					</div>
+					<div ng-if="true" class="form-group">
+						<label for="postal-code">Before accessing your account, please register your Postal Code.	</label>
+						<p class="postal-code-text">*Postal Code is required to determine health providers in your proximity.</p>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter your Postal Code" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+				</div>
+				<div  class="footer-btn form-group">
+					<button ng-if="false" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Continue</button>
+					<button ng-if="true" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Verify</button>
+					<button ng-if="false" type="none" class="btn btn-info btn-block med-button" ng-class="{'disabled': disabledContinue}" id="login-btn" ng-click="goToPassword()" ng-disabled="disabledContinue">Create</button>
+					<button ng-if="false" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Sign in</button>
+					<button ng-if="false" type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="login()" ng-class="{'disabled': disabledSignIn}" ng-disabled="disabledSignIn">Complete and Sign in</button>
+					<div ng-if="true" class="resend-opt-container">
+						<span>Don't receive OPT? <a>Resend OTP</a>.</span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!-- end new account login -->
 

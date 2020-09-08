@@ -2379,3 +2379,48 @@ body::-webkit-scrollbar-thumb {
 button{
   outline: none !important;
 }
+.login-wrapper .new-login-container.med-form {
+  margin: 40px auto;
+}
+.new-login-container .med-input {
+  padding: 0 10px;
+}
+.new-login-container .form-group {
+  margin: 0;
+}
+.new-login-container .mobile-input-wrapper input:first-child {
+  width: 30%;
+  margin: 0 10px 0 0;
+}
+.new-login-container .form-group .med-input {
+  margin-bottom: 20px;
+}
+.new-login-container .footer-btn {
+  padding: 10px 0 0;
+}
+.new-login-container .pass-created-text {
+  margin: 0 0 30px;
+}
+.new-login-container .postal-code-text {
+  color: #848484;
+  margin: 0 0 20px;
+}
+.checkbox.stay-signed-container {
+  margin: 0;
+}
+.stay-signed-container.checkbox input[type=checkbox] {
+  margin: 0 0 0 -20px;
+}
+.stay-signed-container label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.new-login-container .otp-container label {
+  margin: 0 0 20px;
+  width: 320px;
+}
+.new-login-container .resend-otp-container {
+  font-size: 16px;
+  margin: 40px 0 0;
+}
