@@ -527,6 +527,12 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
 	// activate company mednefits credits
 	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
+	
+	// GOD'S VIEW ROUTE
+	//get corporate linked account
+	Route::get('hr/get/corporate_linked_account', 'CorporateController@getCorporateLinkedAccount');
+	// create unlinked account
+	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
 });
 
 	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
