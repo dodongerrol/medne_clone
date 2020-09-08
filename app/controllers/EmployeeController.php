@@ -3280,4 +3280,131 @@ class EmployeeController extends \BaseController {
     }
     return ['status' => FALSE, 'message' => 'Reset Password Failed.'];
   }
+
+  public function addPostalCodeEmployee( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['postal_code']) || $input['postal_code'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'postal code is required.';
+        return Response::json($returnObject);
+      }
+
+      if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'user id is required.';
+        return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated')
+      ->where('UserID', $input['user_id'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->UserID;
+      DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code']]);
+      $returnObject->status = true;
+      $returnObject->message = 'Postal Code already set';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  public function createNewPasswordEmployee()
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['password']) || $input['password'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'Password is required.';
+        return Response::json($returnObject);
+    }
+
+    if(empty($input['password_confirm']) || $input['password_confirm'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'Confirm Password is required.';
+        return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'User ID is required.';
+        return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated')
+      ->where('UserID', $input['user_id'])->first();
+    
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      if($checker->member_activated) {
+        $returnObject->status = false;
+        $returnObject->message = 'User was active, please sign in!';
+        return Response::json($returnObject);
+      }
+
+      if($input['password'] !== $input['password_confirm']) {
+        $returnObject->status = false;
+        $returnObject->message = 'Sorry, your password and confirmation password do not match';
+        return Response::json($returnObject);
+      }
+
+      $newPassword = [
+        'Password' => StringHelper::encode($input['password_confirm']),
+        'member_activated' => 1,
+        'account_update_status' => 1,
+        'account_already_update'  => 1
+      ];
+      
+      DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
+      $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
+      if(!$token->status) {
+        return Response::json($token);
+      }
+      $returnObject->status = true;
+      $returnObject->token = $token->data['access_token'];
+      $returnObject->message = 'Your Password has been created, Account was active!';
+      return Response::json($returnObject);
+  }
+
+  public function checkUserOtp ( )
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'user_id is required.';
+      return Response::json($returnObject);
+    }  
+      $checker = DB::table('user')
+      ->where('UserID', $input['user_id'])
+      ->first();
+
+      if($checker->disabled_otp == 0) {
+        return array(
+          'status' => 0,
+          'message' => 'user disabled otp.'
+        );
+      }
+      if($checker->disabled_otp == 1) {
+        return array(
+          'status' => 1,
+          'message' => 'user enabled otp.'
+        );
+      }
+  }
+
 }
