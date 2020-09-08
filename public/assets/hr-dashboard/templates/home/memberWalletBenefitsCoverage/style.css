@@ -401,3 +401,45 @@
   border: 2px solid #E0E0E0;
   border-radius: 3px;
 }
+
+/* medical enterprise plan */
+.credits-tooltip-container.total-utilised-visits,
+.credits-tooltip-container.utilised-panel-visits,
+.credits-tooltip-container.utilised-non-panel-visits, 
+.credits-tooltip-container.visits-per-member {
+  display: none;
+}
+
+/* out of pocket */
+.credits-tooltip-container.total-member-transaction {
+  display: none;
+}
+
+.member-activities-table-container .amount-value.add {
+  color: #3F9D59;
+}
+.member-activities-table-container .amount-value.deduct {
+  color: #EB635D;
+}
+.show-details-on-container button.btnActive {
+  background-color: #0392CF;
+  border-color: transparent;
+}
+.side-menu-selector .disabled {
+  opacity: .3;
+  pointer-events: none;
+}
+.mwbc-box-container .status.inactive {
+  color: #EB635D;
+}
+.mwbc-box-container .status.active {
+  color: #3F9D59;
+}
+.member-wallet-wrapper select {
+  display: block;
+  height: auto;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  -webkit-appearance: none;
+}

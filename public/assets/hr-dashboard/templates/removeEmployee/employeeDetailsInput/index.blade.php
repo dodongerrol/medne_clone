@@ -21,4 +21,34 @@
 			<button ng-click="nextBtn()" class="pull-right btn btn-info next-wizard-button">NEXT</button>
 		</div>
 	</div>
+
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="remove-employee-confirm-modal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document" style="width: 620px;">
+			<div class="modal-content" style="border-radius: 0;">
+        <div class="confirm-modal-container">
+          <div class="header-title">Remove Employee</div>
+
+          <div class="body-content">
+            <div ng-if="!isRemoveSuccess">
+              <p>Are you sure you want to remove this employee?</p>
+              <p>Please confirm to proceed.</p>
+            </div>
+            
+
+            <div ng-if="isRemoveSuccess" class="remove-success-div">
+              <img src="../assets/hr-dashboard/img/remove-employee-success.png">  
+              <p>This employee has been successfully removed.</p>
+            </div>
+          </div>
+
+          <div class="btn-container">
+            <button ng-if="!isRemoveSuccess" class="btn-modal-cancel" ng-click="closeConfirm()">Cancel</button>
+            <button ng-if="!isRemoveSuccess" class="btn-modal-confirm" ng-click="submitRemoveEmployee()">Confirm</button>
+            <button ng-if="isRemoveSuccess" type="button" class="btn-modal-close" data-dismiss="modal" ng-click="doneConfirmModal()">Close</button>
+          </div>
+        </div>
+			</div>
+		</div>
+	</div>
 </div>

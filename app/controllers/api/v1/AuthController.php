@@ -5476,6 +5476,18 @@ public function createEclaim( )
   $user_id = StringHelper::getUserId($findUserID);
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
   
+  // check member wallet spending validity
+  $validity = MemberHelper::getMemberWalletValidity($user_id, $input['spending_type']);
+
+  if(!$validity) {
+    $returnObject->status = FALSE;
+    $returnObject->status_type = 'zero_balance';
+    $returnObject->head_message = 'Non-Panel Error';
+    $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+    $returnObject->sub_message = '';
+    return Response::json($returnObject);
+  }
+
   $customer_id = PlanHelper::getCustomerId($user_id);
   // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
@@ -6669,8 +6681,6 @@ public function payCreditsNew( )
                return Response::json($returnObject);
              }
 
-
-
             // // check visit limit
             if($user_type == "employee") {
               $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
@@ -6695,6 +6705,18 @@ public function payCreditsNew( )
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
+            }
+
+            // check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
+
+            if(!$validity) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
             }
 
             $returnObject->status = TRUE;
@@ -6782,6 +6804,18 @@ public function payCreditsNew( )
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
+            }
+
+            // check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
+
+            if(!$validity) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable ';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
             }
 
             $returnObject->status = TRUE;

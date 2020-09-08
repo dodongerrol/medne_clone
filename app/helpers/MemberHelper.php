@@ -699,6 +699,12 @@ class MemberHelper
 		if($status) {
 			return true;
 		} else {
+			// check of from top up and pending
+			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
+
+			if($top_up_user) {
+				return true;
+			}
 			return false;
 		}
 	}
@@ -1597,7 +1603,10 @@ class MemberHelper
 		);
 
 		try {
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
 			if($plan_active->account_type != "enterprise_plan")	{
@@ -1628,7 +1637,7 @@ class MemberHelper
 				'amount'					=> $amount
 			);
 
-			if($plan_active->account_type == "lite_plan") {
+			if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 				$data['refund_status'] = 2;
 				$data['keep_seat']	= 1;
 				$data['vacate_seat']	= 1;
@@ -1762,7 +1771,7 @@ class MemberHelper
 			'amount'					=> $amount
 		);
 
-		if($plan_active->account_type == "lite_plan") {
+		if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 			$data['refund_status'] = 2;
 			$data['keep_seat']	= 1;
 			$data['vacate_seat']	= 1;
@@ -1773,7 +1782,10 @@ class MemberHelper
 
 		try {
 			$withdraw->createPlanWithdraw($data);
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			PlanHelper::revemoDependentAccounts($user_id, date('Y-m-d', strtotime($expiry_date)));
 			return TRUE;
 		} catch(Exception $e) {
@@ -2132,6 +2144,100 @@ class MemberHelper
 		} else {
 			return false;
 		}
+	}
+
+	public function getTransactionSpent($customer_id, $start, $end)
+    {
+        $end = \PlanHelper::endDate($end);
+        $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+        $user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
+
+        $total_spent = 0;
+
+        foreach($user_allocated as $key => $user) {
+            $ids = StringHelper::getSubAccountsID($user);
+
+            // panel
+            $total_spent += DB::table('transaction_history')
+                        ->whereIn('UserID', $ids)
+                        ->where('procedure_cost', '>', 0)
+                        ->where('deleted', 0)
+                        ->sum('procedure_cost');
+        }
+
+        return $total_spent;
+	}
+	
+	public static function getMemberWalletValidity($member_id, $spending_type)
+	{
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+
+		if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		} else {
+			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+		if($start <= $today && $end >= $today) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static function getMemberWalletStatus($member_id, $spending_type)
+	{
+		$emp_status = "active";
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$member = DB::table('user')->where('UserID', $member_id)->first();
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+
+		if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		} else {
+			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+
+
+		if($start < $today) {
+			$status = "active";
+		}
+
+		if($start <= $today && $end >= $today) {
+			if((int)$member->member_activated == 0 || (int)$member->member_activated == 1 && (int)$member->Status == 0) {
+				$emp_status = 'pending';
+			}
+		}
+
+		if($today > $end) {
+			$emp_status = 'expired';
+		}
+
+		if((int)$member->Active == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		return $emp_status;
 	}
 }
 ?>

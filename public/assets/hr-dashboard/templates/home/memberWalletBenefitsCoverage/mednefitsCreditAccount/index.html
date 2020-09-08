@@ -1,67 +1,48 @@
 <div class="mednefits-credits-account-container" mednefits-credit-account-directive>
-  <div class="show-details-on-container">
-    <div>
-      <span class="member-bold-text">Show details on</span> 
-      <div class="current-term-wrapper"> 
-        <div ng-click="termSelector()" class="current-term-input-wrapper">
-          <span>Current term</span>
-          <span ng-repeat="list in dateTerm" ng-if="$last">
-            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-          </span>
-          <i class="fa fa-angle-down"></i>
+
+  <div ng-if="isPrepaidCreditsActivated">
+    <div class="show-details-on-container">
+      <div>
+        <span class="member-bold-text">Show details on</span> 
+        <div class="current-term-wrapper"> 
+          <div ng-click="termSelector()" class="current-term-input-wrapper">
+            <span>{{ selectedTerm.term }}</span>
+            <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
+              (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+            </span> -->
+            <i class="fa fa-angle-down"></i>
+          </div>
+          <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+            <!-- <span>Last term</span> -->
+            <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+            <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
+          </div>
         </div>
-        <div ng-if="showLastTermSelector" class="last-term-selector">
-          <span>Last term</span>
-          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        
+        
+        <div>
+          <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
         </div>
       </div>
       <div>
-        <button>Apply</button>
+        <!-- <button>Save</button> -->
       </div>
     </div>
-    <div>
-      <!-- <button>Save</button> -->
-    </div>
-  </div>
-  <div class="mwbc-box-container">
-    <h4 class="member-bold-text"> Mednefits Credits Account</h4>
-    <!-- add class "pending" if the account is still pending -->
-    <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false }">
-      <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Mednefits Credits Account Invoice</span>
-      <div class="mednefits-available-credits display-flex">
-        <div class="available-credits flex-1">
-          <span class="available-credits-container dp-flex-ai">
-            <div class="available-credits-text member-bold-text">Available Credits</div>
-            <span class="credits-tooltip-wrapper">
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-              <div ng-if="false" class="credits-tooltip-container">
-                <div class="tooltip-title">Available Credits</div>
-                <p>The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
-                </p>
-                <div class="tooltip-btn-footer">
-                  <button>Got it</button>
-                </div>
-              </div> 
-            </span>
-          </span>
-          <span>
-            <div class="available-credits-amount member-bold-text">SGD {{ mednefitsCreditsData.available_credits }}</div>
-          </span>
-        </div>
-        <div>
-          <button data-toggle="modal" data-target="#top-up-credits-modal" class="btn-top-up-credits">Top up credits</button>
-        </div>
-      </div>
-      <div class="credits-info-details-container display-flex">
-        <div class="total-credits-container">
-          <div>
-            <span class="dp-flex-ai">
-              <div>Total Credits</div>
+    <div class="mwbc-box-container">
+      <h4 class="member-bold-text"> Prepaid Credits Account</h4>
+      <p class="prepaid-subtext">Prepaid Credits Account stores prepaid credits. Prepaid credits can be used to pay for employee benefits charges.</p>
+      <!-- add class "pending" if the account is still pending -->
+      <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false }">
+        <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
+        <div class="mednefits-available-credits display-flex">
+          <div class="available-credits flex-1">
+            <span class="available-credits-container dp-flex-ai">
+              <div class="available-credits-text member-bold-text">Available Credits</div>
               <span class="credits-tooltip-wrapper">
-                <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
                 <div ng-if="false" class="credits-tooltip-container">
-                  <div class="tooltip-title">Total Credits</div>
-                  <p>The amount of credits is given to your company’s wallet.<br>(The sum of Purchased Credits and Bonus Credits)
+                  <div class="tooltip-title">Available Credits</div>
+                  <p>The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
                   </p>
                   <div class="tooltip-btn-footer">
                     <button>Got it</button>
@@ -70,41 +51,86 @@
               </span>
             </span>
             <span>
-              <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_credits }}</div>
+              <div class="available-credits-amount member-bold-text">SGD {{ mednefitsCreditsData.available_credits }}</div>
             </span>
           </div>
-          <div class="credits-border-container"></div>
-        </div>
-        <div class="purchased-credits-container">
           <div>
-            <span class="dp-flex-ai">
-              <div>Purchased Credits</div>
-              <span class="credits-tooltip-wrapper">
-                <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-                <div ng-if="false" class="credits-tooltip-container">
-                  <div class="tooltip-title">Purchased Credits</div>
-                  <p>The amount of credits that your company agreed to purchase.</p>
-                  <div class="tooltip-btn-footer">
-                    <button>Got it</button>
-                  </div>
-                </div> 
+            <button ng-click="topUpCredits()" data-toggle="modal" data-target="#top-up-credits-modal" class="btn-top-up-credits">Top up credits</button>
+          </div>
+        </div>
+        <div class="credits-info-details-container display-flex">
+          <div class="total-credits-container">
+            <div>
+              <span class="dp-flex-ai">
+                <div>Total Credits</div>
+                <span class="credits-tooltip-wrapper">
+                  <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                  <div ng-if="false" class="credits-tooltip-container">
+                    <div class="tooltip-title">Total Credits</div>
+                    <p>The amount of credits is given to your company’s wallet.<br>(The sum of Purchased Credits and Bonus Credits)
+                    </p>
+                    <div class="tooltip-btn-footer">
+                      <button>Got it</button>
+                    </div>
+                  </div> 
+                </span>
               </span>
-            </span>
-            <span>
-              <div class="member-bold-text">SGD {{ mednefitsCreditsData.purchased_credits }}</div>
-            </span>
+              <span>
+                <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_credits }}</div>
+              </span>
+            </div>
+            <div class="credits-border-container"></div>
           </div>
-          <div class="credits-border-container"></div>
-        </div>
-        <div class="bonus-credits-container">
+          <div class="purchased-credits-container">
+            <div>
+              <span class="dp-flex-ai">
+                <div>Purchased Credits</div>
+                <span class="credits-tooltip-wrapper">
+                  <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+                  <div ng-if="false" class="credits-tooltip-container">
+                    <div class="tooltip-title">Purchased Credits</div>
+                    <p>The amount of credits that your company agreed to purchase.</p>
+                    <div class="tooltip-btn-footer">
+                      <button>Got it</button>
+                    </div>
+                  </div> 
+                </span>
+              </span>
+              <span>
+                <div class="member-bold-text">SGD {{ mednefitsCreditsData.purchased_credits }}</div>
+              </span>
+            </div>
+            <div class="credits-border-container"></div>
+          </div>
+          <div class="bonus-credits-container">
+            <div>
+              <span class="dp-flex-ai">
+                <div>Bonus Credits</div>
+                <span class="credits-tooltip-wrapper">
+                  <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+                  <div ng-if="false" class="credits-tooltip-container">
+                    <div class="tooltip-title">Bonus Credits</div>
+                    <p>Free-of-charge credits from Mednefits as an addition to your Purchased Credits.</p>
+                    <div class="tooltip-btn-footer">
+                      <button>Got it</button>
+                    </div>
+                  </div>
+                </span>
+              </span>
+              <span>
+                <div class="member-bold-text">SGD {{ mednefitsCreditsData.bonus_credits }}</div>
+              </span>
+            </div>
+            <div class="credits-border-container"></div>
+          </div>
           <div>
             <span class="dp-flex-ai">
-              <div>Bonus Credits</div>
+              <div>Total Utilised Credits</div>
               <span class="credits-tooltip-wrapper">
                 <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
                 <div ng-if="false" class="credits-tooltip-container">
-                  <div class="tooltip-title">Bonus Credits</div>
-                  <p>Free-of-charge credits from Mednefits as an addition to your Purchased Credits.</p>
+                  <div class="tooltip-title">Total Utilised Credits<</div>
+                  <p>The amount of Total Credits that have already been distributed/allocated to members.</p>
                   <div class="tooltip-btn-footer">
                     <button>Got it</button>
                   </div>
@@ -112,122 +138,205 @@
               </span>
             </span>
             <span>
-              <div class="member-bold-text">SGD {{ mednefitsCreditsData.bonus_credits }}</div>
+              <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_utilised_credits }}</div>
             </span>
           </div>
-          <div class="credits-border-container"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mwbc-box-container">
+      <div class="dp-flex-ai">
+        <h5 class="member-bold-text flex-1">Member Wallet</h5>
+        <div>
+          <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+        </div>
+      </div>
+      <div ng-if="false" class="mednefits-credits-pending">
+        <div>This method is currently not in use due to pending Prepaid Credits Account Invoice.</div>
+      </div>
+      <div ng-if="true">
+        <div>Prepaid Credits is currently used in:</div>
+        <div>
+          <div class="wallet-container medical-wallet-container display-flex">
+              <div class="member-bold-text">Medical Wallet:</div>
+              <div class="display-flex wallet-panel-container">
+                <div>Mednefits Panel</div>
+                <div>Non Panel</div>
+              </div>
+          </div>
+          <div class="wallet-container wellness-wallet-container display-flex">
+            <div class="member-bold-text">Wellness Wallet:</div>
+            <div>
+              <div>Non Panel Panel</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mwbc-box-container">
+      <h5 class="member-bold-text">Activities</h5>
+      <div class="member-activities-table-wrapper">
+        <div class="member-activities-table-container">
+          <table>
+            <thead>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Amount</th>
+            </thead>
+            <tbody>
+              <tr ng-repeat="list in mednefitsActivitiesData">
+                <td>
+                  <span ng-bind="formatTableDate(list.created_at)">01 Jan 2020</span>
+                </td>
+                <td>
+                  <span ng-if="list.type == 'added_bonus_credits'">Bonus Credits</span>
+                  <span ng-if="list.type == 'added_purchase_credits'">Purchased Credits</span>
+                </td>
+                <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="custom-pagination-container flex-1">
+            <div class="custom-pagination">
+              <div class="page-wrapper">
+                <div class="page-scroll-container">
+                  <span ng-click="_prevPageList_('activity')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                    <i class="fa fa-angle-left"></i> 
+                    <span>Prev</span>
+                  </span>
+                  <div class="pages-list">
+                      
+                    <!-- <span class="page-num active">1</span>	 -->
+                    <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+
+                    <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+                    
+                  </div>
+                  <span ng-click="_nextPageList_('activity')" class="prev-next-container">  
+                    <span>Next</span>
+                    <i class="fa fa-angle-right"></i> 
+                  </span>
+                </div>
+              </div>
+              <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+              <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+                <span><span>10</span> per page</span>
+                <span>  
+                  <i class="fa fa-caret-down"></i>
+                </span>
+                <div ng-if="pagination_dropdown" class="opened-per-page-scroll">
+                  <span ng-click="_setPageLimit_( 'activity',10 )">10 per page</span>
+                  <span ng-click="_setPageLimit_( 'activity',25 )">20 per page</span>
+                  <span ng-click="_setPageLimit_( 'activity',50 )">50 per page</span>
+                  <span ng-click="_setPageLimit_( 'activity',100 )">100 per page</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div ng-if="!isPrepaidCreditsActivated" class="prepaid-not-activated"> 
+    <h4 class="member-bold-text content-header-title"> Prepaid Credits Account</h4>
+
+    <div ng-if="!isPrepaidCreditsFormShow" class="credits-not-activated-text">
+      <p class="gray-text">
+        Prepaid Credits Account stores Prepaid Credits. Prepaid Credits can be used to pay for employee benefits charges.
+      </p>  
+      <p>
+        Prepaid Credits Account is currently not activated. Would you like to activate Prepaid Credits Account?
+      </p>
+      <button class="btn-activate-credits" ng-click="toggleCreditsActivation()">
+        Activate Prepaid Credits Account
+      </button>
+    </div>
+  </div>
+  
+  <div ng-if="isPrepaidCreditsFormShow" class="prepaid-credits-form-container">
+    <div class="top-up-body-container">
+      <div class="display-flex">
+        <div>
+          <div class="company-account-text"><span class="asterisk-red">*</span>How many credits would you like to have<br>in your company account?</div>
         </div>
         <div>
-          <span class="dp-flex-ai">
-            <div>Total Utilised Credits</div>
-            <span class="credits-tooltip-wrapper">
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-              <div ng-if="false" class="credits-tooltip-container">
-                <div class="tooltip-title">Total Utilised Credits<</div>
-                <p>The amount of Total Credits that have already been distributed/allocated to members.</p>
-                <div class="tooltip-btn-footer">
-                  <button>Got it</button>
-                </div>
-              </div>
-            </span>
-          </span>
-          <span>
-            <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_utilised_credits }}</div>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="mwbc-box-container">
-    <div class="dp-flex-ai">
-      <h5 class="member-bold-text flex-1">Member Wallet</h5>
-      <div>
-        <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
-      </div>
-    </div>
-    <div ng-if="false" class="mednefits-credits-pending">
-      <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
-    </div>
-    <div ng-if="true">
-      <div>Mednefits Credits is currently used in:</div>
-      <div>
-        <div class="wallet-container medical-wallet-container display-flex">
-            <div class="member-bold-text">Medical Wallet:</div>
-            <div class="display-flex wallet-panel-container">
-              <div>Mednefits Panel</div>
-              <div>Non Panel</div>
+          <div class="top-up-credits-container">
+            <h5>Total Credits</h5>
+            <span>*The credits amount will be added to company account</span>
+            <div class="top-up-input-wrapper">
+              <div class="currency-type">SGD</div>
+              <input type="text" ng-model="activateCreditsData.total_credits" ng-change="calculateActivateCredits('total_credits', activateCreditsData.total_credits)" ng-model-options="{ debounce: 500 }">
             </div>
+          </div>
+          <div class="top-up-calculation-wrapper">
+            <div ng-click="toggleCreditsCalculation()" class="dp-flex-ai top-up-see-calc-wrapper">
+              <div class="top-up-icon-container see-calc">
+                <img ng-if="!isCreditsCalculationShow"  src="../../assets/hr-dashboard/img/blue-angle-down.png">
+                <img ng-if="isCreditsCalculationShow" src="../../assets/hr-dashboard/img/blue-angle-up.png">
+              </div>
+              <div>
+                <span ng-if="!isCreditsCalculationShow">See calculation</span>
+                <span ng-if="isCreditsCalculationShow">Hide calculation</span>
+              </div>
+            </div>
+            <div ng-if="isCreditsCalculationShow" class="dp-flex-ai bonus-credits">
+              <div class="top-up-icon-container calc-details">
+                <i class="fa fa-minus"></i>
+              </div>
+              <div class="bonus-credits-amount"><span><span class="currency-type">SGD</span> {{ activateCreditsData.bonus_credits }}</span> <span>(Bonus Credits)</span></div>
+            </div>
+          </div>
         </div>
-        <div class="wallet-container wellness-wallet-container display-flex">
-          <div class="member-bold-text">Wellness Wallet:</div>
-          <div>
-            <div>Non Panel Panel</div>
+      </div>
+      <div class="display-flex">
+        <div>
+          <div class="company-account-text"><span class="asterisk-red">*</span>Here’s how much you’ll need to pay</div>
+        </div>
+        <div>
+          <div class="top-up-credits-container">
+            <h5>Purchased Credits</h5>
+            <span>*The credits amount company will be paying for</span>
+            <div class="top-up-input-wrapper">
+              <div class="currency-type">SGD</div>
+              <input type="text" ng-model="activateCreditsData.purchased_credits" ng-change="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" ng-model-options="{ debounce: 500 }">
+            </div>
+          </div>
+          <div class="bonus-credtits-rate-container">
+            <div ng-click="toggleCreditsBonusCredit()">
+              <i ng-if="!isCreditsBonusCreditShow" class="fa fa-angle-down"></i>
+              <i ng-if="isCreditsBonusCreditShow" class="fa fa-angle-up"></i>
+              <span>{{ !isCreditsBonusCreditShow ? 'See' : 'Hide' }} Bonus Credits rate</span>
+            </div>
+            <div ng-if="isCreditsBonusCreditShow" class="top-up-bonus-credits-container top-up-credits-container">
+              <h5>Bonus Credits</h5>
+              <span>*The percentage of Purchased Credits given by Mednefits</span>
+              <div class="top-up-input-wrapper">
+                <div>%</div>
+                <input type="number" ng-model="activateCreditsData.bonus_credits_percentage" ng-change="calculateActivateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="display-flex">
+        <div>
+          <div class="company-account-text"><span class="asterisk-red">*</span>Invoice Date</div>
+        </div>
+        <div>
+          <div class="top-up-credits-container invoice-date">
+            <div class="top-up-input-wrapper">
+              <input class="datepicker" ng-model="activateCreditsData.invoice_date">
+              <img src="../../assets/hr-dashboard/img/calendar.png">
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="mwbc-box-container">
-    <h5 class="member-bold-text">Activities</h5>
-    <div class="member-activities-table-wrapper">
-      <div class="member-activities-table-container">
-        <table>
-          <thead>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Amount</th>
-          </thead>
-          <tbody>
-            <tr ng-repeat="list in mednefitsActivitiesData">
-              <td>
-                <span ng-bind="formatTableDate(list.created_at)">01 Jan 2020</span>
-              </td>
-              <td>
-                <span ng-if="list.type == 'added_bonus_credits'">Bonus Credits</span>
-                <span ng-if="list.type == 'added_purchase_credits'">Purchased Credits</span>
-              </td>
-              <td class="amount-value">+ <span class="currency-type" ng-bind="list.currency_type">SGD</span> <span ng-bind="list.credit">20,000.00</span></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="custom-pagination-container flex-1">
-          <div class="custom-pagination">
-            <div class="page-wrapper">
-              <div class="page-scroll-container">
-                <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
-                  <i class="fa fa-angle-left"></i> 
-                  <span>Prev</span>
-                </span>
-                <div class="pages-list">
-                    
-                  <!-- <span class="page-num active">1</span>	 -->
-                  <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
 
-                   <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
-                  
-                </div>
-                <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
-                  <span>Next</span>
-                  <i class="fa fa-angle-right"></i> 
-                </span>
-              </div>
-            </div>
-            <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
-            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
-              <span><span>10</span> per page</span>
-              <span>  
-                <i class="fa fa-caret-down"></i>
-              </span>
-              <div class="opened-per-page-scroll invoice-per-page-container">
-                <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="btn-container">
+      <button class="btn-custom-cancel" ng-click="toggleCreditsActivation()">Back</button>
+      <button class="btn-custom-confirm" data-toggle="modal" data-target="#active-prepaid-credits-modal">Activate</button>
     </div>
   </div>
 
@@ -236,10 +345,10 @@
       <div class="modal-content">
         <form>
           <div class="modal-header">
-            <h5>Top Up Mednefits Credits</h5>
-            <span>Input amount of Total Credits or Purchased Credits you wish to top up</span>
+            <h5>Top Up Prepaid Credits</h5>
+            <span ng-if="isCreditsInputFormShow">Input amount of Total Credits or Purchased Credits you wish to top up</span>
           </div>
-          <div class="modal-body top-up-body-container">
+          <div ng-if="isCreditsInputFormShow" class="modal-body top-up-body-container">
             <div class="display-flex">
               <div>
                 <div class="company-account-text"><span class="asterisk-red">*</span>How much do you want to top up to the company account?</div>
@@ -250,26 +359,26 @@
                   <span>*The credits amount will be added to company account</span>
                   <div class="top-up-input-wrapper">
                     <div>SGD</div>
-                    <input type="number">
+                    <input type="text" ng-model="creditsTopUpData.total_credits" ng-change="calculateCredits('total_credits', creditsTopUpData.total_credits)" ng-model-options="{ debounce: 500 }">
                   </div>
                 </div>
                 <div class="top-up-calculation-wrapper">
-                  <div class="dp-flex-ai top-up-see-calc-wrapper">
+                  <div ng-click="toggleCalculation()" class="dp-flex-ai top-up-see-calc-wrapper">
                     <div class="top-up-icon-container see-calc">
-                      <i ng-if="false" class="fa fa-angle-down"></i>
-                      <img src="../../assets/hr-dashboard/img/blue-angle-up.png">
-                      <img ng-if="false" src="../../assets/hr-dashboard/img/blue-angle-down.png">
+                      <!-- <i ng-if="false" class="fa fa-angle-down"></i> -->
+                      <img ng-if="!isCalculationShow" src="../../assets/hr-dashboard/img/blue-angle-down.png">
+                      <img ng-if="isCalculationShow" src="../../assets/hr-dashboard/img/blue-angle-up.png">
                     </div>
                     <div>
-                      <span>See calculation</span>
-                      <span ng-if="false">Hide calculation</span>
+                      <span ng-if="!isCalculationShow">See calculation</span>
+                      <span ng-if="isCalculationShow">Hide calculation</span>
                     </div>
                   </div>
-                  <div class="dp-flex-ai">
+                  <div ng-if="isCalculationShow" class="dp-flex-ai bonus-credits">
                     <div class="top-up-icon-container calc-details">
                       <i class="fa fa-minus"></i>
                     </div>
-                    <div class="bonus-credits-amount"><span class="member-bold-text">SGD 1,800.00</span> <span class="member-bold-text">(Bonus Credits)</span></div>
+                    <div class="bonus-credits-amount"><span class="member-bold-text">SGD {{ creditsTopUpData.bonus_credits }}</span> <span class="member-bold-text">(Bonus Credits)</span></div>
                   </div>
                 </div>
               </div>
@@ -284,21 +393,21 @@
                   <span>*The credits amount company will be paying for</span>
                   <div class="top-up-input-wrapper">
                     <div>SGD</div>
-                    <input type="number">
+                    <input type="text" ng-model="creditsTopUpData.purchased_credits" ng-change="calculateCredits('purchased_credits', creditsTopUpData.purchased_credits)" ng-model-options="{ debounce: 500 }">
                   </div>
                 </div>
                 <div class="bonus-credtits-rate-container">
-                  <div>
-                    <i class="fa fa-angle-down"></i>
-                    <i ng-if="false" class="fa fa-angle-up"></i>
-                    <span>See Bonus Credits rate</span>
+                  <div ng-click="toggleCreditsBonusCredit()">
+                    <i ng-if="!isCreditsBonusCreditShow" class="fa fa-angle-down"></i>
+                    <i ng-if="isCreditsBonusCreditShow" class="fa fa-angle-up"></i>
+                    <span>{{ !isCreditsBonusCreditShow ? 'See' : 'Hide' }} Bonus Credits rate</span>
                   </div>
-                  <div class="top-up-bonus-credits-container top-up-credits-container">
+                  <div ng-if="isCreditsBonusCreditShow" class="top-up-bonus-credits-container top-up-credits-container">
                     <h5 class="member-bold-text">Bonus Credits</h5>
                     <span>*The percentage of Purchased Credits given by Mednefits</span>
                     <div class="top-up-input-wrapper">
                       <div>%</div>
-                      <input type="number">
+                      <input type="text"  ng-model="creditsTopUpData.bonus_credits_percentage" ng-change="calculateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
                     </div>
                   </div>
                 </div>
@@ -311,18 +420,58 @@
               <div>
                 <div class="top-up-credits-container invoice-date">
                   <div class="top-up-input-wrapper">
-                    <input type="number">
+                    <input class="datepicker" type="text" ng-model="creditsTopUpData.invoice_date">
+                    <img src="../../assets/hr-dashboard/img/calendar.png">
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div ng-if="isCreditsConfirmShow" class="modal-body top-up-body-container top-up-success">
+            <p ng-if="!isTopUpSuccess" >
+              A Prepaid Credits invoice will be billed to your company after this top-up has been successfully completed. Please pay your invoice to utilise the top-up Prepaid Credits.
+            </p>
+            <p ng-if="!isTopUpSuccess" >
+              Please confirm to proceed.
+            </p>
+
+            <img ng-if="isTopUpSuccess" src="../assets/images/success-circle.png" alt="">
+            <p ng-if="isTopUpSuccess" class="text-center">This top-up has been successfully completed.</p>
+          </div>
           <div class="modal-footer">
-            <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="true" class="btn-update">Top Up</button>
+            <button ng-if="isCreditsInputFormShow" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-click="toggleTopUpCreditsConfirm(true)" ng-if="isCreditsInputFormShow" ng-disabled="creditsTopUpData.purchased_credits == 0" class="btn-update">Top Up</button>
+            <button ng-if="isCreditsConfirmShow && !isTopUpSuccess" class="btn-edit-cancel btn-close" ng-click="toggleTopUpCreditsConfirm(false)">Cancel</button>
+            <button ng-click="submitTopUpCredits(creditsTopUpData)" ng-if="isCreditsConfirmShow && !isTopUpSuccess" class="btn-update">Confrim</button>
+            <button ng-if="isTopUpSuccess" class="btn-update">Close</button>
           </div>
         </form>
       </div>
     </div>
   </div>
+
+  <div class="modal fade spending-account-modal" id="active-prepaid-credits-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Activate Prepaid Credits Account</h5>
+        </div>
+        <div class="modal-body">
+          <p ng-if="!isMednefitsCreditsSuccessShow" >
+            An invoice of Purchased Credits will be generated after Prepaid Credits Account is activated. Are you sure you want to activate Prepaid Credits Account?
+          </p>
+          <p ng-if="!isMednefitsCreditsSuccessShow" >
+            Please confirm to proceed.
+          </p>
+          <img ng-if="isMednefitsCreditsSuccessShow" src="../assets/images/success-circle.png" alt="">
+          <p ng-if="isMednefitsCreditsSuccessShow" class="text-center">Prepaid Credits Account has been successfully activated.</p>
+        </div>
+        <div class="modal-footer">
+          <button ng-if="!isMednefitsCreditsSuccessShow" class="btn-edit-cancel btn-close" data-dismiss="modal">Cancel</button>
+          <button ng-if="!isMednefitsCreditsSuccessShow" class="btn-update" ng-click="submitActivateMednefitsCredits(activateCreditsData)">Confirm</button>
+          <button ng-if="isMednefitsCreditsSuccessShow" class="btn-update" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>    
 </div>

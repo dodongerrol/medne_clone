@@ -330,7 +330,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="list in global_enrollmentHistoryData track by $index">
+									<tr ng-click="invoiceAccordion( list,$index )" ng-repeat="list in global_enrollmentHistoryData track by $index">
 										<td ng-bind="list.date_of_edit">18 Feb 2020</td>
 										<td>
 											<span ng-if="list.plan_type == 'Pro Plan' ">Pro Plan</span>

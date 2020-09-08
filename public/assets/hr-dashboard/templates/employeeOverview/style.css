@@ -1,0 +1,11 @@
+.employee-overview-container{
+  padding: 15px 85px;
+  min-height: calc( 100vh - 180px );
+  height: 100%;
+}
+.employee-overview-container .employee-pagination-wrapper {
+  background: transparent;
+}
+.employee-overview-container .per_page{
+  display: block;
+}

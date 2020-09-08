@@ -1,0 +1,104 @@
+<div class="credit-allocation-container" credit-allocation-directive>
+  <div class="global-loader child-body-loading" hidden>
+    <div class="loader-container">
+      <div class="loader"></div>
+    </div>
+  </div>
+  <div class="entitlement-information">
+    <div class="entitlement-btn-edit-wrapper">
+      <h3>{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} Information</h3>
+      <button ng-disabled="updateDisable" ng-class="{ 'calc-disabled' : updateDisable }" class="btn-update" ng-click="updateEntitlement()">Update</button>
+    </div>
+
+    <div class="entitlement-information-details">
+      <div ng-if="selectedEmployee.account_type != 'enterprise_plan' && selectedEmployee.medical_wallet">
+        <h4 class="weight-700 medical-entitlement">Medical Wallet | {{ selectedEmployee.medical_spending_account_validity}}</h4>
+        <div class="col-md-12 medical-entitlement-container">
+          <div class="col-md-4">
+            <div class="entitlement-input-container original">
+              <h5 class="weight-700">Current Entitlement</h5>
+              <div class="entitlement-input-label">
+                <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
+                <input class="entitlement-input form-control" type="text" readonly="readonly"
+                  placeholder="0.00" ng-model="emp_entitlement.original_medical_entitlement">
+              </div>
+              <p ng-if="emp_entitlement.updated_medical_entitlement" class="small">*Updated from 
+                <span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.old_medical_entitlement">500.00</span> to 
+                <span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_medical_entitlement">1,000</span> on <span ng-bind="emp_entitlement.medical_entitlement_date">30/04/2019</span>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="entitlement-input-container new">
+              <h5 class="weight-700">New Entitlement</h5>
+              <div class="entitlement-input-label">
+                <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
+                <input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.medical_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="(!spending_account_status.paid_status && spending_account_status.medical_method == 'pre_paid')">
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="entitlement-input-container usage">
+              <h5 class="weight-700">Effective Date of New Entitlement</h5>
+              <div class="entitlement-input-label withIcon">
+                <div class="entitlement-date-input-wrapper">
+                  <input type="text" name="usage_date"
+                    class="medical-entitlement-date entitlement-input dateWithIcon form-control datepicker-medical"
+                    ng-model="med_effective_date" placeholder="DD/MM/YYYY">
+                  <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div ng-if="selectedEmployee.wellness_wallet">
+        <h4 class="weight-700 wellness-entitlement">Wellness Entitlement | {{ selectedEmployee.wellness_spending_account_validity}}</h4>
+        <div class="col-md-12 wellness-entitlement-container">
+          <div class="col-md-4">
+            <div class="entitlement-input-container original">
+              <h5 class="weight-700">Current Entitlement</h5>
+              <div class="entitlement-input-label">
+                <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
+                <input class="entitlement-input form-control" type="text" readonly="readonly"
+                  placeholder="0.00" ng-model="emp_entitlement.original_wellness_entitlement">
+              </div>
+              <p ng-if="emp_entitlement.updated_wellness_entitlement == true" class="small">*Updated from 
+                <span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.old_wellness_entitlement">500.00</span> to 
+                <span ng-bind="emp_entitlement.currency_type" class="currency-type">SGD</span> <span ng-bind="emp_entitlement.original_wellness_entitlement">1,000</span> on <span ng-bind="emp_entitlement.wellness_entitlement_date">30/04/2019</span></p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="entitlement-input-container new">
+              <h5 class="weight-700">New Entitlement</h5>
+              <div class="entitlement-input-label">
+                <label ng-bind="emp_entitlement.currency_type" class="entitlement-label currency-type">SGD</label>
+                <input class="entitlement-input form-control" type="number" placeholder="0.00" ng-model="emp_entitlement.wellness_new_entitlement" ng-change="checkNewAllocation(emp_entitlement)" ng-readonly="(!spending_account_status.paid_status && spending_account_status.wellness_method == 'pre_paid')">
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="entitlement-input-container usage">
+              <h5 class="weight-700">Effective Date of New Entitlement</h5>
+              <div class="entitlement-input-label withIcon">
+                <div class="entitlement-date-input-wrapper">
+                  <input type="text" name="usage_date"
+                    class="wellness-entitlement-date entitlement-input dateWithIcon form-control datepicker-wellness"
+                    ng-model="well_effective_date" placeholder="DD/MM/YYYY">
+                  <i class="fa fa-calendar-o" aria-hidden="true"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<style scoped>
+  @import url('../assets/hr-dashboard/templates/employeeInformation/creditAllocation/style.css');
+</style>

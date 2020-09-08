@@ -26,7 +26,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bootstrap.min.css?_={{ $date->format('U') }}">
-	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/materialize.min.css?_={{ $date->format('U') }}">
+	<!-- <link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/materialize.min.css?_={{ $date->format('U') }}"> -->
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bootstrap-slider.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/font-awesome.min.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/jquery.toast.min.css?_={{ $date->format('U') }}">
@@ -51,12 +51,12 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/style.css?_={{ $date->format('U') }}">
 
 	<!-- REMOVE EMPLOYEE STYLES -->
-		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/style.css?_={{ $date->format('U') }}">
-		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/style.css?_={{ $date->format('U') }}">
-		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/style.css?_={{ $date->format('U') }}">
-		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/refundSummary/style.css?_={{ $date->format('U') }}">
-		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/style.css?_={{ $date->format('U') }}">
-		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/employeeDetailsInput/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/removeCheckboxOptions/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/replaceEmployeeInput/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/refundSummary/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/healthSpendingAccountSummary/style.css?_={{ $date->format('U') }}">
+		<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/healthSpendingAccountConfirm/style.css?_={{ $date->format('U') }}">
 	<!---------------------------->
 
 	<!-- EMPLOYEE ENROLLMENT -->
@@ -91,7 +91,7 @@
 </head>
 <body class="body-reset">
 	<div id="main-section-container">
-		<div ui-view="navigation" ng-controller="checkCtrls"></div>
+		<div ui-view="navigation" ng-controller="checkCtrls as navCtr"></div>
 		<div class="main-ui-view" ui-view="main"></div>
 		<div ui-view="modal"></div>
 		<div ui-view="modal_2"></div>
@@ -223,7 +223,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/benefitsTiersDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/editDetailsDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/companyContactsDirective.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/employeeOverviewDirective.js?_={{ $date->format('U') }}"></script>
+	<!-- <script type="text/javascript" src="<?php //echo $server; ?>/assets/hr-dashboard/process/directives/employeeOverviewDirective.js?_={{ $date->format('U') }}"></script> -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/employeeListDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/replaceExternalDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/refundListDirective.js?_={{ $date->format('U') }}"></script>
@@ -252,8 +252,6 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/webInputDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/webPreviewDirective.js?_={{ $date->format('U') }}"></script>
 
-
-
 	<!-- NEW EMPLOYEE ENROLLMENT -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enrollmentFactory.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/container/function.js?_={{ $date->format('U') }}"></script>
@@ -265,26 +263,48 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/previewCommunication/function.js?_={{ $date->format('U') }}"></script>
 
-
 	<!-- Company activation -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/function.js?_={{ $date->format('U') }}"></script>
 
 	<!-- REMOVE EMPLOYEE DIRECTIVES -->
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/function.js?_={{ $date->format('U') }}"></script>
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/refundSummary/function.js?_={{ $date->format('U') }}"></script>
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/function.js?_={{ $date->format('U') }}"></script>
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/function.js?_={{ $date->format('U') }}"></script>
-		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeEmployeeFactory.js?_={{ $date->format('U') }}"></script>
+		<!-- <script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/replaceEmployeeInput/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/refundSummary/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountSummary/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/function.js?_={{ $date->format('U') }}"></script>
+		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeEmployeeFactory.js?_={{ $date->format('U') }}"></script> -->
 	<!-------------------------------->
 
+	<!-- Member Wallet and Benefits Covarage -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/medicalWallet/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/wellnessWallet/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsEnterprisePlan/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/outOfPocket/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/function.js?_={{ $date->format('U') }}"></script>
+	<!----------------------------------->
 
+	<!--------- EMPLOYEE OVERVIEW and EMPLOYEE INFORMATION and REMOVE EMPLOYEE-------->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeOverview/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeInfoContainer/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeDetails/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/dependentDetails/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/creditAllocation/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeSettings/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeHealthProviderAccess/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeFactory.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/container/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/replaceEmployeeInput/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/refundSummary/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/healthSpendingAccountSummary/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/healthSpendingAccountConfirm/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/removeEmployeeFactory.js?_={{ $date->format('U') }}"></script>
+	<!---------------------------------->
 
 	<!-- ACCOUNT SETTINGS -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/function.js?_={{ $date->format('U') }}"></script>
@@ -296,6 +316,8 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/function.js?_={{ $date->format('U') }}"></script>
 
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
 
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>

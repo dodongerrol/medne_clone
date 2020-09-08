@@ -2093,6 +2093,8 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Basic Plan";
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
+			} else if($active_plan->account_type == 'out_of_pocket') {
+				$plan_name = "Out of Pocket";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -2313,7 +2315,7 @@ class BenefitsDashboardController extends \BaseController {
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
-				'end_date'				=> date('F d, Y', strtotime($plan_user_history->end_date)),
+				'end_date'				=> $active_plan->account_type != 'out_of_pocket' ? date('F d, Y', strtotime($plan_user_history->end_date)) : null,
 				'expiry_date'			=> $expiry_date,
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
@@ -13374,6 +13376,12 @@ class BenefitsDashboardController extends \BaseController {
 				$result['spending_feature_status_type'] = false;
 			}
 
+			// check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($id, 'medical');
+			if(!$validity)	{
+				$result['spending_feature_status_type'] = false;
+			}
+
 			return $result;
 		} else {
 			$returnObject->status = FALSE;
@@ -16855,5 +16863,339 @@ class BenefitsDashboardController extends \BaseController {
 			ob_clean();
 		}
 		return $response;
+	}
+
+	public function employeeByID( $id )
+	{
+		$input = Input::all();
+		$result = self::checkSession();
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		$final_user = [];
+		$paginate = [];
+
+		$user = DB::table('user')
+			->where('user.UserID', $id)
+			->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'member_activated', 'Status')
+			->first();
+		
+		// spending account
+		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$medical_wallet = (int)$spending_account->medical_enable == 1 ? true : false;
+		$wellness_wallet = (int)$spending_account->wellness_enable == 1 ? true : false;
+
+		// return $users;
+		$filter = 'current_term';
+		$with_employee_id = false;
+
+
+		if($user->emp_no) {
+			$with_employee_id = true;
+		}
+		$ids = StringHelper::getSubAccountsID($user->UserID);
+		$wallet = DB::table('e_wallet')->where('UserID', $user->UserID)->orderBy('created_at', 'desc')->first();
+		$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user->UserID);
+		$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user->UserID);
+		// get medical entitlement
+		$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $user->UserID)->orderBy('created_at', 'desc')->first();
+			// check if account is schedule for deletion
+		$deletion = DB::table('customer_plan_withdraw')->where('user_id', $user->UserID)->first();
+		$dependets = DB::table('employee_family_coverage_sub_accounts')
+		->where('owner_id', $user->UserID)
+		->where('deleted', 0)
+		->count();
+
+			// check if their is a plan tier
+		$plan_tier = DB::table('plan_tier_users')
+		->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+		->where('plan_tier_users.user_id', $user->UserID)
+		->first();
+
+		$get_employee_plan = DB::table('user_plan_type')->where('user_id', $user->UserID)->orderBy('created_at', 'desc')->first();
+		$plan_extension = false;
+		$deleted = false;
+		$deletion_text = null;
+		$date_deleted = false;
+		$replacement_text = null;
+		$schedule = false;
+		$plan_withdraw = false;
+		$emp_status = 'active';
+		// check if user has replace property
+		$user_active_plan_history = DB::table('user_plan_history')->where('user_id', $user->UserID)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		$replace = DB::table('customer_replace_employee')
+		->where('old_id', $user->UserID)
+		->where('active_plan_id', $user_active_plan_history->customer_active_plan_id)
+		->orderBy('created_at', 'desc')
+		->first();
+
+		$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_active_plan_history->customer_active_plan_id)->first();
+		$plan_type = $active_plan->account_type;
+		if($active_plan->account_type == 'stand_alone_plan') {
+			$plan_name = "Pro Plan";
+		} else if($active_plan->account_type == 'insurance_bundle') {
+			$plan_name = "Insurance Bundle";
+		} else if($active_plan->account_type == 'trial_plan'){
+			$plan_name = "Trial Plan";
+		} else if($active_plan->account_type == 'lite_plan') {
+			$plan_name = "Basic Plan";
+		} else if($active_plan->account_type == 'enterprise_plan') {
+			$plan_name = "Enterprise Plan";
+		} else if($active_plan->account_type == 'out_of_pocket') {
+			$plan_name = "Out of Pocket";
+		}
+
+		$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
+		$plan_user_history = DB::table('user_plan_history')
+			->where('user_id', $user->UserID)
+			->where('type', 'started')
+			->orderBy('created_at', 'desc')
+			->first();
+			
+		if($employee_status['status'] == true) {
+			$schedule = $employee_status['schedule_status'];
+			$deletion_text = $employee_status['schedule'];
+			$expiry_date = $employee_status['expiry_date'];
+			$deleted = $employee_status['deleted'];
+			$plan_withdraw = $employee_status['plan_withdraw'];
+			$emp_status = $employee_status['emp_status'];
+		} else {
+			if(!$plan_user_history) {
+									// create plan user history
+				PlanHelper::createUserPlanHistory($user->UserID, $link_account->customer_buy_start_id, $customer_id);
+				$plan_user_history = DB::table('user_plan_history')
+				->where('user_id', $user->UserID)
+				->where('type', 'started')
+				->orderBy('created_at', 'desc')
+				->first();
+			}
+
+			$active_plan = DB::table('customer_active_plan')
+			->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
+			->first();
+
+			$plan = DB::table('customer_plan')
+			->where('customer_plan_id', $active_plan->plan_id)
+			->orderBy('created_at', 'desc')
+			->first();
+
+			$active_plan_first = DB::table('customer_active_plan')
+			->where('plan_id', $active_plan->plan_id)
+			->first();
+
+			if((int)$active_plan_first->plan_extention_enable == 1) {            
+				$plan_user = DB::table('user_plan_type')
+				->where('user_id', $user->UserID)
+				->orderBy('created_at', 'desc')
+				->first();
+
+				$active_plan_extension = DB::table('plan_extensions')
+				->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
+				->first();
+
+				if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
+					$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
+					$expiry_date = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+				} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+					$expiry_date = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+				}
+
+				if($active_plan_extension->account_type == 'stand_alone_plan') {
+					$plan_name = "Pro Plan";
+				} else if($active_plan_extension->account_type == 'insurance_bundle') {
+					$plan_name = "Insurance Bundle";
+				} else if($active_plan_extension->account_type == 'trial_plan'){
+					$plan_name = "Trial Plan";
+				} else if($active_plan_extension->account_type == 'lite_plan') {
+					$plan_name = "Lite Plan";
+				}
+			} else {
+				$plan_user = DB::table('user_plan_type')
+				->where('user_id', $user->UserID)
+				->orderBy('created_at', 'desc')
+				->first();
+
+				$plan = DB::table('customer_plan')
+				->where('customer_plan_id', $active_plan->plan_id)
+				->first();
+
+				if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
+					$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
+					$expiry_date = date('m/d/Y', strtotime('-1 day', strtotime($temp_valid_date)));
+				} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+					$expiry_date = date('m/d/Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+				}
+			}
+		}
+
+		$medical = null;
+		$wellness = null;
+		if($active_plan->account_type == 'enterprise_plan') {
+			// get pending allocation for medical
+			$e_claim_amount_pending_medication = DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', 'medical')
+			->where('status', 0)
+			->sum('claim_amount');
+
+			// get pending allocation for wellness
+			$e_claim_amount_pending_wellness = DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', 'wellness')
+			->where('status', 0)
+			->sum('claim_amount');
+
+			$medical = array(
+				'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
+				'credits_allocation' =>  number_format($medical_credit_data['allocation'], 2),
+				'credits_spent' 	=>  number_format($medical_credit_data['get_allocation_spent'], 2),
+				'e_claim_amount_pending_medication' =>  number_format($e_claim_amount_pending_medication, 2),
+				'visits'			=> $user_active_plan_history->total_visit_limit,
+				'balance'			=> $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+				'utilised'			=> $user_active_plan_history->total_visit_created,
+				'in_network' 	=>  number_format($medical_credit_data['in_network'], 2),
+				'out_network' 	=>  number_format($medical_credit_data['out_network'], 2)
+			);
+
+			$wellness_balance = $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'];
+			$wellness = array(
+				'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
+				'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
+				'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
+				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+				'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2),
+			);
+		} else {
+			// get pending allocation for medical
+			$e_claim_amount_pending_medication = DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', 'medical')
+			->where('status', 0)
+			->sum('claim_amount');
+
+			// get pending allocation for wellness
+			$e_claim_amount_pending_wellness = DB::table('e_claim')
+			->whereIn('user_id', $ids)
+			->where('spending_type', 'wellness')
+			->where('status', 0)
+			->sum('claim_amount');
+
+			$medical = array(
+				'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
+				'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
+				'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
+				'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
+				'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
+			);
+
+			$wellness_balance = $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'];
+			$wellness = array(
+				'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
+				'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
+				'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
+				'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+				'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
+			);
+		}
+
+		if($employee_status['status'] == true) {
+			$expiry_date = $employee_status['expiry_date'];
+			$today = PlanHelper::endDate(date('Y-m-d'));
+			$expiry_date = PlanHelper::endDate($expiry_date);
+			if($today > $expiry_date) {
+				$medical['credits_allocation'] = "0.00";
+				$medical['balance'] = "0.00";
+				$wellness['credits_allocation'] = "0.00";
+				$wellness['balance'] = "0.00";
+			}
+		}
+
+		$phone_no = (int)$user->PhoneNo;
+		$country_code = $user->PhoneCode;
+		$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
+
+		if((int)$user->Active == 0) {
+			$emp_status = 'deleted';
+		}
+
+		$cap_per_visit = $wallet->cap_per_visit_medical;
+
+		if($plan_tier) {
+			if($wallet->cap_per_visit_medical > 0) {
+				$plan_tier->gp_cap_per_visit = $wallet->cap_per_visit_medical;
+			} else {
+				$cap_per_visit = $plan_tier->gp_cap_per_visit;
+			}
+		}
+
+		if((int)$user->Active == 1 && (int)$user->member_activated == 1) {
+			// statuses
+			$panel = DB::table('transaction_history')->where('UserID', $user->UserID)->first();
+			$non_panel = DB::table('e_claim')->where('user_id', $user->UserID)->first();
+							
+			if($panel || $non_panel) {
+				$emp_status = 'active';
+			} else if((int)$user->Active == 1 && (int)$user->member_activated == 1 && (int)$user->Status == 1){
+				$emp_status = 'activated';
+			}
+		}
+		
+		if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0 || (int)$user->member_activated == 1 && (int)$user->Status == 0) {
+			$emp_status = 'pending';
+		}
+
+		$temp = array(
+			'spending_account'	=> array(
+				'medical' 	=> $medical,
+				'wellness'	=> $wellness,
+				'currency_type' => $wallet->currency_type
+			),
+			'account_type'	=>	$active_plan->account_type,
+			'plan_method_type'	=>	$active_plan->plan_method,
+			'medical_wallet'		=> $medical_wallet,
+			'wellness_wallet'		=> $wellness_wallet,
+			'dependents'	  		=> $dependets,
+			'plan_tier'				=> $plan_tier,
+			'gp_cap_per_visit'		=> $cap_per_visit > 0 ? $cap_per_visit : null,
+			'name'					=> $user->Name,
+			'email'					=> $user->Email,
+			'enrollment_date' 		=> $user->created_at,
+			'plan_name'				=> $plan_name,
+			'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
+			'end_date'				=> $active_plan->account_type != 'out_of_pocket' ? date('F d, Y', strtotime($plan_user_history->end_date)) : null,
+			'expiry_date'			=> $expiry_date,
+			'user_id'				=> $user->UserID,
+			'member_id'				=> $member_id,
+			'employee_id'			=> $user->emp_no,
+			'member_activated'		=> (int)$user->member_activated == 1 ? true : false,
+			'nric'					=> $user->NRIC,
+			'mobile_no'				=> $country_code.(string)$phone_no,
+			'phone_no'				=> $phone_no,
+			'country_code'			=> $country_code,
+			'job_title'				=> $user->Job_Title,
+			'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
+			'postal_code'			=> $user->Zip_Code,
+			'bank_account'			=> $user->bank_account,
+			'bank_code'				=> $user->bank_code,
+			'bank_branch'			=> $user->bank_brh,
+			'bank_name'				=> $user->bank_name,
+			// 'company'				=> ucwords($user->company_name),
+			'employee_plan'			=> $get_employee_plan,
+			'date_deleted'  		=> $date_deleted,
+			'deletion'      		=> $deleted,
+			'deletion_text'    		=> $deletion_text,
+			'schedule'				=> $schedule,
+			'plan_withdraw_status' 	=> $plan_withdraw,
+			'emp_status'			=> $emp_status,
+			'account_status'		=> (int)$user->Active == 1 ? true : false,
+			'plan_type'				=> $plan_type,
+			'wallet_enabled' 		=> (int)$user->wallet == 1 ? true : false,
+			'total_visit_limit'          => $user_active_plan_history->total_visit_limit,
+						'total_visit_created'       => $user_active_plan_history->total_visit_created,
+			'total_balance_visit'       => $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
+			'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
+			'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
+		);
+
+		return array('data' => $temp, 'status' => true);;
 	}
 }

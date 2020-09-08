@@ -239,6 +239,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
 	Route::get('hr/employee/list', 'BenefitsDashboardController@employeeLists');
+	Route::get('hr/employee/{id}', 'BenefitsDashboardController@employeeByID');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
 	// search employee
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
@@ -518,7 +519,15 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update_spending_payment_method', 'SpendingAccountController@updateSpendingPaymentMethod');
 	// create top up mednefits credits
 	Route::post('hr/create_top_up_mednefits_credits', 'SpendingAccountController@createMednefitsCreditsTopUp');
-
+	// activate mednefis basic plan
+	Route::post('hr/activate_mednefits_basic_plan', 'SpendingAccountController@activateBasicPlan');
+	// wallet activation or deactivation
+	Route::post('hr/wallet_activate_deactivate', 'SpendingAccountController@activateDeactivateWallet');
+	// enable disable mednefits credits account
+	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
+	// activate company mednefits credits
+	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
+	
 	// GOD'S VIEW ROUTE
 	//get corporate linked account
 	Route::get('hr/get/corporate_linked_account', 'CorporateController@getCorporateLinkedAccount');
@@ -526,6 +535,11 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
 });
 
+	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
+	// download non-panel reimbursement
+	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
+	// download non-panel invoice
+	Route::get('hr/download_non_panel_invoice', 'EclaimController@downloadNonPanelInvoice');
 	// downloand plan invoice
 	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get company employees and credits left

@@ -303,6 +303,11 @@ class SpendingInvoiceLibrary
 		$in_network_transactions = 0;
 		$consultation_status = false;
 		$lite_plan = false;
+		$total_gp_medicine = 0;
+		$total_gp_consultation = 0;
+		$total_dental = 0;
+		$total_tcm = 0;
+		$total_transactions = 0;
 		$transaction_invoices = SpendingInvoiceTransactions::where('invoice_id', $invoice_id)->get();
 
 		foreach ($transaction_invoices as $key => $transaction) {
@@ -320,6 +325,7 @@ class SpendingInvoiceLibrary
 				$service_credits = false;
 
 				if((int)$trans['deleted'] == 0) {
+					$total_transactions++;
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_transactions += (float)$trans['credit_cost'] * $trans->currency_amount;
 					} else {
@@ -343,11 +349,13 @@ class SpendingInvoiceLibrary
 
 						if($logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_use_credits'] == 0 || $logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_enabled'] == 1) {
 							$total_consultation += floatval($logs_lite_plan->credit);
+							$total_gp_consultation += floatval($logs_lite_plan->credit);
 							$consultation = number_format($logs_lite_plan->credit, 2);
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if($logs_lite_plan && floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
 							$total_consultation += floatval($logs_lite_plan->credit);
+							$total_gp_consultation += floatval($logs_lite_plan->credit);
 							$consultation = $logs_lite_plan->credit;
 							$consultation_credits = true;
 							$service_credits = true;
@@ -355,9 +363,11 @@ class SpendingInvoiceLibrary
 							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 								$total_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
 								$consultation = number_format($trans['consultation_fees'] * $trans->currency_amount, 2);
+								$total_gp_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
 							} else {
 								$total_consultation += floatval($trans['consultation_fees']);
 								$consultation = number_format($trans['consultation_fees'], 2);
+								$total_gp_consultation += floatval($trans['consultation_fees']);
 							}
 						}
 					}
@@ -470,7 +480,41 @@ class SpendingInvoiceLibrary
 						$type = $clinic_type_data['type_name'];
 						$clinic_type_name = $clinic_type_data['type'];
 						$image = $clinic_type_data['image'];
-							// check user if it is spouse or dependent
+
+						if($clinic_type->head == 1 || $clinic_type->head == "1") {
+							if($clinic_type->Name == "GP") { 
+								$total_gp_medicine += $treatment;
+							} else if($clinic_type->Name == "Dental") {
+							$total_dental += $treatment;
+							 $type = "Dental";
+							 $type_name = "dental_care";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+						   } else if($clinic_type->Name == "TCM") {
+							 $total_dental += $total_tcm;
+							 $type = "TCM";
+							 $type_name = "tcm";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+						   }
+						  } else {
+							$find_head = DB::table('clinic_types')
+							->where('ClinicTypeID', $clinic_type->sub_id)
+							->first();
+							if($clinic_type->Name == "GP") { 
+								$total_gp_medicine += $treatment;
+							} else if($find_head->Name == "Dental") {
+							 $total_dental += $treatment;
+							 $type = "Dental";
+							 $type_name = "dental_care";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
+						   } else if($find_head->Name == "TCM") {
+							 $total_dental += $total_tcm;
+							 $type = "TCM";
+							 $type_name = "tcm";
+							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
+						   }
+						  }
+
+						// check user if it is spouse or dependent
 
 						$employee = $customer->Name;
 						$dependent = null;
@@ -506,6 +550,8 @@ class SpendingInvoiceLibrary
 							$trans->currency_type = "sgd";
 						}
 
+						// check for
+						// if( strpos( strtolower($procedure), 'medicine' ) !== false ) $total_gp_medicine += $treatment;
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
 						$format = array(
 							'clinic_name'       => $clinic->Name,
@@ -572,7 +618,12 @@ class SpendingInvoiceLibrary
 			'consultation_status'	=> $consultation_status,
 			'total_consultation'	=> $total_consultation, 
 			'transactions' => $transaction_details,
-			'lite_plan'		=> $lite_plan
+			'lite_plan'		=> $lite_plan,
+			'total_gp_medicine'		=> $total_gp_medicine,
+			'total_gp_consultation'	=> $total_gp_consultation,
+			'total_dental'			=> $total_dental,
+			'total_tcm'				=> $total_tcm,
+			'total_transactions'	=> $total_transactions
 		);
 	}
 
@@ -790,17 +841,21 @@ class SpendingInvoiceLibrary
 			'statement_id'	=> $data->statement_id,
 			'statement_number' => $data->statement_number,
 			'statement_status'	=> $data->statement_status,
-			'statement_total_amount' => number_format($results['credits'] + $results['total_consultation'], 2),
+			'statement_total_amount' => DecimalHelper::formatDecimal($results['credits'] + $results['total_consultation']),
 			'total_in_network_amount'		=> $results['credits'],
-			'statement_amount_due' => number_format($amount_due, 2),
+			'statement_amount_due' => DecimalHelper::formatDecimal($amount_due),
 			'consultation_amount_due'	=> $consultation_amount_due,
 			'in_network'				=> $results['transactions'],
-
 			'paid_date'				=> $data->paid_date ? date('j M Y', strtotime($data->paid_date)) : NULL,
 			'payment_remarks' => $data->payment_remarks,
-			'payment_amount' => number_format($data->paid_amount, 2),
+			'payment_amount' => DecimalHelper::formatDecimal($data->paid_amount),
 			'lite_plan'	=> $lite_plan,
-			'total_consultation'	=> $results['total_consultation'],
+			'total_consultation'	=> DecimalHelper::formatDecimal($results['total_consultation']),
+			'total_gp_medicine'		=> DecimalHelper::formatDecimal($results['total_gp_medicine']),
+			'total_gp_consultation'	=> DecimalHelper::formatDecimal($results['total_gp_consultation']),
+			'total_dental'			=> DecimalHelper::formatDecimal($results['total_dental']),
+			'total_tcm'				=> DecimalHelper::formatDecimal($results['total_tcm']),
+			'total_transactions'	=> $results['total_transactions'],
 			'currency_type'	=> $data->currency_type
 		);
 	}
@@ -981,6 +1036,137 @@ class SpendingInvoiceLibrary
 			'total_credits'   => $total_transaction_spent,
 			'total_consultation'        => $total_consultation
 		);
+	}
+
+	public static function getNonPanelTransactionDetails($invoice_id, $customer_id, $fields)
+	{
+		$transactions = DB::table('statement_e_claim_transactions', $invoice_id)->get();
+		$total_medical = 0;
+		$total_wellness = 0;
+		$transaction_data = array();
+		$total_credits = 0;
+
+		foreach($transactions as $key => $transaction) {
+			$e_claim = DB::table('e_claim')->where('e_claim_id', $transaction->e_claim_id)->where('status', 1)->first();
+
+			if($e_claim) {
+				if($e_claim->spending_type == "medical") {
+					$table_wallet_history = 'wallet_history';
+				} else {
+					$table_wallet_history = 'wellness_wallet_history';
+				}
+	
+				$logs = DB::table($table_wallet_history)
+						->where('where_spend', 'e_claim_transaction')
+						->where('id',  $e_claim->e_claim_id)
+						->first();
+				if($logs) {
+					$credits = $logs->credit;
+					$e_claim->amount = $logs->credit;
+				} else {
+					$credits = $e_claim->amount;
+					$e_claim->amount = $logs->credit;
+				}
+
+				if($e_claim->spending_type == "medical") {
+					$total_medical += $credits;
+				} else {
+					$total_wellness += $credits;
+				}
+
+				$member = DB::table('user')->where('UserID', $e_claim->user_id)->first();
+
+				  // check user if it is spouse or dependent
+				$claim_member_type = "Employee";
+				$employee_name = $member->Name;
+				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+					$sub_account = ucwords($temp_account->Name);
+					$sub_account_type = $temp_sub->user_type;
+					$owner_id = $temp_sub->owner_id;
+					$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+					$relationship = FALSE;
+					$bank_account_number = $temp_account->bank_account;
+					$bank_name = $temp_account->bank_name;
+					$bank_code = $temp_account->bank_code;
+					$bank_brh = $temp_account->bank_brh;
+					$claim_member_type = "Dependent";
+				} else {
+					$sub_account = FALSE;
+					$sub_account_type = FALSE;
+					$owner_id = $member->UserID;
+					$dependent_relationship = FALSE;
+					$bank_account_number = $member->bank_account;
+					$bank_name = $member->bank_name;
+					$bank_code = $member->bank_code;
+					$bank_brh = $member->bank_brh;
+				}
+
+				$id = str_pad($e_claim->e_claim_id, 6, "0", STR_PAD_LEFT);
+
+				if($e_claim->currency_type == "myr" && $e_claim->default_currency == "myr") {
+					$e_claim->default_currency = "MYR";
+				} else if($e_claim->default_currency == "myr"){
+					$e_claim->default_currency = "MYR";
+				} else {
+					$e_claim->default_currency = "SGD";
+				}
+
+				$temp_docs = DB::table('e_claim_docs')
+                      ->where('e_claim_id', $e_claim->e_claim_id)
+					  ->get();
+					  
+				foreach ($temp_docs as $key => $doc) {
+					if($doc->file_type == "pdf" || $doc->file_type == "xls" || $doc->file_type == "xlsx") {
+						$doc->file = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+					} else if($doc->file_type == "image") {
+						$doc->file = $doc->doc_file;
+					}
+				}
+
+				$temp = array(
+					'status'            => $e_claim->status,
+					'status_text'       => 'Approved',
+					'claim_date'        => date('d F Y h:ia', strtotime($e_claim->created_at)),
+					'approved_date'        => date('d F Y', strtotime($e_claim->approved_date)),
+					'time'              => $e_claim->time,
+					'service'           => $e_claim->service,
+					'merchant'          => $e_claim->merchant,
+					'claim_amount'		=> $e_claim->claim_amount,
+					'amount'            => number_format($e_claim->amount, 2),
+					'member'            => ucwords($member->Name),
+					'employee_dependent_name' => $sub_account ? $sub_account : null,
+					'claim_member_type'       => $dependent_relationship ? 'DEPENDENT' : 'EMPLOYEE',
+					'type'              => 'E-Claim',
+					'transaction_id'    => 'MNF'.$id,
+					'visit_date'        => date('d F Y', strtotime($e_claim->date)).', '.$e_claim->time,
+					'owner_id'          => $owner_id,
+					'sub_account_type'  => $sub_account_type,
+					'sub_account'       => $sub_account,
+					'month'             => date('M', strtotime($e_claim->approved_date)),
+					'day'               => date('d', strtotime($e_claim->approved_date)),
+					'approved_time'              => date('h:ia', strtotime($e_claim->approved_date)),
+					'spending_type'     => $e_claim->spending_type,
+					'dependent_relationship'	=> $dependent_relationship,
+					'bank_account_number' => $bank_account_number,
+					'bank_name'			=> $bank_name,
+					'bank_code'			=> $bank_code,
+					'bank_brh'			=> $bank_brh,
+					'nric'				=> $member->NRIC,
+					'currency_type'		=> $e_claim->default_currency,
+					'email_address'		=> $member->Email,
+					'employee_name'		=> $employee_name,
+					'remarks'			=> $e_claim->rejected_reason,
+					'files'				=> $temp_docs
+				);
+
+				array_push($transaction_data, $temp);
+			}
+		}
+
+		$total_credits = $total_medical + $total_wellness;
+		return ['total_medical' => $total_medical, 'total_wellness' => $total_wellness, 'total_credits' => $total_credits, 'transactions' => $transaction_data, 'total_consultation' => 0, 'credits' => $total_credits, 'lite_plan' => false];
 	}
 }
 ?>
