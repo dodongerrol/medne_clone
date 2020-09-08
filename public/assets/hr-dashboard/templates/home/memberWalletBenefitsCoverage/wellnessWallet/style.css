@@ -58,4 +58,18 @@
 .wellness-not-active-info-container .payment-method-row-status  {
   width: 60%;
 }
+.credits-tooltip-container.mednefits-credits,
+.credits-tooltip-container.wellness-balance,
+.credits-tooltip-container.wellness-budget,
+.credits-tooltip-container.company-budget,
+.credits-tooltip-container.mednefits-basic-plan {
+  display: none;
+}
 
+.member-wellness-wallet-wrapper .mwbc-card-box-container {
+  width: 380px;
+}
+
+.member-wellness-wallet-wrapper .activate-well-btn {
+  margin: 10px 0 0;
+}

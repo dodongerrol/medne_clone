@@ -1,0 +1,261 @@
+<div class="employee-details-container" employee-details-directive>
+  <div class="global-loader child-body-loading" hidden>
+    <div class="loader-container">
+      <div class="loader"></div>
+    </div>
+  </div>
+  <div id="employee-dependent-info-container" class="employee-dependent-information">
+    <div class="employee-information">
+      <div class="employee-btn-edit-wrapper">
+        <h3 class="weight-700">Employee Information</h3>
+        <button class="btn-edit" ng-click="openUpdateEmployeeModal()"><img
+            src="../assets/hr-dashboard/img/icons/edit.png">Edit</button>
+      </div>
+      <div class="employee-information-details">
+        <div class="col-1-employee-information-details">
+          <div>
+            <strong class="font-helvetica-medium">Full Name</strong>
+            <span ng-bind="selectedEmployee.name">Calvin Harris</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Employee ID</strong>
+            <span ng-bind="selectedEmployee.employee_id">657834</span>
+          </div>
+            <div ng-if="selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon">
+            <strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
+            <span>
+              <span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
+              <span ng-if="entitlement_status.medical_entitlement" class="custom small">(The amount of 
+              <span ng-bind="entitlement_status.medical_entitlement.currency_type" class="currency-type">SGD</span> 
+              <span ng-bind="entitlement_status.medical_entitlement.new_entitlement_credits">1,000.00</span> will be
+                updated on 
+                <span ng-bind="entitlement_status.medical_entitlement.effective_date">01/05/2019</span>)</span>
+            </span>
+            <div ng-click="dropdownEntitlement.medical = !dropdownEntitlement.medical" class="custom-ellipsis-wrapper">
+              <span class="custom-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+              </span>
+            </div>
+            <span ui-sref="member.credit-allocation" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
+          </div>
+          <div ng-if="selectedEmployee.wellness_wallet" class="entitlementWithIcon">
+            <strong class="font-helvetica-medium">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
+            <span>
+              <span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
+              <span ng-if="entitlement_status.wellness_entitlement" class="custom small">
+                (The amount of <span ng-bind="entitlement_status.wellness_entitlement.currency_type" class="currency-type">SGD</span>
+               <span ng-bind="entitlement_status.wellness_entitlement.new_entitlement_credits">1,000.00</span> will be
+                updated on 
+                <span ng-bind="entitlement_status.wellness_entitlement.effective_date">01/05/2019</span>)</span>
+            </span>
+            <div ng-click="dropdownEntitlement.wellness = !dropdownEntitlement.wellness" class="custom-ellipsis-wrapper">
+              <span class="custom-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+              </span>
+            </div>
+            <span ui-sref="member.credit-allocation" ng-if="dropdownEntitlement.wellness" class="dropdown-entitlement">Update</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Date of Birth</strong>
+            <span ng-bind="selectedEmployee.dob | date: 'dd/MM/yyyy'">01/08/2015</span>
+          </div>
+        </div>
+        <div class="col-2-employee-information-details">
+          <div>
+            <strong class="font-helvetica-medium">Country Code</strong>
+            <span ng-bind="selectedEmployee.country_code">+63</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Mobile Number</strong>
+            <span ng-bind="selectedEmployee.phone_no">87589582</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Work Email</strong>
+            <span ng-bind="selectedEmployee.email">calvin.lee@medicloud.com</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Postal Code</strong>
+            <span ng-bind="selectedEmployee.postal_code">645362</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Bank Account Number</strong>
+            <span ng-bind="selectedEmployee.bank_account">0173489384</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Bank Name</strong>
+            <span ng-bind="selectedEmployee.bank_name">BDO</span>
+          </div>
+        </div>
+      </div>
+
+      <div ng-if="dependents_status.dependent_status" class="employee-btn-add-seat-wrapper">
+        <h3 class="weight-700">Add a Dependent?</h3>
+        <button class="btn-add-seat" ng-click="toggleAddDependents()"><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="add-dependent-wrapper" style="display: none;">
+		<div class="dependent-details">
+			<p class="text-center weight-700" ng-bind="selectedEmployee.name">Calvin Lee</p>
+			<h1 class="text-center weight-700 font-helvetica-medium">Add a dependent</h1>
+			<p class="text-center weight-700" style="margin-bottom: 50px;">
+				<span>
+					<span></span>
+					DEPENDENT
+					<span ng-bind="addActiveDependent_index">1</span> OF
+					<span ng-bind="dependents.total_number_of_seats">1</span>
+				</span>
+			</p>
+			<form>
+				<div class="employee-input-wrapper">
+					<label for="fname">Full Name</label>
+					<input disabled-specific-characters type="text" name="fname" ng-model="dependent_data.fullname">
+				</div>
+				<div class="employee-input-wrapper">
+					<label for="fname">Date of Birth</label>
+					<input type="text" name="datebirth" class="datepicker" ng-model="dependent_data.dob" autocomplete="off">
+				</div>
+				<div class="employee-input-wrapper">
+					<label for="fname">Relationship</label>
+					<select ng-model="dependent_data.relationship">
+						<option value="spouse">Spouse</option>
+						<option value="child">Child</option>
+						<option value="family">Family</option>
+						<option value="parent">Parent</option>
+					</select>
+					<img class="down-arrow" src="../assets/hr-dashboard/img/icons/down-arrow.svg">
+				</div>
+				<div class="employee-input-wrapper">
+					<label for="fname">Start Date</label>
+					<input type="text" name="start-date" class="start-date-datepicker-dependent" ng-model="dependent_data.start_date"  autocomplete="off">
+				</div>
+
+				<div class="summary-left-right-button">
+					<img ng-if="dependents_ctr > 0" class="summary-left-btn" src="../assets/hr-dashboard/img/icons/left.png"
+						ng-click="prevActiveDependent()">
+					<img ng-if="dependents_ctr < addDependents_arr.length" class="summary-right-btn"
+						src="../assets/hr-dashboard/img/icons/right.png" ng-click="nextActiveDependent()">
+				</div>
+			</form>
+			<div class="dependent-details-btn">
+				<button class="btn-cancel" ng-click="toggleAddDependents( )">CANCEL</button>
+				<div class="dependent-btn-right-wrapper">
+					<button ng-if="!selectedEmployee.plan_tier && addActiveDependent_index < dependents.occupied_seats + 1"
+						class="btn-add" ng-click="pushActiveDependent( dependent_data )">ADD</button>
+					<button class="btn-save-continue" ng-click="saveActiveDependents(  )">SAVE & CONTINUE</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+  <div style="padding-top: 70px;border-radius: 0;" class="modal fade new-update-employee-modal" id="update-employee-modal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document" style="width: 800px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-body">
+					<p class="text-center font-helvetica-medium" style="color: #444;font-weight: 500;font-size: 18px;margin: 35px 0 40px 0;">Edit Employee details</p>
+					<p class="text-center status-wrapper" style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
+					<div class="row">
+						<div>
+							<form class="form update-form new">
+								<div>
+									<div>
+										<div class="form-group">
+											<label class="edit-employee-modal-label">Full Name</label>
+											<input type="text" class="form-control edit-employee-modal-input disabled" ng-model="selectedEmployee.name">
+										</div>
+									</div>
+									<div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Employee ID</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Type in Employee ID" ng-model="selectedEmployee.employee_id">
+	                  </div>
+	                </div>
+	                 <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Date of Birth</label>
+	                    <input type="text" class="form-control edit-employee-modal-input datepicker" ng-model="selectedEmployee.dob">
+	                  </div>
+	                </div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Work Email</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.email">
+	                  </div>
+	                </div>
+                </div>
+                <div>
+                	<div>
+                		<label class="edit-employee-modal-label">Mobile Number</label>
+	                	<div class="emp-mobile-number-container">
+	                		<div class="form-group">
+	                			<div>
+		                			<input id="phoneNum" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.country_code">
+		                			<i class="fa fa-angle-down"></i>
+	                			</div>
+	                		</div>
+											<div class="form-group">
+												<input valid-number id="area_code" type="text" class="form-control edit-employee-modal-input"
+													ng-model="selectedEmployee.phone_no">
+											</div>
+										</div>
+									</div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Postal Code</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.postal_code">
+	                  </div>
+	                </div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Bank Name</label>
+	                    <div style="position: relative;" x-data="{ open: false }">
+		                    <input @click="open = true" ng-model="selectedEmployee.bank_name" type="text" class="form-control edit-employee-modal-input" placeholder="Choose Bank Name">
+		                    <i class="fa fa-angle-down" @click="open = true"></i>
+		                    <div x-show="open" @click.away="open = false" @click="open = false" class="bank-list-wrapper">
+		                    	<div ng-click="selectBank('DBS/POSB BANK')">DBS/POSB BANK</div>
+		                    	<div ng-click="selectBank('OCBC')">OCBC</div>
+		                    	<div ng-click="selectBank('UOB')">UOB</div>
+		                    	<div ng-click="selectBank('CITI BANK')">CITI BANK</div>
+		                    	<div ng-click="selectBank('MAYBANK')">MAYBANK</div>
+		                    	<div ng-click="selectBank('SCB (Standard Chartered Bank)')">SCB (Standard Chartered Bank)</div>
+		                    	<div ng-click="selectBank('HSBC')">HSBC</div>
+		                    	<div ng-click="selectBank('BOC (Bank of China)')">BOC (Bank of China)</div>
+		                    	<div ng-click="selectBank('RHB BANK')">RHB BANK</div>
+		                    	<div ng-click="selectBank('CIMB BANK Berhad')">CIMB BANK Berhad</div>
+		                    	<div ng-click="selectBank('FEB (Far Eastern Bank)')">FEB (Far Eastern Bank)</div>
+		                    	<div ng-click="selectBank('SBI BANK(State Bank of India)')">SBI BANK(State Bank of India)</div>
+		                    </div>
+	                    </div>
+	                  </div>
+	                </div>
+	                <div>
+	                  <div class="form-group">
+	                    <label class="edit-employee-modal-label">Bank Account Number</label>
+	                    <input type="text" class="form-control edit-employee-modal-input" placeholder="Type in Account Number" ng-model="selectedEmployee.bank_account">
+	                  </div>
+	                </div>
+								</div>
+							</form>
+							<div class="col-md-12 edit-employee-footer">
+								<button class="cancel-employee-update-button" data-dismiss="modal">
+									Cancel
+								</button>
+								<button ng-click="saveEmployee( selectedEmployee )" class="replace-employee-update-button update-replace">Update</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style scoped>
+  @import url('../assets/hr-dashboard/templates/employeeInformation/employeeDetails/style.css');
+</style>

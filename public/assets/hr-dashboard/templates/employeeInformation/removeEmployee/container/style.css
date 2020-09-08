@@ -1,0 +1,11 @@
+.remove-emp-container{
+  height: calc( 100vh - 60px );
+  position: relative;
+}
+.remove-employee-wrapper > h1{
+  margin-top: 0;
+}
+.remove-emp-container .prev-next-buttons-container{
+  position: absolute;
+  bottom: 0;
+}

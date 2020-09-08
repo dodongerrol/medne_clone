@@ -2,21 +2,22 @@
   <div class="show-details-on-container">
     <div>
       <span class="member-bold-text">Show details on</span> 
-      <div class="current-term-wrapper">
+      <div class="current-term-wrapper"> 
         <div ng-click="termSelector()" class="current-term-input-wrapper">
-          <span>Current term</span>
-          <span ng-repeat="list in dateTerm" ng-if="$last">
+          <span>{{ selectedTerm.term }}</span>
+          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
             (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-          </span>
+          </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" class="last-term-selector">
-          <span>Last term</span>
-          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
+        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+          <!-- <span>Last term</span> -->
+          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+          <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
         </div>
       </div>
       <div>
-        <button>Apply</button>
+        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
@@ -31,10 +32,10 @@
           <span class="available-credits-container dp-flex-ai">
             <div class="available-credits-text member-bold-text">Total Member Transaction</div>
             <span class="credits-tooltip-wrapper">
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-              <div ng-if="false" class="credits-tooltip-container">
-                <div class="tooltip-title">Total Utilised Visits</div>
-                <p>The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
+              <img ng-click="toggleTransaction()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <div class="credits-tooltip-container total-member-transaction">
+                <div class="tooltip-title">Total Employee Transaction</div>
+                <p>Total spending by employees at Mednefits panel visits.
                 </p>
                 <div class="tooltip-btn-footer">
                   <button>Got it</button>
@@ -52,7 +53,7 @@
   <div class="mwbc-box-container">
     <div class="dp-flex-ai">
       <h5 class="member-bold-text flex-1">Member Wallet</h5>
-      <div>
+      <div ng-if="false">
         <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
       </div>
     </div>
@@ -60,19 +61,25 @@
       <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
     </div>
     <div ng-if="true">
-      <div>Mednefits Credits is currently used in:</div>
+      <div>
+        <span ng-if="medical_wallet_details.panel_payment_method == 'giro'">Mednefits Credits</span>
+        <span ng-if="medical_wallet_details.panel_payment_method == 'bank_transfer'">Mednefits Credits</span>
+        <span ng-if="medical_wallet_details.panel_payment_method == 'mednefits_credits'">Mednefits Credits</span>
+         is currently used in:
+        </div>
       <div>
         <div class="wallet-container medical-wallet-container display-flex">
-            <div class="member-bold-text">Medical Wallet:</div>
+            <div ng-if="benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel" class="member-bold-text">Medical Wallet:</div>
             <div class="display-flex wallet-panel-container">
-              <div>Mednefits Panel</div>
-              <div>Non Panel</div>
+              <div ng-if="benefitsCoverageData.medical.panel">Mednefits Panel</div>
+              <div ng-if="benefitsCoverageData.medical.non_panel">Non Panel</div>
             </div>
         </div>
         <div class="wallet-container wellness-wallet-container display-flex">
-          <div class="member-bold-text">Wellness Wallet:</div>
-          <div>
-            <div>Non Panel Panel</div>
+          <div ng-if="benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel" class="member-bold-text">Wellness Wallet:</div>
+          <div class="display-flex wallet-panel-container">
+            <div ng-if="benefitsCoverageData.wellness.panel">Mednefits Panel</div>
+            <div ng-if="benefitsCoverageData.wellness.non_panel">Non Panel</div>
           </div>
         </div>
       </div>
@@ -88,11 +95,11 @@
             <th>Category</th>
             <th>Amount</th>
           </thead>
-          <tbody>
+          <tbody ng-repeat="list in spending_activity.data">
             <tr>
-              <td>01 Jan 2020</td>
-              <td>Bonus Credits</td>
-              <td class="amount-value">+ SGD 20,000.00</td>
+              <td>{{formatTableDate(list.created_at)}}</td>
+              <td>{{list.label || 'N/A'}}</td>
+              <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td>
             </tr>
           </tbody>
         </table>
@@ -100,35 +107,35 @@
           <div class="custom-pagination">
             <div class="page-wrapper">
               <div class="page-scroll-container">
-                <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                <span ng-click="_prevPageList_('activity')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
                   <i class="fa fa-angle-left"></i> 
                   <span>Prev</span>
                 </span>
                 <div class="pages-list">
                     
                   <!-- <span class="page-num active">1</span>	 -->
-                  <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+                  <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
 
                    <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
                   
                 </div>
-                <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
+                <span ng-click="_nextPageList_('activity')" class="prev-next-container">  
                   <span>Next</span>
                   <i class="fa fa-angle-right"></i> 
                 </span>
               </div>
             </div>
-            <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
+            <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
             <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
               <span><span>10</span> per page</span>
               <span>  
                 <i class="fa fa-caret-down"></i>
               </span>
-              <div class="opened-per-page-scroll invoice-per-page-container">
-                <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+              <div ng-if="pagination_dropdown" class="opened-per-page-scroll invoice-per-page-container">
+                <span ng-click="_setPageLimit_( 'activity',10 )">10 per page</span>
+                <span ng-click="_setPageLimit_( 'activity',25 )">20 per page</span>
+                <span ng-click="_setPageLimit_( 'activity',50 )">50 per page</span>
+                <span ng-click="_setPageLimit_( 'activity',100 )">100 per page</span>
               </div>
             </div>
           </div>

@@ -45,10 +45,21 @@
 				<h4 ui-sref-active="active" ui-sref="benefits-dashboard">Overview</h4>
 				<div class="arrow-up"></div>
 			</div>
-			<div class="welcome-container">
-        <h4 ui-sref-active="active" ui-sref="employee-overview">Employee</h4>
+			<div class="welcome-container emp-nav-click-drop">
+				<div>
+					<h4 ng-click="navCtr.toggleEmployeeNavDrop()" ng-class="{'active' : $state.current.name == 'employee-overview' || $state.current.name == 'settings.cap-per-visit' || $state.current.name == 'settings.block-health-partners'}">Employee</h4>
+					<i class="fa fa-angle-down"></i>
+				</div>
         <!-- <h4  ng-click="toggleEmployee()">Employee</h4> -->
 				<div class="arrow-up"></div>
+				<div ng-if="navCtr.isEmpDropShow" class="nav-drop-wrapper">
+					<div class="nav-drop-item" ui-sref-active="active" ui-sref="employee-overview" ng-click="navCtr.isEmpDropShow = false;">
+						Employee Overview
+					</div>
+					<div class="nav-drop-item" ui-sref-active="active" ui-sref="settings.cap-per-visit" ng-click="navCtr.isEmpDropShow = false;">
+						Employee Settings
+					</div>
+				</div>
 			</div>
 			<div class="welcome-container">
 				<h4 ui-sref-active="active" ui-sref="activity">Activity</h4>
@@ -63,15 +74,26 @@
 				<div class="arrow-up"></div>
 			</div>
 			<div class="welcome-container">
-				<h4 ui-sref-active="active" ui-sref="account-and-payment">Account</h4>
+				<div>
+					<h4 ng-click="navCtr.toggleAccountNavDrop()">Account</h4>
+					<i class="fa fa-angle-down"></i>
+				</div>
 				<div class="arrow-up"></div>
+				<div ng-if="navCtr.isAccDropShow" class="nav-drop-wrapper account-drop-wrapper">
+					<div class="nav-drop-item" ui-sref-active="active" ui-sref="account-and-payment" ng-click="navCtr.isAccDropShow = false;">
+						Company Account
+					</div>
+					<div class="nav-drop-item" ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-credits-account" ng-click="navCtr.isAccDropShow = false;">
+						Member Wallet & Benefits Coverage
+					</div>
+				</div>
       </div>
-      <div class="welcome-container">
+      <!-- <div class="welcome-container">
         <h4 ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-credits-account">Member Wallet & Benefits Coverage</h4>
         <div class="arrow-up"></div>
-      </div>
+      </div> -->
       <div class="welcome-container">
-        <h4 ui-sref-active="active" ui-sref="account-and-payment">Billing</h4>
+        <h4 ui-sref-active="active" ui-sref="spending-billing">Billing</h4>
         <div class="arrow-up"></div>
       </div>
 		</div>
@@ -152,7 +174,7 @@
 					<div class="drop-item" ui-sref="account-settings">
 						Account Settings
 					</div>
-					<div class="drop-item">
+					<div class="drop-item" ui-sref="company-profile.company-overview">
 						Company Profile
 					</div>
 					<div class="drop-item" id="signout-btn">

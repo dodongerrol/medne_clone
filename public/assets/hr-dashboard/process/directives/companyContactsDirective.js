@@ -312,6 +312,7 @@ app.directive("companyContactsDirective", [
           scope.toggleLoading();
           var curr_total = scope.transactions.current_total != 0 ? scope.transactions.current_total : 0;
           hrSettings.getTransactions( page ).then(function(response) {
+            console.log(response);
             scope.transactions = response.data;
             angular.forEach(scope.transactions.data, function(value, key) {
               if(scope.transactions.data[ key ].amount.includes('S$')) {
@@ -907,7 +908,7 @@ app.directive("companyContactsDirective", [
           start_date: new Date(),
           plan_duration: '12',
           invoice_start_date: new Date(),
-          // invoice_date: new Date(),
+          invoice_date: new Date(),
         }
 
         scope._editDetails_ = function ( type, planData ) {

@@ -137,6 +137,7 @@
   padding: 8px 0;
   width: 190px;
   text-align: initial;
+  z-index: 1;
 }
 .download-dp-container >div {
   padding: 15px;

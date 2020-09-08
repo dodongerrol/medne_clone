@@ -2489,7 +2489,8 @@ p.number-of-enrollees.inactive-enroll-text {
 }
 
 .account-billing-link-list ul li.active-link {
-  background-color: #e9e9e9;
+  /* background-color: #e9e9e9; */
+  text-decoration: underline;
 }
 
 .account-billing-link-list ul li a {
@@ -7228,7 +7229,8 @@ span.dropdown-entitlement.disabled {
 /* EMPLOYEE OUTCOME */
 .employee-standalone-pro-wrapper,
 .employee-insurance-bundle-wrapper {
-  padding-top: 150px;
+  /* padding-top: 150px; */
+  padding-top: 100px;
   position: relative;
   color: #283e52;
 }
@@ -7270,7 +7272,8 @@ span.dropdown-entitlement.disabled {
 
 /* REPLACEMENT EMPLOYEE */
 .employee-replacement-wrapper {
-  padding-top: 150px;
+  /* padding-top: 150px; */
+  padding-top: 50px;
 }
 
 .employee-replacement-wrapper span {
@@ -7570,7 +7573,7 @@ span.dropdown-entitlement.disabled {
 /* HEALTH SPENDING ACCOUNT */
 
 .health-spending-account-wrapper {
-  padding-top: 170px;
+  padding-top: 120px;
 }
 
 .health-spending-account-wrapper span {
@@ -10494,7 +10497,7 @@ span.dropdown-entitlement.disabled {
   height: 250px;
   overflow: auto;
   margin: 0 0 20px;
-  display: none;
+  /* display: none; */
 }
 .bank-list-wrapper >div {
   padding: 5px 0;
@@ -10736,4 +10739,17 @@ span.dropdown-entitlement.disabled {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
+  color: #e4e4e4;
+}
+.welcome-container .fa-angle-down {
+  color: #fff;
+  font-size: 16px;
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+.welcome-container .nav-drop-wrapper.account-drop-wrapper {
+  width: 250px;
 }

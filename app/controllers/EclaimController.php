@@ -129,14 +129,11 @@ class EclaimController extends \BaseController {
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
-
 		
 		// check if their is receipts
 		if(sizeof($input['receipts']) == 0) {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
-
-		
 
 		$ids = [];
         // get real userid for dependents
@@ -167,8 +164,6 @@ class EclaimController extends \BaseController {
 		$date = date('Y-m-d', strtotime($input['date']));
 		$claim_amount = $input['claim_amount'];
 		
-		
-
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -177,6 +172,13 @@ class EclaimController extends \BaseController {
 			if($check_plan['e_claim_access'] == false) {
 				return array('status' => FALSE, 'message' => 'The E-claim function is disabled for your company.');
 			}
+		}
+
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
 		// check if it is myr or sgd
@@ -213,11 +215,9 @@ class EclaimController extends \BaseController {
 			$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 
 			// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
-
-			
+			if($check_user_balance->currency_type == "myr" ) {
+				return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+			}
 
 			if($limit <= 0) {
 				return ['status' => false, 'message' => 'Maximum of 14 visits already reached.'];
@@ -244,19 +244,19 @@ class EclaimController extends \BaseController {
 			$amount = trim($input['amount']);
 		} else {
 			if(Input::has('currency_type') && $input['currency_type'] != null) {
-			if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
-				$amount = $input['amount'] / $currency;
-				$claim_amount = $claim_amount / $currency;
-			} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
-				$amount = $input['amount'] * $currency;
-				$claim_amount = $claim_amount * $currency;
+				if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
+					$amount = $input['amount'] / $currency;
+					$claim_amount = $claim_amount / $currency;
+				} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+					$amount = $input['amount'] * $currency;
+					$claim_amount = $claim_amount * $currency;
+				} else {
+					$amount = trim($input['amount']);
+					$claim_amount = trim($claim_amount);
+				}
 			} else {
 				$amount = trim($input['amount']);
 				$claim_amount = trim($claim_amount);
-			}
-			} else {
-			$amount = trim($input['amount']);
-			$claim_amount = trim($claim_amount);
 			}
 		}    	
 
@@ -264,7 +264,6 @@ class EclaimController extends \BaseController {
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
-
 			if($spending['back_date'] == false) {
 				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
@@ -298,7 +297,7 @@ class EclaimController extends \BaseController {
 			'default_currency'	=> $check_user_balance->currency_type,
 			'currency_value' => $currency
 		);
-
+		
 		if($customer_id) {
 			// get claim type service cap
 			$get_company_e_claim_service = DB::table('company_e_claim_service_types')
@@ -471,6 +470,13 @@ class EclaimController extends \BaseController {
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
+		}
+
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
@@ -6663,7 +6669,7 @@ public function updateEclaimStatus( )
 	$hr_data = StringHelper::getJwtHrSession();
 	$hr_id = $hr_data->hr_dashboard_id;
 	$e_claim = new Eclaim( );
-
+	$spending_method = "post_paid";
 	if((int)$check->status == 1 || (int)$check->status == 2) {
 		return array('status' => true, 'message' => 'E-Claim updated.', 'updated_already' => true);
 	}
@@ -6707,6 +6713,7 @@ public function updateEclaimStatus( )
 		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && (int)$spending_accounts->wellness_enable == 1 && $check->spending_type == "wellness") {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+			$spending_method = $balance['spending_method'];
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
 				if($amount > $balance_medical) {
@@ -6736,7 +6743,8 @@ public function updateEclaimStatus( )
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id,
 				'currency_type'	=> $wallet->currency_type,
-				'currency_value' => $check->currency_value
+				'currency_value' => $check->currency_value,
+				'spending_method'	=> $spending_method
 			);
 
 			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
@@ -6835,7 +6843,8 @@ public function updateEclaimStatus( )
 				'id'            => $e_claim_id,
 				'created_at'	=> $e_claim_details->created_at,
 				'currency_type'	=> $wallet->currency_type,
-				'currency_value' => $check->currency_value
+				'currency_value' => $check->currency_value,
+				'spending_method'	=> $spending_method
 			);
 
 			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
@@ -6874,7 +6883,7 @@ public function updateEclaimStatus( )
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
-            // send notification to browser
+            			// send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 						if($admin_id) {
@@ -6884,12 +6893,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_approved_e_claim',
-                'data'      => SystemLogLibrary::serializeData($data)
-              );
-              SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $admin_id,
+								'admin_type' => 'mednefits',
+								'type'      => 'admin_hr_approved_e_claim',
+								'data'      => SystemLogLibrary::serializeData($data)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						} else {
 							$data = array(
 								'e_claim_id' => $e_claim_id,
@@ -6897,12 +6906,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_approved_e_claim',
-                'data'      => SystemLogLibrary::serializeData($data)
-              );
-              SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $hr_id,
+								'admin_type' => 'hr',
+								'type'      => 'admin_hr_approved_e_claim',
+								'data'      => SystemLogLibrary::serializeData($data)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						}
 					}
 				} catch(Exception $e) {
@@ -9848,6 +9857,137 @@ public function downloadEclaimCsv( )
 		}
 
 		return $data;
+	}
+
+	public function downloadNonPanelInvoice( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$statement = DB::table('company_credits_statement')->where('statement_id', $input['id'])->where('type', 'non_panel')->first();
+
+		if(!$statement) {
+			return ['status' => false, 'message' => 'Non Panel Invoice does not exist'];
+		}
+
+		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
+
+		if((int)$statement->statement_status == 1) {
+			$total = round($transaction_data['credits'], 2);
+			$amount_due = (float)$total - (float)$statement->paid_amount;
+		} else {
+			$amount_due = (float)$transaction_data['credits'];
+			$total = $amount_due;
+		}
+
+		$data = array(
+			'xeroInvoiceId'	=> $statement->xeroInvoiceId,
+			'company' => ucwords($statement->statement_company_name),
+			'company_address' => ucwords($statement->statement_company_address),
+			'contact_email' => $statement->statement_contact_email,
+			'contact_name' => ucwords($statement->statement_contact_name),
+			'contact_contact_number' => $statement->statement_contact_number,
+			'customer_id' => $statement->statement_customer_id,
+			'statement_date' => date('j M Y', strtotime($statement->statement_date)),
+			'statement_due' => date('j M Y', strtotime($statement->statement_due)),
+			'statement_start_date' => $statement->statement_start_date,
+			'statement_end_date'	=> $statement->statement_end_date,
+			'start_date' => date('j M Y', strtotime($statement->statement_start_date)),
+			'end_date'	=> date('j M Y', strtotime($statement->statement_end_date)),
+			'statement_id'	=> $statement->statement_id,
+			'statement_number' => $statement->statement_number,
+			'statement_status'	=> $statement->statement_status,
+			'statement_total_amount' => number_format($total, 2),
+			'total_in_network_amount'		=> number_format($transaction_data['credits'], 2),
+			'statement_amount_due' => $amount_due < 0 ? "0.00" : number_format($amount_due, 2),
+			'consultation_amount_due'	=> 0,
+			'in_network'				=> null,
+			'paid_date'				=> $statement->paid_date ? date('j M Y', strtotime($statement->paid_date)) : NULL,
+			'payment_remarks' => $statement->payment_remarks,
+			'payment_amount' => number_format($statement->paid_amount, 2),
+			'lite_plan'	=> true,
+			'total_consultation'	=> $transaction_data['total_consultation'],
+			'currency_type'	=> strtoupper($statement->currency_type),
+			'postal'		=> null,
+			'medical'		=> number_format($transaction_data['total_medical'], 2),
+			'wellness'		=> number_format($transaction_data['total_wellness'], 2)
+		);
+
+		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);
+		$pdf->getDomPDF()->get_option('enable_html5_parser');
+		$pdf->setPaper('A4', 'portrait');
+		return $pdf->stream();
+		return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
+	}
+
+	public function downloadNonPanelReimbursement( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$statement = DB::table('company_credits_statement')->where('statement_id', $input['id'])->where('type', 'non_panel')->first();
+
+		if(!$statement) {
+			return ['status' => false, 'message' => 'Non Panel Invoice does not exist'];
+		}
+
+		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
+		$container = array();
+
+		foreach($transaction_data['transactions'] as $key => $transaction) {
+			$container[] = array(
+				'Member'				=> $transaction['member'],
+				'Email Address'			=> $transaction['email_address'],
+				'Claim Member Type'		=> $transaction['claim_member_type'],
+				'Employee'				=> $transaction['employee_name'],
+				'Claim Date'			=> $transaction['claim_date'],
+				'Visited Date'			=> $transaction['visit_date'],
+				'Transaction#'			=> $transaction['transaction_id'],
+				'Claim Type'			=> $transaction['service'],
+				'Provider'				=> $transaction['merchant'],
+				'Member Wallet'			=> strtoupper($transaction['spending_type']),
+				'Claim Amount'			=> $transaction['claim_amount'],
+				'Total Amount'			=> $transaction['amount'],
+				'Remarks'				=> $transaction['remarks'],
+				'Bank Name'				=> $transaction['bank_name'],
+				'Bank Account Number'	=> $transaction['bank_account_number']
+			);
+		}
+
+		return \Excel::create('Reimbursement CSV', function($excel) use($container) {
+			$excel->sheet('Non-Panel', function($sheet) use($container) {
+				$sheet->fromArray( $container );
+			});
+		})->export('csv');
+		return $container;
 	}
 }
 ?>

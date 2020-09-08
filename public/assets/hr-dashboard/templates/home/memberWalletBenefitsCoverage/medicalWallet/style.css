@@ -48,6 +48,9 @@
 }
 .credits-tooltip-container.medical-balance,
 .credits-tooltip-container.medical-funds,
-.credits-tooltip-container.company-funds {
+.credits-tooltip-container.company-funds,
+.credits-tooltip-container.mednefits-basic-plan,
+.credits-tooltip-container.panel-mednefits-credits,
+.credits-tooltip-container.non-panel-mednefits-credits {
   display: none;
 }

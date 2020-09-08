@@ -1,99 +1,158 @@
-<div class="mednefits-basic-plan-wrapper">
+<div class="mednefits-basic-plan-wrapper" mednefits-basic-plan-directive>
   <div class="show-details-on-container">
     <div class="flex-1">
       <span class="member-bold-text">Show details on</span> 
-      <div class="current-term-input-wrapper">
-        <span>Current term</span>
-        <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
-        <i class="fa fa-angle-down"></i>
+      <div class="current-term-wrapper"> 
+        <div ng-click="termSelector()" class="current-term-input-wrapper">
+          <span>{{ selectedTerm.term }}</span>
+          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
+            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+          </span> -->
+          <i class="fa fa-angle-down"></i>
+        </div>
+        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+          <!-- <span>Last term</span> -->
+          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+          <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
+        </div>
       </div>
       <div>
-        <button>Apply</button>
+        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
-      <button>Save</button>
+      <!-- <!-- <button>Save</button> --> 
     </div>
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text">Mednefits Basic Plan</h4>
-    <div class="mwbc-card-box-container mbp-total-spent-box">
-      <div class="available-credits-container">
-        <div class="available-credits">
-          <span class="available-credits-container dp-flex-ai">
-            <div class="available-credits-text member-bold-text">Total Spent</div>
-            <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
-          </span>
-          <span>
-            <div class="available-credits-amount member-bold-text">SGD 120,000.00</div>
-          </span>
+    <div ng-if="benefitsCoverageData.status">
+    
+      <div class="mwbc-card-box-container mbp-total-spent-box">
+        <div class="available-credits-container">
+          <div class="available-credits">
+            <span class="available-credits-container dp-flex-ai">
+              <div class="available-credits-text member-bold-text">Total Spent</div>
+              <span class="credits-tooltip-wrapper">
+                <img ng-click="toggleFunds()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                <div class="credits-tooltip-container total-spent">
+                  <div class="tooltip-title">Total Spent</div>
+                  <p>The total amount of employee benefits payments settled from GIRO, Bank Transfer, PayNow, and/or Mednefits Credits.
+                  </p>
+                  <div class="tooltip-btn-footer">
+                    <button>Got it</button>
+                  </div>
+                </div> 
+              </span>
+            </span>
+            <span>
+              <div class="available-credits-amount member-bold-text"><span class="currency-type" ng-bind="benefitsCoverageData.currency_type"></span> {{ benefitsCoverageData.spent }}</div>
+            </span>
+          </div>
         </div>
       </div>
+      <div class="mwbc-payment-methods-wrapper">
+        <div class="mwbc-payment-methods">
+          <h5 class="member-bold-text">Payment Methods</h5>
+          <div class="mwbc-card-box-container">
+            <div class="available-credits-container">
+              <div class="available-credits">
+                <span class="available-credits-container dp-flex-ai">
+                  <h5 class="flex-1 member-bold-text">GIRO</h5>
+                  <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
+                    <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                  </div>
+                </span>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
+                  <div>This method is currently used in:</div>
+                  <div class="display-flex mednefits-credits-wallet-container">
+                    <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel)" class="member-bold-text">Medical Wallet:</div>
+                    <div class="display-flex m-panel">
+                      <div ng-if="benefitsCoverageData.medical.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                      <div ng-if="benefitsCoverageData.medical.non_panel">Non-Panel</div>
+                    </div>
+                  </div>
+                  <div ng-if="(benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)" class="display-flex mednefits-credits-wallet-container">
+                    <div class="member-bold-text">Wellness Wallet:</div>
+                    <div ng-if="benefitsCoverageData.wellness.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                    <div ng-if="benefitsCoverageData.wellness.non_panel">Non-Panel</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mwbc-payment-methods bank-transfer-paynow">
+          <div class="mwbc-card-box-container">
+            <div class="available-credits-container">
+              <div class="available-credits">
+                <span class="available-credits-container dp-flex-ai">
+                  <h5 class="flex-1 member-bold-text">Bank Transfer/ PayNow</h5>
+                  <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer') || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')">
+                    <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                  </div>
+                </span>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || medical_wallet_details.non_panel_payment_method == 'bank_transfer') || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')" class="display-flex mednefits-credits-wallet-container">
+                  <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel)" class="member-bold-text">Medical Wallet:</div>
+                  <div class="display-flex m-panel">
+                    <div ng-if="benefitsCoverageData.medical.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                    <div ng-if="benefitsCoverageData.medical.non_panel">Non-Panel</div>
+                  </div>
+                </div>
+                <div ng-if="(benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)" class="display-flex mednefits-credits-wallet-container">
+                  <div class="member-bold-text">Wellness Wallet:</div>
+                  <div ng-if="benefitsCoverageData.wellness.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                  <div ng-if="benefitsCoverageData.wellness.non_panel">Non-Panel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mwbc-payment-methods">
+          <div class="mwbc-card-box-container">
+            <div class="available-credits-container">
+              <div class="available-credits">
+                <span class="available-credits-container dp-flex-ai">
+                  <h5 class="flex-1 member-bold-text">Mednefits Credits</h5>
+                  <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || wellness_wallet_details.non_panel_payment_method == 'mednefits_credits') || (wellness_wallet_details.panel_payment_method == 'mednefits_credits' || wellness_wallet_details.non_panel_payment_method == 'mednefits_credits')">
+                    <button ng-click="editMednefitsCredits()" class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                  </div>
+                </span>
+                <p class="mca-text">Mednefits Credits is held in Mednefits Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
+                <div>This method is currently used in:</div>
+                <div>
+                  <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel)"  class="display-flex mednefits-credits-wallet-container" class="display-flex mednefits-credits-wallet-container">
+                    <div class="member-bold-text">Medical Wallet:</div>
+                    <div class="display-flex m-panel">
+                      <div ng-if="benefitsCoverageData.medical.panel" class="mednefits-panel-text">Mednefits Panel</div>
+                      <div ng-if="benefitsCoverageData.medical.non_panel">Non-Panel</div>
+                    </div>
+                  </div>
+                  <div class="display-flex mednefits-credits-wallet-container">
+                    <div ng-if="benefitsCoverageData.wellness.panel" class="member-bold-text">Wellness Wallet:</div>
+                    <div ng-if="benefitsCoverageData.wellness.non_panel">Non-Panel</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="mwbc-payment-methods-wrapper">
-      <div class="mwbc-payment-methods">
-        <h5 class="member-bold-text">Payment Methods</h5>
-        <div class="mwbc-card-box-container">
-          <div class="available-credits-container">
-            <div class="available-credits">
-              <span class="available-credits-container dp-flex-ai">
-                <h5 class="flex-1 member-bold-text">GIRO</h5>
-                <div>
-                  <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
-                </div>
-              </span>
-              <div>This method is currently used in:</div>
-              <div class="display-flex wellness-wallet-container">
-                <div class="member-bold-text">Wellness Wallet:</div>
-                <div>Non-Panel</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mwbc-payment-methods bank-transfer-paynow">
-        <div class="mwbc-card-box-container">
-          <div class="available-credits-container">
-            <div class="available-credits">
-              <span class="available-credits-container dp-flex-ai">
-                <h5 class="flex-1 member-bold-text">Bank Transfer/ PayNow</h5>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mwbc-payment-methods">
-        <div class="mwbc-card-box-container">
-          <div class="available-credits-container">
-            <div class="available-credits">
-              <span class="available-credits-container dp-flex-ai">
-                <h5 class="flex-1 member-bold-text">Mednefits Credits</h5>
-                <div>
-                  <button class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
-                </div>
-              </span>
-              <p class="mca-text">Mednefits Credits is held in Mednefits Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
-              <div>This method is currently used in:</div>
-              <div class="display-flex mednefits-credits-wallet-container">
-                <div class="member-bold-text">Medical Wallet:</div>
-                <div class="display-flex m-panel">
-                  <div class="mednefits-panel-text">Mednefits Panel</div>
-                  <div>Non-Panel</div>
-                </div>
-              </div>
-              <div class="display-flex mednefits-credits-wallet-container">
-                <div class="member-bold-text">Wellness Wallet:</div>
-                <div>Non-Panel</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+    <div ng-if="!benefitsCoverageData.status && benefitsCoverageData.account_type == 'out_of_pocket'">
+      <div> 
+        <div class="wellness-not-active-text">Mednefits Basic Plan is currently not activated. Would you like to activate Mednefits Basic Plan?</div>
+        <button  data-toggle="modal" data-target="#active-basic-plan-modal" ng-click="showConfirmationModal()" class="activate-well-btn">Activate Mednefits Basic Plan</button>
+      </div>  
     </div>
   </div>
 
+  
+
   <div class="modal fade spending-account-modal" id="edit-payment-methods-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div ng-if="true" class="modal-dialog medical-wellness-wallet-container" role="document" style="margin-top: 200px;">
+    <div ng-if="!isConfirmPaymentShow" class="modal-dialog medical-wellness-wallet-container" role="document" style="margin-top: 200px;">
       <div class="modal-content">
         <form>
           <div class="modal-header">
@@ -109,21 +168,21 @@
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">GIRO</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.panel_payment_method" value="giro" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Bank Transfer/PayNow</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.panel_payment_method" value="bank_transfer" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Mednefits Credits</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.panel_payment_method" value="mednefits_credits" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
@@ -135,21 +194,21 @@
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">GIRO</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.non_panel_payment_method" value="giro" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Bank Transfer/PayNow</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.non_panel_payment_method" value="bank_transfer" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Mednefits Credits</span>
-                        <input type="checkbox">
+                        <input ng-model="medical_wallet_details.non_panel_payment_method" value="mednefits_credits" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
@@ -167,21 +226,21 @@
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">GIRO</span>
-                        <input type="checkbox">
+                        <input ng-model="wellness_wallet_details.non_panel_payment_method" value="giro" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Bank Transfer/PayNow</span>
-                        <input type="checkbox">
+                        <input ng-model="wellness_wallet_details.non_panel_payment_method" value="bank_transfer" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
                     <div class="custom-checkbox-selector">
                       <label class="selector-container">
                         <span class="text">Mednefits Credits</span>
-                        <input type="checkbox">
+                        <input ng-model="wellness_wallet_details.non_panel_payment_method" value="mednefits_credits" type="radio">
                         <span class="custom-checkbox-checkmark"></span>
                       </label>
                     </div>
@@ -192,13 +251,13 @@
           </div>
           <div class="modal-footer">
             <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="true" ng-click="updatePaymentMethods('update')" class="btn-update">Update</button>
             <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
           </div>
         </form>
       </div>
     </div>
-    <div ng-if="false" class="modal-dialog spending-account-modal" role="document" style="margin-top: 280px">
+    <div ng-if="isConfirmPaymentShow" class="modal-dialog spending-account-modal" role="document" style="margin-top: 280px">
       <div class="modal-content">
         <form>
           <div class="modal-header">
@@ -216,10 +275,35 @@
           </div>
           <div class="modal-footer">
             <button ng-if="true" data-dismiss="modal" class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="true" class="btn-update">Confirm</button>
+            <button ng-if="true" ng-click="updatePaymentMethods('confirm')" class="btn-update">Confirm</button>
             <button ng-if="false" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade spending-account-modal" id="active-basic-plan-modal" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog medical-wellness-wallet-container" role="document" style="margin-top: 200px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Activate Mednefits Basic Plan</h5>
+        </div>
+        <div ng-if="!isConfirmModal" class="modal-body active-member-confirmation-container">
+          <div>Are you sure want to activate mednefits basic plan?</div>
+          <div>Please confirm to proceed.</div>
+        </div>
+        <div ng-if="isConfirmModal" class="modal-body active-member-success-container">
+          <div>
+            <img src="../assets/images/success-circle.png">
+          </div>
+          <span>Mednefits Basic Plan has been succesfully activated.</span>
+        </div>
+        <div class="modal-footer">
+          <button ng-if="!isConfirmModal" data-dismiss="modal" ng-click="closeModal()" class="btn-edit-cancel btn-close">Cancel</button>
+          <button ng-if="!isConfirmModal" ng-click="_isConfirmModalBtn_('confirm', 'activate')" class="btn-update">Confirm</button>
+          <button ng-if="isConfirmModal" data-dismiss="modal" ng-click="closeModal()" class="btn-edit-cancel btn-close">Close</button>
+        </div>
       </div>
     </div>
   </div>
