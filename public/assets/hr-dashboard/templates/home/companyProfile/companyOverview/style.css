@@ -1,0 +1,131 @@
+.company-overview-wrapper {
+  color: #2E4057;
+  font-size: 14px;
+}
+.company-overview-wrapper .company-title {
+  margin: 0 0 20px;
+}
+.company-overview-wrapper h4 {
+  text-align: center;
+}
+
+.business-card {
+  background-color: #fff;
+  padding: 20px;
+  border: 2px solid #E0E0E0;
+  border-radius: 4px;
+}
+
+.business-card button {
+  display: flex;
+  align-items: center;
+  border: 1px solid #037CB0;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #037CB0;
+  margin: 0 0 0 auto;
+  padding: 0 10px;
+}
+
+.business-card button img {
+  width: 14px;
+  margin: 0 5px 0 0;
+}
+
+.business-bold-text {
+  font-family: 'Helvetica Medium';
+}
+
+.business-info-row {
+  margin: 0 0 10px;
+}
+
+.business-info-row >div:first-child {
+  width: 35%;
+}
+.primary-admin-header {
+  margin: 0 0 10px;
+}
+.primary-admin-header >div {
+  color: #40A5A3;
+  font-family: 'Helvetica Medium';
+}
+.business-contact-container .add-contact-btn {
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  margin: 0;
+  padding: 2px 25px;
+}
+.business-contact-container .footer-btn {
+  margin: 20px 0 0;
+}
+.business-information-container, 
+.business-contact-container {
+  margin: 0 0 30px;
+}
+.business-modal-container .modal-dialog {
+  margin: 200px auto 0;
+  width: 650px;
+  color: #000000;
+}
+.business-modal-container .modal-header {
+  border-bottom: 0;
+}
+.business-modal-container .modal-body {
+  padding: 0 60px;
+}
+.business-modal-container .modal-footer {
+  border-top: 0;
+  text-align: center;
+  padding: 15px 15px 40px;
+}
+.business-modal-container h5 {
+  text-align: center;
+  font-family: 'Helvetica Medium';
+}
+.business-modal-container .modal-footer button {
+  border-radius: 3px;
+  border: 1px solid #0392CF;
+  padding: 2px;
+}
+.business-modal-container .modal-footer .btn-cancel {
+  width: 100px;
+  color: #0392CF;
+  margin: 0 10px 0 0;
+}
+.business-modal-container .modal-footer .btn-update {
+  width: 200px;
+  color: #fff;
+  background-color: #0392CF;
+}
+.business-input-wrapper {
+  margin: 0 0 20px;
+}
+.business-modal-container input {
+  border: 1px solid #BFBFBF;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+}
+.business-input-wrapper label {
+  display: block;
+  font-family: 'Helvetica Medium';
+  color: #000000;
+}
+.legal-add-row-1 {
+  margin: 0 0 10px;
+}
+.legal-add-row-2 input:first-child {
+  width: 40%;
+  margin: 0 10px 0 0;
+}
+.legal-add-row-2 input:last-child {
+  width: 60;
+}
+.country-postal-container >div:first-child {
+  width: 70%;
+  margin: 0 20px 0 0;
+}
+.country-postal-container >div:last-child {
+  width: 30%;
+}

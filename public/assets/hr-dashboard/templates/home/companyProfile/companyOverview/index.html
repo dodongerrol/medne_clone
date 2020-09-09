@@ -1,0 +1,133 @@
+<div class="company-overview-wrapper">
+  <div>
+    <h4 class="business-bold-text company-title">Company Profile</h4>
+  </div>
+  <div class="business-information-container">
+    <h5 class="business-bold-text">Business Information</h5>
+    <div class="business-card">
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Account Name</div>
+        <span>Mednefits</span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Business Legal Name</div>
+        <span>Medicloud Pte Ltd</span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Business Legal Address</div>
+        <span>7 Temasek Boulevard #18-02 Suntec Tower One, Singapore 038987</span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Country Incorporated</div>
+        <span>Singapore</span>
+      </div>
+      <div class="footer-btn">
+        <button data-toggle="modal" data-target="#business-information-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+      </div>
+    </div>
+  </div>
+  <div class="business-contact-container">
+    <h5 class="business-bold-text">Business Contact</h5>
+    <div class="business-card">
+      <div class="primary-admin-header dp-flex-ai">
+        <div>Primary Admin</div>
+        <button data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Full Name</div>
+        <span>Filbert Tan</span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Email Address</div>
+        <span>filbert@mednefits.com</span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Mobile Number</div>
+        <span>(+65) 8856 4736</span>
+      </div>
+      <div class="footer-btn">
+        <button data-toggle="modal" data-target="#business-add-contact-modal" class="add-contact-btn">Add more contact</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade business-modal-container" id="business-information-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Business Information</h5>
+        </div>
+        <div class="modal-body">
+          <div class="business-input-wrapper">
+            <label>Account Name</label>
+            <input type="text">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Business Legal Name</label>
+            <input type="text">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Business Legal Address</label>
+            <div>
+              <div class="legal-add-row-1">
+                <input type="text">
+              </div>
+              <div class="legal-add-row-2 display-flex">
+                <input type="text">
+                <input type="text">
+              </div>
+            </div>
+          </div>
+          <div class="country-postal-container display-flex">
+            <div class="business-input-wrapper">
+              <label>Country Incorporated</label>
+              <input>
+            </div>
+            <div class="business-input-wrapper">
+              <label>Postal Code</label>
+              <input>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+          <button class="btn-update">Update</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+  
+  <div class="modal fade business-modal-container" id="business-contact-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Business Contact</h5>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+          <button class="btn-update">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade business-modal-container" id="business-add-contact-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Add Business Contact/s</h5>
+        </div>
+        <div class="modal-body">
+          
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+          <button class="btn-update">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

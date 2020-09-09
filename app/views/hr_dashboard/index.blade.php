@@ -82,6 +82,7 @@
 	<!-- Company Profile -->
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/style.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/companyOverview/style.css?_={{ $date->format('U') }}">
 
 	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
 
