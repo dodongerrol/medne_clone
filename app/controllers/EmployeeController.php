@@ -3454,4 +3454,80 @@ class EmployeeController extends \BaseController {
       // return $otp_code;
   }
 
+  public function checkMember( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+          $returnObject->status = false;
+          $returnObject->message = 'Sorry, your phone number has not been signed up with Mednefits.';
+          return Response::json($returnObject);
+      }
+
+      if($checker->postal_code == null || $checker->postal_code === null) {
+          $checker->postal_code = 0;
+      }
+      else {
+          $checker->postal_code = 1;
+      }
+
+      $returnObject->status = true;
+      $returnObject->message = 'Member is already registered';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  public function validateOtpWeb( )
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['otp_code']) || $input['otp_code'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'OTP Code is required.';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'User ID is required.';
+      return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+    ->select('UserID as user_id', 'Name as name', 'member_activated')
+    ->where('UserID', $input['user_id'])->first();
+
+    if(!$checker) {
+      $returnObject->status = false;
+      $returnObject->message = 'User not found!';
+      return Response::json($returnObject);
+    }
+
+    $member_id = $checker->user_id;
+    $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+    if(!$result) {
+        $returnObject->status = false;
+        $returnObject->message = 'Sorry, your OTP is incorrect.';
+        return Response::json($returnObject);
+    }
+
+    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+    $returnObject->status = true;
+    $returnObject->message = 'OTP Code is valid';
+    $returnObject->data = $checker;
+    return Response::json($returnObject);
+  }
+
 }
