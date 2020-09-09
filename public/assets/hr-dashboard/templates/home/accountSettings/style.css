@@ -13,3 +13,21 @@
   font-family: 'Helvetica Medium';
   margin-bottom: 40px;
 }
+
+.account-settings-container .iti__selected-flag{
+  background: transparent;
+  outline: none;
+}
+.account-settings-container .iti__arrow{
+  display: none;
+}
+.account-settings-container .iti__flag-container{
+  width: 100%;
+  height: 100%;
+}
+
+.account-settings-container button[disabled]{
+  opacity: .4;
+  background: #666;
+  border-color: #666;
+}

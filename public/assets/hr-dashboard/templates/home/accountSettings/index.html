@@ -779,24 +779,24 @@
                 <div class="company-account-input-wrapper">
                   <label>Full Name</label>
                   <div class="custom-input-wrapper">
-                    <input type="text" placeholder="Enter new Primary Admin's full name">
+                    <input type="text" placeholder="Enter new Primary Admin's full name" ng-model="changePrimaryData.fullname">
                   </div>
                 </div>
                 <div class="company-account-input-wrapper">
                   <label>Email</label>
                   <div class="custom-input-wrapper">
-                    <input type="text" placeholder="Enter new Primary Admin's work email address">
+                    <input type="text" placeholder="Enter new Primary Admin's work email address" ng-model="changePrimaryData.email">
                   </div>
                 </div>
                 <div class="company-account-input-wrapper number">
                   <label></span>Phone Number</label>
                   <div>
                     <div class="custom-input-wrapper">
-                      <input ng-model="global_hrData.phone_code" type="tel" id="phone_number">
+                      <input ng-model="changePrimaryData.phone_code" type="tel" id="phone_number_primary_admin">
                       <i class="fa fa-angle-down"></i>
                     </div>
                     <div class="custom-input-wrapper">
-                      <input ng-model="global_hrData.phone" type="text">
+                      <input ng-model="changePrimaryData.phone_no" type="text" placeholder="Enter new Primary Admin’s mobile number">
                     </div>
                   </div>
                 </div>
@@ -810,7 +810,8 @@
                 <button
                   type="button"
                   class="ui-btn ui-btn-primary w-64"
-                  ng-click="changeAdmin()"
+                  ng-click="submitChangePrimaryAdmin()"
+                  ng-disabled="!changePrimaryData.fullname || !changePrimaryData.email || !changePrimaryData.phone_code || !changePrimaryData.phone_no"
                   >
                   Continue
                 </button>
@@ -840,7 +841,8 @@
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
                 <p class="helvetica-medium text-sm text-center font-medium text-gray-900 font-semibold">
-                  Please note that the change of HR Administrator will make this account unlinked.
+                  HR Administrator has successfully been changed.<br>
+                  Mednefits is unlinked from Linked Accounts under <span ng-bind="global_hrData.full_name"></span>.
                 </p>
               </div>
               <div class="flex items-center justify-center">

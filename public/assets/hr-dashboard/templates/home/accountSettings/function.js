@@ -5,7 +5,9 @@ app.directive("accountSettingsDirective", [
   "$state",
   "serverUrl",
   "$timeout",
-  function directive($state, hrSettings, $rootScope, $state, serverUrl, $timeout) {
+  "$http",
+  "serverUrl",
+  function directive($state, hrSettings, $rootScope, $state, serverUrl, $timeout, $http, serverUrl) {
     return {
       restrict: "A",
       scope: true,
@@ -54,6 +56,10 @@ app.directive("accountSettingsDirective", [
           // invoice_date: new Date(),
         };
 
+        scope.changePrimaryData = {
+          phone_code: ''
+        }
+
         scope.setPhoneCode = () => {
           alert('asdasds');
           // scope.global_hrData.phone_code = code;
@@ -69,6 +75,15 @@ app.directive("accountSettingsDirective", [
 
         scope.presentModal = (id, show = true) => {
           $(`#${id}`).modal(show ? "show" : "hide");
+
+          if(id == scope.changePrimaryAdminModals.form && show == true){
+            scope.changePrimaryData = {
+              phone_code: '65'
+            }
+            $timeout(function(){
+              scope.initializeChangePrimaryAdminCountryCode();
+            },400);
+          }
         };
 
         scope.changeAdmin = () => {
@@ -122,7 +137,7 @@ app.directive("accountSettingsDirective", [
               value.invoice_date = moment(value.invoice_date).format("DD MMMM YYYY");
               value.invoice_due = moment(value.invoice_due).format("DD MMMM YYYY");
               value.payment_date = moment(value.payment_date).format("DD MMMM YYYY");
-              value.total = value.total.toFixed(2);
+              // value.total = value.total.toFixed(2);
             });
             scope.hideLoading();
           });
@@ -676,6 +691,51 @@ app.directive("accountSettingsDirective", [
             scope.spending_account_status = response.data;
           });
         };
+
+        scope.initializeChangePrimaryAdminCountryCode = function(){
+          var settings = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: false,
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg", "my"],
+          };
+
+          var input = document.querySelector("#phone_number_primary_admin");
+          primaryAdminCountry = intlTelInput(input, settings);
+          primaryAdminCountry.setCountry("SG");
+          input.addEventListener("countrychange", function () {
+            scope.changePrimaryData.phone_code = primaryAdminCountry.getSelectedCountryData().dialCode;
+          });
+        }
+        scope.checkEmail = function (email) {
+					var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+					return regex.test(email);
+				}
+        scope.submitChangePrimaryAdmin  = function(){
+          if( scope.checkEmail(scope.changePrimaryData.email) == false ){
+            return swal('Error!', 'Invalid Email', 'error');
+          }
+          var data  = {
+            id: scope.global_hrData.id,
+            fullname: scope.changePrimaryData.fullname,
+            email: scope.changePrimaryData.email,
+            phone_code: scope.changePrimaryData.phone_code,
+            phone_no: scope.changePrimaryData.phone_no,
+          }
+          scope.showLoading();
+          $http.post(serverUrl.url + "/hr/unlink/company_account", data)
+            .then(function(response){
+              console.log(response);
+              scope.hideLoading();
+              if(response.data.status){
+                scope.changeAdmin();
+              }else{
+                swal("Error!", response.data.message, 'error');
+              }
+            });
+        }
 
         scope.range = function (num) {
           var arr = [];

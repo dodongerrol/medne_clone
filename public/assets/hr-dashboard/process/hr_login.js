@@ -33,6 +33,13 @@ login.directive('loginSection', [
 				scope.accounts = [];
 				scope.token = null;
 
+				scope.pageActive	=	1;
+				scope.perPage	=	5;
+				scope.searchAccountText	=	'';
+				scope.linkedAccounts = [];
+				scope.linkedAccountsPagi = {};
+				scope.isSearchActive	=	false;
+
 				scope.checkUserLogin = function( ) {
 					var token = window.localStorage.getItem('token');
 
@@ -46,46 +53,31 @@ login.directive('loginSection', [
 						});
 					}
 				};
-
 				scope.loginHr = async function( ) {
 					// setLoginButtonState('Log in', false);
 					// console.log(scope.login_details);
 					$('#login-btn').attr('disabled', true);
 					$('#login-btn').text('Logging in...');
-					$http.post(serverUrl.url + '/company-benefits-dashboard-login', scope.login_details)
+					await $http.post(serverUrl.url + '/company-benefits-dashboard-login', scope.login_details)
 					.success(async function(response){
 						// console.log(response);
 						$('#login-btn').attr('disabled', false);
 						$('#login-btn').text('Log in');
-
 						if (!response.status) {
 							scope.ng_fail = true;
 							scope.showAccounts = false;
-							return;
+						}else{
+							scope.ng_fail = false;
+							scope.token = response.token;
+							$http.defaults.headers.common.Authorization = scope.token;
+							await scope.checkLinkedAccounts();
 						}
-
-						scope.ng_fail = false;
-						scope.showAccounts = true;
-						scope.token = response.token;
-
-						// if(response.status == true){
-
-						//   window.localStorage.setItem('token', response.token)
-						//   // window.location.href = serverUrl.url + "company-benefits-dashboard/";
-			            //   window.location.href = window.location.origin + "/company-benefits-dashboard/";
-			            //   scope.ng_fail = false;
-			            // }else{
-
-			            // }
 					});
 				};
-
 				scope.showPasswordToggle = function () {
 					scope.showPassword = !scope.showPassword;
 					console.log(scope.showPassword);
 				}
-
-				scope.token = null;
 				scope.enableContinue = function (email) {
 					// let emailFromDb = 'example@email.com';
 					let account_status;
@@ -114,20 +106,83 @@ login.directive('loginSection', [
 						console.log(scope.login_details.status);
 					});
 				}
-
 				scope.resend_hr_activation = function () {
 					// $http.post(serverUrl.url + `/hr/resend_hr_activation_link?id=${scope.hr_id}`)
 					$http.post(serverUrl.url + `/hr/resend_hr_activation_link?token=${scope.token}`)
 					.success(function(response){
 						console.log(response);
+						
 					});
 				}
-
-				scope.checkUserLogin();
+				scope.searchAccount	=	function(search){
+					scope.isSearchActive = search != '' ? true : false;
+					scope.searchAccountText = search;
+					scope.checkLinkedAccounts();
+				}
+				scope.checkLinkedAccounts = async function () {
+					console.log(scope.searchAccountText);
+					var url = serverUrl.url + `/hr/get/corporate_linked_account?limit=${scope.perPage}&page=${scope.pageActive}&total_enrolled_employee_status=true&total_enrolled_dependent_status=true`;
+					if(scope.searchAccountText != ''){
+						url += `&search=${scope.searchAccountText}`;
+					}
+					await $http.get(url)
+					.success(function(response){
+						console.log(response);
+						if(scope.isSearchActive){
+							scope.linkedAccounts = response.data;
+							scope.showAccounts = true;
+						}else{
+							if(response.total_data > 0){
+								scope.linkedAccountsPagi	=	response;
+								scope.linkedAccounts = response.data;
+								scope.showAccounts = true;
+							}else{
+								// scope.showAccounts = false;
+								// window.localStorage.setItem('token', response.token)
+								// window.location.href = window.location.origin + "/company-benefits-dashboard/";
+							}
+						}
+						
+					});
+				}
+				scope.prevPage	=	function(){
+					if(scope.pageActive != 1){
+						scope.pageActive -= 1;
+						scope.checkLinkedAccounts();
+					}
+					
+				}
+				scope.nextPage	=	function(){
+					if(true){
+						scope.pageActive += 1;
+						scope.checkLinkedAccounts();
+					}
+				}
+				scope.setPerPage	=	function(perpage){
+					scope.perPage = perpage;
+					scope.checkLinkedAccounts();
+				}
+				scope.setPage	=	function(page){
+					scope.pageActive = page;
+					scope.checkLinkedAccounts();
+				}
 				scope.chooseAccount = (accountId) =>  {
 					window.localStorage.setItem('token', scope.token);
 					window.location.href = window.location.origin + "/company-benefits-dashboard/";
 				}
+				scope.range = function (range) {
+          var arr = [];
+          for (var i = 0; i < range; i++) {
+            arr.push(i);
+          }
+          return arr;
+        }
+
+				scope.onLoad	=	function(){
+					scope.checkUserLogin();
+				}
+				scope.onLoad();
+				
 			}
 		}
 	}
