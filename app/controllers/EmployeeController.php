@@ -3407,4 +3407,51 @@ class EmployeeController extends \BaseController {
       }
   }
 
+  public function sendOtpWeb( )
+  {
+      $input = Input::all();
+      $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Country Code is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->user_id;
+      $mobile_number = (int)$input['mobile'];
+      $code = $input['mobile_country_code'];
+      $phone = $code.$mobile_number;
+
+      $otp_code = StringHelper::OTPChallenge();
+      // StringHelper::TestSendOTPSMS($phone, $otp_code);
+      $data = array();
+      $data['phone'] = $phone;
+      $data['message'] = 'Your Mednefits OTP is '.$otp_code;
+      $data['sms_type'] = "LA";
+      SmsHelper::sendSms($data);
+      DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+      $returnObject->status = true;
+      $returnObject->message = 'OTP SMS sent';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+      // return $otp_code;
+  }
+
 }
