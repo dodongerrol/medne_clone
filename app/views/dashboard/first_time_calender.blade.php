@@ -155,7 +155,7 @@
     <div id="setupHours" class="tab-pane fade">
 
     <div>
-      	<h3 style="float: left;">Set Yours Operating Hours</h3>
+      	<h3 style="float: left;">Set Your Operating Hours</h3>
       	<span style="float: right; padding-top: 22px;">
       		<button id="hour-back" class="config-back-btn" style="font-size: medium;"><i class="glyphicon glyphicon-chevron-left" style="font-size: small;"></i></button>
       		<button id="hour-next" class="config-nxt-btn" style="font-size: medium;">Next <i class="glyphicon glyphicon-chevron-right" style="font-size: small;"></i></button>
@@ -339,6 +339,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 			</div>
+			<div class="col-md-3 monday-addBreakBtn" style="padding-top: 1px">
+					<button id="monday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -360,6 +363,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Tuesday</label>
 			</div>
+			<div class="col-md-3 tuesday-addBreakBtn" style="padding-top: 1px">
+					<button id="tuesday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -376,6 +382,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Wednesday</label>
 			</div>
+			<div class="col-md-3 wednesday-addBreakBtn" style="padding-top: 1px">
+					<button id="wednesday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -392,6 +401,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Thursday</label>
 			</div>
+			<div class="col-md-3 thursday-addBreakBtn" style="padding-top: 1px">
+					<button id="thursday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -408,6 +420,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Friday</label>
 			</div>
+			<div class="col-md-3 friday-addBreakBtn" style="padding-top: 1px">
+					<button id="friday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -424,6 +439,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Saturday</label>
 			</div>
+			<div class="col-md-3 saturday-addBreakBtn" style="padding-top: 1px">
+					<button id="saturday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -440,6 +458,9 @@
 			<div class="col-md-2" style="clear: both">
 				<label class="con-detail-lbl day-name" style="padding-top: 8px;">Sunday</label>
 			</div>
+			<div class="col-md-3 sunday-addBreakBtn" style="padding-top: 1px">
+					<button id="sunday-addBreak">Add Break</button>
+				</div>
 			<div class="col-md-1" style="padding-top: 3px;">
 				<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="breakChk_activate" data-onstyle="info">
 			</div>
@@ -451,7 +472,25 @@
 				<input type="button" class="timepicker breakTime-to" value="21:00:00" style="font-size: 12px;">
 			</div>
 		</div>	
-				
+		<!-- Public Holiday div -->
+		<div class="row col-md-13" id ='publicHoliday-div'><br>
+				<div class="col-md-2" style="clear: both">
+					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
+				</div>
+				<div class="col-md-3 publicHoliday-addBreakBtn" style="padding-top: 1px">
+					<button id="publicHoliday-addBreak">Add Break</button>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>		
 	</div>
 
 

@@ -154,8 +154,8 @@ jQuery(document).ready(function($) {
 			providersName = $('#con-clinic-name').val(),
 			operatingAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
 			operatingAvailableDaysKey = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'publicHoliday'],
-			breakAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
-			breakAvailableDaysKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+			breakAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
+			breakAvailableDaysKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'publicHoliday'],
 			providersOperatingHours = [],
 			providersBreakHours = [];
 			
@@ -603,6 +603,18 @@ jQuery(document).ready(function($) {
 	});	
 
 	/****************************Break Hours**********************************/
+	// Show break hours time
+	$(document).on('click', 
+						`#monday-addBreak, #tuesday-addBreak, #wednesday-addBreak,
+						#thursday-addBreak, #friday-addBreak, #saturday-addBreak,
+						#sunday-addBreak, #publicHoliday-addBreak`, function () {
+		const parentName = this.id.split('-addBreak')[0];
+							
+		$('div#setupBreakHours .'+parentName+'-addBreakBtn').css('display', 'none');
+		$('div#setupBreakHours #'+parentName+'-div .col-md-1.con-detail-lbl').css('display', 'inline-block');
+		$('div#setupBreakHours #'+parentName+'-div .toggle').css('display', 'inline-block');
+		$('div#setupBreakHours #'+parentName+'-div .timepicker').css('display', 'inline-block');
+	});
 
 	$(document).on('change', '#monday-div input.timepicker.breakTime-from.ui-timepicker-input, #monday-div input.timepicker.breakTime-to.ui-timepicker-input',function () {
 		var mondayTimeFrom = $('#monday-div input.timepicker.breakTime-from.ui-timepicker-input').val(),
@@ -702,8 +714,5 @@ jQuery(document).ready(function($) {
 			'minTime'	 : '09:00:00',
 			'maxTime'	 : '21:00:00'
 		});
-  	});
-
-
-
+	  });
 });

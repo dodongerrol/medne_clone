@@ -22,6 +22,7 @@
 <div id="profile-breakHours-time-panel">
 			<!-- Monday div -->
 			<div class="row col-md-13" id ='profile-breakHours-monday-div'><br>
+				<button id="profile-breakHours-monday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 				</div>
@@ -43,6 +44,7 @@
 			</div>	
 			<!-- Tuesday div -->
 			<div class="row col-md-13" id ='profile-breakHours-tuesday-div'><br>
+				<button id="profile-breakHours-tuesday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Tuesday</label>
 				</div>
@@ -59,6 +61,7 @@
 			</div>	
 			<!-- Wednesday div -->
 			<div class="row col-md-13" id ='profile-breakHours-wednesday-div'><br>
+				<button id="profile-breakHours-wednesday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Wednesday</label>
 				</div>
@@ -75,6 +78,7 @@
 			</div>	
 			<!-- Thursday div -->
 			<div class="row col-md-13" id ='profile-breakHours-thursday-div'><br>
+				<button id="profile-breakHours-thursday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Thursday</label>
 				</div>
@@ -91,6 +95,7 @@
 			</div>	
 			<!-- Friday div -->
 			<div class="row col-md-13" id ='profile-breakHours-friday-div'><br>
+				<button id="profile-breakHours-friday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Friday</label>
 				</div>
@@ -107,6 +112,7 @@
 			</div>	
 			<!-- Saturday div -->
 			<div class="row col-md-13" id ='profile-breakHours-saturday-div'><br>
+				<button id="profile-breakHours-saturday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Saturday</label>
 				</div>
@@ -123,6 +129,7 @@
 			</div>	
 			<!-- Sunday div -->
 			<div class="row col-md-13" id ='profile-breakHours-sunday-div'><br>
+				<button id="profile-breakHours-sunday-addBreak">Add Break</button>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Sunday</label>
 				</div>
@@ -137,6 +144,24 @@
 					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
 			</div>			
+		</div>
+		<!-- Public Holiday div -->
+		<div class="row col-md-13" id ='profile-breakHours-publicHoliday-div'><br>
+			<button id="profile-breakHours-publicHoliday-addBreak">Add Break</button>
+				<div class="col-md-2" style="clear: both">
+					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
+				</div>
+				<div class="col-md-1" style="padding-top: 3px;">
+					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="profile-breakHours-chk_activate" data-onstyle="info">
+				</div>
+				<div class="col-md-2" style="padding-left: 10px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+				</div>
+					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+				<div class="col-md-2">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+				</div>
+			</div>		
 		</div>
 		<div class="col-md-9" style="padding-top: 3px;" id="saveOperatingBtnDiv">
 			<button id="profile-breakHours-savebreakHours" ><span class="glyphicon glyphicon-pencil"></span> Apply Changes</button>

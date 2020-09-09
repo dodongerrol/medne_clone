@@ -891,3 +891,42 @@ div.fc-scroller
 #setupBreakHours .btn-info {
     background: #1B9BD7;
 }
+
+div#setupBreakHours #monday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #monday-div .toggle,
+div#setupBreakHours #monday-div .timepicker,
+div#setupBreakHours #tuesday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #tuesday-div .toggle,
+div#setupBreakHours #tuesday-div .timepicker,
+div#setupBreakHours #wednesday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #wednesday-div .toggle,
+div#setupBreakHours #wednesday-div .timepicker,
+div#setupBreakHours #thursday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #thursday-div .toggle,
+div#setupBreakHours #thursday-div .timepicker,
+div#setupBreakHours #friday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #friday-div .toggle,
+div#setupBreakHours #friday-div .timepicker,
+div#setupBreakHours #saturday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #saturday-div .toggle,
+div#setupBreakHours #saturday-div .timepicker,
+div#setupBreakHours #sunday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #sunday-div .toggle,
+div#setupBreakHours #sunday-div .timepicker,
+div#setupBreakHours #publicHoliday-div .col-md-1.con-detail-lbl,
+div#setupBreakHours #publicHoliday-div .toggle,
+div#setupBreakHours #publicHoliday-div .timepicker,
+div#setupBreakHours #copyTimetoAllBtnBreak{
+    display: none;
+}
+
+#monday-addBreak,
+#tuesday-addBreak,
+#wednesday-addBreak,
+#thursday-addBreak,
+#friday-addBreak,
+#saturday-addBreak,
+#sunday-addBreak,
+#publicHoliday-addBreak {
+    font-size: 0.5em;
+}
