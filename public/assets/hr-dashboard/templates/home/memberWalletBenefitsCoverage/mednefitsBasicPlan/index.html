@@ -60,7 +60,7 @@
                 <span class="available-credits-container dp-flex-ai">
                   <h5 class="flex-1 member-bold-text">GIRO</h5>
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
-                    <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                    <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
                   </div>
                 </span>
                 <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">

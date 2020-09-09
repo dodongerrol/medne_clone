@@ -5,6 +5,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	var vm = this;
 	vm.account_type = null;
 	vm.isEmpDropShow	=	false;
+	vm.isAccDropShow = false;
 
 
 	vm.getCompanyContacts = function() {
@@ -83,6 +84,10 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 
 	vm.toggleEmployeeNavDrop	=	function(){
 		vm.isEmpDropShow	=	vm.isEmpDropShow ? false : true;
+	}
+
+	vm.toggleAccountNavDrop = function() {
+		vm.isAccDropShow	=	vm.isAccDropShow ? false : true;
 	}
 
 	$("body").click(function (e) {

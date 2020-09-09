@@ -17,6 +17,7 @@ app.directive('memberWellnessWalletDirective', [
 				scope.paymentMednefitsCreditsStatus = false;
 				scope.isWellnessWalletShow = false;
 				scope.isSaveEnable = false;
+				scope.wellnessActivated = false;
 				// scope.medicalWalletData = {
 				// 	non_panel_reimbursement : false,
 				// }
@@ -82,6 +83,8 @@ app.directive('memberWellnessWalletDirective', [
           hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'wellness' )
             .then(function(response){
 							console.log(response);
+							scope.wellnessActivated = response.data.status;
+							console.log(scope.wellnessActivated);
 							scope.wellnessWalletData = response.data.data;
 							scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
 							scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');

@@ -1,7 +1,8 @@
 app.directive('employeeDetailsInputDirective', [
 	'$state',
 	'removeEmployeeFactory',
-	function directive( $state, removeEmployeeFactory ) {
+	'dependentsSettings',
+	function directive( $state, removeEmployeeFactory, dependentsSettings ) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -17,19 +18,23 @@ app.directive('employeeDetailsInputDirective', [
 				}
 				scope.nextBtn	=	function(){
 					scope.emp_details = scope.selectedEmployee;
-					scope.showLoading();
+					
 					removeEmployeeFactory.setEmployeeDetails( scope.selectedEmployee );
 					if( scope.selectedEmployee.account_type == 'enterprise_plan' ){
 						if( scope.selectedEmployee.wellness_wallet == true ){
+							scope.showLoading();
 							$state.go('employee-overview.health-spending-account-summary');
 						}else{
+							scope.showLoading();
 							$state.go('employee-overview.refund-summary');
 						}
 					}else if( scope.selectedEmployee.account_type == 'basic_plan' || scope.selectedEmployee.account_type == 'lite_plan' ){
+						scope.showLoading();
 						$state.go('employee-overview.health-spending-account-summary');
 					}else if( scope.selectedEmployee.account_type == 'out_of_pocket' || scope.selectedEmployee.account_type == 'out_pocket' ){
 						$("#remove-employee-confirm-modal").modal('show');
 					}else{
+						scope.showLoading();
 						$state.go('employee-overview.remove-emp-checkboxes');
 					}
 				}

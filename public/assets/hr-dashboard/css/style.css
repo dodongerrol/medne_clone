@@ -10733,3 +10733,14 @@ span.dropdown-entitlement.disabled {
   flex-direction: column;
   justify-content: center;
 }
+
+.welcome-container .fa-angle-down {
+  color: #fff;
+  font-size: 16px;
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+.welcome-container .nav-drop-wrapper.account-drop-wrapper {
+  width: 250px;
+}

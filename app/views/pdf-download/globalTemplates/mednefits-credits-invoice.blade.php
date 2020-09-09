@@ -2,7 +2,7 @@
 <html><head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Employee Plan Invoice</title>
+    <title>Pre Paid Invoice</title>
     <style type="text/css">
       @page { 
         margin: 10px 10px 0 10px; 
@@ -44,9 +44,9 @@
         <tr>
           <td style="width: 60%;padding-left: 40px;padding-bottom: 80px;">
             <p style="font-size: 35px;line-height: 35px;margin: 0 0 15px 0;">INVOICE</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$name}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$address}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_name}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$contact_name}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_address}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$postal}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
@@ -54,7 +54,7 @@
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">
               <div class="one" style="width: 46%;display: inline-block;vertical-align: top;">
                 <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Date</p>
-                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_date}}</p>
+                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$payment_date}}</p>
     
                 <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Number</p>
                 <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_number}}</p>
@@ -113,31 +113,31 @@
         </tr>
         <tr>
           <td style="padding: 5px 0;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Purchased Credits: {{$amount}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Purchased Credits: {{$credits_purchase}}</p>
           </td>
           <td colspan="4"></td>
         </tr>
         <tr>
           <td style="padding: 5px 0;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Bonus Credits: {{$amount}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Bonus Credits: {{$credit_bonus}}</p>
           </td>
           <td colspan="4"></td>
         </tr>
         <tr>
           <td style="border-bottom: 1px solid #BFBFBF;padding: 5px 0;" >
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Total Credits: {{$amount}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Total Credits: {{$total_credits}}</p>
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            {{$number_employess}}
+            1
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            {{$price}}
+            {{$total_credits}}
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
             No Tax
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            {{$amount}}
+            {{$total_credits}}
           </td>
         </tr>
         <tr>
@@ -145,16 +145,16 @@
             <p style="font-size: 14px;line-height: 14px;margin: 0;">Discounts</p>
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            {{$number_employess}}
+            1
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            {{$price}}
+            {{$credit_bonus}}
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
             No Tax
           </td>
           <td style="text-align: right;border-bottom: 1px solid #BFBFBF;">
-            {{$amount}}
+            {{$credit_bonus}}
           </td>
         </tr>
       
@@ -185,7 +185,7 @@
             (via Bank Transfer)
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            {{$statement_amount_due}}
+            {{$amount_due}}
           </td>
         </tr>
         <tr>
@@ -193,7 +193,7 @@
             AMOUNT DUE {{$currency_type}}
           </td>
           <td style="text-align: right;font-weight: 700;padding: 10px 0;">
-            {{$statement_total_amount}}
+            {{$total}}
           </td>
         </tr>
       </table>

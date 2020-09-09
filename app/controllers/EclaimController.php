@@ -260,19 +260,19 @@ class EclaimController extends \BaseController {
 			$amount = trim($input['amount']);
 		} else {
 			if(Input::has('currency_type') && $input['currency_type'] != null) {
-			if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
-				$amount = $input['amount'] / $currency;
-				$claim_amount = $claim_amount / $currency;
-			} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
-				$amount = $input['amount'] * $currency;
-				$claim_amount = $claim_amount * $currency;
+				if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
+					$amount = $input['amount'] / $currency;
+					$claim_amount = $claim_amount / $currency;
+				} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+					$amount = $input['amount'] * $currency;
+					$claim_amount = $claim_amount * $currency;
+				} else {
+					$amount = trim($input['amount']);
+					$claim_amount = trim($claim_amount);
+				}
 			} else {
 				$amount = trim($input['amount']);
 				$claim_amount = trim($claim_amount);
-			}
-			} else {
-			$amount = trim($input['amount']);
-			$claim_amount = trim($claim_amount);
 			}
 		}    	
 
@@ -280,7 +280,6 @@ class EclaimController extends \BaseController {
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
-
 			if($spending['back_date'] == false) {
 				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
@@ -314,7 +313,7 @@ class EclaimController extends \BaseController {
 			'default_currency'	=> $check_user_balance->currency_type,
 			'currency_value' => $currency
 		);
-
+		
 		if($customer_id) {
 			// get claim type service cap
 			$get_company_e_claim_service = DB::table('company_e_claim_service_types')
@@ -6686,7 +6685,7 @@ public function updateEclaimStatus( )
 	$hr_data = StringHelper::getJwtHrSession();
 	$hr_id = $hr_data->hr_dashboard_id;
 	$e_claim = new Eclaim( );
-
+	$spending_method = "post_paid";
 	if((int)$check->status == 1 || (int)$check->status == 2) {
 		return array('status' => true, 'message' => 'E-Claim updated.', 'updated_already' => true);
 	}
@@ -6730,6 +6729,7 @@ public function updateEclaimStatus( )
 		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && (int)$spending_accounts->wellness_enable == 1 && $check->spending_type == "wellness") {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
+			$spending_method = $balance['spending_method'];
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
 				if($amount > $balance_medical) {
@@ -6759,7 +6759,8 @@ public function updateEclaimStatus( )
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id,
 				'currency_type'	=> $wallet->currency_type,
-				'currency_value' => $check->currency_value
+				'currency_value' => $check->currency_value,
+				'spending_method'	=> $spending_method
 			);
 
 			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
@@ -6858,7 +6859,8 @@ public function updateEclaimStatus( )
 				'id'            => $e_claim_id,
 				'created_at'	=> $e_claim_details->created_at,
 				'currency_type'	=> $wallet->currency_type,
-				'currency_value' => $check->currency_value
+				'currency_value' => $check->currency_value,
+				'spending_method'	=> $spending_method
 			);
 
 			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
@@ -6897,7 +6899,7 @@ public function updateEclaimStatus( )
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
-            // send notification to browser
+            			// send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 						if($admin_id) {
@@ -6907,12 +6909,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_approved_e_claim',
-                'data'      => SystemLogLibrary::serializeData($data)
-              );
-              SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $admin_id,
+								'admin_type' => 'mednefits',
+								'type'      => 'admin_hr_approved_e_claim',
+								'data'      => SystemLogLibrary::serializeData($data)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						} else {
 							$data = array(
 								'e_claim_id' => $e_claim_id,
@@ -6920,12 +6922,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_approved_e_claim',
-                'data'      => SystemLogLibrary::serializeData($data)
-              );
-              SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $hr_id,
+								'admin_type' => 'hr',
+								'type'      => 'admin_hr_approved_e_claim',
+								'data'      => SystemLogLibrary::serializeData($data)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						}
 					}
 				} catch(Exception $e) {

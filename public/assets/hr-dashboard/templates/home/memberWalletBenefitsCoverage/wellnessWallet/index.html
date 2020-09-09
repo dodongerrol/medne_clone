@@ -1,5 +1,5 @@
 <div class="member-wellness-wallet-wrapper member-wallet-wrapper" member-wellness-wallet-directive>
-  <div ng-if="true" class="wellness-activated">
+  <div ng-if="wellnessActivated" class="wellness-activated">
     <div class="show-details-on-container">
       <div class="flex-1">
         <span class="member-bold-text">Show details on</span> 
@@ -130,15 +130,18 @@
     <div class="mwbc-box-container">
       <h5 class="member-bold-text">Benefits Coverage (Reimbursement)</h5>
       <div class="dp-flex-ai">
-        <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan' ">Mednefits Basic Plan</div>
+        <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan' || wellnessWalletData.benefits_coverage == 'basic_plan'">Mednefits Basic Plan</div>
         <div ng-if="wellnessWalletData.benefits_coverage == 'enterprise_plan' ">Mednefits Enterprise Plan</div>
         <div ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' ">Out of pocket</div>
         <div>
           <span class="credits-tooltip-wrapper">
             <img ng-click="toggleWellnessBasicPlan()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
             <div class="credits-tooltip-container mednefits-basic-plan">
-              <div class="tooltip-title">Mednefits Basic Plan (Reimbursement)</div>
-              <p>Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
+              <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan' || wellnessWalletData.benefits_coverage == 'basic_plan'" class="tooltip-title">Mednefits Basic Plan (Reimbursement)</div>
+              <div ng-if="wellnessWalletData.benefits_coverage == 'out_pocket'" class="tooltip-title">Out of pocket (Reimbursement)</div>
+              <p ng-if="wellnessWalletData.benefits_coverage == 'lite_plan' || wellnessWalletData.benefits_coverage == 'basic_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
+              </p>
+              <p ng-if="wellnessWalletData.benefits_coverage == 'out_pocket'">All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
               </p>
               <div class="tooltip-btn-footer">
                 <button>Got it</button>
@@ -148,7 +151,7 @@
         </div>
       </div>
     </div>
-    <div class="mwbc-box-container">
+    <div ng-if="wellnessWalletData.non_panel_reimbursement" class="mwbc-box-container">
       <h5 class="member-bold-text">Payment Methods (Reimbursement)</h5>
       <div>Payment methods for monthly spending invoice</div>
       <div class="payment-methods-box-container">
@@ -225,12 +228,12 @@
             </div>
           </div>
           <div class="display-flex">
-            <div class="dp-flex-ai flex-1">
-              <span>Mednefits Credits</span>
+            <div class="dp-flex-ai flex-1 prepaid-credits-toggle">
+              <span>Prepaid Credits</span>
               <span class="credits-tooltip-wrapper">
                 <img ng-click="toggleMednefitsCredits()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div class="credits-tooltip-container mednefits-credits">
-                  <div class="tooltip-title">Mednefits Credits</div>
+                  <div class="tooltip-title">Prepaid Credits</div>
                   <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
                   </p>
                   <div class="tooltip-btn-footer">
@@ -342,7 +345,7 @@
       </div>
     </div>
   </div>
-  <div ng-if="false" class="wellness-not-activated">
+  <div ng-if="!wellnessActivated" class="wellness-not-activated">
       <h4 class="member-bold-text">Wellness Wallet</h4>
       <div ng-if="!isWellnessWalletShow"> 
         <div class="wellness-not-active-text">Wellness Wallet is currently not activated. Would you like to activate Wellness Wallet?</div>
@@ -429,7 +432,7 @@
           </div>
           <div class="dp-flex-ai">
             <div class="dp-flex-ai payment-method-row-status">
-              <span>Mednefits Credits</span>
+              <span>Prepaid Credits</span>
               <span class="credits-tooltip-wrapper">
                 <img ng-click="toggleMednefitsCredits()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div class="credits-tooltip-container mednefits-credits">
