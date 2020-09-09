@@ -17190,12 +17190,23 @@ class BenefitsDashboardController extends \BaseController {
 			'plan_type'				=> $plan_type,
 			'wallet_enabled' 		=> (int)$user->wallet == 1 ? true : false,
 			'total_visit_limit'          => $user_active_plan_history->total_visit_limit,
-						'total_visit_created'       => $user_active_plan_history->total_visit_created,
+			'total_visit_created'       => $user_active_plan_history->total_visit_created,
 			'total_balance_visit'       => $user_active_plan_history->total_visit_limit - $user_active_plan_history->total_visit_created,
 			'medical_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->medical_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->medical_spending_end_date)),
 			'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
 		);
 
 		return array('data' => $temp, 'status' => true);;
+	}
+
+	public function getDepartmentList()
+	{
+		$input = Input::all();
+
+		if(empty($input['customer_id']) || $input['customer_id'] == null) {
+			return array('status' => false, 'message' => 'customer_id is required.');
+		}
+
+		$departments = DB::table('company_departments')->where('customer_id', $input['customer_id'])->first();
 	}
 }
