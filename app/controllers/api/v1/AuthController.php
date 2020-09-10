@@ -6896,7 +6896,7 @@ public function payCreditsNew( )
   {
     $input = Input::all();
     $returnObject = new stdClass();
-    $returnObject->admin = false;
+    $returnObject->administrator = false;
 
     if(empty($input['otp_code']) || $input['otp_code'] == null) {
       $returnObject->status = false;
@@ -6928,16 +6928,23 @@ public function payCreditsNew( )
         return Response::json($returnObject);
     }
 
-    $check_if_admin = DB::table('admin')
-    ->select('AdminID as admin_id', 'Name as name', 'Email as email')
-    ->where('Email', $checker->email_user)->first();
+    $check_if_administrator = DB::table('customer_hr_dashboard')
+    ->join('user', 'user.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
+    ->select('UserID as user_id', 'Name as name', 'user.Email as email', 'is_hr_admin_linked', 'is_account_linked')
+    ->where('UserID', $member_id)->first();
 
-    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
-    $returnObject->status = true;
-    // //check if admin user
-    if($check_if_admin) {
-      $returnObject->admin = true;
+    if($check_if_administrator && $check_if_administrator->is_account_linked === 1) {
+      $returnObject->administrator = true;
     }
+
+    //remove OTPCode
+    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+
+    // //check if administrator
+    if($check_if_administrator && $check_if_administrator->is_account_linked === 1) {
+      $returnObject->administrator = true;
+    }
+    $returnObject->status = true;
     $returnObject->message = 'OTP Code is valid';
     $returnObject->data = $checker;
     return Response::json($returnObject);
@@ -7041,7 +7048,7 @@ public function payCreditsNew( )
       return Response::json($returnObject);
   }
 
-  public function createNewPasswordByAdminUser()
+  public function createNewPasswordByAdministrator()
   {
     $input = Input::all();
     $returnObject = new stdClass();
@@ -7068,12 +7075,19 @@ public function payCreditsNew( )
         return Response::json($returnObject);
       }
 
-      $checker_if_admin = DB::table('admin')
-      ->select('AdminID as admin_id', 'Name as name', 'Password as password_admin', 'Email as email')
-      ->where('Email',  $checker->email)->first();
+      $check_if_administrator = DB::table('customer_hr_dashboard')
+      ->join('user', 'user.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
+      ->select('UserID as user_id', 'Name as name', 'user.Email as email', 'is_hr_admin_linked', 'is_account_linked', 'customer_hr_dashboard.password as password_administrator')
+      ->where('UserID', $checker->UserID)->first();
+
+      if(!$check_if_administrator) {
+        $returnObject->status = false;
+        $returnObject->message = 'user not an administrator';
+        return Response::json($returnObject);
+      }
 
       $newPassword = [
-        'Password' => $checker_if_admin->password_admin,
+        'Password' => $check_if_administrator->password_administrator,
         'member_activated' => 1,
         'account_update_status' => 1,
         'account_already_update'  => 1
