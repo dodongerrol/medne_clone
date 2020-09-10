@@ -497,6 +497,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_users_by_active_plan', 'BenefitsDashboardController@enrolledUsersFromActivePlan');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
+	// get refund invoice
+	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
 });
 
 	// downloand plan invoice

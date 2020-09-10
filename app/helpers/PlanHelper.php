@@ -6947,5 +6947,141 @@ class PlanHelper {
 			return false;
 		}
 	}
+
+	public static function getRefundLists($id)
+	{
+		$users = [];
+		$amount_due = 0;
+		$refund_payment = DB::table('payment_refund')->where('payment_refund_id', $id)->first();
+
+		if(!$refund_payment) {
+			return false;
+		}
+
+		if($refund_payment) {
+			$company_active_plan = DB::table('customer_active_plan')
+			->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
+															// ->where('account_type', 'stand_alone_plan')
+			->first();
+			$company_plan = DB::table('customer_plan')->where('customer_plan_id', $company_active_plan->plan_id)->first();
+			$plan_withdraw = DB::table('customer_plan_withdraw')->where('customer_active_plan_id', $id)->orderBy('created_at', 'desc')->first();
+			$temp_end_date = date('Y-m-d', strtotime('+1 year', strtotime($company_plan->plan_start)));
+			$end_date = date('Y-m-d', strtotime('-1 day', strtotime($temp_end_date)));
+			$total_refund = 0;
+			$withdraws = DB::table('customer_plan_withdraw')->where('payment_refund_id', $id)->whereIn('refund_status', [0,1])->get();
+
+			foreach ($withdraws as $key => $user) {
+				if((int)$user->has_no_user == 0) {
+					$employee = DB::table('user')->where('UserID', $user->user_id)->first();
+					$plan = DB::table('user_plan_type')->where('user_id', $user->user_id)->orderBy('created_at', 'desc')->first();
+					$invoice = DB::table('corporate_invoice')
+						->where('customer_active_plan_id', $refund_payment->customer_active_plan_id)
+						->first();
+					$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($plan->plan_start))), new \DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+
+					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+					$total_days = \MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
+					$remaining_days = $total_days - $days + 1;
+
+					$cost_plan_and_days = ($invoice->individual_price/$total_days);
+					$temp_total = $cost_plan_and_days * $remaining_days;
+					$temp_sub_total = $temp_total * 0.70;
+
+					// check withdraw amount
+					if($user->amount != $temp_sub_total) {
+						// update amount
+						DB::table('customer_plan_withdraw')->where('plan_withdraw_id', $user->plan_withdraw_id)->update(['amount' => $temp_sub_total]);
+					}
+
+					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
+					$total_refund += $temp_sub_total;
+
+					$temp = array(
+						'user_id'			=> $user->user_id,
+						'name'				=> ucwords($employee->Name),
+						'nric'				=> $employee->NRIC,
+						'period_of_used' => date('d/m/Y', strtotime($plan->plan_start)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($end_date)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($end_date)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
+						'after_amount' => \DecimalHelper::formatDecimal($temp_sub_total)
+					);
+				} else {
+					$total_refund += $user->amount;
+					$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($user->date_started))), new \DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
+					$days = $diff->format('%a') + 1;
+					$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+
+					$remaining_days = $total_days - $days;
+					$temp = array(
+						'user_id'			=> null,
+						'name'				=> null,
+						'nric'				=> null,
+						'period_of_used' => date('d/m/Y', strtotime($user->date_started)).' - '.date('d/m/Y', strtotime($user->date_withdraw)),
+						'period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)).' - '.date('d/m/Y', strtotime($user->unused)),
+						'days_used'			=> $days,
+						'first_period_of_unused' => date('d/m/Y', strtotime($user->date_withdraw)),
+						'last_period_of_unused' => date('d/m/Y', strtotime($user->unused)),
+						'remaining_days' => $remaining_days,
+						'total_days'		=> $total_days,
+						'before_amount'	=> \DecimalHelper::formatDecimal($user->amount),
+						'after_amount' => \DecimalHelper::formatDecimal($user->amount)
+					);
+				}
+
+				if($user->paid == 0) {
+					$amount_due += $temp['after_amount'];
+				}
+
+				array_push($users, $temp);
+			}
+
+
+			$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $company_active_plan->customer_start_buy_id)->first();
+
+			$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $company_active_plan->customer_start_buy_id)->first();
+
+			$data['email'] = $contact->work_email;
+			if($contact->billing_status === "true" || $contact->billing_status === true) {
+				$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+			} else {
+				$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $company_active_plan->customer_start_buy_id)->first();
+				$data['name'] = ucwords($billing_contact->billing_name);
+				$data['address'] = $billing_contact->billing_address;
+			}
+			$data['phone']     = $contact->phone;
+			if($contact->billing_status === "true") {
+				$data['address'] = $business_info->company_address;
+				$data['postal'] = $business_info->postal_code;
+				$data['company'] = ucwords($business_info->company_name);
+			} else {
+				$data['postal'] = $business_info->postal_code;
+				$data['company'] = ucwords($business_info->company_name);
+			}
+
+			return array(
+				'total_refund' => \DecimalHelper::formatDecimal($total_refund, 2),
+				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due, 2),
+				'cancellation_number' => $refund_payment->cancellation_number,
+				'paid' => $refund_payment->payment_amount,
+				'date_refund' => $refund_payment->date_refund,
+				'payment_due'	=> $refund_payment->invoice_due,
+				'payment_date'	=> $refund_payment->payment_date,
+				'payment_amount'	=> $refund_payment->payment_amount,
+				'payment_status' => $refund_payment->status,
+				'payment_remarks' => $refund_payment->payment_remarks,
+				'billing_info' => $data,
+				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
+				'currency_type' => $refund_payment->currency_type,
+				'users' => $users,
+			);
+
+		}
+	}
 }
 ?>
