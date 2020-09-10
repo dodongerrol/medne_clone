@@ -2481,3 +2481,15 @@ button{
   width: 10%;
   text-align: center;
 }
+
+.mobile-num-input.error {
+  border: 2px solid #EB635D;
+}
+
+.mobile-message-container {
+  color: #EB635D;
+  margin: 20px 0 0;
+}
+.new-login-container .form-group .med-button.disabled {
+  pointer-events: none;
+}
