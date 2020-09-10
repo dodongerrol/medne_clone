@@ -6933,6 +6933,7 @@ public function payCreditsNew( )
     ->select('UserID as user_id', 'Name as name', 'user.Email as email', 'is_hr_admin_linked', 'is_account_linked')
     ->where('UserID', $member_id)->first();
 
+    // //check if administrator
     if($check_if_administrator && $check_if_administrator->is_account_linked === 1) {
       $returnObject->administrator = true;
     }
@@ -6940,10 +6941,6 @@ public function payCreditsNew( )
     //remove OTPCode
     DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
 
-    // //check if administrator
-    if($check_if_administrator && $check_if_administrator->is_account_linked === 1) {
-      $returnObject->administrator = true;
-    }
     $returnObject->status = true;
     $returnObject->message = 'OTP Code is valid';
     $returnObject->data = $checker;
