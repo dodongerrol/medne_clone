@@ -18,6 +18,7 @@ app.directive('memberWellnessWalletDirective', [
 				scope.isWellnessWalletShow = false;
 				scope.isSaveEnable = false;
 				scope.wellnessActivated = false;
+				scope.applyTerm = false;
 				// scope.medicalWalletData = {
 				// 	non_panel_reimbursement : false,
 				// }
@@ -66,7 +67,8 @@ app.directive('memberWellnessWalletDirective', [
             // scope.dateTermIndex = parseInt(data);
             scope.termSelector();
             console.log(data);
-            scope.selectedTerm = data;
+						scope.selectedTerm = data;
+						scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
@@ -268,6 +270,14 @@ app.directive('memberWellnessWalletDirective', [
 					scope.isSaveEnable = true;
 				}
 
+				scope.getStatus = async function () {
+					await hrSettings.getPlanStatus( )
+            .then(function(response){
+							scope.planStatusData = response.data;
+							console.log(scope.planStatusData);
+						})		
+				}
+
 				scope.showLoading = function () {
 					$(".circle-loader").fadeIn();
 					loading_trap = true;
@@ -280,9 +290,10 @@ app.directive('memberWellnessWalletDirective', [
 					},10)
 				}
 
-				scope.onLoad = function () {
+				scope.onLoad = async function () {
 					scope.showLoading();
-					scope.getDateTerms();
+					await scope.getDateTerms();
+					await scope.getStatus();
 				}
 
 				scope.onLoad();

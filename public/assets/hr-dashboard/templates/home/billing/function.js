@@ -15,12 +15,13 @@ app.directive('spendingBillingDirective', [
         scope.page_active = 1;
         scope.per_page = 5;
         scope.billing_pagination_dropdown = false;
+        scope.applyTerm = false
         // scope.showLastTermSelector = false;
         
 
-        // scope.termSelector = function () {
-        //   scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
-        // }
+        scope.termSelector = function () {
+          scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
+        }
 
         scope.formatDate = function (date) {
           return moment(new Date(date)).format("DD/MM/YYYY");
@@ -65,10 +66,11 @@ app.directive('spendingBillingDirective', [
             scope.termSelector();
             console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
-            // scope.getBenefitsCoverageData(data);
+            scope.getBillingInvoiceHistory();
           }
           console.log(scope.selectedTerm)
         }
@@ -192,10 +194,10 @@ app.directive('spendingBillingDirective', [
 
         }
        
-        scope.onLoad = function () {
+        scope.onLoad = async function () {
           // scope.showLoading();
-          scope.getDateTerms();
-          scope.getBillingInvoiceHistory( scope.invoiceSelectorValue );
+          await scope.getDateTerms();
+          await scope.getBillingInvoiceHistory( scope.invoiceSelectorValue );
         }
 
         scope.onLoad();

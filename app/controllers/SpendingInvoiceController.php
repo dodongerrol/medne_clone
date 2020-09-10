@@ -574,6 +574,8 @@ class SpendingInvoiceController extends \BaseController {
 						'payment_amount' => number_format($data->paid_amount, 2),
 						'currency_type' => $data->currency_type,
 						'company_name' => $data->statement_company_name,
+                        'payment_remarks' => $data->payment_remarks,
+                        'payment_method' => $data->payment_method,
 						'Panel/Non-Panel' => 'Wellness Non-Panel'
 					);
 
@@ -682,6 +684,8 @@ class SpendingInvoiceController extends \BaseController {
 					'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
 					'payment_amount' => $result['total'],
 					'currency_type' => $result['currency_type'], 
+                    'payment_remarks' => $data->payment_remarks,
+                    'payment_method' => $data->payment_method,
 					'company_name' => $result['company']
 				);
 
@@ -791,6 +795,8 @@ class SpendingInvoiceController extends \BaseController {
 					'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
 					'payment_amount' => $result['total'],
 					'currency_type' => $result['currency_type'],
+                    'payment_remarks' => $data->payment_remarks,
+                    'payment_method' => $data->payment_method,
 					'company_name' => $result['company']
 				);
 
@@ -900,6 +906,8 @@ class SpendingInvoiceController extends \BaseController {
 					'paid_date'	=> $result['date_refund'],
 					'payment_amount' => $result['total_refund'],
 					'currency_type' => $result['currency_type'],
+                    'payment_remarks' => $data->payment_remarks,
+                    'payment_method' => $data->payment_method,
 					'company_name' => $result['billing_info']['company']
 				);
 
