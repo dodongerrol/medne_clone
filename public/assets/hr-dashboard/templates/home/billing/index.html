@@ -3,13 +3,22 @@
     <div class="show-details-on-container">
       <div class="flex-1">
         <span class="member-bold-text">Show details on</span> 
-        <div class="current-term-input-wrapper">
-          <span>Current term</span>
-          <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span>
-          <i class="fa fa-angle-down"></i>
+        <div class="current-term-wrapper"> 
+          <div ng-click="termSelector()" class="current-term-input-wrapper">
+            <span>{{ selectedTerm.term }}</span>
+            <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
+              (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+            </span> -->
+            <i class="fa fa-angle-down"></i>
+          </div>
+          <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+            <!-- <span>Last term</span> -->
+            <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+            <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
+          </div>
         </div>
         <div>
-          <button>Apply</button>
+          <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
         </div>
       </div>
       <div>
@@ -96,22 +105,24 @@
                     <div>
                       <div>
                         <span class="member-bold-text">Amount Due: </span>
-                        <span>SGD 500.00</span>
+                        <span><span class="currency-type" ng-bind="list.currency_type"></span class="currency-type" ng-bind="list.currency_type"> <span ng-bind="list.amount_due">500.00</span></span>
                       </div>
                       <div class="invoice-credits-remarks">
-                        <span class="member-bold-text">Remarks: </span>
+                        <span class="member-bold-text">Remarks: <span ng-bind="list.payment_remarks"></span></span>
                       </div>
                     </div>
                     <div>
                       <div>
                         <span class="member-bold-text">Payment Due: </span>
-                        <span>16 Feb 2020</span>
+                        <span ng-bind="list.payment_due">16 Feb 2020</span>
                       </div>
                     </div>
                     <div>
                       <div>
                         <span class="member-bold-text">Payment Method: </span>
-                        <span>Bank Transfer</span>
+                        <span ng-if="list.payment_method == 'giro'">Giro</span>
+                        <span ng-if="list.payment_method == 'bank_transfer'">Bank Transfer</span>
+                        <span ng-if="list.payment_method == 'mednefits_credits'">Prepaid Credits</span>
                       </div>
                     </div>
                   </div>

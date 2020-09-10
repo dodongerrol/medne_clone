@@ -17,6 +17,7 @@ app.directive('mednefitsCreditAccountDirective', [
         scope.isCreditsInputFormShow = true;
         scope.isCreditsConfirmShow = false;
         scope.isTopUpSuccess = false;
+        scope.applyTerm = false;
 
         scope.creditsTopUpData  = {
           total_credits: '0.00',
@@ -91,6 +92,7 @@ app.directive('mednefitsCreditAccountDirective', [
             scope.termSelector();
             console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);

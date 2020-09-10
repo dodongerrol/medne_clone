@@ -17,7 +17,7 @@
         </div>
       </div>
       <div>
-        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
+        <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>

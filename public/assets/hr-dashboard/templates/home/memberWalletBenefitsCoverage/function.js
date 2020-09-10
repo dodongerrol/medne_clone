@@ -60,8 +60,8 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 					})
 				}, 300); 
 
-				scope.getStatus = function () {
-					hrSettings.getPlanStatus( )
+				scope.getStatus = async function () {
+					await hrSettings.getPlanStatus( )
             .then(function(response){
 							scope.planStatusData = response.data;
 							console.log(scope.planStatusData);
@@ -88,8 +88,8 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 					}
 				}
 
-				scope.onLoad = function () {
-					scope.getStatus();
+				scope.onLoad = async function () {
+					await scope.getStatus();
 				}
 
 				scope.onLoad();

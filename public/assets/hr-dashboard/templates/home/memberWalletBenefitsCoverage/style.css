@@ -448,3 +448,31 @@
   opacity: 0.5;
   pointer-events: none;
 }
+.out-of-pocket-wrapper .mwbc-box-container .prepaid-subtext {
+  font-size: 17px;
+  line-height: 24px;
+  color: #848484;
+  margin: 15px 0;
+}
+.payment-current-method >div:first-child {
+  margin: 0 50px 0 0;
+}
+.input-readonly,
+.input-readonly input {
+  background-color: #f2f2f2;
+  pointer-events: none;
+}
+.reimbursement-text {
+  font-family: 'Helvetica Medium';
+  text-decoration: underline;
+}
+.non-panel-claim-container >div.reimbursement-text-wrapper {
+  margin: 30px 0 0;
+}
+.show-details-on-container .btn-apply-term {
+  pointer-events: none;
+}
+.show-details-on-container .btn-apply-term.active {
+  background-color: #0392CF;
+  pointer-events: initial;
+}

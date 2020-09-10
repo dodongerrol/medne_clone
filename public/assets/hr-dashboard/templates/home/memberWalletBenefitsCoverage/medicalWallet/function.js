@@ -17,13 +17,41 @@ app.directive('memberMedicalWalletDirective', [
 				scope.nonPanelBankTransfer = false;
 				scope.nonPanelMednefitsCredits = false;
 				scope.defaultDateTerms = {};
+				scope.applyTerm = false;
 
+				scope.getDateTerms = function () {
+          hrSettings.fetchDateTerms()
+          .then(function(response){
+            scope.dateTerm = response.data.data;
+            console.log(scope.dateTerm);
+
+            let termLength = scope.dateTerm.length;
+            // console.log(termLength);
+
+            scope.dateTerm.map(function(value,index) {
+              if (index == termLength-1) {
+                value.term = `Current term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
+                value.index = index;
+                scope.defaultDateTerms = value;
+                scope.selectedTerm = value;
+                scope.dateTermIndex = value.index;
+              } else {
+                value.term = `Last term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
+              }
+            });
+
+            // scope.getBenefitsCoverageData(scope.defaultDateTerms);
+
+            
+          })
+				}
+				
 				scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
         }
 				
-				scope.getDateTerms = function () {
-          hrSettings.fetchDateTerms()
+				scope.getDateTerms = async function () {
+          await hrSettings.fetchDateTerms()
           .then(function(response){
             scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
@@ -58,7 +86,8 @@ app.directive('memberMedicalWalletDirective', [
             // scope.dateTermIndex = parseInt(data);
             scope.termSelector();
             console.log(data);
-            scope.selectedTerm = data;
+						scope.selectedTerm = data;
+						scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
@@ -157,7 +186,7 @@ app.directive('memberMedicalWalletDirective', [
             })
 				}
 
-				scope._saveWallet_ = function () {
+				scope._saveWallet_ = async function () {
 
 					let data = {
 						id: scope.medicalWalletData.id,
@@ -171,12 +200,20 @@ app.directive('memberMedicalWalletDirective', [
 						payment_method_non_panel:scope.medicalWalletData.non_panel_payment_method,
 					}
 
-					hrSettings.updateMemberWallet( data )
+					await hrSettings.updateMemberWallet( data )
 					.then(function(response){
 						console.log(response);
 						scope.getMemberWalletData( scope.selectedTerm );
 						scope.hideLoading();
 					})
+				}
+				
+				scope.getStatus = async function () {
+					await hrSettings.getPlanStatus( )
+            .then(function(response){
+							scope.planStatusData = response.data;
+							console.log(scope.planStatusData);
+						})		
 				}
 
 				scope._saveButtonTrigger_ = function () {
@@ -196,9 +233,10 @@ app.directive('memberMedicalWalletDirective', [
         };
 			
 
-				scope.onLoad = function () {
+				scope.onLoad = async function () {
 					scope.showLoading();
-					scope.getDateTerms();
+					await scope.getDateTerms();
+					await scope.getStatus();
 				}
 
 				scope.onLoad();

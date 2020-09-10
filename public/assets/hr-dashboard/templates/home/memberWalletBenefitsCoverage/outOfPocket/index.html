@@ -17,7 +17,7 @@
         </div>
       </div>
       <div>
-        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
+        <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
@@ -26,6 +26,7 @@
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text">Out of pocket</h4>
+    <p class="prepaid-subtext">This indicates that no plan is in effect to enable employee benefits budget allocation, meaning all employees will be charged for the cost of their own benefits usage.</p>
     <div class="mwbc-card-box-container">
       <div class="available-credits-container">
         <div class="available-credits">
