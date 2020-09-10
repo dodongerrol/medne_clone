@@ -17201,12 +17201,19 @@ class BenefitsDashboardController extends \BaseController {
 
 	public function getDepartmentList()
 	{
-		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
 
-		if(empty($input['customer_id']) || $input['customer_id'] == null) {
+		$departments = DB::table('company_departments')->where('customer_id', $customer_id)->first();
+		if(empty($customer_id) || $customer_id == null) {
 			return array('status' => false, 'message' => 'customer_id is required.');
 		}
 
-		$departments = DB::table('company_departments')->where('customer_id', $input['customer_id'])->first();
+		$data = array(
+			'customer_id'			=> $departments->customer_id,
+			'department_name'		=> $departments->department_name
+		);
+
+		return array('status' => TRUE , 'data' => $data);
 	}
 }

@@ -219,6 +219,10 @@ Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@ge
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get token download
+
+	// gods view
+	Route::get('hr/get_department_list', 'BenefitsDashboardController@getDepartmentList');
+
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
 	Route::get('hr/get_plan_status', 'BenefitsDashboardController@getPlanStatus');
