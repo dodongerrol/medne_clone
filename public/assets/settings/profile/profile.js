@@ -39,10 +39,15 @@ jQuery(document).ready(function($) {
   $("#clinic-hours").click(function(event) {
     $('.clinic-detail-container').css('display', 'none');
     $('.operatingHours-div').css('display', 'inline-block');
+    $('#profile-breakHours-savebreakHours').css('display', 'none');
     $("#Configure-list div b").css("color", "#777676");
     $("#Integrate-list div b").css("color", "#777676");
     $('#clinic-hours').css("color", "black");
     $('#clinic-hours-tab').click();
+  });
+
+  $("#clinic-hours-tab").click(function(event) {
+    $('#profile-breakHours-savebreakHours').css('display', 'none');
   });
 
   // --------------------------------------------------------------------
@@ -130,7 +135,7 @@ jQuery(document).ready(function($) {
 
   $(document).on("click", "#clinic-breaks-tab", function(event) {
     $('.clinic-detail-container').css('display', 'none');
-    // $('.operatingHours-div').css('display', 'none');
+    $('#profile-breakHours-savebreakHours').css('display', 'inline-block');
   });
 
   // -------------------- load clinic time off tab page --------------------
