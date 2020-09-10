@@ -3401,6 +3401,7 @@ class EmployeeController extends \BaseController {
       }
       if($checker->disabled_otp == 1) {
         return array(
+          'user_id' => $checker->UserID,
           'status' => 1,
           'message' => 'user enabled otp.'
         );
