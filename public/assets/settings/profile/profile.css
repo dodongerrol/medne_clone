@@ -104,8 +104,12 @@ button#profile-operatingHours-saveOperatingHours {
 
 button#profile-breakHours-copyTimetoAllBtn, 
 button#profile-breakHours-undoCopyTimetoAllBtn {
-	font-size: 0.9em;
+    font-size: 0.9em;
+    color: #1b9bd7;
 }
+ button#profile-operatingHours-copyTimetoAllBtn {
+    color: #1b9bd7;
+ }
 
 button#profile-breakHours-undoCopyTimetoAllBtn {
 	display: none;
@@ -124,4 +128,33 @@ button#profile-breakHours-savebreakHours {
     height: 35px;
 	border-radius: 5px;
 	float: right;
+}
+
+ #profile-breakHours-monday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-monday-div .toggle,
+ #profile-breakHours-monday-div .timepicker,
+ #profile-breakHours-tuesday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-tuesday-div .toggle,
+ #profile-breakHours-tuesday-div .timepicker,
+ #profile-breakHours-wednesday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-wednesday-div .toggle,
+ #profile-breakHours-wednesday-div .timepicker,
+ #profile-breakHours-thursday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-thursday-div .toggle,
+ #profile-breakHours-thursday-div .timepicker,
+ #profile-breakHours-friday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-friday-div .toggle,
+ #profile-breakHours-friday-div .timepicker,
+ #profile-breakHours-saturday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-saturday-div .toggle,
+ #profile-breakHours-saturday-div .timepicker,
+ #profile-breakHours-sunday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-sunday-div .toggle,
+ #profile-breakHours-sunday-div .timepicker,
+ #profile-breakHours-publicHoliday-div .col-md-1.profile-breakHours-detail-lbl,
+ #profile-breakHours-publicHoliday-div .toggle,
+ #profile-breakHours-publicHoliday-div .timepicker,
+ #profile-breakHours-copyTimetoAllBtn,
+ #profile-breakHours-savebreakHours{
+    display: none;
 }

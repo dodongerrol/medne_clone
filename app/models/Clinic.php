@@ -504,19 +504,8 @@ public function getFavouriteClinics($userID)
         }
         
         public function UpdateClinicDetails($dataArray){
-
-            // $findClinicType = \DB::table('clinic_types')->where('ClinicTypeID', $dataArray['Clinic_Type'])->first();
-
-            // if($findClinicType->discount_type == "fixed") {
-            //     $dataArray['co_paid_status'] = 1;
-            //     $dataArray['discount'] = '$'.$findClinicType->discount_amount;
-            //     $dataArray['co_paid_amount'] = $findClinicType->discount_amount;
-            // } else if($findClinicType->discount_type == "percent"){
-            //     $dataArray['co_paid_status'] = 0;
-            //     $dataArray['medicloud_transaction_fees'] = $findClinicType->discount_amount;
-            //     $dataArray['discount'] = $findClinicType->discount_amount.'%';
-            // }
-
+            unset($dataArray['speciality']);
+            
             $allData = DB::table('clinic')
                 ->where('ClinicID', '=', $dataArray['clinicid'])
                 ->update($dataArray);
@@ -614,7 +603,7 @@ public function getFavouriteClinics($userID)
             DB::table('extra_events')
                 ->where('clinic_id', $clinic_id)
                 ->delete();
-
+            
             // update manage events
             for ($x = 0; $x < count($data); $x++) {
                 $guid = StringHelper::getGUID();

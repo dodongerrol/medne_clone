@@ -12,7 +12,7 @@ jQuery(document).ready( function ($) {
 
     $('.timepicker.profile-breakHours-time-to').timepicker({
         'timeFormat' : 'h:i A',
-        'minTime'	 : '09:00:00',
+        'minTime'	 : '09:15:00',
         'maxTime'	 : '21:00:00'
     });
 
@@ -31,12 +31,22 @@ jQuery(document).ready( function ($) {
                 if (response.data.length > 0) {
                      // Assign Data
                      let availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
-                        availableDaysKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+                        availableDaysKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'publicHoliday'],
                         breakHoursData =  response.data;
 
                      for (let i = 0; i < breakHoursData.length; i++) {
                         let dayKey = availableDaysKeys.indexOf(breakHoursData[i]['day']); 
+                        // Display visible all elements needed.
+
+                        if (availableDays[dayKey] == 'monday') {
+                            $('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[dayKey]+'-div #profile-breakHours-copyTimetoAllBtn').css('display', 'inline-block');
+                        }
                         
+                        $('div#profile-breakHours-time-panel .'+availableDays[dayKey]+'-addBreakBtn').css('display', 'none');
+                        $('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[dayKey]+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
+                        $('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[dayKey]+'-div .toggle').css('display', 'inline-block');
+                        $('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[dayKey]+'-div .timepicker').css('display', 'inline-block');
+                        // Set value
                         $('#profile-breakHours-'+availableDays[dayKey]+'-div input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(breakHoursData[i]['start_time']);
                         $('#profile-breakHours-'+availableDays[dayKey]+'-div input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(breakHoursData[i]['end_time']);
                         $('#profile-breakHours-'+availableDays[dayKey]+'-div .profile-breakHours-chk_activate').bootstrapToggle('on');
@@ -103,14 +113,17 @@ jQuery(document).ready( function ($) {
         
 		var availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
 
-		for (var i = 0; i < availableDays.length; i++) {
+		for (var i = 0; i < availableDays.length; i++) {console.log(availableDays[i])
+            // Display visible all elements needed.
+			$('div#profile-breakHours-time-panel .'+availableDays[i]+'-addBreakBtn').css('display', 'none');
+			$('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[i]+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
+			$('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[i]+'-div .toggle').css('display', 'inline-block');
+            $('div#profile-breakHours-time-panel #profile-breakHours-'+availableDays[i]+'-div .timepicker').css('display', 'inline-block');
+            // Set value to time-From and time-To
 			$('#profile-breakHours-'+availableDays[i]+'-div input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(mondayTimeFrom);
 			$('#profile-breakHours-'+availableDays[i]+'-div input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(mondayTimeTo);
 		}
 
-		/* Change Button text and add class */
-		// $('#profile-breakHours-copyTimetoAllBtn').css('display', 'none');
-		// $('#profile-breakHours-undoCopyTimetoAllBtn').css('display', 'block');
     });	
     
     /* Undo changes in every days */
@@ -139,8 +152,8 @@ jQuery(document).ready( function ($) {
         $('#config_alert_box').css('display', 'block');
         $('#config_alert_box').html('Updating records. Please wait...');
         
-        var availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
-            operatingAvailableDaysKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+        var availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
+            operatingAvailableDaysKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'publicHoliday'],
             breakHours = [];
         
         for (let x = 0; x < availableDays.length; x++) {
@@ -162,7 +175,7 @@ jQuery(document).ready( function ($) {
             type: 'PUT',
             data: {
                 providersDetails: {
-                    providersbreakHours: breakHours
+                    providersBreakHours: breakHours
                 }
             }
             }).done(function (data) {
@@ -174,6 +187,63 @@ jQuery(document).ready( function ($) {
                 }, 1000);
           });
         
+    });
+
+    // Validate Time-From and Time-to value
+    $(document).on('change', 'div#profile-breakHours-time-panel .timepicker.profile-breakHours-time-to', function (time) {
+		const timeselected = time.currentTarget.value,
+				parentElement = this.parentElement.parentElement.id.split('-div')[0],
+                fromTime = $('div#profile-breakHours-time-panel #'+parentElement+'-div .timepicker.profile-breakHours-time-from').val();
+            
+		if (new Date().getTime(timeselected) <= new Date().getTime(fromTime)) {
+			$('#config_alert_box').css('display', 'block');
+			$('#config_alert_box').css('color', 'red');
+			$('#config_alert_box').html('Invalid time selected!');
+			$('div#profile-breakHours-time-panel #'+parentElement+'-div .timepicker.profile-breakHours-time-to').val('09:00 PM');
+			setTimeout(function () {
+				$('#config_alert_box').css('display', 'none');
+				$('#config_alert_box').css('color', 'black');
+			}, 1000);
+		}
+		
+    });
+
+    
+    
+    // Show break hours time
+	$(document).on('click', 
+                `#monday-addBreak, #tuesday-addBreak, #wednesday-addBreak,
+                #thursday-addBreak, #friday-addBreak, #saturday-addBreak,
+                #sunday-addBreak, #publicHoliday-addBreak`, function () {
+
+            const parentName = this.id.split('-addBreak')[0];
+                    
+            $('div#profile-breakHours-time-panel .'+parentName+'-addBreakBtn').css('display', 'none');
+            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
+            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle').css('display', 'inline-block');
+            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle .profile-breakHours-chk_activate').bootstrapToggle('on');
+            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .timepicker').css('display', 'inline-block');
+
+            // For copy time to all button
+            if (parentName == 'monday') {
+                $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #profile-breakHours-copyTimetoAllBtn').css('display', 'inline-block');
+            }
+    });
+
+    // Toggle
+    $(document).on('change', `div#profile-breakHours-time-panel .toggle`, function (element) {
+
+            const parentName = this.firstElementChild.className.split(' ')[0];
+            
+            if (!$('.'+parentName+'.profile-breakHours-chk_activate').prop('checked')) {
+                if (parentName == 'monday') {
+                    $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #profile-breakHours-copyTimetoAllBtn').css('display', 'none');
+                }
+                $('div#profile-breakHours-time-panel .'+parentName+'-addBreakBtn').css('display', 'inline-block');
+                $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'none');
+                $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle').css('display', 'none');
+                $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .timepicker').css('display', 'none');
+            }
     });
 
 });

@@ -920,13 +920,13 @@ div#setupBreakHours #copyTimetoAllBtnBreak{
     display: none;
 }
 
-#monday-addBreak,
-#tuesday-addBreak,
-#wednesday-addBreak,
-#thursday-addBreak,
-#friday-addBreak,
-#saturday-addBreak,
-#sunday-addBreak,
-#publicHoliday-addBreak {
+div#setupBreakHours #monday-addBreak,
+div#setupBreakHours #tuesday-addBreak,
+div#setupBreakHours #wednesday-addBreak,
+div#setupBreakHours #thursday-addBreak,
+div#setupBreakHours #friday-addBreak,
+div#setupBreakHours #saturday-addBreak,
+div#setupBreakHours #sunday-addBreak,
+div#setupBreakHours #publicHoliday-addBreak {
     font-size: 0.5em;
 }

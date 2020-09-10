@@ -12,7 +12,7 @@ jQuery(document).ready( function ($) {
 
     $('.timepicker.profile-operatingHours-time-to').timepicker({
         'timeFormat' : 'h:i A',
-        'minTime'	 : '09:00:00',
+        'minTime'	 : '09:15:00',
         'maxTime'	 : '21:00:00'
     });
 
@@ -177,6 +177,24 @@ jQuery(document).ready( function ($) {
                 }, 1000);
           });
         
+    });
+
+    $(document).on('change', 'div#profile-operatingHours-time-panel .timepicker.profile-operatingHours-time-to', function (time) {
+		const timeselected = time.currentTarget.value,
+				parentElement = this.parentElement.parentElement.id.split('-div')[0],
+                fromTime = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-from').val();
+            
+		if (new Date().getTime(timeselected) <= new Date().getTime(fromTime)) {
+			$('#config_alert_box').css('display', 'block');
+			$('#config_alert_box').css('color', 'red');
+			$('#config_alert_box').html('Invalid time selected!');
+			$('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-to').val('09:00 PM');
+			setTimeout(function () {
+				$('#config_alert_box').css('display', 'none');
+				$('#config_alert_box').css('color', 'black');
+			}, 1000);
+		}
+		
     });
 
 });

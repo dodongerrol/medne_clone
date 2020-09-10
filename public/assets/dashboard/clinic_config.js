@@ -118,12 +118,12 @@ jQuery(document).ready(function($) {
 		$('.timepicker.breakTime-from').timepicker({
 			'timeFormat' : 'h:i A',
 			'minTime'	 : '09:00:00',
-			'maxTime'	 : '21:00:00'
+			'maxTime'	 : '20:00:00'
 		});
 
 		$('.timepicker.breakTime-to').timepicker({
 			'timeFormat' : 'h:i A',
-			'minTime'	 : '09:00:00',
+			'minTime'	 : '09:15:00',
 			'maxTime'	 : '21:00:00'
 		});
 
@@ -528,6 +528,23 @@ jQuery(document).ready(function($) {
 	
 	/****************************Operating Hours**********************************/
 
+	$(document).on('change', 'div#setupHours .timepicker.time-to', function (time) {
+		const timeselected = time.currentTarget.value,
+				parentElement = this.parentElement.parentElement.id.split('-div')[0],
+				fromTime = $('div#setupHours #'+parentElement+'-div .timepicker.time-from').val();
+		if (new Date().getTime(timeselected) <= new Date().getTime(fromTime)) {
+			$('#config_alert_box').css('display', 'block');
+			$('#config_alert_box').css('color', 'red');
+			$('#config_alert_box').html('Invalid time selected!');
+			$('div#setupHours #'+parentElement+'-div .timepicker.time-to').val('09:00 PM');
+			setTimeout(function () {
+				$('#config_alert_box').css('display', 'none');
+				$('#config_alert_box').css('color', 'black');
+			}, 1000);
+		}
+		
+	});
+
 	$(document).on('change', '#monday-div input.timepicker.time-from.ui-timepicker-input, #monday-div input.timepicker.time-to.ui-timepicker-input',function () {
 		var mondayTimeFrom = $('#monday-div input.timepicker.time-from.ui-timepicker-input').val(),
 			mondayTimeTo   = $('#monday-div input.timepicker.time-to.ui-timepicker-input').val();
@@ -573,10 +590,6 @@ jQuery(document).ready(function($) {
 			$('#'+availableDays[i]+'-div input.timepicker.time-from.ui-timepicker-input').val(mondayTimeFrom);
 			$('#'+availableDays[i]+'-div input.timepicker.time-to.ui-timepicker-input').val(mondayTimeTo);
 		}
-
-		/* Change Button text and add class */
-		$('#copyTimetoAllBtn').css('display', 'none');
-		$('#undoCopyTimetoAllBtn').css('display', 'block');
 	});	
 
 	/* Undo changes in every days */
@@ -603,6 +616,25 @@ jQuery(document).ready(function($) {
 	});	
 
 	/****************************Break Hours**********************************/
+	// Validate Time-From and Time-to value
+	$(document).on('change', 'div#setupBreakHours .breakTime-to', function (time) {
+		const timeselected = time.currentTarget.value,
+				parentElement = this.parentElement.parentElement.id.split('-div')[0],
+				fromTime = $('div#setupBreakHours #'+parentElement+'-div .breakTime-from').val();
+
+		if (new Date().getTime(timeselected) <= new Date().getTime(fromTime)) {
+			$('#config_alert_box').css('display', 'block');
+			$('#config_alert_box').css('color', 'red');
+			$('#config_alert_box').html('Invalid time selected!');
+			$('div#setupBreakHours #'+parentElement+'-div .breakTime-to').val('09:00 PM');
+			
+			// For copy time to all button
+			if (parentElement == 'monday') {
+				$('div#setupBreakHours #'+parentElement+'-div #copyTimetoAllBtnBreak').css('display', 'none');
+			}
+		}
+		
+	});
 	// Show break hours time
 	$(document).on('click', 
 						`#monday-addBreak, #tuesday-addBreak, #wednesday-addBreak,
@@ -613,7 +645,29 @@ jQuery(document).ready(function($) {
 		$('div#setupBreakHours .'+parentName+'-addBreakBtn').css('display', 'none');
 		$('div#setupBreakHours #'+parentName+'-div .col-md-1.con-detail-lbl').css('display', 'inline-block');
 		$('div#setupBreakHours #'+parentName+'-div .toggle').css('display', 'inline-block');
+		$('div#setupBreakHours #'+parentName+'-div .toggle .breakChk_activate').bootstrapToggle('on');
 		$('div#setupBreakHours #'+parentName+'-div .timepicker').css('display', 'inline-block');
+		
+		// For copy time to all button
+		if (parentName == 'monday') {
+			$('div#setupBreakHours #'+parentName+'-div #copyTimetoAllBtnBreak').css('display', 'inline-block');
+		}
+	});
+
+	// Toggle
+	$(document).on('change', `div#setupBreakHours .toggle`, function (element) {
+		
+		const parentName = this.firstElementChild.className.split(' ')[0];
+		
+		if (!$('.'+parentName+'.breakChk_activate').prop('checked')) {
+			if (parentName == 'monday') {
+				$('div#setupBreakHours #'+parentName+'-div #copyTimetoAllBtnBreak').css('display', 'none');
+			}
+			$('div#setupBreakHours .'+parentName+'-addBreakBtn').css('display', 'inline-block');
+			$('div#setupBreakHours #'+parentName+'-div .col-md-1.con-detail-lbl').css('display', 'none');
+			$('div#setupBreakHours #'+parentName+'-div .toggle').css('display', 'none');
+			$('div#setupBreakHours #'+parentName+'-div .timepicker').css('display', 'none');
+		}
 	});
 
 	$(document).on('change', '#monday-div input.timepicker.breakTime-from.ui-timepicker-input, #monday-div input.timepicker.breakTime-to.ui-timepicker-input',function () {
@@ -653,42 +707,24 @@ jQuery(document).ready(function($) {
 		var mondayTimeFrom = $('#monday-div input.timepicker.breakTime-from.ui-timepicker-input').val(),
 			mondayTimeTo   = $('#monday-div input.timepicker.breakTime-to.ui-timepicker-input').val();
 		
-		// Set monday Time values to other days
-		/* Set all toggle ON*/
+		/* Set monday Time values to other days */
+		
+		//Set all toggle ON
 		$('.breakChk_activate').bootstrapToggle('on');
-		var availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+		var availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
 
 		for (var i = 0; i < availableDays.length; i++) {
+			// Display visible all elements needed.
+			$('div#setupBreakHours .'+availableDays[i]+'-addBreakBtn').css('display', 'none');
+			$('div#setupBreakHours #'+availableDays[i]+'-div .col-md-1.con-detail-lbl').css('display', 'inline-block');
+			$('div#setupBreakHours #'+availableDays[i]+'-div .toggle').css('display', 'inline-block');
+			$('div#setupBreakHours #'+availableDays[i]+'-div .timepicker').css('display', 'inline-block');
+
+			// Set value to time-From and time-To
 			$('#'+availableDays[i]+'-div input.timepicker.breakTime-from.ui-timepicker-input').val(mondayTimeFrom);
 			$('#'+availableDays[i]+'-div input.timepicker.breakTime-to.ui-timepicker-input').val(mondayTimeTo);
 		}
 
-		/* Change Button text and add class */
-		// $('#copyTimetoAllBtnBreak').css('display', 'none');
-		// $('#undoCopyTimetoAllBtnBreak').css('display', 'block');
-	});	
-
-	/* Undo changes in every days */
-	$('#undoCopyTimetoAllBtnBreak').click(function () {console.log('shit')
-		/* Set all toggle OFF*/
-		$('#tuesday-div .breakChk_activate').bootstrapToggle('off');
-		$('#wednesday-div .breakChk_activate').bootstrapToggle('off');
-		$('#thursday-div .breakChk_activate').bootstrapToggle('off');
-		$('#friday-div .breakChk_activate').bootstrapToggle('off');
-		$('#saturday-div .breakChk_activate').bootstrapToggle('off');
-		$('#sunday-div .breakChk_activate').bootstrapToggle('off');
-		$('#publicHoliday-div .breakChk_activate').bootstrapToggle('off');
-
-		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
-
-		for (var i = 0; i < availableDays.length; i++) {
-			$('#'+availableDays[i]+'-div input.timepicker.breakTime-from.ui-timepicker-input').val('09:00 AM');
-			$('#'+availableDays[i]+'-div input.timepicker.breakTime-to.ui-timepicker-input').val('09:00 PM');
-		}
-
-		/* Change Button text and add class */
-		$('#copyTimetoAllBtnBreak').css('display', 'block');
-		$('#undoCopyTimetoAllBtnBreak').css('display', 'none');
 	});	
 
 	$("#welcome-next").click(function(){
@@ -706,12 +742,12 @@ jQuery(document).ready(function($) {
 		$('.timepicker.time-from').timepicker({
 			'timeFormat' : 'h:i A',
 			'minTime'	 : '09:00:00',
-			'maxTime'	 : '21:00:00'
+			'maxTime'	 : '20:00:00'
 		});
 
 		$('.timepicker.time-to').timepicker({
 			'timeFormat' : 'h:i A',
-			'minTime'	 : '09:00:00',
+			'minTime'	 : '09:15:00',
 			'maxTime'	 : '21:00:00'
 		});
 	  });
