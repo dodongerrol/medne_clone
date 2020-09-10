@@ -10,7 +10,7 @@
           </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+        <div ng-if="showLastTermSelector && !selectedTerm" ng-repeat="list in dateTerm" class="last-term-selector">
           <!-- <span>Last term</span> -->
           <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
           <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
