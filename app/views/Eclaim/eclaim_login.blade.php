@@ -179,7 +179,7 @@
 								</div>
 								<!-- for future flag ui -->
 								<!-- <div ng-repeat="list in countryData">
-									<img src="../assets/images/flag/list.image" style="height: 20px; width: 30px;">
+									<img src="../assets/images/flag/@{{list.image}}" style="height: 20px; width: 30px;">
 									<div ng-bind="list.name"></div>
 								</div> -->
 							</div>
@@ -257,6 +257,9 @@
 					</div>
 					<div class="mobile-message-container" ng-if="passwordNotMatch">
 						<span>Sorry, your password and confirmation password do not match</span>
+					</div>
+					<div class="mobile-message-container" ng-if="disableCreateText">
+						<span ng-bind="createNewPasswordData.message"></span>
 					</div>
 				</div>
 			</div>

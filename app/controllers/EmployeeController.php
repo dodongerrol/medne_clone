@@ -3369,7 +3369,7 @@ class EmployeeController extends \BaseController {
       ];
       
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
-      $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
+      $token = StringHelper::createLoginToken($checker->UserID, $input['user_id']);
       if(!$token->status) {
         return Response::json($token);
       }

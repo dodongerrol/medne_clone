@@ -221,6 +221,7 @@ login.directive('eclaimLogin', [
         scope.showPostalCodeInput = false;
         scope.mobileValidation = false;
         scope.otpValidation = false;
+        scope.disableCreateText = false;
         // testing for flag 
         // scope.countryData = [
         //   {
@@ -340,11 +341,13 @@ login.directive('eclaimLogin', [
           $http.post(serverUrl.url + 'employee/create_new_password_member', data)
 	          .then(function(response) {
               console.log(response);
+              scope.createNewPasswordData = response.data;              
               if (response.data.status) {
                 scope.showPostalCodeInput = true;
                 scope.hideLoading();
               } else {
                 // scope.showPostalCodeInput = true;
+                scope.disableCreateText = true;
                 scope.hideLoading();
               }
             })
@@ -356,23 +359,42 @@ login.directive('eclaimLogin', [
           if ( type == 'new_password' ) {
             scope.new_password = data;
             console.log(scope.new_password);
+            console.log(scope.confirm_new_password);
           }
           if ( type == 'confirm_new_password' ) {
             scope.confirm_new_password = data;
+            console.log(scope.new_password);
             console.log(scope.confirm_new_password);
           }
+          
+          if ( (scope.new_password != undefined && scope.confirm_new_password != undefined) && (scope.new_password != "" && scope.confirm_new_password != "") ) {
+           
+            // if ( scope.new_password == scope.confirm_new_password ) {
+            //   // console.log('naa pa ang disale ug mugawas ang trigger');
+            //   scope.disableCreate = false;
+            //   scope.passwordNotMatch = false;
+            // } else {
+            //   // console.log('wala ang trigger tas wala ang disable sa button')
+              
+            //   scope.disableCreate = true;
+            //   scope.passwordNotMatch = true;
+            //   scope.disableCreateText = false;
+            // }
 
-          if ( scope.new_password != scope.confirm_new_password ) {
+            if ( scope.new_password != scope.confirm_new_password ) {
             // console.log('naa pa ang disale ug mugawas ang trigger');
-            scope.disableCreate = true;
-            scope.passwordNotMatch = true;
-          } else if (scope.new_password == "" && scope.confirm_new_password == "" ) {
-            scope.disableCreate = true;
-            scope.passwordNotMatch = false;
-          } else {
-            // console.log('wala ang trigger tas wala ang disable sa button')
-            scope.disableCreate = false;
-            scope.passwordNotMatch = false;
+              scope.disableCreate = true;
+              scope.passwordNotMatch = true;
+              scope.disableCreateText = false;
+            } else if (scope.new_password == null && scope.confirm_new_password == null ) {
+              scope.disableCreate = true;
+              scope.passwordNotMatch = false;
+              scope.disableCreateText = false;
+            } else {
+              // console.log('wala ang trigger tas wala ang disable sa button')
+              scope.disableCreate = false;
+              scope.passwordNotMatch = false;
+            }
           }
         }
 
