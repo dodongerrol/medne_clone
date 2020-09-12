@@ -53,10 +53,13 @@
 						<th class="status-title">Status</th>
 						<th class="nric-fin-title">Mobile Number</th>
 						<!-- <th class="nric-fin-title">NRIC/FIN</th> -->
-						<th class="plan-details-title">Plan details</th>
+						<!-- <th class="plan-details-title">Plan details</th> -->
+						<th class="plan-details-title">(Medical) Benefits Coverage</th>
 						<th class="family-coverage-title">Family coverage</th>
-						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-medical-title">Spending account <span>(medical)</span></th>
-						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-wellness-title">Spending account <span>(wellness)</span></th>
+						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-medical-title">Medical Wallet</th>
+						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-wellness-title">Wellness Wallet</th>
+						<!-- <th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-medical-title">Spending account <span>(medical)</span></th>
+						<th ng-if="spending_account_status.account_type != 'enterprise_plan'" class="spending-account-wellness-title">Spending account <span>(wellness)</span></th> -->
 						<th ng-if="spending_account_status.account_type == 'enterprise_plan'" class="spending-account-visits-title">Visits</th>
 						<th ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == false" class="spending-account-spending-title">Spendings</th>
 						<th ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true" class="spending-account-spending-title">Wellness<br>Spending Account</th>
@@ -96,7 +99,8 @@
 						<td class="plan-start-container">
 							<span ng-bind="emp.plan_tier.plan_tier_name">Tier 1</span>
 							<div class="plan-details">
-								<strong>Plan type: </strong>
+								<strong>Benefits coverage: </strong>
+								<!-- <strong>Plan type: </strong> -->
 								<span ng-bind="emp.plan_name">Pro Plan</span>
 							</div>
 							<div class="plan-details">
@@ -112,7 +116,7 @@
 						</td>
 						<td ng-if="spending_account_status.account_type != 'enterprise_plan'" class="medical-details-container">
 							<div class="medical-details">
-								<strong>Allocation:</strong>
+								<strong>Entitlement:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
 										ng-bind="emp.spending_account.medical.credits_allocation">1,000.00</span></span>
 							</div>
@@ -124,7 +128,7 @@
 						</td>
 						<td ng-if="spending_account_status.account_type != 'enterprise_plan'" class="wellness-details-container">
 							<div class="wellness-details">
-								<strong>Allocation:</strong>
+								<strong>Entitlement:</strong>
 								<span><span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> <span
 										ng-bind="emp.spending_account.wellness.credits_allocation_wellness">1,000.00</span></span>
 							</div>
@@ -309,7 +313,8 @@
 				<div class="plan-information">
 					<h4 class="font-helvetica-medium"><strong>Plan Information</strong></h4>
 					<div class="employee-plan">
-						<strong class="font-helvetica-medium"><span>Plan</span></strong>
+						<!-- <strong class="font-helvetica-medium"><span>Plan</span></strong> -->
+						<strong class="font-helvetica-medium"><span>(Medical) Benefits Coverage</span></strong>
 						<p ng-repeat="list in selectedEmployee.plan_list" style="margin: 5px!important;">
 							<span><span ng-bind="list.user_type"></span> - <span ng-bind="list.plan_type"></span></span>
 						</p>
@@ -430,7 +435,8 @@
 					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
-							<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
+							<!-- <strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong> -->
+							<strong class="font-helvetica-medium">Entitlement</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 									ng-bind="selectedEmployee.spending_account.medical.credits_allocation">1,000.00</span></span>
 						</div>
@@ -480,7 +486,8 @@
 					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
-							<strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
+							<!-- <strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong> -->
+							<strong class="font-helvetica-medium">Entitlement</strong>
 							<span><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span> <span
 									ng-bind="selectedEmployee.spending_account.wellness.credits_allocation_wellness">500.00</span></span>
 						</div>

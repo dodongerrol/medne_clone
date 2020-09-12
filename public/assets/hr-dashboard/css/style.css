@@ -9793,7 +9793,7 @@ span.dropdown-entitlement.disabled {
 }
 .mednefits-logo-container .mednefits-logo {
   width: 180px;
-  margin: 40px 0 90px;
+  margin: 40px 0 50px;
 }
 .mednefits-logo-container {
   text-align: center;
@@ -9884,6 +9884,7 @@ span.dropdown-entitlement.disabled {
 }
 .btn-footer {
   text-align: right;
+  margin-bottom: 50px;
 }
 .privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
   /* margin: 0 0 40px; */
