@@ -3467,7 +3467,7 @@ class EmployeeController extends \BaseController {
       }
 
       $checker = DB::table('user')
-      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp')
+      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'Password', 'disabled_otp')
       ->where('PhoneNo', $input['mobile'])->first();
 
       if(!$checker) {
@@ -3483,6 +3483,12 @@ class EmployeeController extends \BaseController {
           $checker->postal_code = 1;
       }
 
+      if($checker->Password == null || $checker->Password === null) {
+        $checker->Password = 0;
+      }
+      else {
+        $checker->Password = 1;
+      }
       $returnObject->status = true;
       $returnObject->message = 'Member is already registered';
       $returnObject->data = $checker;
