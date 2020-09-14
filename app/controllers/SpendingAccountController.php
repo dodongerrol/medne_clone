@@ -19,7 +19,7 @@ class SpendingAccountController extends \BaseController {
                         ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
                         ->where('mednefits_credits.customer_id', $customer_id)
                         ->where('mednefits_credits.start_term', $input['start'])
-                        ->where('mednefits_credits.end_term', $input['end'])
+                        // ->where('mednefits_credits.end_term', $input['end'])
                         ->get();
 
 		if(sizeof($account_credits) == 0) {
@@ -73,11 +73,11 @@ class SpendingAccountController extends \BaseController {
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
 			// 'mednefits_credits_id'  => $account_credits->id,
-			'total_credits'         => $total_credits,
-			'available_credits'     => $total_credits - $utilised_credits['credits'],
-			'purchased_credits'     => $purchased_credits,
-			'bonus_credits'         => $bonus_credits,
-			'total_utilised_credits'  => $utilised_credits['credits'],
+			'total_credits'         => number_format($total_credits, 2),
+			'available_credits'     => number_format($total_credits - $utilised_credits['credits'], 2),
+			'purchased_credits'     => number_format($purchased_credits, 2),
+			'bonus_credits'         => number_format($bonus_credits, 2),
+			'total_utilised_credits'  => number_format($utilised_credits['credits'], 2),
 			'top_up_total_credits'  => $top_up_purchase,
 			'top_up_purchase'       => $top_up_purchase,
 			'top_up_bonus_credits'  => $top_up_bonus_credits,
@@ -683,7 +683,7 @@ class SpendingAccountController extends \BaseController {
 				$activity->label = 'Refund';
 				$activity->type_status = "deduct";
 			}
-
+			$activity->credit = number_format($activity->credit, 2);
 			$format[] = $activity;
 		}
 
@@ -737,7 +737,7 @@ class SpendingAccountController extends \BaseController {
 			$temp = array(
 				'mednefits_credits_id'	=> $activity->mednefits_credits_id,
 				'customer_id'	=> $activity->customer_id,
-				'credit'	=> $activity->credit,
+				'credit'	=> number_format($activity->credit, 2),
 				'type' => $activity->type,
 				'label'	=> $label,
 				'type_status'	=> $type_status,

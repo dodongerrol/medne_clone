@@ -191,6 +191,7 @@ class StringHelper{
                 if($hr) {
                     if((int)$hr->active == 1) {
                         $hr->signed_in = $result->signed_in;
+                        $hr->hr_activated = true;
                         if(isset($result->expire_in)) {
                             $hr->expire_in = $result->expire_in;
                         } else {
