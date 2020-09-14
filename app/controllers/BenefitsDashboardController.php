@@ -17297,6 +17297,23 @@ class BenefitsDashboardController extends \BaseController {
             ->where('id', $input['id'])->update($data);
         } 
         return array('status' => TRUE, 'message' => 'Successfully updated Department.');
-    }
+	}
+	
+	public function getDepartmentList()
+	{	
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+		$format = [];
+		
+		$departments = CorporateHrDepartment::where('customer_id', $id)->orderBy('created_at','desc')->get();
+		
+
+		$data = array (
+			'department_name' 	=> $departments 
+		);
+
+		return array('data' => $data);
+	}
 }
 
