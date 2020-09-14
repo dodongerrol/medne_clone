@@ -17196,7 +17196,7 @@ class BenefitsDashboardController extends \BaseController {
 			'wellness_spending_account_validity'	=> date('d/m/Y', strtotime($spending_account->wellness_spending_start_date)).' - '.date('d/m/Y', strtotime($spending_account->wellness_spending_end_date)),
 		);
 
-		return array('data' => $temp, 'status' => true);;
+		return array('data' => $temp, 'status' => true);
 	}
 
 	public function getDepartmentList()
@@ -17206,11 +17206,17 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_id = $result->customer_buy_start_id;
 		$format = [];
 		
-		if(empty($input['customer_id']) || $input['customer_id'] == null) {
-			return ['status' => false, 'message' => 'customer_id is required'];
-		}
-		$departments = DB::table('company_departments')->where('customer_id', $input['customer_id'])->first();
+		// if(empty($input['customer_id']) || $input['customer_id'] == null) {
+		// 	return ['status' => false, 'message' => 'customer_id is required'];
+		// }
+		$departments = DB::table('company_departments')->where('customer_id', $customer_id)->first();
 		
+
+		// $data = array (
+		// 	'department_name' 	=> $departments 
+		// );
+
+		// return array('data' => $data);
 		foreach ($departments as $key => $department){
 
 			$data = array(
@@ -17219,5 +17225,46 @@ class BenefitsDashboardController extends \BaseController {
 			array_push($format, $data);
 		}
 		return $format;
+	}
+
+	public function createHrDepartment ()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+
+		// if(empty($input['department_name']) || $input['department_name'] == null) {
+		// 	return ['status' => false, 'message' => 'department_name'];
+		// }
+
+		if($id) {
+			$data = array (
+				'customer_id'		=> $id,
+				'department_name' 	=> $input['department_name']
+			);
+			\CorporateHrDepartment::create($data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully created Department.');			
+	}
+
+	public function updateHrDepartment ()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		if($id) {
+			$data = array (
+				'id'				=> $input['id'],
+				'department_name' 	=> $input['department_name']
+			);
+			$update = DB::table('company_departments')
+			->where('id', $input['id'])->update($data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully updated Department.');
 	}
 }
