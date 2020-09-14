@@ -222,6 +222,7 @@ login.directive('eclaimLogin', [
         scope.mobileValidation = false;
         scope.otpValidation = false;
         scope.disableCreateText = false;
+        scope.disabledSignIn = true;
         // testing for flag 
         // scope.countryData = [
         //   {
@@ -272,6 +273,8 @@ login.directive('eclaimLogin', [
               console.log(response);
               scope.checkMobileData = response.data;
               scope.checkMemberData = response.data.data;
+              console.log(scope.checkMemberData);
+              // scope.checkMemberData.Password = 0;
               if (response.data.status == true ) {
                 scope.disabledContinue = false;
                 scope.mobileValidation = false;
@@ -437,8 +440,20 @@ login.directive('eclaimLogin', [
                 console.log('trueeeeeeee');
                 window.location.href = window.location.origin + '/member-portal#/home';
                 window.localStorage.setItem('token_member', response.data.token);
+              } else {
+                swal('Ooops!', response.data.message, 'error');
               }
             })
+        }
+
+        scope.checkPassword = function ( new_password ) {
+          scope.disabledSignIn = false;
+          scope.new_password = new_password;
+          console.log(scope.new_password);
+        }
+
+        scope.signInPassword = function () {
+          scope.showPostalCodeInput = true;
         }
 
         scope.showLoading = function(){
