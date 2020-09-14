@@ -166,9 +166,17 @@ login.directive('loginSection', [
 					scope.pageActive = page;
 					scope.checkLinkedAccounts();
 				}
-				scope.chooseAccount = (accountId) =>  {
-					window.localStorage.setItem('token', scope.token);
-					window.location.href = window.location.origin + "/company-benefits-dashboard/";
+				scope.chooseAccount = async (account) =>  {
+					await $http.get(serverUrl.url + '/hr/login_company_linked?id=' + account.id + '&token=' + scope.token)
+					.success(function(response){
+						console.log(response);
+						if(response.status){
+							window.localStorage.setItem('token', response.token);
+							window.location.href = window.location.origin + "/company-benefits-dashboard/";
+						}else{
+							swal('Error!', response.message, 'error');
+						}
+					});
 				}
 				scope.range = function (range) {
           var arr = [];
