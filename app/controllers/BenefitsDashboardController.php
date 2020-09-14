@@ -17203,28 +17203,17 @@ class BenefitsDashboardController extends \BaseController {
 	{	
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$customer_id = $result->customer_buy_start_id;
+		$id = $result->hr_dashboard_id;
 		$format = [];
 		
-		// if(empty($input['customer_id']) || $input['customer_id'] == null) {
-		// 	return ['status' => false, 'message' => 'customer_id is required'];
-		// }
-		$departments = DB::table('company_departments')->where('customer_id', $customer_id)->first();
+		$departments = CorporateHrDepartment::where('customer_id', $id)->orderBy('created_at','desc')->get();
 		
 
-		// $data = array (
-		// 	'department_name' 	=> $departments 
-		// );
+		$data = array (
+			'department_name' 	=> $departments 
+		);
 
-		// return array('data' => $data);
-		foreach ($departments as $key => $department){
-
-			$data = array(
-				'department_name'		=> $departments
-			);
-			array_push($format, $data);
-		}
-		return $format;
+		return array('data' => $data);
 	}
 
 	public function createHrDepartment ()
@@ -17232,10 +17221,6 @@ class BenefitsDashboardController extends \BaseController {
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->hr_dashboard_id;
-
-		// if(empty($input['department_name']) || $input['department_name'] == null) {
-		// 	return ['status' => false, 'message' => 'department_name'];
-		// }
 
 		if($id) {
 			$data = array (
