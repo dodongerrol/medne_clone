@@ -17312,62 +17312,22 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function createHrDepartment ()
-    {
-        $input = Input::all();
-        $result = StringHelper::getJwtHrSession();
-        $id = $result->hr_dashboard_id;
-
-        // if(empty($input['department_name']) || $input['department_name'] == null) {
-        //  return ['status' => false, 'message' => 'department_name'];
-        // }
-
-        if($id) {
-            $data = array (
-                'customer_id'       => $id,
-                'department_name'   => $input['department_name']
-            );
-            \CorporateHrDepartment::create($data);
-        } 
-        return array('status' => TRUE, 'message' => 'Successfully created Department.');            
-    }
-
-    public function updateHrDepartment ()
-    {
-        $input = Input::all();
-        $result = StringHelper::getJwtHrSession();
-        $id = $result->hr_dashboard_id;
-
-        if(empty($input['id']) || $input['id'] == null) {
-            return ['status' => false, 'message' => 'id is required'];
-        }
-
-        if($id) {
-            $data = array (
-                'id'                => $input['id'],
-                'department_name'   => $input['department_name']
-            );
-            $update = DB::table('company_departments')
-            ->where('id', $input['id'])->update($data);
-        } 
-        return array('status' => TRUE, 'message' => 'Successfully updated Department.');
-	}
-	
-	public function getDepartmentList()
-	{	
+	public function deleteHrDepartment()
+	{
 		$input = Input::all();
-		$result = StringHelper::getJwtHrSession();
+        $result = StringHelper::getJwtHrSession();
 		$id = $result->hr_dashboard_id;
-		$format = [];
 		
-		$departments = CorporateHrDepartment::where('customer_id', $id)->orderBy('created_at','desc')->get();
-		
+		if(empty($input['id']) || $input['id'] == null) {
+            return ['status' => false, 'message' => 'id is required'];
+		}
+		$remove = DB::table('company_departments')
+		->where('id', $input['id'])->delete();
 
-		$data = array (
-			'department_name' 	=> $departments 
+		return array(
+			'status'		=> TRUE,
+			'message'		=> 'Successfully deleted department.'
 		);
-
-		return array('data' => $data);
 	}
 }
 
