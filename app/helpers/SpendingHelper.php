@@ -10,7 +10,7 @@ class SpendingHelper {
         $total_wellness_balance = 0;
         $end = \PlanHelper::endDate($end);
         $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-        $user_allocated = \CustomerHelper::getActivePlanUsers($account_link->corporate_id, $customer_id);
+        $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
 
         if(sizeof($user_allocated) > 0) {
             $wallet_ids = DB::table('e_wallet')->whereIn('UserID', $user_allocated)->lists('wallet_id');

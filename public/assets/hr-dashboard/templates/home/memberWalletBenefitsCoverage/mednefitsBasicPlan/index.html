@@ -10,7 +10,7 @@
           </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+        <div ng-if="showLastTermSelector && !selectedTerm" ng-repeat="list in dateTerm" class="last-term-selector">
           <!-- <span>Last term</span> -->
           <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
           <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
@@ -61,7 +61,7 @@
                 <span class="available-credits-container dp-flex-ai">
                   <h5 class="flex-1 member-bold-text">GIRO</h5>
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
-                    <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                    <!-- <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button> -->
                   </div>
                 </span>
                 <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
@@ -92,7 +92,7 @@
                 <span class="available-credits-container dp-flex-ai">
                   <h5 class="flex-1 member-bold-text">Bank Transfer/ PayNow</h5>
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer') || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')">
-                    <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                    <!-- <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button> -->
                   </div>
                 </span>
                 <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || medical_wallet_details.non_panel_payment_method == 'bank_transfer') || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')" class="display-flex mednefits-credits-wallet-container">
@@ -118,16 +118,16 @@
             <div class="available-credits-container">
               <div class="available-credits">
                 <span class="available-credits-container dp-flex-ai">
-                  <h5 class="flex-1 member-bold-text">Mednefits Credits</h5>
+                  <h5 class="flex-1 member-bold-text">Prepaid Credits</h5>
                   <div ng-if="false" class="prepaid-not-activated">
                     <button class="btn-activate-credits">Activate Prepaid Credits Account</button>
                   </div >
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || wellness_wallet_details.non_panel_payment_method == 'mednefits_credits') || (wellness_wallet_details.panel_payment_method == 'mednefits_credits' || wellness_wallet_details.non_panel_payment_method == 'mednefits_credits')">
-                    <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+                    <!-- <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button> -->
                   </div>
                 </span>
-                <p class="mca-text">Mednefits Credits is held in Mednefits Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
-                <div>This method is currently used in:</div>
+                <p class="mca-text">Prepaid Credits is held in Prepaid Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || medical_wallet_details.non_panel_payment_method == 'mednefits_credits') || (wellness_wallet_details.non_panel_payment_method == 'mednefits_credits')">This method is currently used in:</div>
                 <div>
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || medical_wallet_details.non_panel_payment_method == 'mednefits_credits')"  class="display-flex mednefits-credits-wallet-container"  class="display-flex mednefits-credits-wallet-container" class="display-flex mednefits-credits-wallet-container">
                     <div class="member-bold-text">Medical Wallet:</div>

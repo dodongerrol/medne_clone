@@ -85,7 +85,7 @@ app.directive('spendingBillingDirective', [
 
               scope.billingData = response.data.data;
               scope.billingPagination = response.data;
-              scope.totalOutstanding = response.data.total_due;
+              scope.totalOutstanding = parseFloat(response.data.total_due).toFixed(2);
 							scope.hideLoading();
             })
 				}
@@ -142,6 +142,9 @@ app.directive('spendingBillingDirective', [
         }
 
         scope.downloadViewInvoice = function ( id ) {
+          window.open(serverUrl.url + '/benefits/invoice/' + id );
+        }
+        scope.downloadViewTransactions = function ( id ) {
           window.open(serverUrl.url + '/benefits/invoice/' + id );
         }
 

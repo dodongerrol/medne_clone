@@ -454,14 +454,19 @@ class SpendingInvoiceController extends \BaseController {
     
     public function getCompanyInvoiceHistory( )
 	{
-		$session = self::checkSession();
+		$input = Input::all();
+
+		if(!empty($input['token']) && $input['token'] != null) {
+			$session = self::checkToken($input['token']);
+		} else {
+			$session = self::checkSession();
+		}
+
 		$customer_id = $session->customer_buy_start_id;
-        $input = Input::all();
 
 		if(empty($input['type']) || $input['type'] == null) {
 			return array('status' => false, 'message' => 'type is required.');
 		}
-
 
 		if(!in_array($input['type'], ['spending', 'plan', 'deposit', 'plan_withdrawal'])) {
 			return ['status' => false, 'message' => 'type should only be spending, plan, deposit and plan_withdrawal'];
@@ -473,12 +478,6 @@ class SpendingInvoiceController extends \BaseController {
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-
-			// if($type == 2) {
-			// 	$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $request->get('customer_id'))->orderBy('statement_date', 'desc')->paginate($limit);
-			// } else {
-			// 	$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $request->get('customer_id'))->where('statement_status', $type)->orderBy('statement_date', 'desc')->paginate($limit);
-			// }
 			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();		
 			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
 
@@ -604,124 +603,101 @@ class SpendingInvoiceController extends \BaseController {
 			}
 
 			$pagination['data'] = $format;
-			$pagination['total_due'] = $total_due;
+			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;
 
 		} elseif ($input['type'] == 'plan') {
-
-			$all_plan_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();		
-
-            $active_plans = DB::table('customer_active_plan')
-                                        ->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
-										->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
-										->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
-										->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-										->where('customer_buy_start.customer_buy_start_id', $customer_id)
-										->orderBy('corporate_invoice.invoice_date', 'desc')
-										->paginate($limit);
-
+			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 			$pagination = [];
-			$pagination['current_page'] = $active_plans->getCurrentPage();
-			$pagination['last_page'] = $active_plans->getLastPage();
-			$pagination['total'] = $active_plans->getTotal();
-			$pagination['per_page'] = $active_plans->getPerPage();
-			$pagination['count'] = $active_plans->count();
 			$format = [];
-
 			$total_due = 0;
-			
-			foreach ($all_plan_data as $key => $data) {
-				$lite_plan = false;
-				$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
 
-				if($results['credits'] > 0 || $results['total_consultation'] > 0) {
-					$consultation_amount_due = 0;
-					// $company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
-					if((int)$data->lite_plan == 1 || $results['lite_plan'] == true) {
-						$lite_plan = true;
-					}
+			if($plan && $plan->account_type != "lite_plan") {
+				$all_plan_data = DB::table('customer_active_plan')
+							->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
+							->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
+							->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+							->where('customer_buy_start.customer_buy_start_id', $customer_id)
+							->get();		
 
-					if($lite_plan == true) {
-						$consultation_amount_due_temp = DB::table('transaction_history')
-						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-						->where('transaction_history.deleted', 0)
-						->where('transaction_history.paid', 1)
-						->where('transaction_history.lite_plan_enabled', 1)
-						->sum('transaction_history.co_paid_amount');
-						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					}
+				$active_plans = DB::table('customer_active_plan')
+											->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+											->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
+											->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
+											->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+											->where('customer_buy_start.customer_buy_start_id', $customer_id)
+											->orderBy('corporate_invoice.invoice_date', 'desc')
+											->paginate($limit);
 
-					if((int)$data->statement_status == 1) {
-						$total = round($results['credits'] + $results['total_consultation'], 2);
-						$amount_due = (float)$total - (float)$data->paid_amount;
-					} else {
-						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-						$total = $amount_due;
-					}
+				$pagination['current_page'] = $active_plans->getCurrentPage();
+				$pagination['last_page'] = $active_plans->getLastPage();
+				$pagination['total'] = $active_plans->getTotal();
+				$pagination['per_page'] = $active_plans->getPerPage();
+				$pagination['count'] = $active_plans->count();
+				
+				foreach ($all_plan_data as $key => $data) {
+					$result = \PlanHelper::getCompanyInvoice($data->corporate_invoice_id);
+					$total_due += $result['amount_due'];
+				}
+				
+				foreach($active_plans as $key => $active) {
+					$result = \PlanHelper::getCompanyInvoice($active->corporate_invoice_id);
+					$result['invoice_id'] = $active->corporate_invoice_id;
+					$result['corporate_invoice_id'] = $active->corporate_invoice_id;
+					$result['customer_id'] = $active->customer_buy_start_id;
 
-					$amount_due = $amount_due < 0 ? 0 : $amount_due;
-					// array_push($format, $data);
+					$temp = array(
+						'id' => $customer_id,
+						'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
+						'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
+						'number' => $result['invoice_number'],
+						'status'	=> $result['paid'] ? 1 : 0,
+						'amount_due' => $result['amount_due'],
+						'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
+						'payment_amount' => $result['total'],
+						'currency_type' => $result['currency_type'], 
+						'payment_remarks' => $result['payment_remarks'],
+						'payment_method' => null,
+						'company_name' => $result['company']
+					);
 
-					$total_due += $amount_due;
+					array_push($format, $temp);
+				}
+
+				if($download) {
+					$date = date('d-m-Y h:i:s');
+					$title = "Company History Invoice type - Plan-".$date;
+
+					$filterSheet = array_map(function($tmp) { 
+						$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
+						if(!$tmp['paid_date']) {
+							$tmp['paid_date'] = '-';
+						}
+						return $tmp; 
+					}, $format);
+
+					$excel = Excel::create($title, function($excel) use($filterSheet) {
+
+							$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
+								$sheet->fromArray( $filterSheet );
+							});
+
+					})->export('csv');
+					return array('status' => TRUE, 'message' => 'Successfully Downloaded!');
 				}
 			}
 			
-			foreach($active_plans as $key => $active) {
-				$result = \PlanHelper::getCompanyInvoice($active->corporate_invoice_id);
-				$result['invoice_id'] = $active->corporate_invoice_id;
-				$result['corporate_invoice_id'] = $active->corporate_invoice_id;
-				$result['customer_id'] = $active->customer_buy_start_id;
-				// array_push($format, $result);
-
-				$temp = array(
-					'id' => $customer_id,
-					'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
-					'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
-					'number' => $result['invoice_number'],
-					'status'	=> $result['paid'] ? 1 : 0,
-					'amount_due' => $result['amount_due'],
-					'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
-					'payment_amount' => $result['total'],
-					'currency_type' => $result['currency_type'], 
-                    'payment_remarks' => $data->payment_remarks,
-                    'payment_method' => $data->payment_method,
-					'company_name' => $result['company']
-				);
-
-				array_push($format, $temp);
-			}
-
-			if($download) {
-
-				$date = date('d-m-Y h:i:s');
-				$title = "Company History Invoice type - Plan-".$date;
-
-				$filterSheet = array_map(function($tmp) { 
-					$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
-					if(!$tmp['paid_date']) {
-						$tmp['paid_date'] = '-';
-					}
-					return $tmp; 
-				}, $format);
-
-				$excel = Excel::create($title, function($excel) use($filterSheet) {
-
-						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
-							$sheet->fromArray( $filterSheet );
-						});
-
-				})->export('csv');
-				return array('status' => TRUE, 'message' => 'Successfully Downloaded!');
-			}
-
 			$pagination['data'] = $format;
-			$pagination['total_due'] = $total_due;
+			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;
 			
 		} elseif ($input['type'] == 'deposit') {
-
-			$all_deposit_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();
+			$all_deposit_data = DB::table('spending_deposit_credits')
+									->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', "=", 'spending_deposit_credits.customer_active_plan_id')
+									->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', "=", 'customer_active_plan.customer_start_buy_id')
+									->where('customer_buy_start.customer_buy_start_id', $customer_id)
+									->get();
 
 			$deposits = DB::table('spending_deposit_credits')
 							->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', "=", 'spending_deposit_credits.customer_active_plan_id')
@@ -738,44 +714,10 @@ class SpendingInvoiceController extends \BaseController {
 			$pagination['per_page'] = $deposits->getPerPage();
 			$pagination['count'] = $deposits->count();
 			$format = [];
-
 			$total_due = 0;
 
 			foreach ($all_deposit_data as $key => $data) {
-				$lite_plan = false;
-				$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
-
-				if($results['credits'] > 0 || $results['total_consultation'] > 0) {
-					$consultation_amount_due = 0;
-					// $company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
-					if((int)$data->lite_plan == 1 || $results['lite_plan'] == true) {
-						$lite_plan = true;
-					}
-
-					if($lite_plan == true) {
-						$consultation_amount_due_temp = DB::table('transaction_history')
-						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-						->where('transaction_history.deleted', 0)
-						->where('transaction_history.paid', 1)
-						->where('transaction_history.lite_plan_enabled', 1)
-						->sum('transaction_history.co_paid_amount');
-						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					}
-
-					if((int)$data->statement_status == 1) {
-						$total = round($results['credits'] + $results['total_consultation'], 2);
-						$amount_due = (float)$total - (float)$data->paid_amount;
-					} else {
-						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-						$total = $amount_due;
-					}
-
-					$amount_due = $amount_due < 0 ? 0 : $amount_due;
-					// array_push($format, $data);
-
-					$total_due += $amount_due;
-				}
+				$total_due += $result['amount_due'];
 			}
 
 			foreach ($deposits as $key => $deposit) {
@@ -796,7 +738,7 @@ class SpendingInvoiceController extends \BaseController {
 					'payment_amount' => $result['total'],
 					'currency_type' => $result['currency_type'],
                     'payment_remarks' => $data->payment_remarks,
-                    'payment_method' => $data->payment_method,
+                    'payment_method' => null,
 					'company_name' => $result['company']
 				);
 
@@ -827,12 +769,18 @@ class SpendingInvoiceController extends \BaseController {
 			}
 	
 			$pagination['data'] = $format;
-			$pagination['total_due'] = $total_due;
+			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;
 			
 		} elseif ($input['type'] == 'plan_withdrawal') {
 
-			 $all_withdraw_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();
+			 $all_withdraw_data = DB::table('payment_refund')
+									->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id',"=",'payment_refund.customer_active_plan_id')
+									->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id',"=", 'customer_active_plan.customer_start_buy_id')
+									->whereIn('customer_active_plan.account_type',['stand_alone_plan', "=",'lite_plan'])
+									->where('customer_buy_start.customer_buy_start_id', $customer_id)
+									->get();
+
 			 $refunds = DB::table('payment_refund')
 							->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id',"=",'payment_refund.customer_active_plan_id')
 							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id',"=", 'customer_active_plan.customer_start_buy_id')
@@ -852,40 +800,7 @@ class SpendingInvoiceController extends \BaseController {
 			$total_due = 0;
 
 			foreach ($all_withdraw_data as $key => $data) {
-				$lite_plan = false;
-				$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
-
-				if($results['credits'] > 0 || $results['total_consultation'] > 0) {
-					$consultation_amount_due = 0;
-					// $company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
-					if((int)$data->lite_plan == 1 || $results['lite_plan'] == true) {
-						$lite_plan = true;
-					}
-
-					if($lite_plan == true) {
-						$consultation_amount_due_temp = DB::table('transaction_history')
-						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-						->where('transaction_history.deleted', 0)
-						->where('transaction_history.paid', 1)
-						->where('transaction_history.lite_plan_enabled', 1)
-						->sum('transaction_history.co_paid_amount');
-						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					}
-
-					if((int)$data->statement_status == 1) {
-						$total = round($results['credits'] + $results['total_consultation'], 2);
-						$amount_due = (float)$total - (float)$data->paid_amount;
-					} else {
-						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-						$total = $amount_due;
-					}
-
-					$amount_due = $amount_due < 0 ? 0 : $amount_due;
-					// array_push($format, $data);
-
-					$total_due += $amount_due;
-				}
+				$total_due += $result['amount_due'];
 			}
 
 			foreach ($refunds as $key => $refund) {
@@ -942,7 +857,7 @@ class SpendingInvoiceController extends \BaseController {
 			}
 			
 			$pagination['data'] = $format;
-			$pagination['total_due'] = $total_due;
+			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;
 		}
 
