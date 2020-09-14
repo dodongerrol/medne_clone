@@ -257,7 +257,8 @@
 					<!-- <button ng-if="otpStatus == 0 && showContinueInput == true && !showPostalCodeInput" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button> -->
 					<!-- <button ng-if="otpStatus == 1 || showContinueInput == true && !showPostalCodeInput && showPasswordInputInOtp && !showPostalCodeInput && checkMemberData.Password == 1" ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button> -->
 					<button ng-if="otpStatus == 0 && checkMemberData.Password == 1 && !showPostalCodeInput && showContinueInput == true || otpStatus == 1 && checkMemberData.Password == 1 && !showPostalCodeInput && showPasswordInputInOtp == true" ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button>
-					<button ng-if="showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" class="btn btn-info btn-block med-button">Complete and Sign in</button>
+					<button ng-if="checkMemberData.Password == 0 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Complete and Sign in</button>
+					<button ng-if="checkMemberData.Password == 1 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Done</button>
 					<div ng-if="otpStatus == 1 && showContinueInput == true && !showPasswordInputInOtp" class="resend-otp-container">
 						<span>Don't receive OPT? <a ng-click="resendOtp()">Resend OTP</a>.</span>
 					</div>

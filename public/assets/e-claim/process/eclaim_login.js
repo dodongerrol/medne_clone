@@ -223,6 +223,7 @@ login.directive('eclaimLogin', [
         scope.otpValidation = false;
         scope.disableCreateText = false;
         scope.disabledSignIn = true;
+        scope.disabledDone = true;
         // testing for flag 
         // scope.countryData = [
         //   {
@@ -321,10 +322,12 @@ login.directive('eclaimLogin', [
             mobile_country_code: scope.country_code_value,
           }
           console.log(data);
-
+          scope.showLoading();
           $http.post(serverUrl.url + 'employee/send_otp_web',data)
 	          .then(function(response) {
               console.log(response);
+              scope.hideLoading();
+              swal('Success!', response.data.message, 'success');
             })
         }
 
@@ -400,19 +403,25 @@ login.directive('eclaimLogin', [
             }
           }
         }
+        scope.postal_code_value = "";
 
         scope.postalCode = function ( postal_code ) {
-          scope.postalCode = postal_code;
-          console.log(scope.postalCode);
+          if ( postal_code != undefined ) {
+            scope.postal_code_value = postal_code;
+            scope.disabledDone = false;
+            console.log(scope.postal_code_value);
+          } else {
+            scope.disabledDone = true;
+          }
         }
 
         scope.completeSignIn = async function ( type ) {
           
             if ( type == 'postal' ) {
-              console.log(scope.postalCode);
+              console.log(scope.postal_code_value);
               let data = {
                 user_id: scope.checkMemberData.user_id,
-                postal_code: scope.postalCode,
+                postal_code: scope.postal_code_value,
               }
               scope.showLoading();
               await $http.post(serverUrl.url + 'employee/add_postal_code_member', data)
