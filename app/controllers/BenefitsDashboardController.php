@@ -17198,4 +17198,63 @@ class BenefitsDashboardController extends \BaseController {
 
 		return array('data' => $temp, 'status' => true);;
 	}
+
+	public function accessCompanyLogin( )
+	{
+		$input = Input::all();
+		if(empty($input['token'])) {
+			return ['status' => false, 'message' => 'token is required'];
+		}
+
+		if(empty($input['id'])) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		// get token details
+		$result = self::checkToken($input['token']);
+		$customer_id = $result->customer_buy_start_id;
+
+		// check company link account
+		$link_account = DB::table('company_link_accounts')
+							->where('id', $input['id'])
+							->where('under_customer_id', $customer_id)
+							->where('status', 1)
+							->first();
+		if(!$link_account) {
+			return ['status' => false, 'message' => 'company link account does not exist'];
+		}
+
+		// login flow
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $link_account->hr_id)->first();
+
+		if(!$hr) {
+			return ['status' => false, 'message' => 'hr does not exist'];
+		}
+
+		$jwt = new JWT();
+		$secret = Config::get('config.secret_key');
+
+		$hr->signed_in = TRUE;
+		$hr->company_linked = TRUE;
+		$hr->under_customer_id = $customer_id;
+		$token = $jwt->encode($hr, $secret);
+
+		// update ip address for login hr
+		$hrClass = new HRDashboard();
+		$hrClass->updateCorporateHrDashboard($hr->hr_dashboard_id, array('login_ip' => $_SERVER['REMOTE_ADDR']));
+
+		$admin_logs = array(
+			'admin_id'  => $hr->hr_dashboard_id,
+			'admin_type' => 'hr',
+			'type'      => 'admin_hr_login_portal_from_linked',
+			'data'      => SystemLogLibrary::serializeData($hr)
+		);
+		SystemLogLibrary::createAdminLog($admin_logs);
+
+		return array(
+			'status'	=> TRUE,
+			'message'	=> 'Success.',
+			'token' => $token
+		);
+	}
 }

@@ -534,7 +534,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// create unlinked account
 	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
 });
-
+	// login company link account
+	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
 	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 	// download non-panel reimbursement
 	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
