@@ -80,8 +80,8 @@ class Api_V1_TransactionController extends \BaseController
 						$dependent_user = true;
 					}
 
-					$customer_id = PlanHelper::getCustomerId($user_id);
-					$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+					$customerID = PlanHelper::getCustomerId($user_id);
+					$spending = CustomerHelper::getAccountSpendingStatus($customerID);
 					$spending_method = $spending['medical_payment_method_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 					// get clinic info and type
 					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
@@ -205,7 +205,7 @@ class Api_V1_TransactionController extends \BaseController
 					$co_paid_status = $clinic_co_payment['co_paid_status'];
 					$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 					// check if user has a plan tier
-					$plan_tier = PlanHelper::getEmployeePlanTier($customer_id, $user_id);
+					$plan_tier = PlanHelper::getEmployeePlanTier($customerID, $user_id);
 					$cap_amount = 0;
 					if($plan_tier) {
 						if($wallet_user->cap_per_visit_medical > 0) {
@@ -628,8 +628,8 @@ class Api_V1_TransactionController extends \BaseController
 											MemberHelper::deductPlanHistoryVisit($findUserID);
 										}
 										try {
-											$customer_id = PlanHelper::getCustomerId($user_id);
-											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+											// $customer_id = PlanHelper::getCustomerId($user_id);
+											$spending = CustomerHelper::getAccountSpendingStatus($customerID);
 											
 											// if($spending['medical_method'] == "post_paid") {
 												$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";

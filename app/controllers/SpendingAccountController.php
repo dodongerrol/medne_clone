@@ -392,6 +392,7 @@ class SpendingAccountController extends \BaseController {
 			'wellness_spending_start_date'      => date('Y-m-d', strtotime($data['benefits_start'])),
 			'wellness_spending_end_date'        => date('Y-m-d', strtotime($data['benefits_end'])),
 			'wellness_payment_method_non_panel' => $data['non_panel_payment_method'],
+			'wellness_benefits_coverage'        => 'lite_plan',
 			'wellness_reimbursement'            => $non_panel_reimbursement
 		);
 

@@ -379,7 +379,11 @@ class DependentController extends \BaseController {
 			->first();
 
 			if($dependents) {
-				return array('status' => true, 'total_number_of_seats' => $dependents->total_dependents, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => $dependents->total_dependents - $dependents->total_enrolled_dependents);
+				if($plan->account_type == "lite_plan") {
+					return array('status' => true, 'total_number_of_seats' => 9999, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => 999, 'account_type' => $plan->account_type);
+				} else {
+					return array('status' => true, 'total_number_of_seats' => $dependents->total_dependents, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => $dependents->total_dependents - $dependents->total_enrolled_dependents, 'account_type' => $plan->account_type);
+				}
 			}
 		}
 
