@@ -7124,7 +7124,8 @@ class PlanHelper {
 		$data['company'] = ucwords($business_info->company_name);
 		$data['postal'] = $business_info->postal_code;
 		$data['currency_type'] = strtoupper($invoice->currency_type);
-		
+		$data['payment_remarks'] = null;
+
 		if($contact->billing_status == "true" || $contact->billing_status == true) {
 			$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
 			$data['address'] = $business_info->company_address;
@@ -7136,9 +7137,7 @@ class PlanHelper {
 
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $get_active_plan->plan_id)->first();
 		$plan_start = $plan->plan_start;
-
 		$account = DB::table('customer_buy_start')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
 		$data['account_type'] = $get_active_plan->account_type;
 		$data['complimentary'] = FALSE;
 		$data['plan_type'] = "Standalone Mednefits Care (Corporate)";
@@ -7586,6 +7585,7 @@ class PlanHelper {
 			array_push($dependents_data, $temp);
 		}
 
+		$data['payment_remarks'] = $data['notes'];
 		$data['dependents'] = $dependents_data;
 		$data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
 		$data['amount_due'] = \DecimalHelper::formatDecimal($data['amount_due'] + $dependent_amount_due, 2);
@@ -7768,6 +7768,7 @@ class PlanHelper {
 		$wellness_deposit_amount = 0;
 		$data['total_wellness'] = 0;
 		$data['total_medical'] = 0;
+		$data['payment_remarks'] = null;
 
 		if($deposit->medical_credits > 0) {
 			$data['total_medical'] = $deposit->medical_credits;
@@ -7812,6 +7813,7 @@ class PlanHelper {
 			$data['payment_date'] = date('F d, Y', strtotime($deposit->payment_date));
 			if($deposit->payment_remarks) {
 				$data['notes'] = $deposit->payment_remarks;
+				$data['payment_remarks'] = $deposit->payment_remarks;
 			}
 		}
 

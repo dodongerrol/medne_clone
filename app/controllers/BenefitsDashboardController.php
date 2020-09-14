@@ -320,7 +320,7 @@ class BenefitsDashboardController extends \BaseController {
 				'total_employees' => $plan_status->employees_input,
 				'plan_end_date'	=> $end_plan,
 				'added_purchase_status' => $added_purchase_status,
-				'account_type'	=> $customer->account_type
+				'account_type'	=> $plan->account_type
 			)
 		);
 	}

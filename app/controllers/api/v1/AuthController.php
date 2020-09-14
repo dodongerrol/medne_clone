@@ -6645,19 +6645,14 @@ public function payCreditsNew( )
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'zero_balance';
                 $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                // $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
             }
                 
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
               $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
-
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'zero_balance';
-              $returnObject->head_message = 'Registration on Hold';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
 
               if($current_balance <= 0) {
                 $returnObject->status = FALSE;

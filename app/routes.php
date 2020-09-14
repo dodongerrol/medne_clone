@@ -498,7 +498,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	// get member allocation activity
 	Route::get('hr/get_member_allocation_activity', 'SpendingAccountController@getMemberAllocationActivity');
-	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 	// get mednefits credits account
 	Route::get('hr/get_mednefits_credits_account', 'SpendingAccountController@getMednefitsCreditsAccount');
 	// get company wallet details
@@ -527,7 +526,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// activate company mednefits credits
 	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
 });
-
+	
+	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 	// download non-panel reimbursement
 	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
