@@ -225,6 +225,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
     Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
 
 	// get token download
+
+	// gods view
+	Route::get('hr/get_department_list', 'BenefitsDashboardController@getDepartmentList');
+	Route::post('hr/create_department', 'BenefitsDashboardController@createHrDepartment');
+	Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
+	Route::get('hr/remove_department', 'BenefitsDashboardController@deleteHrDepartment');
+
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
 	Route::get('hr/get_plan_status', 'BenefitsDashboardController@getPlanStatus');
