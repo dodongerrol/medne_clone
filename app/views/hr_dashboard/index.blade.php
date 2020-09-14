@@ -216,7 +216,9 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/alpine.min.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/app.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/helpers/countries.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-das
+	hboard/process/helpers/countries.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/helpers/utilities.js?_={{ $date->format('U') }}"></script>
 
 	<!-- Directives -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/introDirective.js?_={{ $date->format('U') }}"></script>
@@ -310,13 +312,11 @@
 	<!-- ACCOUNT SETTINGS -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/function.js?_={{ $date->format('U') }}"></script>
 
-	<!-- Company Profile -->
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/container/function.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/constants.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/function.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/function.js?_={{ $date->format('U') }}"></script>
+	<!-- Company Profile > Location & Departments ( app/views/hr_dashboard/scripts/company-profile/location-departments.blade.php ) -->
+	@include('hr_dashboard.scripts.company-profile.location-departments')
 
+	<!-- Company Profile > Billing & Payments ( app/views/hr_dashboard/scripts/company-profile/billing-payments.blade.php ) -->
+	@include('hr_dashboard.scripts.company-profile.billing-payments')
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
 

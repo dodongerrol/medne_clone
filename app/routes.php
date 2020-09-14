@@ -218,6 +218,12 @@ Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@ge
 // update agree status
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
+
+	// gods view
+    Route::get('hr/get_department_list', 'BenefitsDashboardController@getDepartmentList');
+    Route::post('hr/create_department', 'BenefitsDashboardController@createHrDepartment');
+    Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
+
 	// get token download
 
 	// gods view
@@ -540,7 +546,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// create unlinked account
 	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
 });
-
+	// login company link account
+	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
 	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 	// download non-panel reimbursement
 	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
@@ -1051,6 +1058,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
+		Route::post('auth/activated-administrator-user', 'Api_V1_AuthController@createNewPasswordByAdministrator');
 
 		// for getting member lists
 		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');

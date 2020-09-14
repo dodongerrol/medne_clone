@@ -3,7 +3,7 @@
 class CorporateHrDepartment extends Eloquent 
 {
 
-	protected $table = 'company_departments';
+    protected $table = 'company_departments';
     protected $guarded = ['id'];
 
     public function getHrDepartments($id)
