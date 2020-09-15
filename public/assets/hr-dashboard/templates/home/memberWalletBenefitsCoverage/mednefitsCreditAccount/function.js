@@ -58,6 +58,7 @@ app.directive('mednefitsCreditAccountDirective', [
           .then(function(response){
             // console.log(response);
             scope.dateTerm = response.data.data;
+            console.log(scope.dateTerm);
             let termLength = scope.dateTerm.length;
             scope.dateTerm.map(function(value,index) {
               if (index == 0) {
@@ -70,9 +71,6 @@ app.directive('mednefitsCreditAccountDirective', [
                 value.term = `Last term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
               }
             });
-
-            // scope.getMedicalMemberWallet(scope.defaultDateTerms);
-            // scope.getWellnessMemberWallet(scope.defaultDateTerms);
           })
         }
 
@@ -251,28 +249,6 @@ app.directive('mednefitsCreditAccountDirective', [
           }, 10);
         };
 
-        // get the keys for member wallet 
-        scope.getMedicalMemberWallet = function ( data ) {
-          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
-
-          // hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical')
-          //   .then(function(response){
-          //     // console.log('medical',response);
-          //   })
-        }
-
-        scope.getWellnessMemberWallet = function ( data ) {
-          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
-
-          // hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'wellness' )
-          //   .then(function(response){
-          //     // console.log('wellness',response);
-             
-          //   })
-        }
-
         scope.toggleCreditsActivation = function(){
           scope.isPrepaidCreditsFormShow = scope.isPrepaidCreditsFormShow ? false : true;
           scope.activateCreditsData.invoice_date = moment().format('DD/MM/YYYY');
@@ -359,6 +335,27 @@ app.directive('mednefitsCreditAccountDirective', [
           return arr;
         };
 
+        scope.getMemberWalletData = async function ( data, type ) {
+					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
+          await hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, type )
+            .then(function(response){
+              if(type == 'medical'){
+                scope.medicalWalletData = response.data.data;
+                scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
+                scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
+                scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+              }
+              if(type == 'wellness'){
+                scope.wellnessActivated = response.data.status;
+                scope.wellnessWalletData = response.data.data;
+                scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
+                scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');
+                scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
+              }
+            })
+				}
+
        
         scope.onLoad = async function () {
           scope.showLoading();
@@ -366,6 +363,9 @@ app.directive('mednefitsCreditAccountDirective', [
           await scope.getDateTerms();
           await scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
           await scope.getMednefitsCreditActivities();
+          await scope.getMemberWalletData(scope.defaultDateTerms, 'medical');
+          await scope.getMemberWalletData(scope.defaultDateTerms, 'wellness');
+
         }
 
         scope.onLoad();

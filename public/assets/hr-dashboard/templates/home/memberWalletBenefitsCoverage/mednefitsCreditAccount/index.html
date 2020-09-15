@@ -7,18 +7,12 @@
         <div class="current-term-wrapper"> 
           <div ng-click="termSelector()" class="current-term-input-wrapper">
             <span>{{ selectedTerm.term }}</span>
-            <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
-              (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-            </span> -->
             <i class="fa fa-angle-down"></i>
           </div>
-          <div ng-if="showLastTermSelector && !selectedTerm" ng-repeat="list in dateTerm" class="last-term-selector">
-            <!-- <span>Last term</span> -->
-            <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+          <div ng-if="showLastTermSelector && selectedTerm != list" ng-repeat="list in dateTerm" class="last-term-selector">
             <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
           </div>
         </div>
-        
         
         <div>
           <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
@@ -40,7 +34,7 @@
               <div class="available-credits-text member-bold-text">Available Credits</div>
               <span x-data="{ open: false }" class="credits-tooltip-wrapper">
                 <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-                <div x-show="open" @click.away="open = false"class="credits-tooltip-container">
+                <div x-show="open" @click.away="open = false" class="credits-tooltip-container">
                   <div class="tooltip-title">Available Credits</div>
                   <p>The amount of undistributed/unallocated Total Credits.<br>(Total Credits minus Total Allocated Credits)
                   </p>
@@ -151,23 +145,23 @@
           <!-- <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button> -->
         </div>
       </div>
-      <div ng-if="false" class="mednefits-credits-pending">
+      <div ng-if="!mednefitsCreditsData.payment_status" class="mednefits-credits-pending">
         <div>This method is currently not in use due to pending Prepaid Credits Account Invoice.</div>
       </div>
-      <div ng-if="true">
+      <div ng-if="mednefitsCreditsData.payment_status">
         <div>Prepaid Credits is currently used in:</div>
         <div>
           <div class="wallet-container medical-wallet-container display-flex">
-              <div class="member-bold-text">Medical Wallet:</div>
-              <div class="display-flex wallet-panel-container">
-                <div>Mednefits Panel</div>
-                <div>Non Panel</div>
-              </div>
+            <div class="member-bold-text">Medical Wallet:</div>
+            <div class="display-flex wallet-panel-container">
+              <div ng-if="medicalWalletData.panel_payment_method">Mednefits Panel</div>
+              <div ng-if="medicalWalletData.non_panel_payment_method">Non Panel</div>
+            </div>
           </div>
           <div class="wallet-container wellness-wallet-container display-flex">
             <div class="member-bold-text">Wellness Wallet:</div>
             <div>
-              <div>Non Panel Panel</div>
+              <div ng-if="wellnessWalletData.non_panel_payment_method">Non Panel Panel</div>
             </div>
           </div>
         </div>
