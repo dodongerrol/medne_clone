@@ -192,7 +192,7 @@
 								<input type="number" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : otpValidation == true }" placeholder="Enter Your OTP" ng-model="otp_number" ng-model-options="{debounce: 1000}" ng-change="checkOTP(otp_number)" />
 							</div>
 						</div>
-						<div ng-if="otpStatus == 1 && checkMemberData.Password == 0 && showPasswordInputInOtp == true || otpStatus == 0 && checkMemberData.Password == 0 && showContinueInput " class="form-group">
+						<div ng-if="otpStatus == 1 && checkMemberData.member_activated == 0 && showPasswordInputInOtp == true || otpStatus == 0 && checkMemberData.member_activated == 0 && showContinueInput " class="form-group">
 							<label for="password">Please create your password</label>
 							<div>
 								<input type="password" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : passwordNotMatch }" placeholder="Enter Your Password" ng-model="new_password" ng-model-options="{debounce: 1000}" ng-change="removeDisable('new_password',new_password)" />
@@ -201,7 +201,7 @@
 								<input type="password" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : passwordNotMatch }" placeholder="Confirm Your Password" ng-model="confirm_new_password" ng-model-options="{debounce: 1000}" ng-change="removeDisable('confirm_new_password',confirm_new_password)" />
 							</div>
 						</div>
-						<div ng-if="otpStatus == 1 && checkMemberData.Password == 1 && showPasswordInputInOtp == true || otpStatus == 0 && checkMemberData.Password == 1 && showContinueInput">
+						<div ng-if="otpStatus == 1 && checkMemberData.member_activated == 1 && showPasswordInputInOtp == true || otpStatus == 0 && checkMemberData.member_activated == 1 && showContinueInput">
 							<div class="form-group">
 								<label for="mobile">Password</label>
 								<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="new_password" ng-model-options="{debounce: 1000}" ng-change="checkPassword(new_password)"  style="margin-bottom: 15px">
@@ -252,13 +252,13 @@
 				<div  class="footer-btn form-group">
 					<button ng-if="!showContinueInput" ng-click="continueButton(mobile_number)" ng-class="{'disabled': disabledContinue}" type="none" class="btn btn-info btn-block med-button">Continue</button>
 					<button ng-if="otpStatus == 1 && showContinueInput == true && !showPasswordInputInOtp" ng-class="{'disabled': disabledVerify}" ng-click="verifyOTP(otp_number)" type="submit" class="btn btn-info btn-block med-button">Verify</button>
-					<button ng-if="checkMemberData.Password == 0 && showContinueInput == true && !showPostalCodeInput && !showPostalCodeInput || checkMemberData.Password == 0 && showPasswordInputInOtp == true" ng-class="{'disabled': disableCreate }" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button>
+					<button ng-if="checkMemberData.member_activated == 0 && showContinueInput == true && !showPostalCodeInput && !showPostalCodeInput || checkMemberData.Password == 0 && showPasswordInputInOtp == true" ng-class="{'disabled': disableCreate }" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button>
 					<!-- <button ng-if="showPasswordInputInOtp && !showPostalCodeInput" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button> -->
 					<!-- <button ng-if="otpStatus == 0 && showContinueInput == true && !showPostalCodeInput" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button> -->
 					<!-- <button ng-if="otpStatus == 1 || showContinueInput == true && !showPostalCodeInput && showPasswordInputInOtp && !showPostalCodeInput && checkMemberData.Password == 1" ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button> -->
-					<button ng-if="otpStatus == 0 && checkMemberData.Password == 1 && !showPostalCodeInput && showContinueInput == true || otpStatus == 1 && checkMemberData.Password == 1 && !showPostalCodeInput && showPasswordInputInOtp == true" ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button>
-					<button ng-if="checkMemberData.Password == 0 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Complete and Sign in</button>
-					<button ng-if="checkMemberData.Password == 1 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Done</button>
+					<button ng-if="otpStatus == 0 && checkMemberData.member_activated == 1 && !showPostalCodeInput && showContinueInput == true || otpStatus == 1 && checkMemberData.member_activated == 1 && !showPostalCodeInput && showPasswordInputInOtp == true" ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button>
+					<button ng-if="checkMemberData.member_activated == 0 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Complete and Sign in</button>
+					<button ng-if="checkMemberData.member_activated == 1 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Done</button>
 					<div ng-if="otpStatus == 1 && showContinueInput == true && !showPasswordInputInOtp" class="resend-otp-container">
 						<span>Don't receive OPT? <a ng-click="resendOtp()">Resend OTP</a>.</span>
 					</div>
@@ -269,7 +269,7 @@
 						<span ng-bind="otpData.message"></span>
 					</div>
 					<div class="mobile-message-container" ng-if="passwordNotMatch">
-						<span>Sorry, your password and confirmation password do not match</span>
+						<span>Sorry, your password and confirmation password do not match.</span>
 					</div>
 					<div class="mobile-message-container" ng-if="disableCreateText">
 						<span ng-bind="createNewPasswordData.message"></span>
