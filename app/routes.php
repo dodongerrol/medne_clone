@@ -219,10 +219,6 @@ Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@ge
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
 
-	// gods view
-    Route::get('hr/get_department_list', 'BenefitsDashboardController@getDepartmentList');
-    Route::post('hr/create_department', 'BenefitsDashboardController@createHrDepartment');
-    Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
 
 	// get token download
 
