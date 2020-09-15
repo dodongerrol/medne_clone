@@ -1,3 +1,6 @@
+.member-wallet-benefits-wrapper input{
+  outline: none;
+}
 .member-wallet-benefits-wrapper {
   height: 100%;
 }

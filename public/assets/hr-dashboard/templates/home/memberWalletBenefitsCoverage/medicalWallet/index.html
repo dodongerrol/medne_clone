@@ -30,11 +30,11 @@
       <div class="available-credits-container">
         <div class="available-credits">
           <span class="available-credits-container dp-flex-ai">
-            <div class="available-credits-text member-bold-text">Medical Funds Balance</div>
+            <div class="available-credits-text member-bold-text">Medical Entitlement Balance</div>
             <span class="credits-tooltip-wrapper">
               <img ng-click="toggleFunds('medical-balance')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
               <div class="credits-tooltip-container medical-balance">
-                <div class="tooltip-title">Medical Balance</div>
+                <div class="tooltip-title">Medical Entitlement Balance</div>
                 <p>The remaining amount available for use from the Medical Budget.
                 </p>
                 <div class="tooltip-btn-footer">
@@ -52,11 +52,11 @@
         <div class="total-credits-container">
           <div>
             <span class="dp-flex-ai">
-              <div>Total Medical Funds</div>
+              <div>Total Medical Entitlement</div>
               <span class="credits-tooltip-wrapper">
                 <img ng-click="toggleFunds('medical-funds')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div class="credits-tooltip-container medical-funds">
-                  <div class="tooltip-title">Total Medical Budget</div>
+                  <div class="tooltip-title">Total Medical Entitlement</div>
                   <p>The total budgeted amount of medical benefits allocated to the employees.
                   </p>
                   <div class="tooltip-btn-footer">
@@ -73,11 +73,11 @@
         </div>
         <div>
           <span class="dp-flex-ai">
-            <div>Total Company Funds</div>
+            <div>Total Company Entitlement</div>
             <span class="credits-tooltip-wrapper">
               <img ng-click="toggleFunds('company-funds')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
               <div class="credits-tooltip-container company-funds">
-                <div class="tooltip-title">Total Company Budget</div>
+                <div class="tooltip-title">Total Company Entitlement</div>
                 <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
                 </p>
                 <div class="tooltip-btn-footer">
@@ -117,13 +117,13 @@
           <!-- <i class="fa fa-angle-down"></i> -->
         </div>
       </div>
-      <div ng-if="false">
+      <!-- <div ng-if="false">
         <label>Deposits</label>
         <div class="benefits-input-wrapper deposits">
           <input ng-change="_saveButtonTrigger_()" ng-model="medicalWalletData.deposits" type="text">
           <span>%</span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="mwbc-box-container">

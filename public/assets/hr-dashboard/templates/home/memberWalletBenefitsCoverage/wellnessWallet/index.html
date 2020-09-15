@@ -31,11 +31,11 @@
         <div class="available-credits-container">
           <div class="available-credits">
             <span class="available-credits-container dp-flex-ai">
-              <div class="available-credits-text member-bold-text">Wellness Funds Balance</div>
+              <div class="available-credits-text member-bold-text">Wellness Entitlement Balance</div>
               <span class="credits-tooltip-wrapper">
                 <img ng-click="toggleWellnessTooltip('wellness-balance')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div class="credits-tooltip-container wellness-balance">
-                  <div class="tooltip-title">Wellness Balance</div>
+                  <div class="tooltip-title">Wellness Entitlement Balance</div>
                   <p>The remaining amount available for use from the Wellness Budget.
                   </p>
                   <div class="tooltip-btn-footer">
@@ -53,11 +53,11 @@
           <div class="total-credits-container">
             <div>
               <span class="dp-flex-ai">
-                <div>Total Wellness Funds</div>
+                <div>Total Wellness Entitlement</div>
                 <span class="credits-tooltip-wrapper">
                   <img ng-click="toggleWellnessTooltip('wellness-budget')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                   <div class="credits-tooltip-container wellness-budget">
-                    <div class="tooltip-title">Total Wellness Budget</div>
+                    <div class="tooltip-title">Total Wellness Entitlement</div>
                     <p>The total budgeted amount of wellness benefits allocated to the employees.
                     </p>
                     <div class="tooltip-btn-footer">
@@ -74,11 +74,11 @@
           </div>
           <div>
             <span class="dp-flex-ai">
-              <div>Total Company Funds</div>
+              <div>Total Company Entitlement</div>
               <span class="credits-tooltip-wrapper">
                 <img ng-click="toggleWellnessTooltip('company-budget')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div class="credits-tooltip-container company-budget">
-                  <div class="tooltip-title">Total Company Budget</div>
+                  <div class="tooltip-title">Total Company Entitlement</div>
                   <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
                   </p>
                   <div class="tooltip-btn-footer">
@@ -118,13 +118,13 @@
             <i class="fa fa-angle-down"></i>
           </div>
         </div>
-        <div ng-if="false">
+        <!-- <div ng-if="false">
           <label>Deposits</label>
           <div class="benefits-input-wrapper deposits">
             <input ng-change="_saveButtonTrigger_()" ng-model="wellnessWalletData.deposits" type="text">
             <span>%</span>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="mwbc-box-container">
