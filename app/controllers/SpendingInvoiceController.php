@@ -581,24 +581,24 @@ class SpendingInvoiceController extends \BaseController {
 						$lite_plan = true;
 					}
 
-					if($lite_plan == true) {
-						$consultation_amount_due_temp = DB::table('transaction_history')
-						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-						->where('transaction_history.deleted', 0)
-						->where('transaction_history.paid', 1)
-						->where('transaction_history.lite_plan_enabled', 1)
-						->sum('transaction_history.co_paid_amount');
-						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					}
+					// if($lite_plan == true) {
+					// 	$consultation_amount_due_temp = DB::table('transaction_history')
+					// 	->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
+					// 	->where('spending_invoice_transactions.invoice_id', $data->statement_id)
+					// 	->where('transaction_history.deleted', 0)
+					// 	->where('transaction_history.paid', 1)
+					// 	->where('transaction_history.lite_plan_enabled', 1)
+					// 	->sum('transaction_history.co_paid_amount');
+					// 	$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
+					// }
 
-					if((int)$data->statement_status == 1) {
-						$total = round($results['credits'] + $results['total_consultation'], 2);
+					// if((int)$data->statement_status == 1) {
+						$total = round($results['total_post_paid_spent'], 2);
 						$amount_due = (float)$total - (float)$data->paid_amount;
-					} else {
-						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-						$total = $amount_due;
-					}
+					// } else {
+					// 	$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
+					// 	$total = $amount_due;
+					// }
 
 
 					if($results['with_post_paid'] == true) {

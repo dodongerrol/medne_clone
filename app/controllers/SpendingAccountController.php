@@ -315,11 +315,11 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		if($input['type'] == "medical") {
-			if(!empty($input['active_non_panel_claim']) || $input['active_non_panel_claim'] != null) {
+			if(isset($input['active_non_panel_claim'])) {
 				$update['medical_active_non_panel_claim'] = $input['active_non_panel_claim'] === true || $input['active_non_panel_claim'] === "true" ? 1 : 0;
 			}
 
-			if(!empty($input['reimbursement']) || $input['reimbursement'] != null) {
+			if(isset($input['reimbursement'])) {
 				$update['medical_reimbursement'] = $input['reimbursement'] === true || $input['reimbursement'] === "true" ? 1 : 0;
 			}
 
@@ -331,11 +331,11 @@ class SpendingAccountController extends \BaseController {
 				$update['medical_payment_method_non_panel'] = $input['payment_method_non_panel'];
 			}
 		} else {
-			if(!empty($input['active_non_panel_claim']) || $input['active_non_panel_claim'] != null) {
+			if(isset($input['active_non_panel_claim'])) {
 				$update['wellness_active_non_panel_claim'] = $input['active_non_panel_claim'] === true || $input['active_non_panel_claim'] === "true" ? 1 : 0;
 			}
 
-			if(!empty($input['reimbursement']) || $input['reimbursement'] != null) {
+			if(isset($input['reimbursement'])) {
 				$update['wellness_reimbursement'] = $input['reimbursement'] === true || $input['reimbursement'] == "true" ? 1 : 0;
 			}
 
