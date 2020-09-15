@@ -543,8 +543,8 @@ class SpendingInvoiceController extends \BaseController {
 			return array('status' => false, 'message' => 'type is required.');
 		}
 
-		if(!in_array($input['type'], ['spending', 'plan', 'deposit', 'plan_withdrawal'])) {
-			return ['status' => false, 'message' => 'type should only be spending, plan, deposit and plan_withdrawal'];
+		if(!in_array($input['type'], ['spending', 'plan', 'deposit', 'plan_withdrawal', 'spending_purchase'])) {
+			return ['status' => false, 'message' => 'type should only be spending, spending_purchase, plan, deposit and plan_withdrawal'];
 		}
 
 		$limit = !empty($input['limit']) ? $input['limit'] : 10;
@@ -673,7 +673,8 @@ class SpendingInvoiceController extends \BaseController {
 						'payment_method'		=> $data->payment_method,
 						'payment_remarks'		=> $data->payment_remarks,
 						'total_pre_paid_spent'	=> $results['total_pre_paid_spent'],
-						'total_post_paid_spent'	=> $results['total_post_paid_spent']
+						'total_post_paid_spent'	=> $results['total_post_paid_spent'],
+						'category_type'			=> $input['type']
 					);
 
 					array_push($format, $temp);
@@ -757,7 +758,8 @@ class SpendingInvoiceController extends \BaseController {
 						'currency_type' => $result['currency_type'], 
 						'payment_remarks' => $result['payment_remarks'],
 						'payment_method' => null,
-						'company_name' => $result['company']
+						'company_name' => $result['company'],
+						'category_type'			=> $input['type']
 					);
 
 					array_push($format, $temp);
@@ -837,7 +839,8 @@ class SpendingInvoiceController extends \BaseController {
 					'currency_type' => $result['currency_type'],
                     'payment_remarks' => $data->payment_remarks,
                     'payment_method' => null,
-					'company_name' => $result['company']
+					'company_name' => $result['company'],
+					'category_type'			=> $input['type']
 				);
 
 				array_push($format, $temp);
@@ -921,7 +924,8 @@ class SpendingInvoiceController extends \BaseController {
 					'currency_type' => $result['currency_type'],
                     'payment_remarks' => $data->payment_remarks,
                     'payment_method' => $data->payment_method,
-					'company_name' => $result['billing_info']['company']
+					'company_name' => $result['billing_info']['company'],
+					'category_type'			=> $input['type']
 				);
 
 				array_push($format, $temp);
@@ -954,6 +958,125 @@ class SpendingInvoiceController extends \BaseController {
 				return array('status' => TRUE, 'message' => 'Successfully Downloaded!');
 			}
 			
+			$pagination['data'] = $format;
+			$pagination['total_due'] = number_format($total_due, 2);
+			return $pagination;
+		}  else if($input['type'] == "spending_purchase") {
+			$pagination = [];
+			$format = [];
+			$total_due = 0;
+			$allInvoices = DB::table('spending_purchase_invoice')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->get();
+			$invoices = DB::table('spending_purchase_invoice')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->paginate($limit);
+
+			foreach($allInvoices as $key => $spendingPurchase) {
+				$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+				$customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+				
+				$data = array();
+				// medical spending account
+				$data['medical_credits_purchase'] = $spendingPurchase->medical_purchase_credits;
+				// wellness spending account
+				$data['wellness_credits_purchase'] = $spendingPurchase->wellness_purchase_credits;
+				$totalCredits = $data['medical_credits_purchase'] + $data['wellness_credits_purchase'];
+				$totalBalance = $totalCredits - $spendingPurchase->payment_amount;
+				$total_due += $totalBalance;
+			}
+
+			$pagination['current_page'] = $invoices->getCurrentPage();
+			$pagination['last_page'] = $invoices->getLastPage();
+			$pagination['total'] = $invoices->getTotal();
+			$pagination['per_page'] = $invoices->getPerPage();
+			$pagination['count'] = $invoices->count();
+
+			foreach($invoices as $key => $spendingPurchase) {
+				$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+				$customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+				
+				$data = array();
+				$data['spending_purchase_invoice_id'] = $spendingPurchase->spending_purchase_invoice_id;
+				$data['company_id'] = $spendingPurchase->customer_id;
+				$data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
+				$data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
+				$data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+				$data['invoice_number'] = $spendingPurchase->invoice_number;
+				$total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+				$data['total']  = $total;
+				$data['amount_due'] = $total - (float)$spendingPurchase->payment_amount;
+				$data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
+				$data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+				$data['remarks']    = $spendingPurchase->remarks;
+				$data['company_name']   = $spendingPurchase->company_name;
+				$data['company_address']   = $spendingPurchase->company_address;
+				$data['postal']   = $spendingPurchase->postal;
+				$data['contact_name']   = $spendingPurchase->contact_name;
+				$data['contact_number']   = $spendingPurchase->contact_number;
+				$data['contact_email']   = $spendingPurchase->contact_email;
+				$data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+				$data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_end));
+				$data['duration']   = $spendingPurchase->duration;
+				$data['account_type'] = \PlanHelper::getAccountType($active_plan->account_type);
+				$data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
+				$data['currency_type']   = strtoupper($customer_wallet->currency_type);
+				// medical spending account
+				$data['medical_spending_account'] = (float)$spendingPurchase->medical_purchase_credits > 0 ? true : false;
+				$data['medical_credits_purchase'] = $spendingPurchase->medical_purchase_credits;
+				$data['medical_credit_bonus'] = $spendingPurchase->medical_credit_bonus;
+				$data['medical_total_credits']  = $spendingPurchase->medical_purchase_credits + $spendingPurchase->medical_credit_bonus;
+	
+				// wellness spending account
+				$data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
+				$data['wellness_credits_purchase'] = $spendingPurchase->wellness_purchase_credits;
+				$data['wellness_credit_bonus'] = $spendingPurchase->wellness_credit_bonus;
+				$data['wellness_total_credits']  = $spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus;
+				
+				$totalCredits = $data['medical_credits_purchase'] + $data['wellness_credits_purchase'];
+				$totalBalance = $totalCredits - $spendingPurchase->payment_amount;
+
+				$temp = array(
+					'id'		=> $data['spending_purchase_invoice_id'],
+					'invoice_date' => date('j M Y', strtotime($data['invoice_date'])),
+					'payment_due' => NULL,
+					'number' => $data['invoice_number'],
+					'status'	=> $totalBalance <= 0 ? 1 : 0 ,
+					'amount_due' => number_format($totalBalance, 2),
+					'paid_date'	=> $data['payment_date'],
+					'payment_amount' => number_format($totalCredits, 2),
+					'currency_type' => $data['currency_type'],
+					'company_name' => $data['company_name'],
+					'payment_method'	=> 'bank_transfer',
+					'payment_remarks'	=> $data['remarks'],
+					'category_type'			=> $input['type']
+				);
+
+				array_push($format, $temp);
+			}
+
+			if($download) {
+				$date = date('d-m-Y h:i:s');
+				$title = "Company History Invoice type - Spending Purchase-".$date;
+
+				$filterSheet = array_map(function($tmp) { 
+					$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
+					$tmp['date_refund'] = $tmp['paid_date'];
+					$tmp['cancellation_date'] = $tmp['invoice_date'];
+					if(!$tmp['payment_due']) {
+						$tmp['payment_due'] = '-';
+					}
+					unset($tmp['paid_date']); 
+					unset($tmp['invoice_date']); 
+					return $tmp; 
+				}, $format);
+
+				$excel = Excel::create($title, function($excel) use($filterSheet) {
+
+						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
+							$sheet->fromArray( $filterSheet );
+						});
+
+				})->export('csv');
+				return array('status' => TRUE, 'message' => 'Successfully Downloaded!');
+			}
+
 			$pagination['data'] = $format;
 			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;
