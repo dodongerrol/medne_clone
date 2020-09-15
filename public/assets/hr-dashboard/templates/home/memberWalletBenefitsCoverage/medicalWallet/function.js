@@ -19,51 +19,20 @@ app.directive('memberMedicalWalletDirective', [
 				scope.defaultDateTerms = {};
 				scope.applyTerm = false;
 
-				scope.getDateTerms = function () {
-          hrSettings.fetchDateTerms()
-          .then(function(response){
-            scope.dateTerm = response.data.data;
-            console.log(scope.dateTerm);
 
-            let termLength = scope.dateTerm.length;
-            // console.log(termLength);
 
-            scope.dateTerm.map(function(value,index) {
-              if (index == termLength-1) {
-                value.term = `Current term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
-                value.index = index;
-                scope.defaultDateTerms = value;
-                scope.selectedTerm = value;
-                scope.dateTermIndex = value.index;
-              } else {
-                value.term = `Last term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
-              }
-            });
-
-            // scope.getBenefitsCoverageData(scope.defaultDateTerms);
-
-            
-          })
-				}
-				
 				scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
         }
 				
 				scope.getDateTerms = async function () {
           await hrSettings.fetchDateTerms()
-          .then(function(response){
-            scope.dateTerm = response.data.data;
+          .then(async function(response){
+						scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
-
-            // scope.currentTerm = scope.dateTerm.slice(-1).pop();
-						// console.log(scope.currentTerm );
-						
 						let termLength = scope.dateTerm.length;
-            // console.log(termLength);
-
-            scope.dateTerm.map(function(value,index) {
-              if (index == termLength-1) {
+            await scope.dateTerm.map(function(value,index) {
+              if (index == 0) {
                 value.term = `Current term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
                 value.index = index;
                 scope.defaultDateTerms = value;
@@ -73,9 +42,6 @@ app.directive('memberMedicalWalletDirective', [
                 value.term = `Last term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
               }
             });
-						
-						scope.getMemberWalletData(scope.defaultDateTerms);
-						scope.getMemberActivity(scope.defaultDateTerms);
           })
 				}
 				
@@ -96,20 +62,16 @@ app.directive('memberMedicalWalletDirective', [
           console.log(scope.selectedTerm)
         }
 
-				scope.getMemberWalletData = function ( data ) {
-					console.log( data );
+				scope.getMemberWalletData = async function ( data ) {
 					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
           scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
-          scope.showLoading();
-          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical' )
+          await hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical' )
             .then(function(response){
 							scope.medicalWalletData = response.data.data;
 							scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
 							scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
 							scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
-							console.log(scope.medicalWalletData);
-							
-							scope.hideLoading();
+							// console.log(scope.medicalWalletData);
             })
 				}
 
@@ -171,18 +133,17 @@ app.directive('memberMedicalWalletDirective', [
 					if ( type == 'non-panel-submission' ) {
 						scope.medicalWalletData.non_panel_submission = opt;
 					}
+
+					scope._saveWallet_();
 				}
 
-				scope.getMemberActivity = function ( data ) {
-					console.log(data);
+				scope.getMemberActivity = async function ( data ) {
 					data.type = 'medical';
-					
-					hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
+					await hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
             .then(function(response){
 							console.log(response);
 							scope.activity_pagination = response;
 							scope.activity_data = response.data.data;
-							scope.hideLoading();
             })
 				}
 
@@ -199,11 +160,11 @@ app.directive('memberMedicalWalletDirective', [
 						payment_method_panel:scope.medicalWalletData.panel_payment_method,
 						payment_method_non_panel:scope.medicalWalletData.non_panel_payment_method,
 					}
-
+					scope.showLoading();
 					await hrSettings.updateMemberWallet( data )
-					.then(function(response){
+					.then(async function(response){
 						console.log(response);
-						scope.getMemberWalletData( scope.selectedTerm );
+						await scope.getMemberWalletData( scope.selectedTerm );
 						scope.hideLoading();
 					})
 				}
@@ -236,7 +197,10 @@ app.directive('memberMedicalWalletDirective', [
 				scope.onLoad = async function () {
 					scope.showLoading();
 					await scope.getDateTerms();
+					await scope.getMemberWalletData(scope.defaultDateTerms);
+					await scope.getMemberActivity(scope.defaultDateTerms);
 					await scope.getStatus();
+					scope.hideLoading();
 				}
 
 				scope.onLoad();

@@ -127,7 +127,7 @@ class SpendingInvoiceController extends \BaseController {
         return array('status' => TRUE, 'data' => $temp);
 	}
 
-	public function downloadSpendingInvoice( )
+	public function downloadSpendingInvoiceOld( )
 	{
 		$input = Input::all();
       	$result = self::checkToken($input['token']);
@@ -144,11 +144,86 @@ class SpendingInvoiceController extends \BaseController {
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $statement['sub_total'] = number_format(floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']), 2);
         $statement['statement_in_network_amount'] = number_format($statement['statement_in_network_amount'], 2);
-		$pdf = PDF::loadView('invoice.hr-statement-invoice', $statement);
+		// return View::make('pdf-download.globalTemplates.plan_invoice', $statement);
+		$pdf = PDF::loadView('pdf-download.globalTemplates.plan_invoice', $statement);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 
     	return $pdf->stream($statement['company'].' - '.$statement['statement_number'].'.pdf');
+	}
+
+	public function downloadSpendingInvoice( )
+	{
+		$input = Input::all();
+      	$result = self::checkToken($input['token']);
+
+		if(!$result) {
+			return array('status' => FALSE, 'message' => 'Invalid Token.');
+		}
+
+		$statement_id = $input['id'];
+		$data = CompanyCreditsStatement::where('statement_id', $statement_id)
+		->first();
+		$lite_plan = false;
+		$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
+
+		if($results['credits'] > 0 || $results['total_consultation'] > 0 || $results['total_post_paid_spent'] > 0 || $results['total_post_paid_spent'] > 0) {
+			$consultation_amount_due = 0;
+			$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
+			if((int)$data->lite_plan == 1) {
+				$lite_plan = true;
+			}
+
+			$total = round($results['total_post_paid_spent'], 2);
+			$amount_due = (float)$total - (float)$data->paid_amount;
+
+			$temp = array(
+				'company' => ucwords($data->statement_company_name),
+				'company_address' => ucwords($data->statement_company_address),
+				'postal'		=> $data->postal,
+				'contact_email' => $data->statement_contact_email,
+				'contact_name' => ucwords($data->statement_contact_name),
+				'contact_contact_number' => $data->statement_contact_number,
+				'customer_id' => $data->statement_customer_id,
+				'statement_date' => date('j M Y', strtotime($data->statement_date)),
+				'statement_due' => date('j M Y', strtotime($data->statement_due)),
+				'statement_start_date' => $data->statement_start_date,
+				'statement_end_date'	=> $data->statement_end_date,
+				'start_date' => date('j M', strtotime($data->statement_start_date)),
+				'end_date'	=> date('j M Y', strtotime($data->statement_end_date)),
+				'period'			=> date('d F', strtotime($data->statement_start_date)).' - '.date('d F Y', strtotime($data->statement_end_date)),
+				'period_start'		=> date('j M', strtotime($data->statement_start_date)),
+				'period_end'		=> date('j M Y', strtotime($data->statement_end_date)),
+				'statement_id'	=> $data->statement_id,
+				'statement_number' => $data->statement_number,
+				'statement_status'	=> $data->statement_status,
+				'statement_total_amount' => number_format($results['credits'] + $results['total_consultation'], 2),
+				'total_in_network_amount'		=> number_format($results['credits'], 2),
+				'statement_amount_due' => number_format($amount_due, 2),
+				'consultation_amount_due'	=> number_format($consultation_amount_due, 2),
+				'in_network'				=> $results['transactions'],
+				'paid_date'				=> $data->paid_date ? date('j M Y', strtotime($data->paid_date)) : NULL,
+				'payment_remarks' => $data->payment_remarks,
+				'payment_amount' => number_format($data->paid_amount, 2),
+				'lite_plan'	=> $lite_plan,
+				'total_consultation'	=> number_format($results['total_consultation'], 2),
+				'total_gp_medicine'		=> number_format($results['total_gp_medicine'], 2),
+				'total_gp_consultation'	=> number_format($results['total_gp_consultation'], 2),
+				'total_dental'			=> number_format($results['total_dental'], 2),
+				'total_tcm'				=> number_format($results['total_tcm'], 2),
+				'total_transactions'	=> number_format($results['total_transactions'], 2),
+				'total_spent'			=> number_format($results['total_post_paid_spent'] + $results['total_pre_paid_spent'], 2),
+				'currency_type'	=> strtoupper($data->currency_type),
+				'total_pre_paid_spent'	=> number_format($results['total_pre_paid_spent'], 2),
+				'total_post_paid_spent'	=> number_format($results['total_post_paid_spent'], 2)
+			);
+
+    		// return View::make('pdf-download.globalTemplates.panel-invoice', $temp);
+			$pdf = \PDF::loadView('pdf-download.globalTemplates.panel-invoice', $temp);
+			$pdf->getDomPDF()->get_option('enable_html5_parser');
+			$pdf->setPaper('A4', 'portrait');
+			return $pdf->stream();
+		}
 	}
 
 	public function downloadCSV($data)
@@ -468,8 +543,8 @@ class SpendingInvoiceController extends \BaseController {
 			return array('status' => false, 'message' => 'type is required.');
 		}
 
-		if(!in_array($input['type'], ['spending', 'plan', 'deposit', 'plan_withdrawal'])) {
-			return ['status' => false, 'message' => 'type should only be spending, plan, deposit and plan_withdrawal'];
+		if(!in_array($input['type'], ['spending', 'plan', 'deposit', 'plan_withdrawal', 'spending_purchase'])) {
+			return ['status' => false, 'message' => 'type should only be spending, spending_purchase, plan, deposit and plan_withdrawal'];
 		}
 
 		$limit = !empty($input['limit']) ? $input['limit'] : 10;
@@ -478,7 +553,7 @@ class SpendingInvoiceController extends \BaseController {
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();		
+			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();	
 			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
 
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
@@ -486,100 +561,124 @@ class SpendingInvoiceController extends \BaseController {
 			$pagination['total'] = $credits_statements->getTotal();
 			$pagination['per_page'] = $credits_statements->getPerPage();
 			$pagination['count'] = $credits_statements->count();
+
 			$format = [];
 
 			$total_due = 0;
-			
+
+
 			foreach ($all_data as $key => $data) {
 				$lite_plan = false;
-				$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
-
-				if($results['credits'] > 0 || $results['total_consultation'] > 0) {
+				if($data->type == "panel") {
+					$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
+				} else {
+					$results = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($data->statement_id, $data->statement_customer_id, true);
+				}
+				if($results['credits'] > 0 || $results['total_consultation'] > 0 || $results['total_post_paid_spent'] > 0 || $results['total_pre_paid_spent'] > 0) {
 					$consultation_amount_due = 0;
 					// $company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 					if((int)$data->lite_plan == 1 || $results['lite_plan'] == true) {
 						$lite_plan = true;
 					}
 
-					if($lite_plan == true) {
-						$consultation_amount_due_temp = DB::table('transaction_history')
-						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-						->where('transaction_history.deleted', 0)
-						->where('transaction_history.paid', 1)
-						->where('transaction_history.lite_plan_enabled', 1)
-						->sum('transaction_history.co_paid_amount');
-						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					}
+					// if($lite_plan == true) {
+					// 	$consultation_amount_due_temp = DB::table('transaction_history')
+					// 	->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
+					// 	->where('spending_invoice_transactions.invoice_id', $data->statement_id)
+					// 	->where('transaction_history.deleted', 0)
+					// 	->where('transaction_history.paid', 1)
+					// 	->where('transaction_history.lite_plan_enabled', 1)
+					// 	->sum('transaction_history.co_paid_amount');
+					// 	$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
+					// }
 
-					if((int)$data->statement_status == 1) {
-						$total = round($results['credits'] + $results['total_consultation'], 2);
+					// if((int)$data->statement_status == 1) {
+						$total = round($results['total_post_paid_spent'], 2);
 						$amount_due = (float)$total - (float)$data->paid_amount;
-					} else {
-						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-						$total = $amount_due;
-					}
+					// } else {
+					// 	$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
+					// 	$total = $amount_due;
+					// }
 
-					$amount_due = $amount_due < 0 ? 0 : $amount_due;
-					// array_push($format, $data);
+
+					if($results['with_post_paid'] == true) {
+						$amount_due = $amount_due < 0 ? 0 : $amount_due;
+					} else {
+						$amount_due = 0;
+					}
 
 					$total_due += $amount_due;
 				}
-			}
+			}	
 
 			foreach ($credits_statements as $key => $data) {
 				$lite_plan = false;
-				$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
-
-				if($results['credits'] > 0 || $results['total_consultation'] > 0) {
+				if($data->type == "panel") {
+					$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, false);
+				} else {
+					$results = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($data->statement_id, $data->statement_customer_id, true);
+				}
+				
+				// if($results['credits'] > 0 || $results['total_consultation'] > 0) {
 					$consultation_amount_due = 0;
 					// $company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 					if((int)$data->lite_plan == 1 || $results['lite_plan'] == true) {
 						$lite_plan = true;
 					}
 
-					if($lite_plan == true) {
-						$consultation_amount_due_temp = DB::table('transaction_history')
-						->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-						->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-						->where('transaction_history.deleted', 0)
-						->where('transaction_history.paid', 1)
-						->where('transaction_history.lite_plan_enabled', 1)
-						->sum('transaction_history.co_paid_amount');
-						$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					}
+					// if($lite_plan == true && $data->type == "panel") {
+					// 	$consultation_amount_due_temp = DB::table('transaction_history')
+					// 	->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
+					// 	->where('spending_invoice_transactions.invoice_id', $data->statement_id)
+					// 	->where('transaction_history.deleted', 0)
+					// 	->where('transaction_history.paid', 1)
+					// 	->where('transaction_history.lite_plan_enabled', 1)
+					// 	->sum('transaction_history.co_paid_amount');
+					// 	$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
+					// }
 
-					if((int)$data->statement_status == 1) {
-						$total = round($results['credits'] + $results['total_consultation'], 2);
+					// if((int)$data->statement_status == 1) {
+						$total = round($results['total_post_paid_spent'], 2);
 						$amount_due = (float)$total - (float)$data->paid_amount;
+					// } else {
+					// 	$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
+					// 	$total = $amount_due;
+					// }
+
+					$amount_due = $amount_due < 0 ? 0 : $amount_due;
+
+					if($amount_due <= 0) {
+						$data->statement_status = 1;
 					} else {
-						$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-						$total = $amount_due;
+						$data->statement_status = 0;
+						$data->paid_date = null;
 					}
 
-					$type = null;
-					$amount_due = $amount_due < 0 ? 0 : $amount_due;
-					// array_push($format, $data);
+					$data->paid_amount = $results['total_pre_paid_spent'] + $data->paid_amount;
 
 					$temp = array(
-						'id' => $customer_id,
-						'invoice_date' => date('j M Y', strtotime($data->statement_date)),
-						'payment_due' => date('j M Y', strtotime($data->statement_due)),
-						'number' => $data->statement_number,
-						'status'	=> $data->statement_status,
-						'amount_due' => number_format($amount_due, 2),
-						'in_network'				=> $results['transactions'],//payment_method in this key
+						'id'					=> $data->statement_id,
+						'invoice_date'		 	=> date('j M Y', strtotime($data->statement_date)),
+						'payment_due' 			=> date('j M Y', strtotime($data->statement_due)),
+						'number' 				=> $data->statement_number,
+						'status'				=> $data->statement_status,
+						'amount_due' 			=> \DecimalHelper::formatDecimal($amount_due),
+						'in_network'			=> $results['transactions'],//payment_method in this key
 						'paid_date'				=> $data->paid_date ? date('j M Y', strtotime($data->paid_date)) : NULL,
-						'payment_amount' => number_format($data->paid_amount, 2),
-						'currency_type' => $data->currency_type,
-						'company_name' => $data->statement_company_name,
-                        'payment_remarks' => $data->payment_remarks,
-                        'payment_method' => $data->payment_method,
-						'Panel/Non-Panel' => 'Wellness Non-Panel'
+						'payment_amount' 		=> \DecimalHelper::formatDecimal($data->paid_amount),
+						'currency_type' 		=> $data->currency_type,
+						'company_name' 			=> $data->statement_company_name,
+						'type'					=> $data->type,
+						'with_post_paid'		=> $results['with_post_paid'],
+						'payment_method'		=> $data->payment_method,
+						'payment_remarks'		=> $data->payment_remarks,
+						'total_pre_paid_spent'	=> $results['total_pre_paid_spent'],
+						'total_post_paid_spent'	=> $results['total_post_paid_spent'],
+						'category_type'			=> $input['type']
 					);
 
 					array_push($format, $temp);
-				}
+				// }
 			}
 
 			if($download == true) {
@@ -659,7 +758,8 @@ class SpendingInvoiceController extends \BaseController {
 						'currency_type' => $result['currency_type'], 
 						'payment_remarks' => $result['payment_remarks'],
 						'payment_method' => null,
-						'company_name' => $result['company']
+						'company_name' => $result['company'],
+						'category_type'			=> $input['type']
 					);
 
 					array_push($format, $temp);
@@ -739,7 +839,8 @@ class SpendingInvoiceController extends \BaseController {
 					'currency_type' => $result['currency_type'],
                     'payment_remarks' => $data->payment_remarks,
                     'payment_method' => null,
-					'company_name' => $result['company']
+					'company_name' => $result['company'],
+					'category_type'			=> $input['type']
 				);
 
 				array_push($format, $temp);
@@ -823,7 +924,8 @@ class SpendingInvoiceController extends \BaseController {
 					'currency_type' => $result['currency_type'],
                     'payment_remarks' => $data->payment_remarks,
                     'payment_method' => $data->payment_method,
-					'company_name' => $result['billing_info']['company']
+					'company_name' => $result['billing_info']['company'],
+					'category_type'			=> $input['type']
 				);
 
 				array_push($format, $temp);
@@ -856,6 +958,125 @@ class SpendingInvoiceController extends \BaseController {
 				return array('status' => TRUE, 'message' => 'Successfully Downloaded!');
 			}
 			
+			$pagination['data'] = $format;
+			$pagination['total_due'] = number_format($total_due, 2);
+			return $pagination;
+		}  else if($input['type'] == "spending_purchase") {
+			$pagination = [];
+			$format = [];
+			$total_due = 0;
+			$allInvoices = DB::table('spending_purchase_invoice')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->get();
+			$invoices = DB::table('spending_purchase_invoice')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->paginate($limit);
+
+			foreach($allInvoices as $key => $spendingPurchase) {
+				$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+				$customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+				
+				$data = array();
+				// medical spending account
+				$data['medical_credits_purchase'] = $spendingPurchase->medical_purchase_credits;
+				// wellness spending account
+				$data['wellness_credits_purchase'] = $spendingPurchase->wellness_purchase_credits;
+				$totalCredits = $data['medical_credits_purchase'] + $data['wellness_credits_purchase'];
+				$totalBalance = $totalCredits - $spendingPurchase->payment_amount;
+				$total_due += $totalBalance;
+			}
+
+			$pagination['current_page'] = $invoices->getCurrentPage();
+			$pagination['last_page'] = $invoices->getLastPage();
+			$pagination['total'] = $invoices->getTotal();
+			$pagination['per_page'] = $invoices->getPerPage();
+			$pagination['count'] = $invoices->count();
+
+			foreach($invoices as $key => $spendingPurchase) {
+				$active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $spendingPurchase->customer_active_plan_id)->first();
+				$customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
+				
+				$data = array();
+				$data['spending_purchase_invoice_id'] = $spendingPurchase->spending_purchase_invoice_id;
+				$data['company_id'] = $spendingPurchase->customer_id;
+				$data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
+				$data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
+				$data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
+				$data['invoice_number'] = $spendingPurchase->invoice_number;
+				$total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+				$data['total']  = $total;
+				$data['amount_due'] = $total - (float)$spendingPurchase->payment_amount;
+				$data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
+				$data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
+				$data['remarks']    = $spendingPurchase->remarks;
+				$data['company_name']   = $spendingPurchase->company_name;
+				$data['company_address']   = $spendingPurchase->company_address;
+				$data['postal']   = $spendingPurchase->postal;
+				$data['contact_name']   = $spendingPurchase->contact_name;
+				$data['contact_number']   = $spendingPurchase->contact_number;
+				$data['contact_email']   = $spendingPurchase->contact_email;
+				$data['plan_start']   = date('d F Y', strtotime($spendingPurchase->plan_start));
+				$data['plan_end']   = date('d F Y', strtotime($spendingPurchase->plan_end));
+				$data['duration']   = $spendingPurchase->duration;
+				$data['account_type'] = \PlanHelper::getAccountType($active_plan->account_type);
+				$data['plan_type'] = 'Pre-paid Credits Plan Mednefits Care (Corporate)';
+				$data['currency_type']   = strtoupper($customer_wallet->currency_type);
+				// medical spending account
+				$data['medical_spending_account'] = (float)$spendingPurchase->medical_purchase_credits > 0 ? true : false;
+				$data['medical_credits_purchase'] = $spendingPurchase->medical_purchase_credits;
+				$data['medical_credit_bonus'] = $spendingPurchase->medical_credit_bonus;
+				$data['medical_total_credits']  = $spendingPurchase->medical_purchase_credits + $spendingPurchase->medical_credit_bonus;
+	
+				// wellness spending account
+				$data['wellness_spending_account'] = (float)$spendingPurchase->wellness_purchase_credits > 0 ? true : false;
+				$data['wellness_credits_purchase'] = $spendingPurchase->wellness_purchase_credits;
+				$data['wellness_credit_bonus'] = $spendingPurchase->wellness_credit_bonus;
+				$data['wellness_total_credits']  = $spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus;
+				
+				$totalCredits = $data['medical_credits_purchase'] + $data['wellness_credits_purchase'];
+				$totalBalance = $totalCredits - $spendingPurchase->payment_amount;
+
+				$temp = array(
+					'id'		=> $data['spending_purchase_invoice_id'],
+					'invoice_date' => date('j M Y', strtotime($data['invoice_date'])),
+					'payment_due' => NULL,
+					'number' => $data['invoice_number'],
+					'status'	=> $totalBalance <= 0 ? 1 : 0 ,
+					'amount_due' => number_format($totalBalance, 2),
+					'paid_date'	=> $data['payment_date'],
+					'payment_amount' => number_format($totalCredits, 2),
+					'currency_type' => $data['currency_type'],
+					'company_name' => $data['company_name'],
+					'payment_method'	=> 'bank_transfer',
+					'payment_remarks'	=> $data['remarks'],
+					'category_type'			=> $input['type']
+				);
+
+				array_push($format, $temp);
+			}
+
+			if($download) {
+				$date = date('d-m-Y h:i:s');
+				$title = "Company History Invoice type - Spending Purchase-".$date;
+
+				$filterSheet = array_map(function($tmp) { 
+					$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
+					$tmp['date_refund'] = $tmp['paid_date'];
+					$tmp['cancellation_date'] = $tmp['invoice_date'];
+					if(!$tmp['payment_due']) {
+						$tmp['payment_due'] = '-';
+					}
+					unset($tmp['paid_date']); 
+					unset($tmp['invoice_date']); 
+					return $tmp; 
+				}, $format);
+
+				$excel = Excel::create($title, function($excel) use($filterSheet) {
+
+						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
+							$sheet->fromArray( $filterSheet );
+						});
+
+				})->export('csv');
+				return array('status' => TRUE, 'message' => 'Successfully Downloaded!');
+			}
+
 			$pagination['data'] = $format;
 			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;

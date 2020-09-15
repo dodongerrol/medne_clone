@@ -202,6 +202,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/exif.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/angular-fix-image-orientation.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/intlTelInput.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/alpine.min.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/app.js?_={{ $date->format('U') }}"></script>
 	<!-- Directives -->

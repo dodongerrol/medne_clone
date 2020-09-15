@@ -85,7 +85,7 @@ app.directive('spendingBillingDirective', [
 
               scope.billingData = response.data.data;
               scope.billingPagination = response.data;
-              scope.totalOutstanding = parseFloat(response.data.total_due).toFixed(2);
+              scope.totalOutstanding = response.data.total_due;
 							scope.hideLoading();
             })
 				}

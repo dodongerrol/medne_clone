@@ -540,7 +540,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
-	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
+	Route::get('hr/download_spending_purchase_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');

@@ -1,3 +1,6 @@
+.member-wallet-benefits-wrapper input{
+  outline: none;
+}
 .member-wallet-benefits-wrapper {
   height: 100%;
 }
@@ -7,6 +10,7 @@
 .member-wallet-benefits-wrapper >div:last-child {
   padding: 100px 0 0;
   height: 100%;
+  min-height: 100vh;
 }
 .member-wallet-body-info-container {
   display: flex;
@@ -40,6 +44,9 @@
 }
 .side-menu-selector .active { 
   background-color: #fff;
+}
+.side-menu-selector .active a{ 
+  text-decoration: underline;
 }
 .side-menu-selector .side-selector-text {
   padding: 10px 50px;
