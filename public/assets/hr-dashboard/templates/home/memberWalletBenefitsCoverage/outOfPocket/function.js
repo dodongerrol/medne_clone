@@ -51,7 +51,6 @@ app.directive('outOfPocketDirective', [
             });
 
             scope.getBenefitsCoverageData(scope.defaultDateTerms);
-            scope._getPaymentDetails_(scope.defaultDateTerms);
           })
         }
 
@@ -161,6 +160,7 @@ app.directive('outOfPocketDirective', [
           // scope.getEnrollmentHistory(scope.customer_active_plan_id);
         }
 
+
         scope.range = function (num) {
           var arr = [];
           for (var i = 0; i < num; i++) {
@@ -186,6 +186,7 @@ app.directive('outOfPocketDirective', [
         scope.onLoad = async function () {
           scope.showLoading();
           await scope.getDateTerms();
+          await scope._getPaymentDetails_(scope.defaultDateTerms);
           await scope.getActivitiesDataTable(scope.defaultDateTerms);
         }
 
