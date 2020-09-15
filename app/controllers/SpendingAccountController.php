@@ -144,6 +144,7 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		$total_credits = 0;
+		$with_prepaid_credits = false;
 		// get utilised credits both medical and wellness
 		$creditAccount = DB::table('mednefits_credits')
 									->where('customer_id', $customer_id)
@@ -153,15 +154,23 @@ class SpendingAccountController extends \BaseController {
 
 		if($creditAccount) {
 			$total_credits = $creditAccount->credits + $creditAccount->bonus_credits;
+			$with_prepaid_credits = true;
 		}
+
+		// get pending spending invoice
+		$pendingInvoice = DB::table('spending_purchase_invoice')
+		->join('mednefits_credits', 'mednefits_credits.id', '=', 'spending_purchase_invoice.mednefits_credits_id')
+		->where('spending_purchase_invoice.customer_id', $customer_id)
+		->where('spending_purchase_invoice.payment_status', 0)
+		->first();
 
 		if($input['type'] == "medical") {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'medical', true);
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
-				'panel_payment_method'	=> $spending_account_settings->medical_payment_method_panel,
-				'non_panel_payment_method'	=> $spending_account_settings->medical_payment_method_non_panel,
+				'panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel,
+				'non_panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel,
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
 				'total_company_budget' => $total_credits,
@@ -171,7 +180,8 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_reimbursement' => (int)$spending_account_settings->medical_reimbursement == 1 ? true : false,
 				'benefits_coverage' => $spending_account_settings->wellness_benefits_coverage,
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
-				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 1 ? false : true
+				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 0 || $pendingInvoice ? true : false,
+				'with_prepaid_credits' => $with_prepaid_credits
 			);
 		} else {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'welenss', true);
@@ -179,8 +189,8 @@ class SpendingAccountController extends \BaseController {
 			$format = array(
 				'customer_id'		  => $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
-				'panel_payment_method'	=> $spending_account_settings->wellness_payment_method_panel,
-				'non_panel_payment_method'	=> $spending_account_settings->wellness_payment_method_non_panel,
+				'panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel,
+				'non_panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_non_panel,
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
 				'total_company_budget' => $total_credits,
@@ -190,7 +200,8 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_reimbursement' => (int)$spending_account_settings->wellness_reimbursement == 1 ? true : false,
 				'benefits_coverage' => (int)$spending_account_settings->wellness_enable == 1 ? $spending_account_settings->wellness_benefits_coverage : 'out_of_pocket',
 				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
-				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 1 ? false : true
+				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 0 || $pendingInvoice ? true : false,
+				'with_prepaid_credits' => $with_prepaid_credits
 			);
 		}
 		
@@ -1216,8 +1227,8 @@ class SpendingAccountController extends \BaseController {
 
 		$customer_id = $result->customer_buy_start_id;
 		$spendingPurchase = DB::table('spending_purchase_invoice')
-								->join('mednefits_credits', 'mednefits_credits.id', '=', 'spending_purchase_invoice.mednefits_credits_id')
-								->where('mednefits_credits.id', $input['id'])
+								// ->join('mednefits_credits', 'mednefits_credits.id', '=', 'spending_purchase_invoice.mednefits_credits_id')
+								->where('spending_purchase_invoice_id', $input['id'])
 								// ->where('spending_purchase_invoice.customer_id', $customer_id)
 								->first();
 								
