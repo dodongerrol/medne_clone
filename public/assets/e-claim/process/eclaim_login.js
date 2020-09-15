@@ -217,7 +217,6 @@ login.directive('eclaimLogin', [
         scope.toggleSelectCountry = false;
         scope.showContinueInput = false;
         scope.showPasswordInputInOtp = false;
-        scope.showPasswordInputInOtp = false;
         scope.showPostalCodeInput = false;
         scope.mobileValidation = false;
         scope.otpValidation = false;
@@ -291,7 +290,6 @@ login.directive('eclaimLogin', [
 
         scope.verifyOTP = function (  ) {
           scope.showPasswordInputInOtp = true;
-
         }
 
         scope.checkOTP = function ( opt_num ) {
@@ -351,6 +349,7 @@ login.directive('eclaimLogin', [
               if (response.data.status) {
                 scope.showPostalCodeInput = true;
                 scope.hideLoading();
+                
               } else {
                 // scope.showPostalCodeInput = true;
                 scope.disableCreateText = true;
