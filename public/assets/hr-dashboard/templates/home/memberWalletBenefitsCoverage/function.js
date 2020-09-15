@@ -77,16 +77,16 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 					// basic plan
 					console.log(scope.planStatusData.account_type);
 					if ( scope.planStatusData.account_type == 'lite_plan' ) {
-						scope.isBasicPlan = await true;
+						scope.isBasicPlan = true;
 					}
 					if ( scope.planStatusData.account_type == 'enterprise_plan' ) {
-						scope.isEnterprisePlan = await true;
+						scope.isEnterprisePlan = true;
 						if (scope.wellnessWalletData.non_panel_reimbursement) {
-              scope.isBasicPlan = await true;
+              scope.isBasicPlan = true;
             }
 					}
 					if ( scope.planStatusData.account_type == 'out_of_pocket' || scope.planStatusData.account_type == 'out_pocket' ) {
-						scope.isOutofPlan = await true;
+						scope.isOutofPlan = true;
 					}
 				}
 
@@ -119,7 +119,7 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
           scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
           await hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, type )
-            .then(function(response){
+            .then(async function(response){
               if(type == 'medical'){
                 scope.medicalWalletData = response.data.data;
                 scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
@@ -131,8 +131,10 @@ app.directive('memberWalletBenefitsCoverageDirective', [
                 scope.wellnessWalletData = response.data.data;
                 scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
                 scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');
-                scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
-              }
+								scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
+								
+							}
+							await scope._disabledStatus_();
             })
 				}
 
@@ -141,7 +143,6 @@ app.directive('memberWalletBenefitsCoverageDirective', [
 					await scope.companyDateTerms();
 					await scope.getMemberWalletData(scope.defaultDateTerms, 'medical');
 					await scope.getMemberWalletData(scope.defaultDateTerms, 'wellness');
-					await scope._disabledStatus_();
 				}
 
 				scope.onLoad();

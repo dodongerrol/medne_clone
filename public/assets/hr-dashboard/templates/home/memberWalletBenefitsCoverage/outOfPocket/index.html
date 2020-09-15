@@ -53,10 +53,10 @@
         <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
       </div>
     </div>
-    <div ng-if="(!out_of_details.medical.panel || !out_of_details.medical.non_panel) && (!out_of_details.wellness.panel || !out_of_details.wellness.non_panel)" class="mednefits-credits-pending">
+    <div ng-if="(!benefitsCoverageData.medical.panel || !benefitsCoverageData.medical.non_panel) && (!benefitsCoverageData.wellness.panel || !benefitsCoverageData.wellness.non_panel)" class="mednefits-credits-pending">
       <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
     </div>
-    <div ng-if="true">
+    <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel) || (benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)">
       <div>
         <span ng-if="medical_wallet_details.panel_payment_method == 'giro'">Mednefits Credits</span>
         <span ng-if="medical_wallet_details.panel_payment_method == 'bank_transfer'">Mednefits Credits</span>

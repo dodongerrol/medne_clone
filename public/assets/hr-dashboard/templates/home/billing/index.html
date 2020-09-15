@@ -79,7 +79,7 @@
                   <img ng-click="downloadAction( list,$index )" class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png">
                   <div ng-if="list.isActionShow" class="download-dp-container">
                     <div ng-click="downloadViewInvoice(list.id)">View Invoice</div>
-                    <div ng-click="downloadViewTransactions(list.id)">View Transactions</div>
+                    <div ng-if="list.category_type != 'spending_purchase'" ng-click="downloadViewTransactions(list.id)">View Transactions</div>
                   </div>
                 </td>
               </tr>

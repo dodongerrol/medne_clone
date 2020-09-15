@@ -29,13 +29,6 @@ app.directive('memberMedicalWalletDirective', [
           await hrSettings.fetchDateTerms()
           .then(async function(response){
 						scope.dateTerm = response.data.data;
-						scope.dateTerm.push({
-              customer_id: 263,
-              end: "2020-08-17",
-              index: 1,
-              start: "2019-08-18",
-              term: "Last term (18/08/2019 - 17/08/2020)",
-            });
             // console.log(scope.dateTerm);
 						let termLength = scope.dateTerm.length;
             await scope.dateTerm.map(function(value,index) {
