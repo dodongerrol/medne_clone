@@ -178,7 +178,7 @@ class SpendingAccountController extends \BaseController {
 				'roll_over'     => (int)$spending_account_settings->medical_roll_over == 1 ? true : false,
 				'non_panel_submission' => (int)$spending_account_settings->medical_active_non_panel_claim == 1 ? true : false,
 				'non_panel_reimbursement' => (int)$spending_account_settings->medical_reimbursement == 1 ? true : false,
-				'benefits_coverage' => $spending_account_settings->wellness_benefits_coverage,
+				'benefits_coverage' => $spending_account_settings->medical_benefits_coverage,
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 0 || $pendingInvoice ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits
@@ -316,11 +316,11 @@ class SpendingAccountController extends \BaseController {
 
 		if($input['type'] == "medical") {
 			if(isset($input['active_non_panel_claim'])) {
-				$update['medical_active_non_panel_claim'] = $input['active_non_panel_claim'] === true || $input['active_non_panel_claim'] === "true" ? 1 : 0;
+				$update['medical_active_non_panel_claim'] = $input['active_non_panel_claim'] == true || $input['active_non_panel_claim'] == "true" ? 1 : 0;
 			}
 
 			if(isset($input['reimbursement'])) {
-				$update['medical_reimbursement'] = $input['reimbursement'] === true || $input['reimbursement'] === "true" ? 1 : 0;
+				$update['medical_reimbursement'] = $input['reimbursement'] == true || $input['reimbursement'] == "true" ? 1 : 0;
 			}
 
 			if(!empty($input['payment_method_panel']) || $input['payment_method_panel'] != null) {
@@ -332,11 +332,11 @@ class SpendingAccountController extends \BaseController {
 			}
 		} else {
 			if(isset($input['active_non_panel_claim'])) {
-				$update['wellness_active_non_panel_claim'] = $input['active_non_panel_claim'] === true || $input['active_non_panel_claim'] === "true" ? 1 : 0;
+				$update['wellness_active_non_panel_claim'] = $input['active_non_panel_claim'] == true || $input['active_non_panel_claim'] == "true" ? 1 : 0;
 			}
 
 			if(isset($input['reimbursement'])) {
-				$update['wellness_reimbursement'] = $input['reimbursement'] === true || $input['reimbursement'] == "true" ? 1 : 0;
+				$update['wellness_reimbursement'] = $input['reimbursement'] == true || $input['reimbursement'] == "true" ? 1 : 0;
 			}
 
 			if(!empty($input['payment_method_panel']) || $input['ayment_method_panel'] != null) {
