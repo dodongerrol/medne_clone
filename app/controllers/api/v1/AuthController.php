@@ -7100,7 +7100,7 @@ public function payCreditsNew( )
           if($user_type == "employee") {
             // check and update login status
             $user = DB::table('user')->where('UserID', $findUserID)->first();
-            if((int)$user->Status == 0) {
+            if($user) {
               // update
               DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
             }
