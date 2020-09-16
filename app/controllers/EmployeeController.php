@@ -3395,14 +3395,14 @@ class EmployeeController extends \BaseController {
 
       if($checker->disabled_otp == 1) {
         return array(
-          'status' => 0,
+          'status' => 1,
           'message' => 'user disabled otp.'
         );
       }
       if($checker->disabled_otp == 0) {
         return array(
           'user_id' => $checker->UserID,
-          'status' => 1,
+          'status' => 0,
           'message' => 'user enabled otp.'
         );
       }
