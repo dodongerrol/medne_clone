@@ -5,15 +5,11 @@ jQuery(document).ready( function ($) {
     $("[data-toggle='toggle']").bootstrapToggle();
     
     $('.timepicker.profile-operatingHours-time-from').timepicker({
-        'timeFormat' : 'h:i A',
-        'minTime'	 : '09:00:00',
-        'maxTime'	 : '21:00:00'
+        'timeFormat' : 'h:i A'
     });
 
     $('.timepicker.profile-operatingHours-time-to').timepicker({
-        'timeFormat' : 'h:i A',
-        'minTime'	 : '09:15:00',
-        'maxTime'	 : '21:00:00'
+        'timeFormat' : 'h:i A'
     });
 
 

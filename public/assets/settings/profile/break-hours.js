@@ -5,15 +5,11 @@ jQuery(document).ready( function ($) {
     $("[data-toggle='toggle']").bootstrapToggle();
     
     $('.timepicker.profile-breakHours-time-from').timepicker({
-        'timeFormat' : 'h:i A',
-        'minTime'	 : '09:00:00',
-        'maxTime'	 : '21:00:00'
+        'timeFormat' : 'h:i A'
     });
 
     $('.timepicker.profile-breakHours-time-to').timepicker({
-        'timeFormat' : 'h:i A',
-        'minTime'	 : '09:15:00',
-        'maxTime'	 : '21:00:00'
+        'timeFormat' : 'h:i A'
     });
 
 
@@ -218,7 +214,7 @@ jQuery(document).ready( function ($) {
 
             const parentName = this.id.split('-addBreak')[0];
                     
-            $('div#profile-breakHours-time-panel .'+parentName+'-addBreakBtn').css('display', 'none');
+            // $('div#profile-breakHours-time-panel .'+parentName+'-addBreakBtn').css('display', 'none');
             $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
             $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle').css('display', 'inline-block');
             $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle .profile-breakHours-chk_activate').bootstrapToggle('on');

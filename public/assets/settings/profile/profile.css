@@ -158,3 +158,17 @@ button#profile-breakHours-savebreakHours {
  #profile-breakHours-savebreakHours{
     display: none;
 }
+
+div#profile-breakHours-time-panel #monday-addBreak,
+div#profile-breakHours-time-panel #tuesday-addBreak,
+div#profile-breakHours-time-panel #wednesday-addBreak,
+div#profile-breakHours-time-panel #thursday-addBreak,
+div#profile-breakHours-time-panel #friday-addBreak,
+div#profile-breakHours-time-panel #saturday-addBreak,
+div#profile-breakHours-time-panel #sunday-addBreak,
+div#profile-breakHours-time-panel #publicHoliday-addBreak {
+    border-radius: 5px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+}

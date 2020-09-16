@@ -28,20 +28,21 @@
 				<div class="col-md-3 monday-addBreakBtn" style="padding-top: 1px">
 					<button id="monday-addBreak">Add Break</button>
 				</div>
-				<div class="col-md-1" style="padding-top: 3px;">
-					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="monday profile-breakHours-chk_activate" data-onstyle="info">
+				<div id="breakDiv-monday">
+					<div class="col-md-1" style="padding-top: 3px;">
+						<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="monday profile-breakHours-chk_activate" data-onstyle="info">
+					</div>
+					<div class="col-md-2" style="padding-left: 10px;">
+						<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
+					</div>
+						<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+					<div class="col-md-2">
+						<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
+					</div>
+					<div>
+						<button id="profile-breakHours-copyTimetoAllBtn" >Copy time to all</button>
+					</div>
 				</div>
-				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
-				</div>
-					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
-				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
-				</div>
-				<div>
-					<button id="profile-breakHours-copyTimetoAllBtn" >Copy time to all</button>
-				</div>
-				
 			</div>	
 			<!-- Tuesday div -->
 			<div class="row col-md-13" id ='profile-breakHours-tuesday-div'><br>
@@ -55,11 +56,11 @@
 					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="tuesday profile-breakHours-chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Wednesday div -->
@@ -74,11 +75,11 @@
 					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="wednesday profile-breakHours-chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Thursday div -->
@@ -93,11 +94,11 @@
 					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="thursday profile-breakHours-chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Friday div -->
@@ -112,11 +113,11 @@
 					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="friday profile-breakHours-chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Saturday div -->
@@ -131,11 +132,11 @@
 					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="saturday profile-breakHours-chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 				</div>
 			</div>	
 			<!-- Sunday div -->
@@ -150,11 +151,11 @@
 					<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="sunday profile-breakHours-chk_activate" data-onstyle="info">
 				</div>
 				<div class="col-md-2" style="padding-left: 10px;">
-					<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 				</div>
 					<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 				<div class="col-md-2">
-					<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+					<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 				</div>
 			</div>
 			<!-- Public Holiday div -->
@@ -169,11 +170,11 @@
 						<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="publicHoliday profile-breakHours-chk_activate" data-onstyle="info">
 					</div>
 					<div class="col-md-2" style="padding-left: 10px;">
-						<input type="button" class="timepicker profile-breakHours-time-from" value="09:00:00" style="float: right; font-size: 12px;">
+						<input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
 					</div>
 						<span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
 					<div class="col-md-2">
-						<input type="button" class="timepicker profile-breakHours-time-to" value="21:00:00" style="font-size: 12px;">
+						<input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
 					</div>
 				</div>		
 			</div>

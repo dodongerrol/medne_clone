@@ -928,5 +928,9 @@ div#setupBreakHours #friday-addBreak,
 div#setupBreakHours #saturday-addBreak,
 div#setupBreakHours #sunday-addBreak,
 div#setupBreakHours #publicHoliday-addBreak {
-    font-size: 0.5em;
+    border-radius: 5px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+    font-size: 0.7em;
 }

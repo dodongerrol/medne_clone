@@ -740,15 +740,11 @@ jQuery(document).ready(function($) {
 		$('#lbl-step-2').css("background", "#2AA4D8");
 
 		$('.timepicker.time-from').timepicker({
-			'timeFormat' : 'h:i A',
-			'minTime'	 : '09:00:00',
-			'maxTime'	 : '20:00:00'
+			'timeFormat' : 'h:i A'
 		});
 
 		$('.timepicker.time-to').timepicker({
-			'timeFormat' : 'h:i A',
-			'minTime'	 : '09:15:00',
-			'maxTime'	 : '21:00:00'
+			'timeFormat' : 'h:i A'
 		});
 	  });
 });
