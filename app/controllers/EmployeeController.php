@@ -3540,4 +3540,24 @@ class EmployeeController extends \BaseController {
     return Response::json($returnObject);
   }
 
+  public function confirmMemberPassword()
+	{
+    $token = StringHelper::getToken();
+    $input = Input::all();
+    $user_id = $input['user_id'];
+    $check = DB::table('user')->where('UserID', $input['user_id'])->where('password', md5($input['password']))->count();
+
+		if($check > 0) {
+			return array(
+				'status'	=> TRUE,
+				'message' => 'Success.'
+			);
+		}
+
+		return array(
+			'status'	=> FALSE,
+			'message'	=> 'Invalid Password.'
+		);
+	}
+
 }
