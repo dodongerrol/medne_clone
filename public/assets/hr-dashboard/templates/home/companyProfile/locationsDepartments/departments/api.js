@@ -6,9 +6,23 @@
             this.$http = $http;
             this.serverUrl = serverUrl.url;
         }
-        getDepartments() {
-            return this.$http.get('http://localhost:3000/departments')
-                .then(response => response.data)
+        get() {
+            return this.$http.get(`${this.serverUrl}/hr/get_department_list`)
+                .then((response) => response.data.data.department_name);
+        }
+        store (department_name) {
+            return this.$http.post(`${this.serverUrl}/hr/create_department`, {
+                department_name: department_name
+            });
+        }
+        update (department) {
+            return this.$http.post(`${this.serverUrl}/hr/update_department`, {
+                id: department.id,
+                department_name: department.department_name
+            });
+        }
+        delete (id) {
+            return this.$http.get(`${this.serverUrl}/hr/remove_department?id=${id}`)
         }
     }
 

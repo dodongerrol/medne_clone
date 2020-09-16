@@ -5,7 +5,11 @@
     $billingPaymentsViews = "{$server}/assets/hr-dashboard/templates/home/companyProfile/BillingPayments";
     $billingPaymentsScripts = [
         '/contacts/api.js',
-        '/contacts/controller.js'
+        '/contacts/controller.js',
+        '/information/api.js',
+        '/information/controller.js',
+        '/cost-centre/api.js',
+        '/cost-centre/controller.js'
     ];
 ?>
 

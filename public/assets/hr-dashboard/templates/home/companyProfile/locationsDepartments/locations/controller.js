@@ -22,10 +22,6 @@
         }
         get() {
             this.loading = true;
-            this.workLocationService.getLocations().then(response => {
-                this.loading = false;
-                this.locations = response;
-            });
         }
         add() {
             this.presentModal('create-location-modal', true);

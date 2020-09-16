@@ -7,8 +7,8 @@
             this.serverUrl = serverUrl.url;
         }
         getLocations() {
-            return this.$http.get('http://localhost:3000/locations')
-                .then(response => response.data)
+            // return this.$http.get('http://localhost:3000/locations')
+            //     .then(response => response.data)
         }
         storeLocation() {
             //

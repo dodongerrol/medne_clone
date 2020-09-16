@@ -1,0 +1,81 @@
+<div class="modal fade" id="{{ $ctrl.element }}" tabindex="-1" role="dialog"
+    aria-labelledby="centre" aria-hidden="true">
+    <div class="modal-dialog max-w-2xl bg-transparent mt-32" role="document">
+    <div class="modal-content">
+        <div class="modal-body py-0">
+        <div class="py-1 px-16">
+            <form name="costCentreModal" class="flex flex-col items-center justify-between space-y-6 pt-6">
+            <h4 class="section-title font-bold">
+                Cost Centre
+            </h4>
+            <div class="w-full">
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="form-label">
+                            Cost Centre
+                        </label>
+                        <div class="btn-group dropdown w-full">
+                            <button
+                                type="button"
+                                class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
+                                data-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+                                {{ costCentre }}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="w-4 text-gray-600" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <input
+                                ng-model="costCentre"
+                                class="hidden"
+                                required
+                                readonly
+                            >
+                            <ul class="dropdown-menu w-full">
+                                <li>
+                                    <a
+                                        ng-click="setCostCentre('Locations')"
+                                        class="flex items-center space-x-2">
+                                        Locations
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        ng-click="setCostCentre('Departments')"
+                                        class="flex items-center space-x-2">
+                                        Departments
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-between w-full pb-8">
+                <div class="flex items-center justify-end space-x-4 w-full">
+                <button ng-click="presentModal(modals.centre, false)" type="button" class="ui-btn ui-btn-primary-outline">
+                    Cancel
+                </button>
+                <button
+                    type="button"
+                    ng-if="editingCostCentre"
+                    ng-disabled="!costCentreModal.$dirty && costCentreModal.$invalid"
+                    class="ui-btn {{ costCentreModal.$dirty && costCentreModal.$valid ? 'ui-btn-primary' : 'ui-btn-disabled' }} w-48">
+                    Update
+                </button>
+                <button
+                    type="button"
+                    ng-if="!editingCostCentre"
+                    ng-disabled="costCentreModal.$invalid"
+                    class="ui-btn {{ costCentreModal.$invalid ? 'ui-btn-disabled' : 'ui-btn-primary' }} w-48">
+                    Set up Cost Centre
+                </button>
+                </div>
+            </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>

@@ -9,7 +9,7 @@
                 form: 'employeeAllocationModal'
             }
         }
-        $onInit() {l
+        $onInit() {
         }
         get() {
             this.api.getEmployees().then(response => {

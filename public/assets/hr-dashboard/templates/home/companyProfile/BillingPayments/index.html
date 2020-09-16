@@ -1,10 +1,10 @@
-<div billing-payments-directive id="billing-payments">
+<div>
     <p class="page-title">
         Billing & Payments
     </p>
-    <div class="grid grid-layout-one gap-6">
-        <ng-include src="sectionsView + 'information.html'"></ng-include>
-        <ng-include src="sectionsView + 'contact.html'"></ng-include>
-        <ng-include src="sectionsView + 'cost-centre.html'"></ng-include>
+    <div class="grid grid-cols-1 gap-8">
+        <contacts></contacts>
+        <information></information>
+        <costcentre></costcentre>
     </div>
 </div>

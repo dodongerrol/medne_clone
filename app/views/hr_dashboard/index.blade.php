@@ -312,6 +312,7 @@
 	<!-- ACCOUNT SETTINGS -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/accountSettings/function.js?_={{ $date->format('U') }}"></script>
 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js" integrity="sha512-90vH1Z83AJY9DmlWa8WkjkV79yfS2n2Oxhsi2dZbIv0nC4E6m5AbH8Nh156kkM7JePmqD6tcZsfad1ueoaovww==" crossorigin="anonymous"></script>
 	<!-- Company Profile > Location & Departments ( app/views/hr_dashboard/scripts/company-profile/location-departments.blade.php ) -->
 	@include('hr_dashboard.scripts.company-profile.location-departments')
 

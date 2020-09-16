@@ -7,9 +7,9 @@
             this.serverUrl = serverUrl.url;
         }
         getEmployees(id) {
-            return this.$http.get('http://localhost:3000/employees', {
-                id
-            }).then(response => response.data)
+            // return this.$http.get('http://localhost:3000/employees', {
+            //     id
+            // }).then(response => response.data)
         }
     }
 

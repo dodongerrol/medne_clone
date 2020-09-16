@@ -6,37 +6,63 @@
                 this.loading = false;
             this.departments = [];
             this.countries = countries();
-            this.formFields = {
-                name: '',
-                employees: 0
-            };
+            this.state = {
+                department: {
+                    id: null,
+                    department_name: null
+                }
+            }
             this.departmentAPI = departmentAPI;
         }
         $onInit() {
             this.get();
         }
         get() {
-            this.loading = true;
-            this.departmentAPI.getDepartments().then(response => {
-                this.loading = false;
+            this.departmentAPI.get().then(response => {
                 this.departments = response;
             });
         }
         add() {
+            this.reset();
             this.presentModal('create-department-modal', true);
         }
         store() {
-            //
+            $(".circle-loader").fadeIn();
+            const request = this.departmentAPI.store(this.state.department.department_name);
+
+            request.then((response) => {
+                $(".circle-loader").fadeOut();
+                this.presentModal('create-department-modal', false);
+                this.get();
+            });
         }
         edit(department) {
+            this.state.department = department;
             this.presentModal('edit-department-modal', true);
-            this.formFields = { ...department };
         }
         update() {
-            //
+            $(".circle-loader").fadeIn();
+            const request = this.departmentAPI.update(this.state.department);
+
+            request.then((response) => {
+                $(".circle-loader").fadeOut();
+                this.presentModal('edit-department-modal', false);
+                this.get();
+            });
         }
-        delete(department) {
-            //
+        delete() {
+            $(".circle-loader").fadeIn();
+            const request = this.departmentAPI.delete(this.state.department.id);
+
+            request.then(() => {
+                $(".circle-loader").fadeOut();
+                this.reset();
+                this.presentModal('edit-department-modal', false);
+                this.get();
+            });
+        }
+        buttonState () {
+            return this.departments.length > 0 ? 'h-10' : 'h-40';
         }
         presentModal(id, show = true) {
             $(`#${id}`).modal(show ? "show" : "hide");
@@ -44,9 +70,9 @@
         setField(field, value) {
             this.formFields[field] = value;
         }
-        resetFormFields() {
-            this.formFields = _.mapValues(
-                scope.formFields,
+        reset() {
+            this.state.department = _.mapValues(
+                this.state.department,
                 () => null
             );
         }

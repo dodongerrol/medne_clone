@@ -1,5 +1,5 @@
-<div class="modal fade" id="{{ modals.contact }}" tabindex="-1" role="dialog"
-  aria-labelledby="information-modal" aria-hidden="true">
+<div class="modal fade" id="contact-form" tabindex="-1" role="dialog"
+  aria-labelledby="contact-form" aria-hidden="true">
   <div class="modal-dialog max-w-2xl bg-transparent mt-32" role="document">
     <div class="modal-content">
       <div class="modal-body py-0">
@@ -48,7 +48,7 @@
             <div class="grid grid-cols-1 w-full">
               <div class="flex items-center justify-end space-x-4 w-full pb-8">
                 <button
-                  ng-click="presentModal(modals.contact, false)"
+                  ng-click="$ctrl.dismiss()"
                   type="button"
                   class="ui-btn ui-btn-primary-outline"
                   >
@@ -58,7 +58,7 @@
                   type="button"
                   ng-disabled="!contactModal.$dirty && contactModal.$invalid"
                   class="ui-btn {{ contactModal.$dirty && contactModal.$valid ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-40"
-                  ng-click="saveBillingContact()">
+                  ng-click="submit()">
                   Update
                 </button>
               </div>

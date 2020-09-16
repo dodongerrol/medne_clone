@@ -6,6 +6,15 @@
         }
         $onInit() {
         }
+        open() {
+            presentModal('contact-form')
+        }
+        dismiss() {
+            presentModal('contact-form', 'hide')
+        }
+        submit() {
+
+        }
     }
 
     angular.module('app')
