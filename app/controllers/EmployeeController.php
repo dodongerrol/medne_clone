@@ -3393,13 +3393,13 @@ class EmployeeController extends \BaseController {
       ->where('UserID', $input['user_id'])
       ->first();
 
-      if($checker->disabled_otp == 0) {
+      if($checker->disabled_otp == 1) {
         return array(
           'status' => 0,
           'message' => 'user disabled otp.'
         );
       }
-      if($checker->disabled_otp == 1) {
+      if($checker->disabled_otp == 0) {
         return array(
           'user_id' => $checker->UserID,
           'status' => 1,
