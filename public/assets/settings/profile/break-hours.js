@@ -214,16 +214,17 @@ jQuery(document).ready( function ($) {
 
             const parentName = this.id.split('-addBreak')[0];
                     
+            
             // $('div#profile-breakHours-time-panel .'+parentName+'-addBreakBtn').css('display', 'none');
-            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
-            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle').css('display', 'inline-block');
-            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle .profile-breakHours-chk_activate').bootstrapToggle('on');
-            $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .timepicker').css('display', 'inline-block');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle').css('display', 'inline-block');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle .profile-breakHours-chk_activate').bootstrapToggle('on');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .timepicker').css('display', 'inline-block');
 
             // For copy time to all button
-            if (parentName == 'monday') {
-                $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #profile-breakHours-copyTimetoAllBtn').css('display', 'inline-block');
-            }
+            // if (parentName == 'monday') {
+            //     $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #profile-breakHours-copyTimetoAllBtn').css('display', 'inline-block');
+            // }
     });
 
     // Toggle
