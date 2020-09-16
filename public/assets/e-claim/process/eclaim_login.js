@@ -279,7 +279,9 @@ login.directive('eclaimLogin', [
                 scope.disabledContinue = false;
                 scope.mobileValidation = false;
                 scope.hideLoading();
-                await scope.getOtpStatus();
+                if ( scope.checkMemberData.member_activated == 0 ) {
+                  await scope.getOtpStatus();
+                }
               } else {
                 scope.disabledContinue = true;
                 scope.mobileValidation = true;
@@ -459,9 +461,27 @@ login.directive('eclaimLogin', [
           scope.new_password = new_password;
           console.log(scope.new_password);
         }
-
+        scope.passwordSignInNotMatch = false;
         scope.signInPassword = function () {
-          scope.showPostalCodeInput = true;
+          // scope.showPostalCodeInput = true;
+          let data = {
+            user_id: scope.checkMemberData.user_id,
+            password: scope.new_password,
+          }
+          console.log(data);
+          scope.showLoading();
+          $http.post(serverUrl.url + 'employee/check_member_password', data)
+	          .then(function(response) {
+              console.log(response);
+              scope.checkMemberPassword = response.data;
+              if ( response.data.status ) {
+                scope.hideLoading();
+                scope.showPostalCodeInput = true;
+              } else {
+                scope.hideLoading();
+                scope.passwordSignInNotMatch = true;
+              }
+            })
         }
 
         scope.showLoading = function(){
