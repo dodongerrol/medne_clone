@@ -917,4 +917,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             return 1;
         }
     }
+
+    function checkMemberExistence ($params) {
+        $query = User::query();
+
+        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('(case when Zip_Code <= 0 then 0 else Zip_Code end)as postal_code'), 'disabled_otp', 'PhoneNo');
+       
+        // Append where clause
+        foreach ($params as $key => $value) {
+            $query->where($value['paramKey'], $value['paramKeyValue']);    
+        }
+        
+        $user = $query->first();
+
+        return count((array)$user) > 0? $user: 0;
+    }
+
+    function updateMemberRecord ($userId, $data) {
+        return User::where('UserID', $userId)
+                    ->update($data);
+    }
 }
