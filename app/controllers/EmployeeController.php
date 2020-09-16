@@ -3332,7 +3332,9 @@ class EmployeeController extends \BaseController {
         $returnObject->message = 'Confirm Password is required.';
         return Response::json($returnObject);
     }
-
+    if($input['password']!=($input['password_confirm'])) {
+			return array('status' => FALSE, 'message' => 'Password did not match.');
+    }
     if(empty($input['user_id']) || $input['user_id'] == null) {
         $returnObject->status = false;
         $returnObject->message = 'User ID is required.';
@@ -3395,6 +3397,7 @@ class EmployeeController extends \BaseController {
 
       if($checker->disabled_otp == 1) {
         return array(
+          'user_id' => $checker->UserID,
           'status' => 1,
           'message' => 'user disabled otp.'
         );
