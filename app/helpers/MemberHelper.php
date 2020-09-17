@@ -224,33 +224,33 @@ class MemberHelper
 		foreach ($member_entitlment as $key => $entitlement) {
 			$spending_type = $entitlement->spending_type;
 			$entitlement_id = $entitlement->wallet_entitlement_schedule_id;
-		if($entitlement->spending_type == "medical") {
-			$data['medical_usage_date'] = $entitlement->new_usage_date;
-			$data['medical_proration'] = $entitlement->proration;
-			$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
-			$data['medical_allocation'] = $entitlement->new_allocation_credits;
-			$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
-		} else {
-			$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
-			$data['medical_proration'] = $wallet_entitlement->medical_proration;
-			$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
-			$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
-			$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
-		}
+			if($entitlement->spending_type == "medical") {
+				$data['medical_usage_date'] = $entitlement->new_usage_date;
+				$data['medical_proration'] = $entitlement->proration;
+				$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['medical_allocation'] = $entitlement->new_allocation_credits;
+				$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
+				$data['medical_proration'] = $wallet_entitlement->medical_proration;
+				$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
+				$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
+				$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
+			}
 
-		if($entitlement->spending_type == "wellness") {
-			$data['wellness_usage_date'] = $entitlement->new_usage_date;
-			$data['wellness_proration'] = $entitlement->proration;
-			$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
-			$data['wellness_allocation'] = $entitlement->new_allocation_credits;
-			$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
-		} else {
-			$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
-			$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
-			$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
-			$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
-			$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
-		}
+			if($entitlement->spending_type == "wellness") {
+				$data['wellness_usage_date'] = $entitlement->new_usage_date;
+				$data['wellness_proration'] = $entitlement->proration;
+				$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['wellness_allocation'] = $entitlement->new_allocation_credits;
+				$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
+				$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
+				$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
+				$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
+				$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
+			}
 		}
 
 		if($data) {

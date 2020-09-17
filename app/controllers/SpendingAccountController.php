@@ -15,6 +15,12 @@ class SpendingAccountController extends \BaseController {
 			return array('status' => false, 'message' => 'end term is required.');
 		}
 
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'cutomer does not exist'];
+		}
+
 		$account_credits = DB::table('mednefits_credits')
                         ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
                         ->where('mednefits_credits.customer_id', $customer_id)
@@ -83,7 +89,8 @@ class SpendingAccountController extends \BaseController {
 			'top_up_bonus_credits'  => $top_up_bonus_credits,
 			'payment_status'        =>  $payment_status,
 			'to_top_up_status'      => $toTopUp > 0 ? true : false,
-			'to_top_value'          => $toTopUp
+			'to_top_value'          => $toTopUp,
+			'currency_type'			=> strtoupper($customer->currency_type)
 		);
 		return ['status' => true, 'data' => $format];
 	  }
@@ -109,6 +116,11 @@ class SpendingAccountController extends \BaseController {
 			return ['status' => false, 'message' => 'only medical and wellness'];
 		}
 		
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'cutomer does not exist'];
+		}
 		
 		// get spending settings
 		$spending_account_settings = DB::table('spending_account_settings')
@@ -173,7 +185,9 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel,
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
-				'total_company_budget' => $total_credits,
+				'total_company_budget' => $credits['total_company_entitlement'],
+				'total_company_entitlement' => $credits['total_company_entitlement'],
+				'total_medical_entitlement' => $credits['total_medical_entitlement'],
 				'total_balance' => $credits['medical_credits'],
 				'roll_over'     => (int)$spending_account_settings->medical_roll_over == 1 ? true : false,
 				'non_panel_submission' => (int)$spending_account_settings->medical_active_non_panel_claim == 1 ? true : false,
@@ -181,7 +195,8 @@ class SpendingAccountController extends \BaseController {
 				'benefits_coverage' => $spending_account_settings->medical_benefits_coverage,
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 0 || $pendingInvoice ? true : false,
-				'with_prepaid_credits' => $with_prepaid_credits
+				'with_prepaid_credits' => $with_prepaid_credits,
+				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		} else {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'welenss', true);
@@ -194,6 +209,8 @@ class SpendingAccountController extends \BaseController {
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
 				'total_company_budget' => $total_credits,
+				'total_company_entitlement' => $credits['total_company_entitlement'],
+				'total_wellness_entitlement' => $credits['total_wellness_entitlement'],
 				'total_balance' => $credits['wellness_credits'],
 				'roll_over'     => (int)$spending_account_settings->wellness_roll_over == 1 ? true : false,
 				'non_panel_submission' => (int)$spending_account_settings->wellness_active_non_panel_claim == 1 ? true : false,
@@ -201,7 +218,8 @@ class SpendingAccountController extends \BaseController {
 				'benefits_coverage' => (int)$spending_account_settings->wellness_enable == 1 ? $spending_account_settings->wellness_benefits_coverage : 'out_of_pocket',
 				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
 				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 0 || $pendingInvoice ? true : false,
-				'with_prepaid_credits' => $with_prepaid_credits
+				'with_prepaid_credits' => $with_prepaid_credits,
+				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		}
 		
@@ -534,6 +552,12 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		if(!$customer) {
+			return ['status' => false, 'message' => 'cutomer does not exist'];
+		}
+
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
@@ -574,7 +598,8 @@ class SpendingAccountController extends \BaseController {
 			  'id'			=> $spending_account_settings->spending_account_setting_id,
 			  'customer_id'	=> $customer_id,
 			  'medical'         => $medical,
-        	  'wellness'        => $wellness
+			  'wellness'        => $wellness,
+			  'currency_type'	=> strtoupper($customer->currency_type)
 			];
 		} else if($input['type'] == "out_of_pocket"){
 			$credits = \MemberHelper::getTransactionSpent($customer_id, $input['start'], $input['end'], 'all', false);
@@ -586,7 +611,8 @@ class SpendingAccountController extends \BaseController {
 				'id'			=> $spending_account_settings->spending_account_setting_id,
 				'customer_id'	=> $customer_id,
 				'medical'         => $medical,
-        	  	'wellness'        => $wellness
+				'wellness'        => $wellness,
+				'currency_type'	=> strtoupper($customer->currency_type)
 			];
 		} else {
 			if($plan->account_type == "out_of_pocket") {
@@ -601,7 +627,8 @@ class SpendingAccountController extends \BaseController {
 				'id'			=> $spending_account_settings->spending_account_setting_id,
 				'customer_id'	=> $customer_id,
 				'medical'         => $medical,
-        	  	'wellness'        => $wellness
+				'wellness'        => $wellness,
+				'currency_type'	=> strtoupper($customer->currency_type)
 			];
 		}
 	}
