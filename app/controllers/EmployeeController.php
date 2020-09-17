@@ -3359,7 +3359,7 @@ class EmployeeController extends \BaseController {
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Password Mismatched.';
+        $returnObject->message = 'Password Mismatched. Please ensure the password match.';
         return Response::json($returnObject);
       }
 
