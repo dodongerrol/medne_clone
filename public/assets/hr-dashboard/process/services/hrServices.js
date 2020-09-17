@@ -531,6 +531,14 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/activate_mednefits_basic_plan"  );
   }
 
+  // Linked Account
+  hrFactory.fetchLinkAccount = function ( limit,page ) {
+    return $http.get( serverUrl.url + "/hr/get/corporate_linked_account/?limit=" + limit + "page=" + page );
+  }
+
+  hrFactory.updateUnlinkAccount = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/unlink/company_account", data);
+  }
 
   return hrFactory;
 });

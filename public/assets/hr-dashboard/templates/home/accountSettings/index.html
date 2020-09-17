@@ -47,23 +47,26 @@
             {{ value }}
           </th>
         </thead>
-        <tbody>
+        <tbody ng-repeat="list in link_account_data.data">
           <!-- Replace with real values -->
           <tr class="">
-            <td class="bg-white px-4 rounded-l-lg text-gray-900"> Medicloud </td>
-            <td class="bg-white px-4 text-gray-900"> 141 </td>
-            <td class="bg-white px-4 text-gray-900"> 28/02/2020 </td>
-            <td class="bg-white px-4 text-gray-900"> Basic Plan (Post-paid) </td>
-            <td class="bg-white px-4 text-gray-900"> chris.teo@mednefits.com </td>
+            <td ng-bind="list.account_name" class="bg-white px-4 rounded-l-lg text-gray-900"> Medicloud </td>
+            <td ng-bind="list.company_id" class="bg-white px-4 text-gray-900"> 141 </td>
+            <td ng-bind="list.link_date" class="bg-white px-4 text-gray-900"> 28/02/2020 </td>
+            <td ng-bind="list.plan_type" class="bg-white px-4 text-gray-900"> Basic Plan (Post-paid) </td>
+            <td ng-bind="list.email" class="bg-white px-4 text-gray-900"> chris.teo@mednefits.com </td>
             <td class="bg-white px-4 rounded-r-lg text-gray-900">
-              <div class="relative inline-block text-left" x-data="{ open: false }">
-                <button class="ui-btn ui-btn-link-dark" @click="open = !open">
+              <div class="relative inline-block text-left unlink-action" x-data="{ open: false }">
+                <button class="ui-btn ui-btn-link-dark" ng-click="linkAction(list,$index)">
                   <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
                     <path fill-rule="evenodd"
                       d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                       clip-rule="evenodd"></path>
                   </svg>
                 </button>
+                <div ng-if="list.isUnlinkShow" class="unlink-dp-wrapper">
+                  <div ng-click="unlinkAccount( list )" data-toggle="modal" data-target="#unlink_account">Unlink Account</div>
+                </div>
               </div>
             </td>
           </tr>
@@ -854,6 +857,60 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal unlink-account" id="unlink_account" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h4>Unlink Account</h4>
+            <p ng-if="!unlinkSuccessfullyUpdated" class="unlink-subtext">Please key in new HR Administrator (Primary Admin) details to unlink this account.</p>
+          </div>
+          <div ng-if="!unlinkSuccessfullyUpdated" class="modal-body">
+            <div class="company-account-input-wrapper">
+              <label>Full Name</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="unlinkData.full_name" type="text" placeholder="Enter new Primary Admin’s full name">
+              </div>
+            </div>
+            <div class="company-account-input-wrapper">
+              <label>Email</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="unlinkData.email" type="text" placeholder="Enter new Primary Admin’s work email address">
+              </div>
+            </div>
+            <div class="company-account-input-wrapper number">
+              <label></span>Mobile Number</label>
+              <div>
+                <div class="custom-input-wrapper">
+                  <input ng-model="unlinkData.phone_code" type="tel" id="unlink_mobile_number">
+                  <i class="fa fa-angle-down"></i>
+                </div>
+                <div class="custom-input-wrapper">
+                  <input ng-model="unlinkData.mobile_number" type="number" placeholder="Enter new Primary Admin’s mobile number">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-if="unlinkSuccessfullyUpdated" class="modal-body edit-hr-success-container">
+            <div>
+              <img src="../assets/images/success-circle.png">
+            </div>
+            <span ng-bind="updatedLinkData.message">The Med has been successfully unlinked from Linked Accounts under Chris Teo.</span>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="!unlinkSuccessfullyUpdated" data-dismiss="modal"
+              class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="!unlinkSuccessfullyUpdated" ng-click="_updateLink_( unlinkData )"
+              class="btn-update" ng-disabled="unlinkData.full_name == null || unlinkData.email == null || unlinkData.mobile_number == null">Confirm Unlink</button>
+            <button ng-if="unlinkSuccessfullyUpdated" data-dismiss="modal"
+              class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

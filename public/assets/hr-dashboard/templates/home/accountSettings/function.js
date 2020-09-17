@@ -18,6 +18,7 @@ app.directive("accountSettingsDirective", [
           phone_code: "",
         };
         scope.editHrSuccessfullyUpdated = false;
+        scope.unlinkSuccessfullyUpdated = false;
         // Active Plan Pagination and Old Plan List
         scope.selectedOldPlan = null;
         scope.activePlan_active_page = 1;
@@ -57,6 +58,9 @@ app.directive("accountSettingsDirective", [
         };
 
         scope.changePrimaryData = {
+          phone_code: ''
+        }
+        scope.unlinkData = {
           phone_code: ''
         }
 
@@ -683,6 +687,8 @@ app.directive("accountSettingsDirective", [
               scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
             });
           }
+
+          
         };
 
         scope.spending_account_status = {};
@@ -736,6 +742,75 @@ app.directive("accountSettingsDirective", [
               }
             });
         }
+        scope.limit_link = 5;
+        scope.page_link = 1;
+        
+        scope.getLinkedAccount = async function () {
+          await hrSettings.fetchLinkAccount( scope.limit_link,scope.page_link ).then(function (response) {
+            console.log(response);
+            scope.link_account_data = response.data;
+          });
+        }
+
+        scope.linkAction = function (data,index) {
+          scope.link_account_data.data.map((value,key)  => {
+            if ( index == key ) {
+              value.isUnlinkShow = value.isUnlinkShow == true ? false : true;
+            } 
+          })
+        }
+
+        scope.unlinkAccount = async function ( data ) {
+          console.log(data);
+          scope.link_account_id = data.id;
+          scope.unlinkData = {
+            phone_code: '65'
+          }
+          await scope.initializeUnlinkCountryCode();
+        }
+
+        scope.initializeUnlinkCountryCode = function(){
+          var settings = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: false,
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg", "my"],
+          };
+
+          var input = document.querySelector("#unlink_mobile_number");
+          primaryAdminCountry = intlTelInput(input, settings);
+          primaryAdminCountry.setCountry("SG");
+          input.addEventListener("countrychange", function () {
+            scope.unlinkData.phone_code = primaryAdminCountry.getSelectedCountryData().dialCode;
+          });
+        }
+
+        scope._updateLink_ = async function ( ) {
+          let data = {
+            id: scope.link_account_id,
+            fullname: scope.unlinkData.full_name,
+            email: scope.unlinkData.email,
+            phone_code: scope.unlinkData.phone_code,
+            phone_no: scope.unlinkData.mobile_number,
+          }
+          if( scope.checkEmail(data.email) == false ){
+            return swal('Error!', 'Invalid Email', 'error');
+          }
+          scope.showLoading();
+          await hrSettings.updateUnlinkAccount( data ).then(async function (response) {
+            console.log(response);
+            scope.updatedLinkData = response.data;
+            if (response.data.status) {
+              scope.unlinkSuccessfullyUpdated = true;
+              scope.hideLoading();
+              await scope.getLinkedAccount();
+            } else {
+              return swal('Error!', response.data.message, 'error');
+            }
+          });
+        }
 
         scope.range = function (num) {
           var arr = [];
@@ -760,6 +835,7 @@ app.directive("accountSettingsDirective", [
           await scope._getHrDetails_();
           await scope.getOldPlansList();
           await scope.getPlanDetails();
+          await scope.getLinkedAccount();
         };
         scope.onLoad();
       },
