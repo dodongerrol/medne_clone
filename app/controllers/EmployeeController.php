@@ -3225,6 +3225,10 @@ class EmployeeController extends \BaseController {
       $hostName = $_SERVER['HTTP_HOST'];
       $protocol = $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
       $server = $protocol.$hostName;
+
+      if($server == "https://hrapi.medicloud.sg") {
+        $server = "https://medicloud.sg";
+      }
       // return $server;
       $id = Input::get ('id');
       $input = Input::all();
@@ -3259,14 +3263,34 @@ class EmployeeController extends \BaseController {
 
           // check type of communication type
           if($findNewUser->UserID) {
-            $emailDdata['emailName'] = $user_data->Name;
-            $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
-            $emailDdata['emailTo'] = $user_data->Email;
-            $emailDdata['emailSubject'] = 'Employee Password Reset';
-            $emailDdata['name'] = $user_data->Name;
-            $emailDdata['context'] = "Forgot your employee password?";
-            $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$updateArray['ResetLink'];
-            EmailHelper::sendEmail($emailDdata);    
+            if($findNewUser->Email) {
+              $emailDdata['emailName'] = $user_data->Name;
+              $emailDdata['emailPage'] = 'email-templates.latest-templates.global-reset-password-template';
+              $emailDdata['emailTo'] = $user_data->Email;
+              $emailDdata['emailSubject'] = 'Employee Password Reset';
+              $emailDdata['name'] = $user_data->Name;
+              $emailDdata['context'] = "Forgot your employee password?";
+              $emailDdata['activeLink'] = $server.'/app/resetmemberpassword?token='.$updateArray['ResetLink'];
+              EmailHelper::sendEmail($emailDdata);    
+            }
+
+            if($findNewUser->PhoneNo) {
+              // check and format phone number
+              $phone = SmsHelper::newformatNumber($findNewUser);
+
+              if($phone) {
+                $findNewUser->phone = $phone;
+                $findNewUser->server = $server;
+                $message = SmsHelper::formatForgotPasswordMessage($findNewUser);
+                // send messge
+                $compose = [];
+                $compose['phone'] = $phone;
+                $compose['message'] = $message;
+                $compose['sms_type'] = "LA";
+                SmsHelper::sendSms($compose);
+              }
+            }
+            
             return array('status' => TRUE, 'message' => 'We sent an email or sms to you with a link to reset your password.');
           } 
           return array('status' => FALSE, 'message' => 'Failed to send reset password link.');

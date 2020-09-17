@@ -2375,3 +2375,7 @@ body::-webkit-scrollbar-thumb {
   background-color: #dcd9d9;
   color: #999 !important;
 }
+
+button{
+  outline: none !important;
+}

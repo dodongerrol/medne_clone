@@ -135,6 +135,7 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
 
+		
 		$ids = [];
         // get real userid for dependents
 		$type = StringHelper::checkUserType($input['user_id']);
@@ -144,6 +145,7 @@ class EclaimController extends \BaseController {
 			$customer_id = $input['user_id'];
 			$email_address = $check->Email;
 			$ids[] = $user_id;
+			$dependent_user = false;
 		} else {
             // find owner
 			$owner = DB::table('employee_family_coverage_sub_accounts')
@@ -154,6 +156,7 @@ class EclaimController extends \BaseController {
 			$email_address = $user_email->Email;
 			$customer_id = $input['user_id'];
 			$ids = [$user_id, $customer_id];
+			$dependent_user = true;
 		}
 
 		// get customer id
@@ -193,15 +196,26 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
 		}
 		
-		$user_plan_history = DB::table('user_plan_history')
-                  ->where('user_id', $user_id)
-                  ->where('type', 'started')
-                  ->orderBy('created_at', 'desc')
-				  ->first();
+		// $user_plan_history = DB::table('user_plan_history')
+        //           ->where('user_id', $user_id)
+        //           ->where('type', 'started')
+        //           ->orderBy('created_at', 'desc')
+		// 		  ->first();
 				  
-		$customer_active_plan = DB::table('customer_active_plan')
-		->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-		->first();
+		// $customer_active_plan = DB::table('customer_active_plan')
+		// ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+		// ->first();
+		if(!$dependent_user) {
+			$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('customer_active_plan')
+			->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+			->first();
+		} else {
+			$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $input['user_id'])->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('dependent_plans')
+										->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+										->first();
+		}
 
 		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
@@ -321,7 +335,7 @@ class EclaimController extends \BaseController {
 				}
 			}
 		}
-    
+
 		try {
 			$result = $claim->createEclaim($data);
 			$id = $result->id;
@@ -332,7 +346,7 @@ class EclaimController extends \BaseController {
 					$service = DB::table('health_types')->where('name', $input['service'])->where('type', 'medical')->where('visit_deduction', 1)->first();
 
 					if($service) {
-					  MemberHelper::deductPlanHistoryVisit($user_id);
+					  MemberHelper::deductPlanHistoryVisit($input['user_id']);
 					}
 				}
 
@@ -5266,6 +5280,7 @@ public function getHrActivity( )
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					$format = array(
+						'emp_no'		   	=> $member->emp_no,
 						'clinic_name'       => $clinic->Name,
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
@@ -5348,9 +5363,9 @@ public function getHrActivity( )
 				$total_visit_created++;
 				$non_panel++;
 			}
-			
+			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 			if($res->status == 1) {
-				$member = DB::table('user')->where('UserID', $res->user_id)->first();
+				
 
         		// check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
@@ -5407,6 +5422,7 @@ public function getHrActivity( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'status'            => $res->status,
+					'emp_no'		   	=> $member->emp_no,
 					'status_text'       => $status_text,
 					'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
 					'approved_date'     => date('d F Y', strtotime($res->approved_date)),
@@ -6589,6 +6605,7 @@ public function hrEclaimActivity( )
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(
 				'status'            => $res->status,
+				'emp_no'			=> $member->emp_no,	
 				'status_text'       => $status_text,
 				'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
 				'approved_date'        => $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
@@ -9385,6 +9402,7 @@ public function downloadEclaimCsv( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
 					'MEMBER'						=> ucwords($member->Name),
+					'EMPLOYEE ID'					=> $member->emp_no,
 					'MOBILE NO'							=> $member->PhoneCode.$member->PhoneNo,
 					'EMAIL ADDRESS'			=> $email,
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
@@ -9725,6 +9743,7 @@ public function downloadEclaimCsv( )
 
 							if((int) $trans->lite_plan_enabled == 1) {
 								$in_network_transactions[] = array(
+									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
 									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,
@@ -9739,6 +9758,7 @@ public function downloadEclaimCsv( )
 								);
 							} else {
 								$in_network_transactions[] = array(
+									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
 									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,

@@ -681,8 +681,9 @@ class PlanHelper {
 		return $current_balance;
 	}
 
-	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history)
+	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history, $owner_id)
 	{
+		$user_wallet = DB::table('e_wallet')->where('UserID', $owner_id)->orderBy('created_at', 'desc')->first();
 		$dependent_plan = DB::table('dependent_plans')
 		->where('dependent_plan_id', $dependent_plan_id)
 		->first();
@@ -732,6 +733,7 @@ class PlanHelper {
 		$package_bundle = DB::table('package_bundle')
 		->join('care_package', 'care_package.care_package_id', '=', 'package_bundle.care_package_id')
 		->where('package_bundle.package_group_id', $package_group->package_group_id)
+		->where('care_package.currency_type', $user_wallet->currency_type)
 		->orderBy('care_package.position', 'desc')
 		->get();
 		return $package_bundle;
@@ -3711,16 +3713,16 @@ class PlanHelper {
 	public static function getActivePlanUsers($customer_id)
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
-		$active_plan_ids = [];
+		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
+		// $active_plan_ids = [];
 
-		foreach($customer_active_plans as $key => $customer_active_plan)	{
-			$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
-		}
+		// foreach($customer_active_plans as $key => $customer_active_plan)	{
+		// 	$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
+		// }
 		
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
-					->whereIn('customer_active_plan_id', $active_plan_ids)
+					->whereIn('customer_active_plan_id', $customer_active_plans)
 					->where('type', 'started')
 					->get();
 		$user_ids = [];
@@ -7096,6 +7098,7 @@ class PlanHelper {
 		}
 	}
 
+<<<<<<< HEAD
 	public static function getCompanyInvoice($id)	
 	{
 		$invoice = CorporateInvoice::where('corporate_invoice_id', $id)->first();
@@ -7593,6 +7596,8 @@ class PlanHelper {
 		return $data;
 	}
 
+=======
+>>>>>>> master
 	public static function getRefundLists($id)
 	{
 		$users = [];
@@ -7627,12 +7632,19 @@ class PlanHelper {
 
 					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 					$total_days = \MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
+<<<<<<< HEAD
 					$remaining_days = $total_days - $days;
 
 					// return $remaining_days;
 					$cost_plan_and_days = ($invoice->individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
 
+=======
+					$remaining_days = $total_days - $days + 1;
+
+					$cost_plan_and_days = ($invoice->individual_price/$total_days);
+					$temp_total = $cost_plan_and_days * $remaining_days;
+>>>>>>> master
 					$temp_sub_total = $temp_total * 0.70;
 
 					// check withdraw amount
@@ -7642,7 +7654,11 @@ class PlanHelper {
 					}
 
 					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
+<<<<<<< HEAD
 					$total_refund += $withdraw_data->amount;
+=======
+					$total_refund += $temp_sub_total;
+>>>>>>> master
 
 					$temp = array(
 						'user_id'			=> $user->user_id,
@@ -7656,7 +7672,11 @@ class PlanHelper {
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
 						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
+<<<<<<< HEAD
 						'after_amount' => \DecimalHelper::formatDecimal($withdraw_data->amount)
+=======
+						'after_amount' => \DecimalHelper::formatDecimal($temp_sub_total)
+>>>>>>> master
 					);
 				} else {
 					$total_refund += $user->amount;
@@ -7712,12 +7732,25 @@ class PlanHelper {
 			}
 
 			return array(
+<<<<<<< HEAD
 				'total_refund' => number_format($total_refund, 2),
 				'amount_due'	=> number_format($amount_due, 2),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
 				'payment_status' => $refund_payment->status,
+=======
+				'total_refund' => \DecimalHelper::formatDecimal($total_refund, 2),
+				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due, 2),
+				'cancellation_number' => $refund_payment->cancellation_number,
+				'paid' => $refund_payment->payment_amount,
+				'date_refund' => $refund_payment->date_refund,
+				'payment_due'	=> $refund_payment->invoice_due,
+				'payment_date'	=> $refund_payment->payment_date,
+				'payment_amount'	=> $refund_payment->payment_amount,
+				'payment_status' => $refund_payment->status,
+				'payment_remarks' => $refund_payment->payment_remarks,
+>>>>>>> master
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
 				'currency_type' => $refund_payment->currency_type,
@@ -7726,6 +7759,7 @@ class PlanHelper {
 
 		}
 	}
+<<<<<<< HEAD
 
 	public static function getSpendingDeposit($id) 
 	{
@@ -7820,5 +7854,7 @@ class PlanHelper {
 
 		return $data;
 	}
+=======
+>>>>>>> master
 }
 ?>

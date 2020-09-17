@@ -3,7 +3,8 @@ app.directive("companyContactsDirective", [
   "hrSettings",
   "$rootScope",
   "serverUrl",
-  function directive($state, hrSettings, $rootScope, serverUrl) {
+  "$http",
+  function directive($state, hrSettings, $rootScope, serverUrl, $http) {
     return {
       restrict: "A",
       scope: true,
@@ -41,6 +42,7 @@ app.directive("companyContactsDirective", [
          scope.oldPlan_active_page = null;
          scope.isOldPlanListDropShow = false;
 
+         scope.invoiceHistoryType = 'plan';
 
 
         scope.$on("informationRefresh", function(evt, data){
@@ -429,7 +431,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.downloadRefund = function(customer_active_plan_id) {
-          window.open(serverUrl.url + '/hr/get_cancellation_details?id=' + customer_active_plan_id + '&token=' + window.localStorage.getItem('token'));
+          window.open(serverUrl.url + '/hr/get_cancellation_details?id=' + scope.activePlanDetails_pagination.data.customer_active_plan_id + '&token=' + window.localStorage.getItem('token'));
         }
 
         scope.getRefundList = function() {
@@ -658,7 +660,7 @@ app.directive("companyContactsDirective", [
                 value.invoice_date = moment( value.invoice_date ).format('DD MMMM YYYY');
                 value.invoice_due = moment( value.invoice_due ).format('DD MMMM YYYY');
                 value.payment_date = moment( value.payment_date ).format('DD MMMM YYYY');
-                value.total = value.total.toFixed(2);
+                // value.total = value.total.toFixed(2);
               });
               scope.toggleOff();
             });
@@ -1198,6 +1200,38 @@ app.directive("companyContactsDirective", [
           scope.$apply();
         }
       });
+
+      scope.changeInvoiceHistoryType  = function(type){
+        scope.page_active = 1;
+        if(type == 'plan'){
+          scope.getInvoiceHistoryData();
+        }
+        if(type == 'refund'){
+          scope.getRefundInvoiceHistory();
+        }
+      }
+
+      scope.getRefundInvoiceHistory = function(){
+        scope.toggleLoading();
+        $http.get(serverUrl.url + `/hr/get_refund_invoices?customer_active_plan_id=${scope.activePlanDetails_pagination.data.customer_active_plan_id}&limit=${scope.per_page}&page=${scope.page_active}`)
+          .success(function (response) {
+            console.log(response);
+            scope.toggleLoading();
+            scope.getPlanInvoiceData = response.data;
+            scope.invoicePlanPagination = response;
+            console.log(scope.getPlanInvoiceData);
+            angular.forEach(scope.getPlanInvoiceData, function(value, key) {
+              value.cancellation_date = moment( value.cancellation_date ).format('DD MMMM YYYY');
+              value.payment_due = moment( value.payment_due ).format('DD MMMM YYYY');
+              value.payment_date = value.payment_date ? moment( value.payment_date ).format('DD MMMM YYYY') : null;
+              // value.total = value.total.toFixed(2);
+            });
+            scope.toggleOff();
+          })
+      }
+
+
+
 
 
         scope.onLoad = function(){
