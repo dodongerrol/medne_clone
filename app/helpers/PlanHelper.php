@@ -7098,7 +7098,6 @@ class PlanHelper {
 		}
 	}
 
-<<<<<<< HEAD
 	public static function getCompanyInvoice($id)	
 	{
 		$invoice = CorporateInvoice::where('corporate_invoice_id', $id)->first();
@@ -7596,8 +7595,6 @@ class PlanHelper {
 		return $data;
 	}
 
-=======
->>>>>>> master
 	public static function getRefundLists($id)
 	{
 		$users = [];
@@ -7632,19 +7629,10 @@ class PlanHelper {
 
 					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 					$total_days = \MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
-<<<<<<< HEAD
-					$remaining_days = $total_days - $days;
-
-					// return $remaining_days;
-					$cost_plan_and_days = ($invoice->individual_price/$total_days);
-					$temp_total = $cost_plan_and_days * $remaining_days;
-
-=======
 					$remaining_days = $total_days - $days + 1;
 
 					$cost_plan_and_days = ($invoice->individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
->>>>>>> master
 					$temp_sub_total = $temp_total * 0.70;
 
 					// check withdraw amount
@@ -7654,11 +7642,7 @@ class PlanHelper {
 					}
 
 					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
-<<<<<<< HEAD
-					$total_refund += $withdraw_data->amount;
-=======
 					$total_refund += $temp_sub_total;
->>>>>>> master
 
 					$temp = array(
 						'user_id'			=> $user->user_id,
@@ -7672,11 +7656,7 @@ class PlanHelper {
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
 						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
-<<<<<<< HEAD
-						'after_amount' => \DecimalHelper::formatDecimal($withdraw_data->amount)
-=======
 						'after_amount' => \DecimalHelper::formatDecimal($temp_sub_total)
->>>>>>> master
 					);
 				} else {
 					$total_refund += $user->amount;
@@ -7732,14 +7712,6 @@ class PlanHelper {
 			}
 
 			return array(
-<<<<<<< HEAD
-				'total_refund' => number_format($total_refund, 2),
-				'amount_due'	=> number_format($amount_due, 2),
-				'cancellation_number' => $refund_payment->cancellation_number,
-				'paid' => $refund_payment->payment_amount,
-				'date_refund' => $refund_payment->date_refund,
-				'payment_status' => $refund_payment->status,
-=======
 				'total_refund' => \DecimalHelper::formatDecimal($total_refund, 2),
 				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due, 2),
 				'cancellation_number' => $refund_payment->cancellation_number,
@@ -7750,7 +7722,6 @@ class PlanHelper {
 				'payment_amount'	=> $refund_payment->payment_amount,
 				'payment_status' => $refund_payment->status,
 				'payment_remarks' => $refund_payment->payment_remarks,
->>>>>>> master
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
 				'currency_type' => $refund_payment->currency_type,
@@ -7759,7 +7730,6 @@ class PlanHelper {
 
 		}
 	}
-<<<<<<< HEAD
 
 	public static function getSpendingDeposit($id) 
 	{
@@ -7854,7 +7824,5 @@ class PlanHelper {
 
 		return $data;
 	}
-=======
->>>>>>> master
 }
 ?>

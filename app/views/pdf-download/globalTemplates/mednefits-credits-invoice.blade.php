@@ -165,7 +165,7 @@
             Subtotal
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            {{$amount_due}}
+            {{$total}}
           </td>
         </tr>
         <tr>
@@ -185,7 +185,7 @@
             (via Bank Transfer)
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            {{$amount_due}}
+            {{$total}}
           </td>
         </tr>
         <tr>
@@ -193,7 +193,7 @@
             AMOUNT DUE {{$currency_type}}
           </td>
           <td style="text-align: right;font-weight: 700;padding: 10px 0;">
-            {{$total}}
+            {{$amount_due}}
           </td>
         </tr>
       </table>
