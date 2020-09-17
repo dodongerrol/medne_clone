@@ -3565,16 +3565,16 @@ class PlanHelper {
 	public static function getActivePlanUsers($customer_id)
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
-		$active_plan_ids = [];
+		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
+		// $active_plan_ids = [];
 
-		foreach($customer_active_plans as $key => $customer_active_plan)	{
-			$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
-		}
+		// foreach($customer_active_plans as $key => $customer_active_plan)	{
+		// 	$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
+		// }
 		
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
-					->whereIn('customer_active_plan_id', $active_plan_ids)
+					->whereIn('customer_active_plan_id', $customer_active_plans)
 					->where('type', 'started')
 					->get();
 		$user_ids = [];
