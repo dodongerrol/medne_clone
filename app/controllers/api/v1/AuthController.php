@@ -6946,7 +6946,7 @@ public function payCreditsNew( )
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Sorry, your password and confirmation password do not match';
+        $returnObject->message = 'Password Mismatched.';
         return Response::json($returnObject);
       }
 
@@ -7227,7 +7227,7 @@ public function payCreditsNew( )
     $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
     if(!$result) {
         $returnObject->status = false;
-        $returnObject->message = 'Sorry, your OTP is incorrect.';
+        $returnObject->message = 'Invalid OTP.';
         return Response::json($returnObject);
     }
 

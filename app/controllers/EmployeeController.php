@@ -3332,7 +3332,9 @@ class EmployeeController extends \BaseController {
         $returnObject->message = 'Confirm Password is required.';
         return Response::json($returnObject);
     }
-
+    if($input['password']!=($input['password_confirm'])) {
+			return array('status' => FALSE, 'message' => 'Password did not match.');
+    }
     if(empty($input['user_id']) || $input['user_id'] == null) {
         $returnObject->status = false;
         $returnObject->message = 'User ID is required.';
@@ -3357,7 +3359,7 @@ class EmployeeController extends \BaseController {
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Sorry, your password and confirmation password do not match';
+        $returnObject->message = 'Password Mismatched.';
         return Response::json($returnObject);
       }
 
@@ -3393,16 +3395,17 @@ class EmployeeController extends \BaseController {
       ->where('UserID', $input['user_id'])
       ->first();
 
-      if($checker->disabled_otp == 0) {
-        return array(
-          'status' => 0,
-          'message' => 'user disabled otp.'
-        );
-      }
       if($checker->disabled_otp == 1) {
         return array(
           'user_id' => $checker->UserID,
           'status' => 1,
+          'message' => 'user disabled otp.'
+        );
+      }
+      if($checker->disabled_otp == 0) {
+        return array(
+          'user_id' => $checker->UserID,
+          'status' => 0,
           'message' => 'user enabled otp.'
         );
       }
@@ -3536,5 +3539,25 @@ class EmployeeController extends \BaseController {
     $returnObject->data = $checker;
     return Response::json($returnObject);
   }
+
+  public function confirmMemberPassword()
+	{
+    $token = StringHelper::getToken();
+    $input = Input::all();
+    $user_id = $input['user_id'];
+    $check = DB::table('user')->where('UserID', $input['user_id'])->where('password', md5($input['password']))->count();
+
+		if($check > 0) {
+			return array(
+				'status'	=> TRUE,
+				'message' => 'Success.'
+			);
+		}
+
+		return array(
+			'status'	=> FALSE,
+			'message'	=> 'Invalid Password.'
+		);
+	}
 
 }

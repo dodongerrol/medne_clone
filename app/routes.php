@@ -169,6 +169,7 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	Route::post('employee/send_otp_web', 'EmployeeController@sendOtpWeb');
 	Route::get('employee/check_member', 'EmployeeController@checkMember');
 	Route::post('employee/validate_otp_web', 'EmployeeController@validateOtpWeb');
+	Route::post('employee/check_member_password', 'EmployeeController@confirmMemberPassword');
 
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
