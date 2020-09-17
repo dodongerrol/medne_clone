@@ -16,7 +16,8 @@
         </label>
       </form>
       <button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ui-sref="cred-allocation">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
-      <button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
+      <!-- <button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button> -->
+      <exportmembers></exportmembers>
       <button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
     </div>
   </div>
@@ -129,19 +130,19 @@
             <div class="enterprise-details">
               <strong>Panel:</strong>
               <span>
-                <span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+                <span class="currency-type" ng-bind="emp.spending_account.currency_type"></span>
                 <span ng-bind="emp.spending_account.medical.in_network | number: 2">1,000.00</span>
               </span>
             </div>
             <div class="enterprise-details">
               <strong>Non-Panel:</strong>
               <span>
-                <span class="currency-type" ng-bind="emp.spending_account.currency_type"></span> 
+                <span class="currency-type" ng-bind="emp.spending_account.currency_type"></span>
                 <span ng-bind="emp.spending_account.medical.out_network | number: 2">1,000.00</span>
               </span>
             </div>
           </td>
-          
+
           <td ng-if="spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true" class="wellness-details-container">
             <div class="wellness-details">
               <strong>Allocation:</strong>
@@ -229,14 +230,14 @@
 			        <input ng-model="global_statusData.active" type="checkbox"/>
 			        <span class="custom-checkbox-checkmark"></span>
 			      </label>
-			    </div> 
+			    </div>
 			    <div class="custom-checkbox-selector">
 			      <label class="selector-container">
 			        <span class="text">Removed</span>
 			        <input ng-model="global_statusData.removed" type="checkbox"/>
 			        <span class="custom-checkbox-checkmark"></span>
 			      </label>
-			    </div>   
+			    </div>
 				</div>
 				<div class="filter-footer">
 					<button ng-click="_cancelModal_()" class="btn-cancel">Cancel</button>
@@ -306,16 +307,16 @@
               <td>
                 <div class="spending-values-div">
                   <p class="allocation">
-                    Allocation: 
+                    Allocation:
                     <span class="allocation-value">
-                      <span class="currency-type">SGD</span> 
+                      <span class="currency-type">SGD</span>
                       500.00
                     </span>
                   </p>
                   <p class="balance">
-                    Balance: 
+                    Balance:
                     <span class="balance-value">
-                      <span class="currency-type">SGD</span> 
+                      <span class="currency-type">SGD</span>
                       500.00
                     </span>
                   </p>
@@ -324,16 +325,16 @@
               <td>
                 <div class="spending-values-div">
                   <p class="allocation">
-                    Allocation: 
+                    Allocation:
                     <span class="allocation-value">
-                      <span class="currency-type">SGD</span> 
+                      <span class="currency-type">SGD</span>
                       500.00
                     </span>
                   </p>
                   <p class="balance">
-                    Balance: 
+                    Balance:
                     <span class="balance-value">
-                      <span class="currency-type">SGD</span> 
+                      <span class="currency-type">SGD</span>
                       500.00
                     </span>
                   </p>
