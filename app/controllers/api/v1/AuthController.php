@@ -7051,7 +7051,7 @@ public function payCreditsNew( )
 
     if(!$checker) {
         $returnObject->status = false;
-        $returnObject->message = 'Unregistered member. Please verify your account with your company HR.';
+        $returnObject->message = 'Unregistered member.';
         return Response::json($returnObject);
     }
 
@@ -7081,7 +7081,7 @@ public function payCreditsNew( )
 
         if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered member. Please verify your account with your company HR.';
+          $returnObject->message = 'Unregistered member.';
 
           return Response::json($returnObject);
         } else  {
@@ -7101,7 +7101,7 @@ public function payCreditsNew( )
         
       if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered member. Please verify your account with your company HR.';
+          $returnObject->message = 'Unregistered member.';
 
           return Response::json($returnObject);
       } else {
@@ -7121,7 +7121,7 @@ public function payCreditsNew( )
 
       if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered member. Please verify your account with your company HR.';
+          $returnObject->message = 'Unregistered member.';
 
           return Response::json($returnObject);
       } else {
