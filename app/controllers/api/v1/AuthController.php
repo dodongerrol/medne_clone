@@ -7179,7 +7179,7 @@ public function payCreditsNew( )
         $userDetails->updateMemberRecord($input['user_id'], array( 'OTPCode' => NULL ));
       } else {
         // update user mobile number and remove otp data record.
-        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $inputp['mobile'], 'OTPCode' => NULL));
+        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $input['mobile'], 'OTPCode' => NULL));
       }
 
       // Get new set of member records.
