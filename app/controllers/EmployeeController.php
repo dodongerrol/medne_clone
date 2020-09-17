@@ -3332,9 +3332,6 @@ class EmployeeController extends \BaseController {
         $returnObject->message = 'Confirm Password is required.';
         return Response::json($returnObject);
     }
-    if($input['password']!=($input['password_confirm'])) {
-			return array('status' => FALSE, 'message' => 'Password did not match.');
-    }
     if(empty($input['user_id']) || $input['user_id'] == null) {
         $returnObject->status = false;
         $returnObject->message = 'User ID is required.';
