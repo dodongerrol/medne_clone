@@ -1035,7 +1035,7 @@ app.directive('benefitsTiersDirective', [
 							swal('Error!', 'Mobile Number for your country code should be 8 digits.', 'error');
 							return false;
 						}
-						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10) {
+						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 9) {
 							swal('Error!', 'Mobile Number for your country code should be 10 digits.', 'error');
 							return false;
 						}
