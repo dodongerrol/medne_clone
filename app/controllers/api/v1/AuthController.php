@@ -6946,7 +6946,7 @@ public function payCreditsNew( )
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Sorry, your password and confirmation password do not match';
+        $returnObject->message = 'Password Mismatched.';
         return Response::json($returnObject);
       }
 
@@ -7179,7 +7179,7 @@ public function payCreditsNew( )
         $userDetails->updateMemberRecord($input['user_id'], array( 'OTPCode' => NULL ));
       } else {
         // update user mobile number and remove otp data record.
-        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $inputp['mobile'], 'OTPCode' => NULL));
+        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $input['mobile'], 'OTPCode' => NULL));
       }
 
       // Get new set of member records.
@@ -7227,7 +7227,7 @@ public function payCreditsNew( )
     $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
     if(!$result) {
         $returnObject->status = false;
-        $returnObject->message = 'Sorry, your OTP is incorrect.';
+        $returnObject->message = 'Invalid OTP.';
         return Response::json($returnObject);
     }
 
