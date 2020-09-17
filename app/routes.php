@@ -525,6 +525,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
 	// activate company mednefits credits
 	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
+	// get refund invoice
+	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
 });
 	
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
@@ -1298,8 +1300,14 @@ Route::group(array('prefix' => 'app'), function()
 
         Route::get('clinic/opening-times-home','App_ClinicController@ClinicOpeningTimesPage');
         Route::get('clinic/doctor-availability','App_ClinicController@ClinicDoctorAvailabilityPage');
-        Route::get('clinic/appointment-home-view','HomeController@showCalender'); //boom
-        Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
+		Route::get('clinic/appointment-home-view','HomeController@showCalender'); //boom
+		/*
+			Refactor API for gettting providers information for the first time.
+		*/
+		Route::get('clinic/getProvidersDetail', '@DashboardController@getProvidersDetail');
+		/* End Here. */
+		
+		Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
         Route::get('clinic/appointment-doctor-view/{id}','App_ClinicController@SingleDoctorAppointmentPage');
 
         Route::get('clinic/calendar-view-single','HomeController@showMainCalendarSingleView'); //boom
@@ -1353,9 +1361,15 @@ Route::group(array('prefix' => 'app'), function()
         Route::post('clinic/change-startdate','App_ClinicController@ChangeStartDate');
         Route::get('clinic/doctor-update-page/{id}','App_ClinicController@UpdateDoctorPage');
         Route::post('clinic/update-doctor','App_ClinicController@UpdateDoctorDetails');
-        Route::post('clinic/channel_update','App_ClinicController@UpdateBookingChannel');
-
-        //Route::get('clinic/','App_ClinicController@index');
+		Route::post('clinic/channel_update','App_ClinicController@UpdateBookingChannel');
+		
+		/*****************Clinic : PUT*****************/
+		//Refactor API for gettting providers information for the first time.
+			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+		/* End Here. */
+	   
+		
+		//Route::get('clinic/','App_ClinicController@index');
         //Route::get('auth/create', 'App_AuthController@create');
     		Route::resource('auth', 'App_AuthController');
 
