@@ -794,5 +794,18 @@ class CustomerHelper
 			return true;
 		}
 	}
+
+	public static function getActivePlanUsers($customer_id)
+	{
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$active_plan_ids = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
+		
+		// get users base on the customer active plan ids
+		$ids = DB::table('user_plan_history')
+					->whereIn('customer_active_plan_id', $active_plan_ids)
+					->where('type', 'started')
+					->lists('user_id');
+		return $ids;
+	}
 }
 ?>
