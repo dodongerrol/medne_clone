@@ -26,9 +26,17 @@
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 				</div>
 				<div class="col-md-3 monday-addBreakBtn" style="padding-top: 1px">
-					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2" id="monday-addBreak">Add Break</button>
+					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample1" aria-expanded="false" aria-controls="multiCollapseExample2" id="monday-addBreak">Add Break</button>
 				</div>
-
+				<div class="row">
+				<div class="col">
+					<div class="collapse multi-collapse" id="multiCollapseExample1">
+					<div class="card card-body">
+						Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+					</div>
+					</div>
+				</div>
+				</div>
 				<!-- <div id="breakDiv-monday0">
 					<div class="col-md-1" style="padding-top: 3px;">
 						<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="monday profile-breakHours-chk_activate" data-onstyle="info">
