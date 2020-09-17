@@ -2496,3 +2496,6 @@ button{
 .resend-otp-text {
   text-decoration: underline;
 }
+.footer-btn .forgot-password {
+  margin: 15px 0 0;
+}
