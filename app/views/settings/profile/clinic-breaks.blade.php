@@ -26,9 +26,10 @@
 					<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Monday</label>
 				</div>
 				<div class="col-md-3 monday-addBreakBtn" style="padding-top: 1px">
-					<button id="monday-addBreak">Add Break</button>
+					<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2" id="monday-addBreak">Add Break</button>
 				</div>
-				<div id="breakDiv-monday">
+
+				<!-- <div id="breakDiv-monday0">
 					<div class="col-md-1" style="padding-top: 3px;">
 						<input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="monday profile-breakHours-chk_activate" data-onstyle="info">
 					</div>
@@ -42,7 +43,7 @@
 					<div>
 						<button id="profile-breakHours-copyTimetoAllBtn" >Copy time to all</button>
 					</div>
-				</div>
+				</div> -->
 			</div>	
 			<!-- Tuesday div -->
 			<div class="row col-md-13" id ='profile-breakHours-tuesday-div'><br>

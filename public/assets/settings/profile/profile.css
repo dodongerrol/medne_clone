@@ -172,3 +172,7 @@ div#profile-breakHours-time-panel #publicHoliday-addBreak {
     color: white;
     border: 1px solid #1b9bd7;
 }
+
+#breakDiv-monday0 {
+    margin-top:23px;
+}

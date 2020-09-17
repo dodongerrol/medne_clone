@@ -1,14 +1,10 @@
 jQuery(document).ready( function ($) { 
     
     /*************** Module jquery Configuration *****************/
-    $("[data-toggle='toggle']").bootstrapToggle('destroy')                 
+    $("[data-toggle='toggle']").bootstrapToggle('destroy');                 
     $("[data-toggle='toggle']").bootstrapToggle();
     
-    $('.timepicker.profile-breakHours-time-from').timepicker({
-        'timeFormat' : 'h:i A'
-    });
-
-    $('.timepicker.profile-breakHours-time-to').timepicker({
+    $('.timepicker').timepicker({
         'timeFormat' : 'h:i A'
     });
 
@@ -221,10 +217,34 @@ jQuery(document).ready( function ($) {
             // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .toggle .profile-breakHours-chk_activate').bootstrapToggle('on');
             // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div .timepicker').css('display', 'inline-block');
 
-            // For copy time to all button
+            // // For copy time to all button
             // if (parentName == 'monday') {
             //     $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #profile-breakHours-copyTimetoAllBtn').css('display', 'inline-block');
             // }
+
+            // Append element
+            // $(`<div id="breakDiv-monday1">
+            //         <div class="col-md-1" style="padding-top: 3px;">
+            //             <input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" class="monday1 profile-breakHours-chk_activate" data-onstyle="info">
+            //         </div>
+            //         <div class="col-md-2" style="padding-left: 10px;">
+            //             <input type="button" class="timepicker profile-breakHours-time-from" value="13:00:00" style="float: right; font-size: 12px;">
+            //         </div>
+            //             <span class="col-md-1 text-center profile-breakHours-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
+            //         <div class="col-md-2">
+            //             <input type="button" class="timepicker profile-breakHours-time-to" value="14:00:00" style="font-size: 12px;">
+            //         </div>
+            //         <div>
+            //             <button id="profile-breakHours-copyTimetoAllBtn" >Copy time to all</button>
+            //         </div>
+            //     </div>
+            // `).insertAfter('div#profile-breakHours-time-panel #breakDiv-monday');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #breakDiv-'+parentName+'1 .col-md-1.profile-breakHours-detail-lbl').css('display', 'inline-block');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #breakDiv-'+parentName+'1 .toggle').css('display', 'inline-block');
+            // $('.1.profile-breakHours-chk_activate').bootstrapToggle('on');
+            // $('div#profile-breakHours-time-panel #profile-breakHours-'+parentName+'-div #breakDiv-'+parentName+'1 .timepicker').css('display', 'inline-block');
+
+
     });
 
     // Toggle
