@@ -2297,6 +2297,18 @@ class EmployeeController extends \BaseController {
         $id = null;
 
         if($input['spending_type'] == 'medical') {
+          if($spending['medical_enabled'] == false) {
+            return ['status' => false, 'message' => 'Medical Wallet is disabled'];
+          }
+        }
+      
+        if($input['spending_type'] == 'wellness') {
+          if($spending['wellness_enabled'] == false) {
+            return ['status' => false, 'message' => 'Wellness Wallet is disabled'];
+          }
+        }
+
+        if($input['spending_type'] == 'medical') {
           if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
             return ['status' => FALSE, 'message' => 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.'];
           }
