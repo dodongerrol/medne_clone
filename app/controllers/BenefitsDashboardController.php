@@ -17329,5 +17329,95 @@ class BenefitsDashboardController extends \BaseController {
 			'message'		=> 'Successfully deleted department.'
 		);
 	}
-}
 
+public function createHrLocation ()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+
+		if($id) {
+			$data = array (
+				'customer_id'			=> $id,
+				'location' 				=> $input['location'],
+				'business_address'		=> $input['business_address'],
+				'country'				=> $input['country'],
+				'postal_code'			=> $input['postal_code']
+			);
+			\CorporateHrLocation::create($data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully created Location.', 'id'	=> $id);			
+	}
+
+	public function getLocationList()
+	{	
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+		$format = [];
+		
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
+		$corporate_members = DB::table('corporate_members')
+		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+		->where('corporate_members.corporate_id', $account_link->corporate_id)
+		->where('user.Active', 1)
+		->get();
+
+		$total_active_members = sizeof($corporate_members);
+
+		$locations = CorporateHrLocation::where('customer_id', $id)->orderBy('created_at','desc')->get();
+		
+
+		$data = array (
+			'Locations' 		=> $locations,
+			'total_employee' 	=> $total_active_members
+		);
+
+		return array('data' => $data);
+	}
+
+	public function updateHrLocation ()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+		
+
+		if(empty($input['LocationID']) || $input['LocationID'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$check = DB::table('company_locations')->where('LocationID', $id)->first();
+
+		$company_location = new CorporateHrLocation();
+
+		$data = array(
+			'location'					=> $input['location'],
+			'business_address'			=> $input['business_address'],
+			'postal_code'				=> $input['postal_code'],
+			'country'					=> $input['country']
+		);
+		if($id) {
+			$update = $company_location->updateCorporateHrLocations($input['LocationID'], $data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully updated Department.');
+	}
+
+	public function deleteHrLocation()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->hr_dashboard_id;
+		
+		if(empty($input['id']) || $input['id'] == null) {
+            return ['status' => false, 'message' => 'id is required'];
+		}
+		$remove = DB::table('company_locations')
+		->where('LocationID', $input['id'])->delete();
+
+		return array(
+			'status'		=> TRUE,
+			'message'		=> 'Successfully deleted location.'
+		);
+	}
+}
