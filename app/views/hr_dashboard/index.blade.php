@@ -290,7 +290,9 @@
 	<!----------------------------------->
 
 	<!--------- EMPLOYEE OVERVIEW and EMPLOYEE INFORMATION and REMOVE EMPLOYEE-------->
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeOverview/function.js?_={{ $date->format('U') }}"></script>
+	<!-- Employee Overvew -->
+	@include('hr_dashboard.scripts.employee-overview')
+
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeInfoContainer/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/employeeDetails/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/dependentDetails/function.js?_={{ $date->format('U') }}"></script>

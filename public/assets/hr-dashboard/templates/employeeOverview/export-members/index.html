@@ -1,0 +1,75 @@
+<button class="btn-export-member" ng-click="$ctrl.open()">
+    <img src="../assets/hr-dashboard/img/new-assets/Download.png">
+    Export members details
+</button>
+<div class="modal fade px-32" id="export-members-modal" tabindex="-1" role="dialog"
+    aria-labelledby="export-members-modal" aria-hidden="true">
+    <div class="modal-dialog w-full bg-transparent mt-32" rolPe="document">
+        <div class="modal-content">
+            <div class="modal-body py-0">
+                <div class="py-4 px-10">
+                    <div
+                        class="flex flex-col items-center justify-between space-y-8">
+                        <h4 class="section-title font-bold">
+                            Member Details
+                        </h4>
+                        <div class="flex items-start justify-center space-x-12 w-full">
+                            <div class="grid grid-cols-1 gap-4 w-1/2">
+                                <div class="relative w-full div-input-group">
+                                    <svg viewBox="0 0 20 20" fill="currentColor"
+                                        class="absolute text-gray-600 w-5 h-5 ml-2 left-0">
+                                        <path fill-rule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    <input
+                                        class="form-input pl-5 text-gray-600"
+                                        type="text"
+                                        placeholder="Search by name"
+                                        ng-model="state.search"
+                                    >
+                                </div>
+                                <div>
+                                    <label class="section-title text-sm mb-1">
+                                        Properties
+                                    </label>
+                                    <div class="flex flex-col h-56 overflow-y-scroll">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                class="h-84 w-1 border-l border-r-0 border-t-0 border-b-0 border-solid border-color">
+                            </div>
+                            <div class="w-1/2">
+                                <label class="section-title text-sm mb-1">
+                                    Selected Properties
+                                </label>
+                                <!-- <div class="flex flex-col h-64 pr-4 overflow-y-scroll"
+                                    ng-if="selectedEmployees.length > 0">
+                                    <div ng-repeat="selectedEmployee in selectedEmployees"
+                                        class="flex items-center justify-between w-full border border-solid border-color-1 bg-gray-contrast text-sm rounded text-gray-900 py-1 px-3 w-full mb-2">
+                                        {{ selectedEmployee.name }}
+                                        <a class="ui-btn ui-btn-link-dark px-0"
+                                            ng-click="removeSelectedEmployee(selectedEmployee)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                class="w-4 h-4" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div> -->
+                                <div class="grid grid-cols-1 gap-2">
+                                    <p class="text-gray-500 text-sm">
+                                        No selected employees yet
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
