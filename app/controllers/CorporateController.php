@@ -520,5 +520,35 @@ class CorporateController extends BaseController {
 		$pagination['data'] = $format;
 		return $pagination;
 	}
+	public function getWorkLocationList( )
+	{
+		$session = self::checkSession();
+		$customer_id = $session->customer_buy_start_id;
+		$input = Input::all();
+
+		if(empty($input['customer_id']) || $input['customer_id'] == null) {
+			return array('status' => false, 'message' => 'customer_id is required.');
+		}
+
+		$locations = DB::table('company_locations')
+		->where('LocationID', $input['customer_id'])
+		->first();
+
+		$members = DB::table('company_location_members')
+		->where('id', $input['customer_id'])
+		->where('Active', 1)
+		->orderBy('created_at', 'desc')
+		->first();
+
+	
+		foreach ($locations as $key => $location) {
+			$location->member = DB::table('company_locations')
+			->join('company_location_members','company_location_members.company_location_id', '=' , 'company_locations.company_location_id')
+			->where('user.UserID', $members->UserID)
+			->where('user.Active', 1)
+			->get();
+			
+		}
+	}	
 }
 
