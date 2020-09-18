@@ -3607,13 +3607,13 @@ class BenefitsDashboardController extends \BaseController {
 		$admin_id = Session::get('admin-session-id');
 		$hr_id = $result->hr_dashboard_id;
 		$input = Input::all();
-
 		$mobile = preg_replace('/\s+/', '', $input['phone_no']);
 		$mobile = (int)$mobile;
 		// check if mobile already existed or duplicate
 		$check_mobile = DB::table('user')
 		->where('PhoneNo', (string)$mobile)
 		->whereNotIn('UserID', [$input['user_id']])
+		->where('UserType', 5)
 		->where('Active', 1)
 		->first();
 
@@ -3621,21 +3621,17 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Mobile Number already taken.');
 		}
 
-		if(empty($input['nric']) || $input['nric'] == null) {
-			return array('status' => false, 'message' => 'NRIC is required.');
+		if(
+			$this->isEmpty($input['phone_no'])
+		 	&& $this->isEmpty($input['nric']) 
+			&& $this->isEmpty($input['passport'])
+		  )
+		{
+			return array('status' => false, 'message' => 'Please key in either Mobile No, NRIC or passport number to proceed.');
 		}
 
-		if(empty($input['phone_no']) || $input['phone_no'] == null) {
-			return array('status' => false, 'message' => 'mobile number is required.');
-		}
 
-		if(empty($input['passport']) || $input['passport'] == null) {
-			return array('status' => false, 'message' => 'passport is required.');
-		}
 
-		if(empty($input['country_code']) || $input['country_code'] == null) {
-			return array('status' => false, 'message' => 'country code is required.');
-		}
 
 		// check email address
 		if(!empty($input['email'])) {
@@ -3697,6 +3693,11 @@ class BenefitsDashboardController extends \BaseController {
 				'reason'	=> var_dump($e)
 			);
 		}
+	}
+
+	private function isEmpty ($input)
+	{
+		return empty($input) || $input === null;
 	}
 
 	public function withDrawEmployees( )
