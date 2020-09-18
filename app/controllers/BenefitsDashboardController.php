@@ -3621,6 +3621,22 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Mobile Number already taken.');
 		}
 
+		if(empty($input['nric']) || $input['nric'] == null) {
+			return array('status' => false, 'message' => 'NRIC is required.');
+		}
+
+		if(empty($input['phone_no']) || $input['phone_no'] == null) {
+			return array('status' => false, 'message' => 'mobile number is required.');
+		}
+
+		if(empty($input['passport']) || $input['passport'] == null) {
+			return array('status' => false, 'message' => 'passport is required.');
+		}
+
+		if(empty($input['country_code']) || $input['country_code'] == null) {
+			return array('status' => false, 'message' => 'country code is required.');
+		}
+
 		// check email address
 		if(!empty($input['email'])) {
 			$check_email= DB::table('user')
@@ -3637,7 +3653,8 @@ class BenefitsDashboardController extends \BaseController {
 		
 		$update = array(
 			'Name'				=> $input['name'],
-			// 'NRIC'				=> $input['nric'],
+			'NRIC'				=> $input['nric'],
+			'Passport'			=> $input['passport'],
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
