@@ -121,7 +121,7 @@
                     <!-- <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn" data-toggle="modal" data-target="#edit-payment-methods-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button> -->
                   </div>
                 </span>
-                <p class="mca-text">Prepaid Credits is held in Prepaid Credits Account. <span class="mca-text mca-link-text">Go to Mednefits Credits Account</span></p>
+                <p class="mca-text">Prepaid Credits is held in Prepaid Credits Account. <span class="mca-text mca-link-text" ui-sref="member-wallet-benefits-coverage.mednefits-credits-account">Go to Prepaid Credits Account</span></p>
                 <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || medical_wallet_details.non_panel_payment_method == 'mednefits_credits') || (wellness_wallet_details.non_panel_payment_method == 'mednefits_credits')">This method is currently used in:</div>
                 <div>
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'mednefits_credits' || medical_wallet_details.non_panel_payment_method == 'mednefits_credits')"  class="display-flex mednefits-credits-wallet-container"  class="display-flex mednefits-credits-wallet-container" class="display-flex mednefits-credits-wallet-container">

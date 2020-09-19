@@ -87,21 +87,11 @@ app.directive('mednefitsBasicPlanDirective', [
         }
 
         scope.getBenefitsCoverageData = async function ( data ) {
-          console.log(data);
-          console.log(data.start);
-          console.log(data.end);
-					// scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          // scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
           scope.showLoading();
           await hrSettings.fetchBenefitsCoverageData( data.start, data.end, 'basic_plan' )
             .then(function(response){
               console.log(response);
 							scope.benefitsCoverageData = response.data;
-							// scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
-							// scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
-							// scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
-							console.log(scope.benefitsCoverageData);
-							
 							scope.hideLoading();
             })
 				}

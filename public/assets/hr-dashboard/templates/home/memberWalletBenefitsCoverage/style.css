@@ -75,6 +75,14 @@
   font-size: 14px;
   margin: 0 20px;
 }
+.show-details-on-container .current-term-input-wrapper.disable {
+  pointer-events: none;
+  background: #e2e1e1;
+  opacity: .5;
+}
+.show-details-on-container .current-term-input-wrapper.disable > span {
+  opacity: 0;
+}
 .show-details-on-container button {
   width: 110px;
   border-radius: 3px;
