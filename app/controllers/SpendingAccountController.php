@@ -196,6 +196,7 @@ class SpendingAccountController extends \BaseController {
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 0 || $pendingInvoice ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
+				'payment_status'  => $pendingInvoice ? false : true,
 				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		} else {
@@ -219,6 +220,7 @@ class SpendingAccountController extends \BaseController {
 				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
 				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 0 || $pendingInvoice ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
+				'payment_status'  => $pendingInvoice ? false : true,
 				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		}

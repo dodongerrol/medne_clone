@@ -557,7 +557,7 @@ class SpendingInvoiceController extends \BaseController {
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();	
+			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();
 			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
 
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
@@ -695,10 +695,40 @@ class SpendingInvoiceController extends \BaseController {
 					return $tmp; 
 				}, $format);
 
-				$excel = Excel::create($title, function($excel) use($filterSheet) {
+				$container = array();
 
-						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
-							$sheet->fromArray( $filterSheet );
+				foreach($filterSheet as $key => $data) {
+					$payment_method = null;
+					if($data['payment_method'] == "mednefits_credits") {
+						$payment_method = 'Mednefits Credits';
+					}
+
+					if($data['payment_method'] == "bank_transfer") {
+						$payment_method = 'Bank Transfer';
+					}
+
+					if($data['payment_method'] == "giro") {
+						$payment_method = 'GIRO';
+					}
+
+					$container[] = array(
+						'Status'			=> (int)$data['status'] == 1 ? 'Paid' : 'Pending',
+						'Invoice Date'		=> $data['invoice_date'],
+						'Number'			=> $data['number'],
+						'Amount Due'		=> $data['amount_due'],
+						'Payment Due'		=> $data['payment_due'],
+						'Amount Paid'		=> $data['payment_amount'],
+						'Payment Date'		=> $data['paid_date'],
+						'Payment Method'	=> $payment_method,
+						'Panel/Non-Panel'	=> ucfirst($data['type']),
+						'Remarks'			=> $data['payment_remarks']
+					);
+				}
+
+				$excel = Excel::create($title, function($excel) use($container) {
+
+						$excel->sheet('Sheetname', function($sheet) use($container) {
+							$sheet->fromArray( $container );
 						});
 
 				})->export('csv');
@@ -759,6 +789,7 @@ class SpendingInvoiceController extends \BaseController {
 						'amount_due' => $result['amount_due'],
 						'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
 						'payment_amount' => $result['total'],
+						'type'			=> null,
 						'currency_type' => $result['currency_type'], 
 						'payment_remarks' => $result['payment_remarks'],
 						'payment_method' => null,
@@ -773,18 +804,40 @@ class SpendingInvoiceController extends \BaseController {
 					$date = date('d-m-Y h:i:s');
 					$title = "Company History Invoice type - Plan-".$date;
 
-					$filterSheet = array_map(function($tmp) { 
-						$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
-						if(!$tmp['paid_date']) {
-							$tmp['paid_date'] = '-';
+					$container = array();
+
+					foreach($format as $key => $data) {
+						$payment_method = null;
+						if($data['payment_method'] == "mednefits_credits") {
+							$payment_method = 'Mednefits Credits';
 						}
-						return $tmp; 
-					}, $format);
 
-					$excel = Excel::create($title, function($excel) use($filterSheet) {
+						if($data['payment_method'] == "bank_transfer") {
+							$payment_method = 'Bank Transfer';
+						}
 
-							$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
-								$sheet->fromArray( $filterSheet );
+						if($data['payment_method'] == "giro") {
+							$payment_method = 'GIRO';
+						}
+
+						$container[] = array(
+							'Status'			=> (int)$data['status'] == 1 ? 'Paid' : 'Pending',
+							'Invoice Date'		=> $data['invoice_date'],
+							'Number'			=> $data['number'],
+							'Amount Due'		=> $data['amount_due'],
+							'Payment Due'		=> $data['payment_due'],
+							'Amount Paid'		=> $data['payment_amount'],
+							'Payment Date'		=> $data['paid_date'],
+							'Payment Method'	=> $payment_method,
+							'Panel/Non-Panel'	=> ucfirst($data['type']),
+							'Remarks'			=> $data['payment_remarks']
+						);
+					}
+
+					$excel = Excel::create($title, function($excel) use($container) {
+
+							$excel->sheet('Sheetname', function($sheet) use($container) {
+								$sheet->fromArray( $container );
 							});
 
 					})->export('csv');
@@ -821,6 +874,7 @@ class SpendingInvoiceController extends \BaseController {
 			$total_due = 0;
 
 			foreach ($all_deposit_data as $key => $data) {
+				$result = \PlanHelper::getSpendingDeposit($data->deposit_id);
 				$total_due += $result['amount_due'];
 			}
 
@@ -841,6 +895,7 @@ class SpendingInvoiceController extends \BaseController {
 					'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
 					'payment_amount' => $result['total'],
 					'currency_type' => $result['currency_type'],
+					'type'			=> $input['type'],
                     'payment_remarks' => $data->payment_remarks,
                     'payment_method' => null,
 					'company_name' => $result['company'],
@@ -854,19 +909,39 @@ class SpendingInvoiceController extends \BaseController {
 
 				$date = date('d-m-Y h:i:s');
 				$title = "Company History Invoice type - Deposit-".$date;
-
-				$filterSheet = array_map(function($tmp) { 
-					$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
-					if(!$tmp['paid_date']) {
-						$tmp['paid_date'] = '-';
+				$container = array();
+				foreach($format as $key => $data) {
+					$payment_method = 'Bank Transfer';
+					if($data['payment_method'] == "mednefits_credits") {
+						$payment_method = 'Mednefits Credits';
 					}
-					return $tmp; 
-				}, $format);
 
-				$excel = Excel::create($title, function($excel) use($filterSheet) {
+					if($data['payment_method'] == "bank_transfer") {
+						$payment_method = 'Bank Transfer';
+					}
 
-						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
-							$sheet->fromArray( $filterSheet );
+					if($data['payment_method'] == "giro") {
+						$payment_method = 'GIRO';
+					}
+
+					$container[] = array(
+						'Status'			=> (int)$data['status'] == 1 ? 'Paid' : 'Pending',
+						'Invoice Date'		=> $data['invoice_date'],
+						'Number'			=> $data['number'],
+						'Amount Due'		=> $data['amount_due'],
+						'Payment Due'		=> $data['payment_due'],
+						'Amount Paid'		=> $data['payment_amount'],
+						'Payment Date'		=> $data['paid_date'],
+						'Payment Method'	=> $payment_method,
+						'Panel/Non-Panel'	=> null,
+						'Remarks'			=> $data['payment_remarks']
+					);
+				}
+
+				$excel = Excel::create($title, function($excel) use($container) {
+
+						$excel->sheet('Sheetname', function($sheet) use($container) {
+							$sheet->fromArray( $container );
 						});
 
 				})->export('csv');
@@ -905,6 +980,7 @@ class SpendingInvoiceController extends \BaseController {
 			$total_due = 0;
 
 			foreach ($all_withdraw_data as $key => $data) {
+				$result = \PlanHelper::getRefundLists($data->payment_refund_id);
 				$total_due += $result['amount_due'];
 			}
 
@@ -926,8 +1002,8 @@ class SpendingInvoiceController extends \BaseController {
 					'paid_date'	=> $result['date_refund'],
 					'payment_amount' => $result['total_refund'],
 					'currency_type' => $result['currency_type'],
-                    'payment_remarks' => $data->payment_remarks,
-                    'payment_method' => $data->payment_method,
+                    'payment_remarks' => $result['payment_remarks'],
+                    'payment_method' => 'bank_transfer',
 					'company_name' => $result['billing_info']['company'],
 					'category_type'			=> $input['type']
 				);
@@ -940,22 +1016,38 @@ class SpendingInvoiceController extends \BaseController {
 				$date = date('d-m-Y h:i:s');
 				$title = "Company History Invoice type - plan withdrawal-".$date;
 
-				$filterSheet = array_map(function($tmp) { 
-					$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
-					$tmp['date_refund'] = $tmp['paid_date'];
-					$tmp['cancellation_date'] = $tmp['invoice_date'];
-					if(!$tmp['payment_due']) {
-						$tmp['payment_due'] = '-';
+				$container = array();
+				foreach($format as $key => $data) {
+					$payment_method = 'Bank Transfer';
+					if($data['payment_method'] == "mednefits_credits") {
+						$payment_method = 'Mednefits Credits';
 					}
-					unset($tmp['paid_date']); 
-					unset($tmp['invoice_date']); 
-					return $tmp; 
-				}, $format);
 
-				$excel = Excel::create($title, function($excel) use($filterSheet) {
+					if($data['payment_method'] == "bank_transfer") {
+						$payment_method = 'Bank Transfer';
+					}
 
-						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
-							$sheet->fromArray( $filterSheet );
+					if($data['payment_method'] == "giro") {
+						$payment_method = 'GIRO';
+					}
+
+					$container[] = array(
+						'Status'			=> (int)$data['status'] == 1 ? 'Paid' : 'Pending',
+						'Invoice Date'		=> $data['invoice_date'],
+						'Number'			=> $data['number'],
+						'Amount Due'		=> $data['amount_due'],
+						'Payment Due'		=> $data['payment_due'],
+						'Amount Paid'		=> $data['payment_amount'],
+						'Payment Date'		=> $data['paid_date'],
+						'Payment Method'	=> $payment_method,
+						'Panel/Non-Panel'	=> null,
+						'Remarks'			=> $data['payment_remarks']
+					);
+				}
+				$excel = Excel::create($title, function($excel) use($container) {
+
+						$excel->sheet('Sheetname', function($sheet) use($container) {
+							$sheet->fromArray( $container );
 						});
 
 				})->export('csv');
@@ -1039,7 +1131,7 @@ class SpendingInvoiceController extends \BaseController {
 				$temp = array(
 					'id'		=> $data['spending_purchase_invoice_id'],
 					'invoice_date' => date('j M Y', strtotime($data['invoice_date'])),
-					'payment_due' => NULL,
+					'payment_due' => date('j M Y', strtotime($data['invoice_due'])),
 					'number' => $data['invoice_number'],
 					'status'	=> $totalBalance <= 0 ? 1 : 0 ,
 					'amount_due' => number_format($totalBalance, 2),
@@ -1058,23 +1150,40 @@ class SpendingInvoiceController extends \BaseController {
 			if($download) {
 				$date = date('d-m-Y h:i:s');
 				$title = "Company History Invoice type - Spending Purchase-".$date;
+				$container = array();
 
-				$filterSheet = array_map(function($tmp) { 
-					$tmp['status'] = $tmp['status'] ? 'Paid' : 'Pending'; 
-					$tmp['date_refund'] = $tmp['paid_date'];
-					$tmp['cancellation_date'] = $tmp['invoice_date'];
-					if(!$tmp['payment_due']) {
-						$tmp['payment_due'] = '-';
+				foreach($format as $key => $data) {
+					$payment_method = null;
+					if($data['payment_method'] == "mednefits_credits") {
+						$payment_method = 'Mednefits Credits';
 					}
-					unset($tmp['paid_date']); 
-					unset($tmp['invoice_date']); 
-					return $tmp; 
-				}, $format);
 
-				$excel = Excel::create($title, function($excel) use($filterSheet) {
+					if($data['payment_method'] == "bank_transfer") {
+						$payment_method = 'Bank Transfer';
+					}
 
-						$excel->sheet('Sheetname', function($sheet) use($filterSheet) {
-							$sheet->fromArray( $filterSheet );
+					if($data['payment_method'] == "giro") {
+						$payment_method = 'GIRO';
+					}
+
+					$container[] = array(
+						'Status'			=> (int)$data['status'] == 1 ? 'Paid' : 'Pending',
+						'Invoice Date'		=> $data['invoice_date'],
+						'Number'			=> $data['number'],
+						'Amount Due'		=> $data['amount_due'],
+						'Payment Due'		=> $data['payment_due'],
+						'Amount Paid'		=> $data['payment_amount'],
+						'Payment Date'		=> $data['paid_date'],
+						'Payment Method'	=> $payment_method,
+						'Panel/Non-Panel'	=> null,
+						'Remarks'			=> $data['payment_remarks']
+					);
+				}
+
+				$excel = Excel::create($title, function($excel) use($container) {
+
+						$excel->sheet('Sheetname', function($sheet) use($container) {
+							$sheet->fromArray( $container );
 						});
 
 				})->export('csv');
