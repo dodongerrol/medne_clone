@@ -14,6 +14,9 @@ class SpendingHelper {
         $end = \PlanHelper::endDate($end);
         $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
         $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
+        $spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+        $spending_method_medical = $spending['medical_payment_method_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+        $spending_method_wellness = $spending['wellness_payment_method_non_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 
         if(sizeof($user_allocated) > 0) {
             $wallet_ids = DB::table('e_wallet')->whereIn('UserID', $user_allocated)->lists('wallet_id');
@@ -68,8 +71,8 @@ class SpendingHelper {
         if($with_user_allocation) {
             foreach($user_allocated as $key => $user) {
                 // if($type == "all") {
-                    $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end);
-                    $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end);
+                    $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, $spending_method_medical);
+                    $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, $spending_method_wellness);
                     $total_medical_entitlment += $medical_credit['allocation'];
                     $total_wellness_entitlment += $wellness_credit['allocation'];
                     $total_medical_balance += $medical_credit['allocation'] - $medical_credit['get_allocation_spent'];

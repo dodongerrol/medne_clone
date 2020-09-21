@@ -7589,8 +7589,10 @@ class PlanHelper {
 
 		$data['payment_remarks'] = $data['notes'];
 		$data['dependents'] = $dependents_data;
-		$data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
-		$data['amount_due'] = \DecimalHelper::formatDecimal($data['amount_due'] + $dependent_amount_due, 2);
+		$data['amount_due'] = $data['amount_due'] + $dependent_amount_due;
+		$data['total'] = $data['amount_due'];
+		// $data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
+		
 		$data['customer_active_plan_id'] = $get_active_plan->customer_active_plan_id;
 		return $data;
 	}

@@ -6556,8 +6556,10 @@ class BenefitsDashboardController extends \BaseController {
 
 		// return $dependents_data;
 		$data['dependents'] = $dependents_data;
-		$data['total'] = number_format($data['total'] + $dependent_amount, 2);
 		$data['amount_due'] = number_format($data['amount_due'] + $dependent_amount_due, 2);
+		$data['total'] = $data['amount_due'];
+		// $data['total'] = number_format($data['total'] + $dependent_amount, 2);
+		
 		// return $data['amount_due'];
 		$data['customer_active_plan_id'] = $get_active_plan->customer_active_plan_id;
 		$data['plan_end'] 			= date('F d, Y', strtotime('-1 day', strtotime($end_plan_date)));
