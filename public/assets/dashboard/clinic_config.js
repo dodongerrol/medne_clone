@@ -686,8 +686,8 @@ jQuery(document).ready(function($) {
                 // Stage 3: CSS, Remove element and Class changes
                 $('#setupBreakHours .day-label-'+parentName+'').attr('class','day-label-'+parentName+'');
                 $('#setupBreakHours .day-label-'+parentName+'').css('clear', '');
-                $('#setupBreakHours .day-label-'+parentName+'').css('margin-left', '2%');
-                $('#setupBreakHours div#'+parentName+'-div .card-body').css('margin-left', '18%');
+                $('#setupBreakHours .day-label-'+parentName+'').css('margin-left', '3%');
+                $('#setupBreakHours div#'+parentName+'-div .card-body').css('margin-left', '25%');
                 $('#setupBreakHours .'+parentName+'-addBreakBtn').remove();
 
                 // Stage 4: Element insertion
@@ -699,7 +699,7 @@ jQuery(document).ready(function($) {
                 </div>`);
                 
                 // Stage 5: Add Css
-                $('#setupBreakHours .'+parentName+'-addBreakBtn').css('margin-left', '18%');
+                $('#setupBreakHours .'+parentName+'-addBreakBtn').css('margin-left', '25%');
                 $('#setupBreakHours .'+parentName+'-addBreakBtn').css('padding-top', '1%');
                 $('#setupBreakHours .'+parentName+'-addBreakBtn').css('padding-bottom', '1%');
 
@@ -743,23 +743,23 @@ jQuery(document).ready(function($) {
 
             const parentName = this.firstElementChild.className.split(' ')[0];
            
-            if (!$('.row.'+parentName+' .profile-breakHours-chk_activate').prop('checked')) {
+            if (!$('div#setupBreakHours .row.'+parentName+' .profile-breakHours-chk_activate').prop('checked')) {
                 if (parentName.indexOf('0') > 0 
                     && $('div#setupBreakHours .row.'+parentName).is(':visible') 
                     && !$('div#setupBreakHours .row.'+parentName.replace(/\d+/g,'')+'1').is(':visible')) {
                 
                     // Stage 1:  Collapse Show
                     $('div#setupBreakHours .row.'+parentName).css('display', 'none');
-                    $('#'+parentName.replace(/\d+/g,'')+'-div').collapse('hide');
+                    $('div#setupBreakHours #'+parentName.replace(/\d+/g,'')+'-div').collapse('hide');
                     $('div#setupBreakHours .row.'+parentName).css('display', 'block');
                 
                     // Stage 2: CSS, Remove element and Class changes
-                    $('.'+parentName.replace(/\d+/g,'')+'-addBreakBtn').remove();
-                    $('.day-label-'+parentName.replace(/\d+/g,'')+'').attr('class','day-label-'+parentName.replace(/\d+/g,'')+' col-md-2');
-                    $('.day-label-'+parentName.replace(/\d+/g,'')+'').css('clear', 'both');
+                    $('div#setupBreakHours .'+parentName.replace(/\d+/g,'')+'-addBreakBtn').remove();
+                    $('div#setupBreakHours .day-label-'+parentName.replace(/\d+/g,'')+'').attr('class','day-label-'+parentName.replace(/\d+/g,'')+' col-md-2');
+                    $('div#setupBreakHours .day-label-'+parentName.replace(/\d+/g,'')+'').css('clear', 'both');
 
                     // Stage 3: Undo changes in button
-                    $('.day-label-'+parentName.replace(/\d+/g,'')+'').after(`
+                    $('div#setupBreakHours .day-label-'+parentName.replace(/\d+/g,'')+'').after(`
                     <div class="col-md-3 `+parentName.replace(/\d+/g,'')+`-addBreakBtn" style="margin-top:1%;margin-bottom: 1%;">
                         <a class="btn btn-primary" data-toggle="collapse" role="button" aria-expanded="false" id='`+parentName.replace(/\d+/g,'')+`-addBreak'>
                         <span class="glyphicon glyphicon-plus"></span>Add Break
@@ -767,14 +767,14 @@ jQuery(document).ready(function($) {
                     </div>`);
 
                     // Stage 4: Removed Css
-                    $('.'+parentName+'-addBreakBtn').css('margin-left', '');
-                    $('.'+parentName+'-addBreakBtn').css('padding-top', '');
-                    $('.'+parentName+'-addBreakBtn').css('padding-bottom', '');
-                    $('.day-label-'+parentName.replace(/\d+/g,'')+'').css('margin-left', '');
+                    $('div#setupBreakHours .'+parentName+'-addBreakBtn').css('margin-left', '');
+                    $('div#setupBreakHours .'+parentName+'-addBreakBtn').css('padding-top', '');
+                    $('div#setupBreakHours .'+parentName+'-addBreakBtn').css('padding-bottom', '');
+                    $('div#setupBreakHours .day-label-'+parentName.replace(/\d+/g,'')+'').css('margin-left', '');
                 } else {
                     if ($('div#setupBreakHours .row.'+parentName).is(':visible')) {
                         if (parentName.indexOf('1') > 0 ) {
-                            $('.'+parentName.replace(/\d+/g,'')+'0.profile-breakHours-chk_activate').prop('disabled',  false);
+                            $('div#setupBreakHours .'+parentName.replace(/\d+/g,'')+'0.profile-breakHours-chk_activate').prop('disabled',  false);
                         }
                         $('div#setupBreakHours .row.'+parentName).css('display', 'none');
                     }
@@ -783,7 +783,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	 /* Copy and Paste time to all days  */
-	 $('#profile-breakHours-copyTimetoAllBtn').click(function () {
+	 $('div#setupBreakHours #profile-breakHours-copyTimetoAllBtn').click(function () {
         // Get Parent Element
         const parentElementClass =  this.parentElement.parentElement.className.split(' ').join('.');
         
@@ -800,14 +800,12 @@ jQuery(document).ready(function($) {
             
             // Trigger click event
             if (availableDays[i] != 'monday')  {
-                $('#'+availableDays[i]+'-addBreak').click();
+                $('div#setupBreakHours #'+availableDays[i]+'-addBreak').click();
             }
 
             for (let x = xStartingCnt; x < 5; x++) {
-                
-                
                 // Set Toggle ON
-                $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');
+                // $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');
                 
                 // Set time
                 $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(mondayTimeFrom);
