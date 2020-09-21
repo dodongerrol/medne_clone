@@ -143,6 +143,10 @@
   padding: 15px;
   cursor: pointer;
 }
+.download-dp-container >div.disabled {
+  pointer-events: none;
+  opacity: .3;
+}
 .download-dp-container >div:hover {
   background-color: rgba(158,158,158,0.2);
 }

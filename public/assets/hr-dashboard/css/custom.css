@@ -479,3 +479,6 @@ body::-webkit-scrollbar-thumb
                        color-stop(.5, transparent), to(transparent));*/
 }
 
+.text-left{
+    text-align: left;
+}

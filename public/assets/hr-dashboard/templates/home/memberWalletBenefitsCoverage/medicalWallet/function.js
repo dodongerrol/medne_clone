@@ -69,8 +69,13 @@ app.directive('memberMedicalWalletDirective', [
             .then(function(response){
 							scope.medicalWalletData = response.data.data;
 							scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
-							scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
-							scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+							if(scope.medicalWalletData.benefits_coverage == 'out_of_pocket'){
+								scope.medicalWalletData.benefits_start = '';
+								scope.medicalWalletData.benefits_end = '';
+							}else{
+								scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
+								scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+							}
 							// console.log(scope.medicalWalletData);
             })
 				}

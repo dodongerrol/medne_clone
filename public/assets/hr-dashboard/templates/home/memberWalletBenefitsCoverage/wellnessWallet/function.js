@@ -72,8 +72,13 @@ app.directive('memberWellnessWalletDirective', [
 							scope.wellnessActivated = response.data.data.status;
 							scope.wellnessWalletData = response.data.data;
 							scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
-							scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');
-							scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
+							if(scope.wellnessWalletData.benefits_coverage == 'out_of_pocket'){
+								scope.wellnessWalletData.benefits_start = '';
+								scope.wellnessWalletData.benefits_end = '';
+							}else{
+								scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');
+								scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
+							}
             })
 				}
 				// start and end date for activating wellness

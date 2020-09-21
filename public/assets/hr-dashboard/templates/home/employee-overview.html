@@ -241,7 +241,7 @@
 
 			<div ng-if="spending_account_status.account_type != 'enterprise_plan' && employees.data.length > 0 && (spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false)" class="spending-not-activated-box">
 				<div class="spending-border-box">
-					<p>Spending Account for your company has<br>not been activated.</p>
+					<p>Mednefits Basic Plan is currently not activated.</p>
 					<a href="/sa-landing" target="_blank">Learn more >></a>
 				</div>
 			</div>
@@ -432,7 +432,7 @@
 				</div>
 
 				<div ng-if="selectedEmployee.account_type != 'enterprise_plan'" class="medical-spending-account" ng-if="selectedEmployee.medical_wallet">
-					<h4><strong class="font-helvetica-medium">Medical Spending Account</strong></h4>
+					<h4><strong class="font-helvetica-medium">Medical Wallet</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
 							<!-- <strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong> -->
@@ -483,7 +483,7 @@
 				</div>
 
 				<div class="wellness-spending-account" ng-if="selectedEmployee.account_type != 'enterprise_plan' && selectedEmployee.wellness_wallet">
-					<h4><strong class="font-helvetica-medium">Wellness Spending Account</strong></h4>
+					<h4><strong class="font-helvetica-medium">Wellness Wallet</strong></h4>
 					<div class="allocation-wrapper">
 						<div class="allocation-container">
 							<!-- <strong class="font-helvetica-medium">{{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong> -->
@@ -1622,8 +1622,8 @@
 		<div
 			ng-if="(health_spending_summary.medical && !health_spending_summary.wellness) || (!health_spending_summary.medical && health_spending_summary.wellness)"
 			class="medical-spending-account-container">
-			<h4 ng-if="health_spending_summary.medical" class="font-helvetica-medium">Medical Spending Account</h4>
-			<h4 ng-if="health_spending_summary.wellness" class="font-helvetica-medium">Wellness Spending Account</h4>
+			<h4 ng-if="health_spending_summary.medical" class="font-helvetica-medium">Medical Wallet</h4>
+			<h4 ng-if="health_spending_summary.wellness" class="font-helvetica-medium">Wellness Wallet</h4>
 			<div class="spending-account-details">
 				<div class="inital-allocation-container weight-700">
 					<strong class="font-helvetica-medium">Initial Allocation</strong>
@@ -1693,7 +1693,7 @@
 		<div ng-if="health_spending_summary.medical && health_spending_summary.wellness "
 			class="medical-wellness-container">
 			<div class="medical-container">
-				<h4 class="font-helvetica-medium">Medical Spending Account</h4>
+				<h4 class="font-helvetica-medium">Medical Wallet</h4>
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
 						<strong class="font-helvetica-medium">Initial Allocation</strong>
@@ -1738,7 +1738,7 @@
 			</div>
 			<div class="separator"></div>
 			<div class="wellness-container">
-				<h4 class="font-helvetica-medium">Wellness Spending Account</h4>
+				<h4 class="font-helvetica-medium">Wellness Wallet</h4>
 				<div class="spending-account-details">
 					<div class="inital-allocation-container weight-700">
 						<strong class="font-helvetica-medium">Initial Allocation</strong>
