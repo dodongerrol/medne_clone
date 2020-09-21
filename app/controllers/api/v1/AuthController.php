@@ -2058,7 +2058,7 @@ public function getNewClinicDetails($id)
       $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
     }
 
-    if($plan_coverage['expired'] == true) {
+    if($plan_coverage['expired'] == true && $plan_coverage['plan_type'] != "out_of_pocket") {
      $returnObject->status = FALSE;
      $returnObject->status_type = 'access_block';
      $returnObject->head_message = 'Registration Unavailable';
@@ -6815,6 +6815,15 @@ public function payCreditsNew( )
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
+            }
+
+            if($customer_active_plan->account_type == "out_of_pocket")	{
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable ';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
             }
 
             // check member wallet spending validity
