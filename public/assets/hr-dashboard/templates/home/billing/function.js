@@ -171,7 +171,7 @@ app.directive('spendingBillingDirective', [
           }
         }
         scope.downloadViewTransactions = function ( id ) {
-          window.open(serverUrl.url + '/benefits/invoice/' + id );
+          window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
         }
 
         scope._selectNumList_ = function ( num ) {
