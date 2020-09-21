@@ -807,44 +807,46 @@ class SpendingAccountController extends \BaseController {
 				$table_wallet_history = 'wellness_wallet_history';
 			}
 
-			$histories = DB::table($table_wallet_history)
+			if(sizeof($ids) > 0) {
+				$histories = DB::table($table_wallet_history)
 					->whereIn('logs', ['added_by_hr', 'deducted_by_hr'])
 					->whereIn('wallet_id', $ids)
 					->where('spending_method', $spending_method)
 					->orderBy('created_at', 'desc')
 					->paginate($per_page);
 			
-			$pagination['current_page'] = $histories->getCurrentPage();
-			$pagination['last_page'] = $histories->getLastPage();
-			$pagination['total'] = $histories->getTotal();
-			$pagination['per_page'] = $histories->getPerPage();
-			$pagination['count'] = $histories->count();
+				$pagination['current_page'] = $histories->getCurrentPage();
+				$pagination['last_page'] = $histories->getLastPage();
+				$pagination['total'] = $histories->getTotal();
+				$pagination['per_page'] = $histories->getPerPage();
+				$pagination['count'] = $histories->count();
 
-			foreach($histories as $key => $history) {
-				$label = null;
-				$type_status = null;
+				foreach($histories as $key => $history) {
+					$label = null;
+					$type_status = null;
 
-				if($history->logs == "added_by_hr") {
-					$label = "Entitlement Increase";
-					$type_status = "add";
-				} else if($history->logs == "deducted_by_hr") {
-					$label = "Entitlement Decreased";
-					$type_status = "deduct";
+					if($history->logs == "added_by_hr") {
+						$label = "Entitlement Increase";
+						$type_status = "add";
+					} else if($history->logs == "deducted_by_hr") {
+						$label = "Entitlement Decreased";
+						$type_status = "deduct";
+					}
+					
+					$temp = array(
+						'customer_id'	=> $customer_id,
+						'credit'	=> number_format($history->credit, 2),
+						'type' => $history->logs,
+						'label'	=> $label,
+						'type_status'	=> $type_status,
+						'spending_type'	=> $history->spending_type,
+						'currency_type' => $history->currency_type,
+						'created_at' => date('j M Y', strtotime($history->created_at)),
+						'company' => $info->company_name,
+					);
+
+					array_push($format, $temp);
 				}
-				
-				$temp = array(
-					'customer_id'	=> $customer_id,
-					'credit'	=> number_format($history->credit, 2),
-					'type' => $history->logs,
-					'label'	=> $label,
-					'type_status'	=> $type_status,
-					'spending_type'	=> $history->spending_type,
-					'currency_type' => $history->currency_type,
-					'created_at' => date('j M Y', strtotime($history->created_at)),
-					'company' => $info->company_name,
-				);
-
-				array_push($format, $temp);
 			}
 		}
 
