@@ -522,7 +522,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   // Download SOA
   hrFactory.downloadSoaData = function ( type,download ) {
-    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download );
+    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download + '&token=' + window.localStorage.getItem('token'));
     // return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
   }
 

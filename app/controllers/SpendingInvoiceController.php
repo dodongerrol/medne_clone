@@ -144,7 +144,7 @@ class SpendingInvoiceController extends \BaseController {
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $statement['sub_total'] = number_format(floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']), 2);
         $statement['statement_in_network_amount'] = number_format($statement['statement_in_network_amount'], 2);
-		// return View::make('pdf-download.globalTemplates.plan_invoice', $statement);
+		return View::make('pdf-download.globalTemplates.plan_invoice', $statement);
 		$pdf = PDF::loadView('pdf-download.globalTemplates.plan_invoice', $statement);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
@@ -277,7 +277,7 @@ class SpendingInvoiceController extends \BaseController {
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $statement['sub_total'] = floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']);
 
-        if($input['type'] == "csv") {
+        if(!empty($input['type']) && $input['type'] == "csv") {
 			return self::downloadCSV($statement);
 		} else {
 			// return View::make('pdf-download.globalTemplates.transaction-history-statement', $statement);
@@ -536,6 +536,10 @@ class SpendingInvoiceController extends \BaseController {
 		} else {
 			$session = self::checkSession();
 		}
+
+		// if(!empty($session['status']) && $session['status'] == false) {
+		// 	return $session;
+		// }
 
 		$customer_id = $session->customer_buy_start_id;
 
