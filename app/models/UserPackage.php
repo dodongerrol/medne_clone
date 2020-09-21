@@ -93,6 +93,9 @@ class UserPackage extends Eloquent
         $data['plan_add_on'] = "NIL";
         $data['dependent_user'] = $dependent_user;
         $cap_per_visit = "Not Applicable";
+        $customer_id = \PlanHelper::getCustomerId($owner_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+
         if($corporate_member) {
             $user_details = $user->getUserProfileMobile($user_id);
             $company = DB::table('corporate')
@@ -170,7 +173,7 @@ class UserPackage extends Eloquent
                         $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
                         $data['plan_type'] = PlanHelper::getDependentPlanType($dependent_plan_history->dependent_plan_id);
                         $data['care_online'] = TRUE;
-                        $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history);
+                        $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history, $owner_id);
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($owner_id);
                         $data['mobile'] = null;
                         $data['account_type'] = $active_plan->account_type;
@@ -232,42 +235,43 @@ class UserPackage extends Eloquent
                                                 ->first();
 
                         $data['start_date'] = date('d F Y', strtotime($plan_user->plan_start));
+                        $data['valid_date'] = date('d F Y', strtotime('+1 days', strtotime($spending['medical_end'])));
                         $active_plan_data = null;
-                        if((int)$active_plan_first->plan_extention_enable == 1) {
+                        // if((int)$active_plan_first->plan_extention_enable == 1) {
                             
-                            $plan_user = DB::table('user_plan_type')
-                                    ->where('user_id', $id)
-                                    ->orderBy('created_at', 'desc')
-                                    ->first();
+                        //     $plan_user = DB::table('user_plan_type')
+                        //             ->where('user_id', $id)
+                        //             ->orderBy('created_at', 'desc')
+                        //             ->first();
 
-                            $active_plan_extension = DB::table('plan_extensions')
-                                            ->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
-                                            ->first();
+                        //     $active_plan_extension = DB::table('plan_extensions')
+                        //                     ->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
+                        //                     ->first();
                             
-                            if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
-                                $temp_valid_date = date('d F Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
-                                $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
-                            } else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-                                $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
-                            }
-                            $data['plan_extension'] = true;
-                            $active_plan_data = $active_plan_extension;
-                        } else {
-                            $plan_user = DB::table('user_plan_type')
-                                ->where('user_id', $id)
-                                ->orderBy('created_at', 'desc')
-                                ->first();
+                        //     if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
+                        //         $temp_valid_date = date('d F Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
+                        //         $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
+                        //     } else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+                        //         $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+                        //     }
+                        //     $data['plan_extension'] = true;
+                        //     $active_plan_data = $active_plan_extension;
+                        // } else {
+                        //     $plan_user = DB::table('user_plan_type')
+                        //         ->where('user_id', $id)
+                        //         ->orderBy('created_at', 'desc')
+                        //         ->first();
 
 
-                            if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
-                                $temp_valid_date = date('d F Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
-                                $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
-                            } else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-                                $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
-                            }
+                        //     if((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
+                        //         $temp_valid_date = date('d F Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
+                        //         $data['valid_date'] = date('d F Y', strtotime('-1 day', strtotime($temp_valid_date)));
+                        //     } else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+                        //         $data['valid_date'] = date('d F Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+                        //     }
 
-                            $active_plan_data = $active_plan_first;
-                        }
+                        //     $active_plan_data = $active_plan_first;
+                        // }
                         $validity = MemberHelper::getMemberWalletValidity($user_details->UserID, 'wellness');
                         $wallet_entitlement = DB::table('employee_wallet_entitlement')
                         ->where('member_id', $id)

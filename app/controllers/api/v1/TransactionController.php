@@ -56,6 +56,8 @@ class Api_V1_TransactionController extends \BaseController
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
+					$spending_method = "post_paid";
+
 					if(is_array($service_id)) {
 						if(isset($service_id['procedureid'])) {
 							$service_id = $service_id['procedureid'];
@@ -63,7 +65,6 @@ class Api_V1_TransactionController extends \BaseController
 						}					
 					}
 					
-					$spending_method = "post_paid";
 					// check user type
 					$type = StringHelper::checkUserType($findUserID);
 					$lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
@@ -212,8 +213,9 @@ class Api_V1_TransactionController extends \BaseController
 					$co_paid_status = $clinic_co_payment['co_paid_status'];
 					$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 					// check if user has a plan tier
-					$plan_tier = PlanHelper::getEmployeePlanTier($customerID, $user_id);
+					$plan_tier = PlanHelper::getEmployeePlanTier($user_id);
 					$cap_amount = 0;
+
 					if($plan_tier) {
 						if($wallet_user->cap_per_visit_medical > 0) {
 							$cap_amount = $wallet_user->cap_per_visit_medical;
@@ -376,7 +378,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 						$data['enterprise_visit_deduction'] = 1;
 					}
-					
+
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;

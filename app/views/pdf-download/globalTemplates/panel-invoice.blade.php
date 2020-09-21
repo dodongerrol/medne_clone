@@ -112,7 +112,7 @@
         </tr>
         <tr>
           <td style="border-bottom: 1px solid #BFBFBF;padding: 5px 0 15px 0;" >
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Statement for 01 Jan to 31 Jan 2020</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Statement for {{ $period_start }} to {{ $period_end }}</p>
           </td>
           <td colspan="4" style="border-bottom: 1px solid #BFBFBF;"></td>
         </tr>

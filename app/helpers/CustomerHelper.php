@@ -308,7 +308,9 @@ class CustomerHelper
 			'medical_payment_method_panel'		=> $spending->medical_payment_method_panel,
 			'medical_payment_method_non_panel'		=> $spending->medical_payment_method_non_panel,
 			'wellness_payment_method_panel'		=> $spending->wellness_payment_method_panel,
-			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel
+			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel,
+			'medical_start'		=> $spending->medical_spending_start_date,
+			'medical_end'		=> $spending->medical_spending_end_date
 		);
 	}
 
@@ -848,6 +850,36 @@ class CustomerHelper
 		$total_allocated = $medical_credits + $wellness_credits;
 		$total_balance = $total_credits - $total_allocated;
 		return ['total_credits' => $total_credits, 'total_allocated' => $total_allocated, 'total_balance' => $total_balance];
+	}
+
+	public static function getAccountCorporateID($customer_id)
+	{
+		$account = DB::table('customer_link_customer_buy')
+		->where('customer_buy_start_id', $customer_id)
+		->first();
+
+		if($account) {
+			return $account->corporate_id;
+		} else {
+			return false;
+		}
+	}
+
+	public static function getCompanyWalletEmployeeIds($customer_id)
+	{
+		$corporate_id = self::getAccountCorporateID($customer_id);
+
+		if(!$corporate_id) {
+			return false;
+		}
+
+		$user_ids = [];
+
+		$userids = DB::table('corporate_members')
+		->where('corporate_id', $corporate_id)
+		->lists('user_id');
+
+		return DB::table('e_wallet')->whereIn('UserID', $userids)->lists('wallet_id');
 	}
 }
 ?>

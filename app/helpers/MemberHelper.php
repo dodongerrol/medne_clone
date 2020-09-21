@@ -224,33 +224,33 @@ class MemberHelper
 		foreach ($member_entitlment as $key => $entitlement) {
 			$spending_type = $entitlement->spending_type;
 			$entitlement_id = $entitlement->wallet_entitlement_schedule_id;
-		if($entitlement->spending_type == "medical") {
-			$data['medical_usage_date'] = $entitlement->new_usage_date;
-			$data['medical_proration'] = $entitlement->proration;
-			$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
-			$data['medical_allocation'] = $entitlement->new_allocation_credits;
-			$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
-		} else {
-			$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
-			$data['medical_proration'] = $wallet_entitlement->medical_proration;
-			$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
-			$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
-			$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
-		}
+			if($entitlement->spending_type == "medical") {
+				$data['medical_usage_date'] = $entitlement->new_usage_date;
+				$data['medical_proration'] = $entitlement->proration;
+				$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['medical_allocation'] = $entitlement->new_allocation_credits;
+				$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
+				$data['medical_proration'] = $wallet_entitlement->medical_proration;
+				$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
+				$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
+				$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
+			}
 
-		if($entitlement->spending_type == "wellness") {
-			$data['wellness_usage_date'] = $entitlement->new_usage_date;
-			$data['wellness_proration'] = $entitlement->proration;
-			$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
-			$data['wellness_allocation'] = $entitlement->new_allocation_credits;
-			$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
-		} else {
-			$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
-			$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
-			$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
-			$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
-			$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
-		}
+			if($entitlement->spending_type == "wellness") {
+				$data['wellness_usage_date'] = $entitlement->new_usage_date;
+				$data['wellness_proration'] = $entitlement->proration;
+				$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['wellness_allocation'] = $entitlement->new_allocation_credits;
+				$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
+				$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
+				$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
+				$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
+				$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
+			}
 		}
 
 		if($data) {
@@ -705,6 +705,24 @@ class MemberHelper
 			if($top_up_user) {
 				return true;
 			}
+
+			// check if account is active
+			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
+
+			if($accountStatus != "active") {
+				return true;
+			}
+
+			// check if plan is paid
+			$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_history->customer_active_plan_id)->first();
+
+			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
+				if($customer_active_plan->paid == "false") {
+					return true;
+				}
+			}
+
 			return false;
 		}
 	}
@@ -1868,7 +1886,7 @@ class MemberHelper
 		return false;
 	}
 
-	public static function memberMedicalPrepaid($user_id, $start, $end)
+	public static function memberMedicalPrepaid($user_id, $start, $end, $spending_method)
 	{
 		
 		$customer_id = \PlanHelper::getCustomerId($user_id);
@@ -1911,13 +1929,13 @@ class MemberHelper
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
 								->where('wallet_history.wallet_id', $e_wallet->wallet_id)
 								->where('e_wallet.UserID', $user_id)
-								->where('spending_method', 'pre_paid')
+								->where('spending_method', $spending_method)
 								->where('wallet_history.created_at',  '>=', $start)
 								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $e_wallet->wallet_id)
-									->where('spending_method', 'pre_paid')
+									->where('spending_method', $spending_method)
 									->get();
 			}
 

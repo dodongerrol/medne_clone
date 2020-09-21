@@ -525,6 +525,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
 	// activate company mednefits credits
 	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
+	// get refund invoice
+	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
 });
 	
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');

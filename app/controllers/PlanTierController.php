@@ -391,8 +391,8 @@ class PlanTierController extends \BaseController {
 					->orderBy('created_at', 'desc')
 					->first();
 
-
-		if($planned->account_type != "lite_plan") {
+		$checkEnrollVacantSeats = $planned->account_type == "lite_plan" || $planned->account_type == "out_of_pocket" ? false : true;
+		if($checkEnrollVacantSeats == true) {
 			$plan_status = DB::table('customer_plan_status')
 							->where('customer_plan_id', $planned->customer_plan_id)
 							->orderBy('created_at', 'desc')
@@ -435,7 +435,7 @@ class PlanTierController extends \BaseController {
 			$customer_active_plan_id = $active_plan->customer_active_plan_id;
 		}
 
-		if($planned->account_type != "lite_plan") {
+		if($checkEnrollVacantSeats) {
 			$total_dependents_entry = 0;
 			$total_dependents = 0;
 			// check total depedents to be save

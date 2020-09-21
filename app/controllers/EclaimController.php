@@ -135,6 +135,7 @@ class EclaimController extends \BaseController {
 			return array('status' => FALSE, 'message' => 'E-Claim receipt is required.');
 		}
 
+		
 		$ids = [];
         // get real userid for dependents
 		$type = StringHelper::checkUserType($input['user_id']);
@@ -176,8 +177,6 @@ class EclaimController extends \BaseController {
 			}
 		}
 
-<<<<<<< HEAD
-=======
 		// check member wallet spending validity
 		$validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
 
@@ -189,7 +188,6 @@ class EclaimController extends \BaseController {
 		if($check_user_balance->currency_type == "myr" ) {
 			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
 		}
->>>>>>> rl-spending-v3
 
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
@@ -5282,6 +5280,7 @@ public function getHrActivity( )
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					$format = array(
+						'emp_no'		   	=> $member->emp_no,
 						'clinic_name'       => $clinic->Name,
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
@@ -5364,9 +5363,9 @@ public function getHrActivity( )
 				$total_visit_created++;
 				$non_panel++;
 			}
-			
+			$member = DB::table('user')->where('UserID', $res->user_id)->first();
 			if($res->status == 1) {
-				$member = DB::table('user')->where('UserID', $res->user_id)->first();
+				
 
         		// check user if it is spouse or dependent
 				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
@@ -5423,6 +5422,7 @@ public function getHrActivity( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$temp = array(
 					'status'            => $res->status,
+					'emp_no'		   	=> $member->emp_no,
 					'status_text'       => $status_text,
 					'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
 					'approved_date'     => date('d F Y', strtotime($res->approved_date)),
@@ -6605,6 +6605,7 @@ public function hrEclaimActivity( )
 			$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 			$temp = array(
 				'status'            => $res->status,
+				'emp_no'			=> $member->emp_no,	
 				'status_text'       => $status_text,
 				'claim_date'        => date('d F Y h:i A', strtotime($res->created_at)),
 				'approved_date'        => $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
@@ -9401,6 +9402,7 @@ public function downloadEclaimCsv( )
 				$id = str_pad($res->e_claim_id, 6, "0", STR_PAD_LEFT);
 				$container[] = array(
 					'MEMBER'						=> ucwords($member->Name),
+					'EMPLOYEE ID'					=> $member->emp_no,
 					'MOBILE NO'							=> $member->PhoneCode.$member->PhoneNo,
 					'EMAIL ADDRESS'			=> $email,
 					'CLAIM MEMBER TYPE'	=> $relationship ? 'DEPENDENT' : 'EMPLOYEE',
@@ -9741,6 +9743,7 @@ public function downloadEclaimCsv( )
 
 							if((int) $trans->lite_plan_enabled == 1) {
 								$in_network_transactions[] = array(
+									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
 									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,
@@ -9755,6 +9758,7 @@ public function downloadEclaimCsv( )
 								);
 							} else {
 								$in_network_transactions[] = array(
+									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
 									'DEPENDENT'				=> $dependent,
 									'HEALTH PROVIDER'	=> $clinic->Name,

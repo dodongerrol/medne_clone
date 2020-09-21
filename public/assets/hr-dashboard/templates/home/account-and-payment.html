@@ -410,8 +410,16 @@
 					</div>
 				</div>
 				<div ng-if="spending_account_status.account_type == 'enterprise_plan'" class="invoice-history-container">
-					<h4>Invoice History</h4>
-					<button ng-if="spending_account_status.account_type == 'enterprise_plan'" class="btn-download-invoice" ng-click="_downloadInvoiceHistoryPDF_()">Download Invoice</button>
+					<div class="invoice-history-header">
+						<h4>Invoice History</h4>
+						<div class="drop-filter-wrapper">
+							<select ng-model="invoiceHistoryType" ng-change="changeInvoiceHistoryType(invoiceHistoryType)">
+								<option value="plan">Plan</option>
+								<option value="refund">Refund</option>
+							</select>
+						</div>
+						<button ng-if="spending_account_status.account_type == 'enterprise_plan'" class="btn-download-invoice" ng-click="_downloadInvoiceHistoryPDF_()">Download Invoice</button>
+					</div>
 					<div class="invoice-history-tbl-wrapper">
 						<div class="invoice-history-tbl-container">
 							<table>
@@ -430,7 +438,51 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="list in getPlanInvoiceData">
+									<tr ng-if="invoiceHistoryType == 'refund'" ng-repeat="list in getPlanInvoiceData">
+										<td>
+											<div ng-if="list.payment_status == 0" class="status pending">Pending</div>
+											<div ng-if="list.payment_status == 1" class="status paid">Paid</div>
+										</td>
+										<td>
+											<span ng-bind="list.cancellation_date">18 Feb 2020</span>
+										</td>
+										<td>
+											<span ng-bind="list.cancellation_number">MC00000238283</span>
+										</td>
+										<td>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.total_refund">300.00</span>
+										</td>
+										<td>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.amount_due">600.00</span>
+										</td>
+										<td>
+											<span ng-bind="list.payment_due">18 Feb 2020</span>
+										</td>
+										<td>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.payment_amount">0.00</span>
+										</td>
+										<td>
+											<span ng-if="list.payment_status" ng-bind="list.payment_date"></span>
+										</td>
+										<td>
+											<span ng-bind="list.payment_remarks"></span>
+										</td>
+										<td>
+											<span class="invoice-history-drop-click" ng-click="toggleInvoiceHistoryDrop( list,$index )">
+												<img src="../assets/hr-dashboard/img/down-arrow.svg">
+												<div ng-if="list.isShowDrop" class="custom-dropdown">
+													<div ng-click="downloadRefund(list.payment_refund_id)">
+														Download PDF
+													</div>
+												</div>
+											</span>
+										</td>
+									</tr>
+
+									<tr ng-if="invoiceHistoryType == 'plan'" ng-repeat="list in getPlanInvoiceData">
 										<td>
 											<div ng-if="list.payment_status == false" class="status pending">Pending</div>
 											<div ng-if="list.payment_status == true" class="status paid">Paid</div>

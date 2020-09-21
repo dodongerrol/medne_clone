@@ -2,7 +2,7 @@
 <html><head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Statement</title>
+    <title>Employee Plan Invoice</title>
     <style type="text/css">
       @page { 
         margin: 10px 10px 0 10px; 
@@ -64,6 +64,7 @@
                   @if($currency_type == "SGD")
                    <!-- IF SINGAPORE -->
                     <span>
+                    Medicloud Pte Ltd<br>
                     7 Temasek Boulevard<br>
                     #18-02 Suntec Tower One<br>
                     038987<br>
@@ -163,7 +164,7 @@
         <tr>
           <td colspan="2"></td>
           <td style="border-bottom: 2px solid #000;"></td>
-          <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;padding-right: 20px;">
+          <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
             Subtotal
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
@@ -173,8 +174,8 @@
         <tr>
           <td colspan="2"></td>
           <td></td>
-          <td style="text-align: right;padding: 10px 0;padding-right: 20px;">
-            TOTAL MYR
+          <td style="text-align: right;padding: 10px 0;">
+            TOTAL {{ $currency_type }}
           </td>
           <td style="text-align: right;font-weight: 700;padding: 10px 0;">
             {{$total}}

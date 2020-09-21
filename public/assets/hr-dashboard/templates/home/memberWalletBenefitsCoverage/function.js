@@ -86,6 +86,7 @@ app.directive('memberWalletBenefitsCoverageDirective', [
             }
 					}
 					if ( scope.planStatusData.account_type == 'out_of_pocket' || scope.planStatusData.account_type == 'out_pocket' ) {
+						scope.isBasicPlan = true;
 						scope.isOutofPlan = true;
 					}
 				}

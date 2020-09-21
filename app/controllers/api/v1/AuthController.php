@@ -2058,7 +2058,7 @@ public function getNewClinicDetails($id)
       $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
     }
 
-    if($plan_coverage['expired'] == true) {
+    if($plan_coverage['expired'] == true && $plan_coverage['plan_type'] != "out_of_pocket") {
      $returnObject->status = FALSE;
      $returnObject->status_type = 'access_block';
      $returnObject->head_message = 'Registration Unavailable';
@@ -6817,6 +6817,15 @@ public function payCreditsNew( )
               }
             }
 
+            if($customer_active_plan->account_type == "out_of_pocket")	{
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable ';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
+
             // check member wallet spending validity
             $validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
 
@@ -7129,7 +7138,7 @@ public function payCreditsNew( )
           if($user_type == "employee") {
             // check and update login status
             $user = DB::table('user')->where('UserID', $findUserID)->first();
-            if((int)$user->Status == 0) {
+            if($user) {
               // update
               DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
             }
