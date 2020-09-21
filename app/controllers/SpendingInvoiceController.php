@@ -553,12 +553,12 @@ class SpendingInvoiceController extends \BaseController {
 
 		$limit = !empty($input['limit']) ? $input['limit'] : 10;
 		$download = !empty($input['download']) && $input['download'] === "true" || !empty($input['download']) && $input['download'] === true ? true : false;
-
+		$today = date('Y-m-d');
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();
-			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
+			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
+			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
 
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
 			$pagination['last_page'] = $credits_statements->getLastPage();

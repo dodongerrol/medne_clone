@@ -1054,6 +1054,14 @@ class SpendingAccountController extends \BaseController {
 		DB::table('top_up_credits')->where('customer_id', $customer_id)
 			->whereNull('mednefits_credits_id')
 			->update(['mednefits_credits_id' => $mednefitsDataResult, 'status' => 1]);
+
+		$emailDdata = array();
+		$emailAddress = Config::get('config.pre_paid_credits_inquiry_email');
+		$emailDdata['emailName']= $information->company_name;
+		$emailDdata['emailPage']= 'email-templates.latest-templates.prepaid-account-template';
+		$emailDdata['emailTo']= $emailAddress;
+		$emailDdata['emailSubject'] = "Prepaid Credits Account Activation";
+		\EmailHelper::sendEmail($emailDdata);
 		return ['status' => true, 'message' => 'This top-up has been successfully completed.'];
 	}
 
@@ -1276,19 +1284,16 @@ class SpendingAccountController extends \BaseController {
 			'updated_at'			=> date('Y-m-d H:i:s')
 		);
 
-		$spending_account = DB::table('spending_account_settings')
-										->where('customer_id', $customer_id)
-										->first();
+		DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)->update($update);
 		$company = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 
-		if ((int)$spending_account->activate_mednefits_credit_account == 1) {
-			$emailDdata['emailName']= $company->company_name;
-	        $emailDdata['emailPage']= 'email-templates.latest-templates.prepaid-account-template';
-	        $emailDdata['emailTo']= 'wanwen@mednefits.com';
-	        $emailDdata['emailSubject'] = "Prepaid Credits Account Activation";
-	        \EmailHelper::sendEmail($emailDdata);
-		}
-		DB::table('spending_account_settings')->where('spending_account_setting_id', $spending_account_settings->spending_account_setting_id)->update($update);
+		$emailDdata = array();
+		$emailAddress = Config::get('config.pre_paid_credits_inquiry_email');
+		$emailDdata['emailName']= $company->company_name;
+		$emailDdata['emailPage']= 'email-templates.latest-templates.prepaid-account-template';
+		$emailDdata['emailTo']= $emailAddress;
+		$emailDdata['emailSubject'] = "Prepaid Credits Account Activation";
+		\EmailHelper::sendEmail($emailDdata);
 		return ['status' => true, 'message' => 'Company successfully created a Mednefits Credit Account.'];
 	}
 

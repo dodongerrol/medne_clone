@@ -6657,28 +6657,28 @@ public function payCreditsNew( )
               return Response::json($returnObject);
             }
 
-            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'zero_balance';
-                $returnObject->head_message = 'Registration on Hold';
-                // $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
-                $returnObject->sub_message = '';
-                return Response::json($returnObject);
-            }
+            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+            //     $returnObject->status = FALSE;
+            //     $returnObject->status_type = 'zero_balance';
+            //     $returnObject->head_message = 'Registration on Hold';
+            //     // $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+            //     $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+            //     $returnObject->sub_message = '';
+            //     return Response::json($returnObject);
+            // }
                 
-            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-              $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
+            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+            //   $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
 
-              if($current_balance <= 0) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'zero_balance';
-                $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
-                return Response::json($returnObject);
-              }
-            }
+            //   if($current_balance <= 0) {
+            //     $returnObject->status = FALSE;
+            //     $returnObject->status_type = 'zero_balance';
+            //     $returnObject->head_message = 'Registration on Hold';
+            //     $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+            //     $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //     return Response::json($returnObject);
+            //   }
+            // }
 
              // check for member transaction
              $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
@@ -6747,14 +6747,14 @@ public function payCreditsNew( )
               return Response::json($returnObject);
             }
 
-            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-Claim Unavailable';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
-              return Response::json($returnObject);
-            }
+            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+            //   $returnObject->status = FALSE;
+            //   $returnObject->status_type = 'without_e_claim';
+            //   $returnObject->head_message = 'E-Claim Unavailable';
+            //   $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //   return Response::json($returnObject);
+            // }
 
             if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
               if($spending['wellness_enabled'] == false) {
