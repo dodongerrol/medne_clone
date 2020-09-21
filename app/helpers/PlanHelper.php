@@ -1446,7 +1446,8 @@ class PlanHelper {
 		$planned = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $planned->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
-		if($planned->account_type != "lite_plan")	{
+		$checkEnrollVacantSeats = $planned->account_type == "lite_plan" || $planned->account_type == "out_of_pocket" ? false : true;
+		if($checkEnrollVacantSeats)	{
 			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
 			if($total <= 0) {
 				return array(

@@ -307,7 +307,7 @@ class BenefitsDashboardController extends \BaseController {
 			$in_progress = 0;
 		}
 
-		if($plan->account_type == "lite_plan") {
+		if($plan->account_type == "lite_plan" || $plan->account_type == "out_of_pocket") {
 			$in_progress = 99999;
 		}
 
