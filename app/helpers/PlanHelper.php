@@ -1112,7 +1112,7 @@ class PlanHelper
 		];
 		$myr_error_message = 'Please key in either Mobile No. NRIC or Password Number to proceed.';
 
-		if ($user['mobile_area_code_country'] === 'my') {
+		if ($customer_wallet->currency_type === 'myr') {
 			if (empty(trim($user['mobile'] ?? null)) && empty(trim($user['nric'] ?? null))  && empty(trim($user['passport'] ?? null))) {
 				$myr_messages['nric_error'] = true;
 				$myr_messages['nric_message'] = $myr_error_message;
