@@ -707,6 +707,8 @@ class PlanTierController extends \BaseController {
 			'dob'						=> $input['dob'],
 			'email'						=> $input['email'],
 			'mobile'					=> $mobile,
+			'nric' 						=> $input['nric'] ?? null,
+			'passport' 					=> $input['passport'] ?? null,
 			'mobile_area_code'			=> $input['mobile_area_code'],
 			'job_title'					=> $input['job_title'],
 			'credits'					=> $input['medical_credits'],
