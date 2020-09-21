@@ -262,7 +262,7 @@
 					</div>
 					<button ng-if="checkMemberData.member_activated == 0 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Complete and Sign in</button>
 					<button ng-if="checkMemberData.member_activated == 1 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Done</button>
-					<div ng-if="otpStatus == 1 && showContinueInput == true && !showPasswordInputInOtp" class="resend-otp-container">
+					<div ng-if="checkMemberData.member_activated == 0 && showContinueInput == true && !showPasswordInputInOtp" class="resend-otp-container">
 						<span>Don't receive OPT? <a ng-click="resendOtp()" class="resend-otp-text">Resend OTP</a>.</span>
 					</div>
 					<div class="mobile-message-container" ng-if="checkMobileData.status == false">
