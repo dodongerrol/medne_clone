@@ -115,6 +115,7 @@ class SpendingInvoiceLibrary
 		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$lite_plan = false;
 		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
+		$payment_method = $spending['medical_payment_method_panel'];
 
 		$business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
 		$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
@@ -259,7 +260,8 @@ class SpendingInvoiceLibrary
 			'statement_in_network_amount'   => $total_in_network_amount,
 			'statement_e_claim_amount'  => $total_e_claim_amount,
 			'currency_type'				=> $customer->currency_type,
-			'currency_value'			=> $currency
+			'currency_value'			=> $currency,
+			'payment_method'			=> $payment_method
 		);
 
 		if($lite_plan) {
@@ -616,6 +618,7 @@ class SpendingInvoiceLibrary
 						$format = array(
 							'clinic_name'       => $clinic->Name,
 							'amount'            => number_format($total_amount, 2),
+							'total_amount'            => number_format($total_amount, 2),
 							'procedure_cost'	=> number_format($procedure_cost, 2),
 							'clinic_type_and_service' => $clinic_name,
 							'clinic_type_name'	=> $clinic_type_name,
@@ -887,11 +890,12 @@ class SpendingInvoiceLibrary
 			'statement_end_date'	=> date('d F', strtotime($data->statement_end_date)),
 			'start_date' => date('j M', strtotime($data->statement_start_date)),
 			'end_date'	=> date('j M Y', strtotime($data->statement_end_date)),
-			'period'			=> date('d F', strtotime($data->statement_start_date)).' - '.date('d F Y', strtotime($data->statement_end_date)),
+			'period'			=> date('d-m-Y', strtotime($data->statement_start_date)).' - '.date('d-m-Y', strtotime($data->statement_end_date)),
 			'statement_id'	=> $data->statement_id,
 			'statement_number' => $data->statement_number,
 			'statement_status'	=> $data->statement_status,
 			'statement_total_amount' => DecimalHelper::formatDecimal($results['credits'] + $results['total_consultation']),
+			'total_amount' => DecimalHelper::formatDecimal($results['credits'] + $results['total_consultation']),
 			'total_in_network_amount'		=> $results['credits'],
 			'statement_amount_due' => DecimalHelper::formatDecimal($amount_due),
 			'consultation_amount_due'	=> $consultation_amount_due,

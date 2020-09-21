@@ -705,6 +705,24 @@ class MemberHelper
 			if($top_up_user) {
 				return true;
 			}
+
+			// check if account is active
+			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
+
+			if($accountStatus != "active") {
+				return true;
+			}
+
+			// check if plan is paid
+			$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_history->customer_active_plan_id)->first();
+
+			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
+				if($customer_active_plan->paid == "false") {
+					return true;
+				}
+			}
+
 			return false;
 		}
 	}
@@ -1868,7 +1886,7 @@ class MemberHelper
 		return false;
 	}
 
-	public static function memberMedicalPrepaid($user_id, $start, $end)
+	public static function memberMedicalPrepaid($user_id, $start, $end, $spending_method)
 	{
 		
 		$customer_id = \PlanHelper::getCustomerId($user_id);
@@ -1911,13 +1929,13 @@ class MemberHelper
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
 								->where('wallet_history.wallet_id', $e_wallet->wallet_id)
 								->where('e_wallet.UserID', $user_id)
-								->where('spending_method', 'pre_paid')
+								->where('spending_method', $spending_method)
 								->where('wallet_history.created_at',  '>=', $start)
 								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $e_wallet->wallet_id)
-									->where('spending_method', 'pre_paid')
+									->where('spending_method', $spending_method)
 									->get();
 			}
 

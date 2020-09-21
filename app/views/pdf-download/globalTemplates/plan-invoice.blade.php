@@ -2,7 +2,7 @@
 <html><head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Statement</title>
+    <title>Employee Plan Invoice</title>
     <style type="text/css">
       @page { 
         margin: 10px 10px 0 10px; 
