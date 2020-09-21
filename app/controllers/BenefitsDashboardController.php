@@ -3607,19 +3607,32 @@ class BenefitsDashboardController extends \BaseController {
 		$admin_id = Session::get('admin-session-id');
 		$hr_id = $result->hr_dashboard_id;
 		$input = Input::all();
-
 		$mobile = preg_replace('/\s+/', '', $input['phone_no']);
 		$mobile = (int)$mobile;
 		// check if mobile already existed or duplicate
+		if(!empty($input['phone_no'])) {
 		$check_mobile = DB::table('user')
 		->where('PhoneNo', (string)$mobile)
 		->whereNotIn('UserID', [$input['user_id']])
+		->where('UserType', 5)
 		->where('Active', 1)
 		->first();
 
 		if($check_mobile) {
 			return array('status' => false, 'message' => 'Mobile Number already taken.');
 		}
+	}	
+		if(
+			$this->isEmpty($input['phone_no'])
+		 	&& $this->isEmpty($input['nric']) 
+			&& $this->isEmpty($input['passport'])
+		  )
+		{
+			return array('status' => false, 'message' => 'Please key in either Mobile No, NRIC or passport number to proceed.');
+		}
+
+
+
 
 		// check email address
 		if(!empty($input['email'])) {
@@ -3637,7 +3650,8 @@ class BenefitsDashboardController extends \BaseController {
 		
 		$update = array(
 			'Name'				=> $input['name'],
-			// 'NRIC'				=> $input['nric'],
+			'NRIC'				=> $input['nric'],
+			'Passport'			=> $input['passport'],
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
@@ -3680,6 +3694,11 @@ class BenefitsDashboardController extends \BaseController {
 				'reason'	=> var_dump($e)
 			);
 		}
+	}
+
+	private function isEmpty ($input)
+	{
+		return empty($input) || $input === null;
 	}
 
 	public function withDrawEmployees( )
