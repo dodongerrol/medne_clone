@@ -361,7 +361,7 @@ class SpendingInvoiceLibrary
 						$total_pre_paid_spent += $history->credit;
 					} else {
 						$with_post_paid = true;
-						$total_post_paid_spent += $history->credit;
+						$total_post_paid_spent += $trans['credit_cost'];
 					}
 
 					if((int)$trans['lite_plan_enabled'] == 1) {
@@ -856,7 +856,7 @@ class SpendingInvoiceLibrary
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 		if((int)$data->lite_plan == 1) {
 			$lite_plan = true;
-		} else if($results['consultation_status'] == true) {
+		} else if($results['lite_plan'] == true) {
 			$lite_plan = true;
 		}
 
