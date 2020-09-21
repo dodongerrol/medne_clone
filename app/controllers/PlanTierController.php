@@ -40,7 +40,7 @@ class PlanTierController extends \BaseController {
 						->where('customer_id', $customer_id)
 						->orderBy('created_at', 'desc')
 						->first();
-		
+
 		if(!$plan_status) {
 			return array('status' => false, 'message' => 'Customer Plan Head Count not found.');
 		}
@@ -116,7 +116,7 @@ class PlanTierController extends \BaseController {
 		);
 
 		// return $tier;
-		
+
 		$result = \PlanTier::create($tier);
 
 		if($result) {
@@ -184,7 +184,7 @@ class PlanTierController extends \BaseController {
 						->where('customer_id', $customer_id)
 						->orderBy('created_at', 'desc')
 						->first();
-		
+
 		if(!$plan_status) {
 			return array('status' => false, 'message' => 'Customer Plan Head Count not found.');
 		}
@@ -399,8 +399,8 @@ class PlanTierController extends \BaseController {
 							->first();
 
 			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
-			
-			
+
+
 			if($total <= 0) {
 				return array(
 					'status'	=> FALSE,
@@ -449,7 +449,7 @@ class PlanTierController extends \BaseController {
 									->where('customer_plan_id', $planned->customer_plan_id)
 									->orderBy('created_at', 'desc')
 									->first();
-			
+
 			if($dependent_plan_status) {
 				$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
 				if($total_dependents <= 0 && $total_dependents_entry > 0) {
@@ -494,7 +494,7 @@ class PlanTierController extends \BaseController {
 			if(!empty($user['postal_code']) && $user['postal_code'] != null) {
 				$postal_code = $user['postal_code'];
 			}
-      
+
 
 			$mobile = preg_replace('/\s+/', '', $user['mobile']);
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
@@ -522,6 +522,8 @@ class PlanTierController extends \BaseController {
 				'cap_per_visit'			=> !empty($user['cap_per_visit']) ? $user['cap_per_visit'] : null,
 				'postal_code'			=> null,
 				'group_number'			=> $group_number,
+				'nric' => $user['nric'] ?? null,
+				'passport' => $user['passport'] ?? null,
 				'error_logs'			=> serialize($error_member_logs)
 			);
 
@@ -649,7 +651,7 @@ class PlanTierController extends \BaseController {
 
 			if($dependent_error) {
 				$error_logs['error'] = true;
-			} 
+			}
 			$temp = array(
 				'employee'		=> $enroll,
 				'dependents'	=> $depedents_format,
@@ -688,7 +690,7 @@ class PlanTierController extends \BaseController {
 		if(!empty($input['postal_code']) && $input['postal_code'] != null) {
 			$postal_code = $input['postal_code'];
 		}
-		
+
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
 			'credits'					=> $input['medical_credits'],
@@ -714,7 +716,7 @@ class PlanTierController extends \BaseController {
 			'error_logs'				=> serialize($error_logs)
 		);
 
-		
+
 		$result = $temp_enroll->updateEnrollee($data);
 
 		if($result) {
@@ -832,7 +834,7 @@ class PlanTierController extends \BaseController {
 		if($error_logs['error'] == true) {
 			return array('status' => false, 'message' => 'Please fix the Empoyee Enrollee details as it has errors on employee details.');
 		}
-		
+
 		$create_user = PlanHelper::createEmployee($input['temp_enrollment_id'], $customer_id, $communcation_send, $schedule_date);
 		return array('result' => $create_user);
 	}
