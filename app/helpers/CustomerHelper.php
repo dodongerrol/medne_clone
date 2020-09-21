@@ -879,7 +879,11 @@ class CustomerHelper
 		->where('corporate_id', $corporate_id)
 		->lists('user_id');
 
-		return DB::table('e_wallet')->whereIn('UserID', $userids)->lists('wallet_id');
+		if(sizeof($userids) > 0) {
+			return DB::table('e_wallet')->whereIn('UserID', $userids)->lists('wallet_id');
+		} else {
+			return [];
+		}
 	}
 }
 ?>
