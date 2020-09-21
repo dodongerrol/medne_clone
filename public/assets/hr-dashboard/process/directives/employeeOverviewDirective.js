@@ -967,6 +967,27 @@ app.directive("employeeOverviewDirective", [
           //   return false;
           // }
 
+          if(!data.nric) {
+            sweetAlert("Oops...", "Please input NRIC Number.", "error");
+            return false;
+          } else {
+            if (data.nric.includes("-")) {
+              sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+              return false;
+            } else if (!scope.checkNRIC(data.nric)) {
+              sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+              return false;
+            }
+					}
+					
+					if(!data.passport) {
+            sweetAlert("Oops...", "Please input Passport Number.", "error");
+            return false;
+          } else if (!scope.checkPassport(data.passport)) {
+            sweetAlert("Oops...", "Invalid Passport Format.", "error");
+              return false;
+          }
+
           return true;
         }
 
@@ -2888,6 +2909,29 @@ app.directive("employeeOverviewDirective", [
           scope.selectedEmployee.bank_name = data;
           $('.bank-list-wrapper').hide();
         }
+
+        scope.checkNRIC = function (theNric) {
+          var nric_pattern = null;
+          if (theNric.length == 9) {
+            nric_pattern = new RegExp("^[stfgSTFG]{1}[0-9]{7}[a-zA-z]{1}$");
+          } else if (theNric.length == 12) {
+            // nric_pattern = new RegExp("^[0-9]{2}(?:0[1-9]|1[-2])(?:[0-1]|[1-2][0-9]|[3][0-1])[0-9]{6}$");
+            return true;
+          } else {
+            return false;
+          }
+          return nric_pattern.test(theNric);
+				};
+				
+				scope.checkPassport = function (value) {
+          let passport_pattern = null;
+          if (value) {
+            passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
+          } else {
+            return false;
+          }
+          return passport_pattern.test(value);
+        };
 
         scope.onLoad = function () {
           console.log($state.current);
