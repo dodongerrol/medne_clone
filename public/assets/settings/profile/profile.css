@@ -139,14 +139,14 @@ div#profile-breakHours-time-panel #publicHoliday-addBreak {
     border: 1px solid #1b9bd7;
 }
 
-#monday-div .card-body .row,
-#tuesday-div .card-body .row,
-#wednesday-div .card-body .row,
-#thursday-div .card-body .row,
-#friday-div .card-body .row,
-#saturday-div .card-body .row,
-#sunday-div .card-body .row,
-#publicHoliday-div .card-body .row {
+div#profile-breakHours-time-panel #monday-div .card-body .row,
+div#profile-breakHours-time-panel #tuesday-div .card-body .row,
+div#profile-breakHours-time-panel #wednesday-div .card-body .row,
+div#profile-breakHours-time-panel #thursday-div .card-body .row,
+div#profile-breakHours-time-panel #friday-div .card-body .row,
+div#profile-breakHours-time-panel #saturday-div .card-body .row,
+div#profile-breakHours-time-panel #sunday-div .card-body .row,
+div#profile-breakHours-time-panel #publicHoliday-div .card-body .row {
     margin-bottom: 1%;
 }
 
