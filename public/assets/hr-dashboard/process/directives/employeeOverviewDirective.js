@@ -2530,6 +2530,7 @@ app.directive("employeeOverviewDirective", [
                   user_id: data.user_id,
                   bank_name: data.bank_name,
                   emp_id: data.employee_id,
+                  passport: data.passport,
                 };
                 console.log(update_data);
                 dependentsSettings.updateEmployee(update_data)
