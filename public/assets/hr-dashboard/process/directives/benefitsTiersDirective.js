@@ -1008,6 +1008,18 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.checkEmployeeForm = function () {
+					if ( scope.showCurrencyType == 'myr' ) {
+						if ( !scope.employee_data.nric && !scope.employee_data.mobile && !scope.employee_data.passport ) {
+							sweetAlert("Oops...", "Please key in Mobile No., NRIC, or Passport Number.", "error");
+							return false;
+						}
+					} else {
+						if (!scope.employee_data.email && !scope.employee_data.mobile) {
+							swal('Error!', 'Email or Mobile is required.', 'error');
+							return false;
+						}
+					}
+
 					if (!scope.employee_data.fullname) {
 						swal('Error!', 'Full Name is required.', 'error');
 						return false;
@@ -1016,20 +1028,13 @@ app.directive('benefitsTiersDirective', [
 						swal('Error!', 'Date of Birth is required.', 'error');
 						return false;
 					}
-					if (!scope.employee_data.email && !scope.employee_data.mobile) {
-						swal('Error!', 'Email or Mobile is required.', 'error');
-						return false;
-					}
 					if (scope.employee_data.email) {
 						if (scope.checkEmail(scope.employee_data.email) == false) {
 							swal('Error!', 'Email is invalid.', 'error');
 							return false;
 						}
 					}
-					if (!scope.employee_data.mobile) {
-						swal('Error!', 'Mobile Number is required.', 'error');
-						return false;
-					} else {
+					if (scope.employee_data.mobile) {
 						// console.log( iti.getSelectedCountryData().iso2 );
 						if (iti.getSelectedCountryData().iso2 == 'sg' && scope.employee_data.mobile.length < 8) {
 							swal('Error!', 'Mobile Number for your country code should be 8 digits.', 'error');
@@ -1044,6 +1049,24 @@ app.directive('benefitsTiersDirective', [
 							return false;
 						}
 					}
+					if ( scope.showCurrencyType == 'myr' ) {
+						if ( scope.employee_data.nric ) {
+							if (scope.employee_data.nric.includes("-")) {
+								sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+								return false;
+							} else if (!scope.checkNRIC(scope.employee_data.nric)) {
+								sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+								return false;
+							}
+						}
+						if ( scope.employee_data.passport ) {
+							if (!scope.checkPassport(scope.employee_data.passport)) {
+								sweetAlert("Oops...", "Invalid Passport Format.", "error");
+									return false;
+							}
+						}
+					}
+					
 					// if( !scope.employee_data.postal_code ){
 					// 	swal( 'Error!', 'Postal Code is required.', 'error' );
 					// 	return false;
@@ -1052,27 +1075,6 @@ app.directive('benefitsTiersDirective', [
 						swal('Error!', 'Start Date is required.', 'error');
 						return false;
 					}
-
-					if(!scope.employee_data.nric) {
-            sweetAlert("Oops...", "Please input NRIC Number.", "error");
-            return false;
-          } else {
-            if (scope.employee_data.nric.includes("-")) {
-              sweetAlert("Oops...", "Invalid NRIC Format.", "error");
-              return false;
-            } else if (!scope.checkNRIC(scope.employee_data.nric)) {
-              sweetAlert("Oops...", "Invalid NRIC Format.", "error");
-              return false;
-            }
-					}
-					
-					if(!scope.employee_data.passport) {
-            sweetAlert("Oops...", "Please input Passport Number.", "error");
-            return false;
-          } else if (!scope.checkPassport(scope.employee_data.passport)) {
-            sweetAlert("Oops...", "Invalid Passport Format.", "error");
-              return false;
-          }
 
 					return true;
 				}
