@@ -134,7 +134,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->DOB = $data['DOB'];
                 $this->Lat = '';
                 $this->Lng = '';
-                $this->NRIC = null;
+                $this->NRIC = $data['NRIC'];
+                $this->passport = $data['passport'];
                 $this->Zip_Code = $data['Zip_Code'];
                 $this->FIN = '';
                 $this->Image = 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1427972951/ls7ipl3y7mmhlukbuz6r.png';
