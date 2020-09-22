@@ -300,7 +300,8 @@ login.directive('eclaimLogin', [
             user_id: scope.checkMemberData.user_id,
           }
           scope.showLoading();
-          $http.post(serverUrl.url + 'employee/validate_otp_web', data)
+          // $http.post(serverUrl.url + 'employee/validate_otp_web', data)
+          $http.post(serverUrl.url + 'v2/auth/validate-otp-mobile', data)
 	          .then(function(response) {
               console.log(response);
               scope.otpData = response.data;
