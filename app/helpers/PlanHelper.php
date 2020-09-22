@@ -1514,7 +1514,7 @@ class PlanHelper
 			'PhoneNo'       => (int)$data_enrollee->mobile,
 			'PhoneCode'     => $data_enrollee->mobile_area_code ? '+' . $data_enrollee->mobile_area_code : "+65",
 			'NRIC'          => $data_enrollee->nric,
-			'passport'          => $data_enrollee->passport,
+			'passport'      => $data_enrollee->passport,
 			'Job_Title'     => $data_enrollee->job_title,
 			'Active'        => 1,
 			'Zip_Code'      => $data_enrollee->postal_code,
