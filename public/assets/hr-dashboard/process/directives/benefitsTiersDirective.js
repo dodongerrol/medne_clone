@@ -1010,7 +1010,7 @@ app.directive('benefitsTiersDirective', [
 				scope.checkEmployeeForm = function () {
 					if ( scope.showCurrencyType == 'myr' ) {
 						if ( !scope.employee_data.nric && !scope.employee_data.mobile && !scope.employee_data.passport ) {
-							sweetAlert("Oops...", "Please key in Mobile No., NRIC, or Passport Number.", "error");
+							sweetAlert("Error!", "Mobile Number,NRIC or Passport Number is required", "error");
 							return false;
 						}
 					} else {
