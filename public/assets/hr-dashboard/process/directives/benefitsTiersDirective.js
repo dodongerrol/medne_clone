@@ -1350,6 +1350,7 @@ app.directive('benefitsTiersDirective', [
 									wellness_credits: parseFloat(emp.employee.wellness_credits),
 									plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 									postal_code: emp.employee.postal_code,
+									passport: emp.employee.passport,
 									mobile_area_code: emp.employee.mobile_area_code,
 								}
 								dependentsSettings.updateTempEnrollee(data)
