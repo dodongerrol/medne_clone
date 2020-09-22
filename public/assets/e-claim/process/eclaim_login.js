@@ -323,7 +323,7 @@ login.directive('eclaimLogin', [
           }
           console.log(data);
           scope.showLoading();
-          $http.post(serverUrl.url + 'employee/send_otp_web',data)
+          $http.post(serverUrl.url + 'v2/auth/send-otp-mobile',data)
 	          .then(function(response) {
               console.log(response);
               scope.hideLoading();
