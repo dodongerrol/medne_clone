@@ -963,7 +963,6 @@ div#setupBreakHours #clinic-time-panel {
 #setupBreakHours #publicHoliday-mainCollapsibleDiv {
     border-top: 1px solid #d0d0d0;
     max-height: 150px;
-    overflow: scroll;
 }
 
 #setupBreakHours #profile-breakHours-copyTimetoAllBtn {
@@ -979,4 +978,16 @@ div#setupBreakHours #clinic-time-panel {
 #setupBreakHours #sunday-div .card-body .row,
 #setupBreakHours #publicHoliday-div .card-body .row {
     margin-bottom: 1%;
+}
+
+#setupBreakHours #monday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #tuesday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #wednesday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #thursday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #friday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #saturday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #sunday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #publicHoliday-mainCollapsibleDiv .scrollableDiv{
+    overflow: scroll;
+    max-height: 117px;
 }

@@ -82,7 +82,8 @@ jQuery(document).ready( function ($) {
             }
 
             for (let x = xStartingCnt; x < 5; x++) {
-                
+                // Display Block
+				$('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x).css('display', 'block');
                 
                 // Set Toggle ON
                 $('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');

@@ -173,18 +173,21 @@ jQuery(document).ready(function($) {
 		}
 
 		// For Break Hours
-		for (let i = 0; i < breakAvailableDays.length; i++) {
-			if ($('#'+breakAvailableDays[i]+'-div .breakChk_activate').prop('checked')) {
-				providersBreakHours.push({
-					start_time: $('#'+breakAvailableDays[i]+'-div input.timepicker.breakTime-from.ui-timepicker-input').val(),
-					end_time:  $('#'+breakAvailableDays[i]+'-div input.timepicker.breakTime-to.ui-timepicker-input').val(),
-					day: breakAvailableDaysKey[i],
-					type: 3,
-					clinic_id: $('#clinicID').val(),
-					updated_at: new Date().getFullYear(),
-					created_at: new Date().getFullYear()
-				});
-			}
+		for (let x = 0; x < breakAvailableDays.length; x++) {
+            for (let i = 0; i < 5; i++) {
+                let chkValue = $('div#setupBreakHours #'+breakAvailableDays[x]+'-mainCollapsibleDiv .row.'+breakAvailableDays[x]+i+' .profile-breakHours-chk_activate').prop('checked');
+                
+                if (chkValue) {
+                    providersBreakHours.push({
+                        start_time: $('div#setupBreakHours #'+breakAvailableDays[x]+'-mainCollapsibleDiv .row.'+breakAvailableDays[x]+i+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(),
+                        end_time:  $('div#setupBreakHours #'+breakAvailableDays[x]+'-mainCollapsibleDiv .row.'+breakAvailableDays[x]+i+' input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(),
+                        day: breakAvailableDaysKey[x]+i,
+                        type: 3,
+                        updated_at: new Date().getFullYear(),
+                        created_at: new Date().getFullYear()
+                    });
+                }
+            }
 		}
 		
 		// Populate data
@@ -804,8 +807,11 @@ jQuery(document).ready(function($) {
             }
 
             for (let x = xStartingCnt; x < 5; x++) {
+				// Display Block
+				$('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x).css('display', 'block');
+
                 // Set Toggle ON
-                // $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');
+                $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');
                 
                 // Set time
                 $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(mondayTimeFrom);
