@@ -102,18 +102,13 @@ button#profile-operatingHours-saveOperatingHours {
     width: 70%;
 }
 
-button#profile-breakHours-copyTimetoAllBtn, 
-button#profile-breakHours-undoCopyTimetoAllBtn {
+button#profile-breakHours-copyTimetoAllBtn {
     font-size: 0.9em;
     color: #1b9bd7;
 }
  button#profile-operatingHours-copyTimetoAllBtn {
     color: #1b9bd7;
  }
-
-button#profile-breakHours-undoCopyTimetoAllBtn {
-	display: none;
-}
 
 .breakHours-div {
 	display: none;
@@ -130,31 +125,79 @@ button#profile-breakHours-savebreakHours {
 	float: right;
 }
 
- #profile-breakHours-monday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-monday-div .toggle,
- #profile-breakHours-monday-div .timepicker,
- #profile-breakHours-tuesday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-tuesday-div .toggle,
- #profile-breakHours-tuesday-div .timepicker,
- #profile-breakHours-wednesday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-wednesday-div .toggle,
- #profile-breakHours-wednesday-div .timepicker,
- #profile-breakHours-thursday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-thursday-div .toggle,
- #profile-breakHours-thursday-div .timepicker,
- #profile-breakHours-friday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-friday-div .toggle,
- #profile-breakHours-friday-div .timepicker,
- #profile-breakHours-saturday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-saturday-div .toggle,
- #profile-breakHours-saturday-div .timepicker,
- #profile-breakHours-sunday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-sunday-div .toggle,
- #profile-breakHours-sunday-div .timepicker,
- #profile-breakHours-publicHoliday-div .col-md-1.profile-breakHours-detail-lbl,
- #profile-breakHours-publicHoliday-div .toggle,
- #profile-breakHours-publicHoliday-div .timepicker,
- #profile-breakHours-copyTimetoAllBtn,
- #profile-breakHours-savebreakHours{
-    display: none;
+div#profile-breakHours-time-panel #monday-addBreak,
+div#profile-breakHours-time-panel #tuesday-addBreak,
+div#profile-breakHours-time-panel #wednesday-addBreak,
+div#profile-breakHours-time-panel #thursday-addBreak,
+div#profile-breakHours-time-panel #friday-addBreak,
+div#profile-breakHours-time-panel #saturday-addBreak,
+div#profile-breakHours-time-panel #sunday-addBreak,
+div#profile-breakHours-time-panel #publicHoliday-addBreak {
+    border-radius: 5px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+}
+
+div#profile-breakHours-time-panel #monday-div .card-body .row,
+div#profile-breakHours-time-panel #tuesday-div .card-body .row,
+div#profile-breakHours-time-panel #wednesday-div .card-body .row,
+div#profile-breakHours-time-panel #thursday-div .card-body .row,
+div#profile-breakHours-time-panel #friday-div .card-body .row,
+div#profile-breakHours-time-panel #saturday-div .card-body .row,
+div#profile-breakHours-time-panel #sunday-div .card-body .row,
+div#profile-breakHours-time-panel #publicHoliday-div .card-body .row {
+    margin-bottom: 1%;
+}
+
+div#profile-breakHours-time-panel .row.monday1,
+div#profile-breakHours-time-panel .row.monday2,
+div#profile-breakHours-time-panel .row.monday3,
+div#profile-breakHours-time-panel .row.monday4,
+div#profile-breakHours-time-panel .row.tuesday1,
+div#profile-breakHours-time-panel .row.tuesday2,
+div#profile-breakHours-time-panel .row.tuesday3,
+div#profile-breakHours-time-panel .row.tuesday4,
+div#profile-breakHours-time-panel .row.wednesday1,
+div#profile-breakHours-time-panel .row.wednesday2,
+div#profile-breakHours-time-panel .row.wednesday3,
+div#profile-breakHours-time-panel .row.wednesday4,
+div#profile-breakHours-time-panel .row.thursday1,
+div#profile-breakHours-time-panel .row.thursday2,
+div#profile-breakHours-time-panel .row.thursday3,
+div#profile-breakHours-time-panel .row.thursday4,
+div#profile-breakHours-time-panel .row.friday1,
+div#profile-breakHours-time-panel .row.friday2,
+div#profile-breakHours-time-panel .row.friday3,
+div#profile-breakHours-time-panel .row.friday4,
+div#profile-breakHours-time-panel .row.saturday1,
+div#profile-breakHours-time-panel .row.saturday2,
+div#profile-breakHours-time-panel .row.saturday3,
+div#profile-breakHours-time-panel .row.saturday4,
+div#profile-breakHours-time-panel .row.sunday1,
+div#profile-breakHours-time-panel .row.sunday2,
+div#profile-breakHours-time-panel .row.sunday3,
+div#profile-breakHours-time-panel .row.sunday4,
+div#profile-breakHours-time-panel .row.publicHoliday1,
+div#profile-breakHours-time-panel .row.publicHoliday2,
+div#profile-breakHours-time-panel .row.publicHoliday3,
+div#profile-breakHours-time-panel .row.publicHoliday4 {
+    display: none
+}
+
+div#profile-breakHours-time-panel {
+    height: 1008px;
+    overflow: scroll;
+}
+
+#profile-breakHours-time-panel #monday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #tuesday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #wednesday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #thursday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #friday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #saturday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #sunday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #publicHoliday-mainCollapsibleDiv {
+    border-top: 1px solid #d0d0d0;
+    max-height:284px;
 }
