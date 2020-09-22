@@ -17334,7 +17334,7 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 
 		if($id) {
 			$data = array (
@@ -17353,7 +17353,7 @@ public function createHrLocation ()
 	{	
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 		$format = [];
 		
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
@@ -17380,7 +17380,7 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 		
 
 		if(empty($input['LocationID']) || $input['LocationID'] == null) {
@@ -17407,7 +17407,7 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 		
 		if(empty($input['id']) || $input['id'] == null) {
             return ['status' => false, 'message' => 'id is required'];
