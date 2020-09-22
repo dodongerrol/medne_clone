@@ -274,7 +274,7 @@ class DependentController extends \BaseController {
 				
 				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
-				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
+				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
 				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
@@ -304,7 +304,7 @@ class DependentController extends \BaseController {
 					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)
 				);
-
+				
 				try {
 					$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 					if($enroll_result) {

@@ -1302,9 +1302,18 @@ app.directive('benefitsTiersDirective', [
         }
 
 				scope.updateEnrolleEmp = function (emp) {
-					if (emp.employee.email == "" && emp.employee.mobile == "") {
-						swal("Error!", "Email Address or Mobile Number is required.", 'error');
-						return false;
+					
+
+					if ( scope.showCurrencyType == 'myr' ) {
+						if ( emp.employee.nric == '' && emp.employee.mobile == '' && emp.employee.passport == '' ) {
+							sweetAlert("Error!", "Please key in Mobile No., NRIC, or Passport Number.", "error");
+							return false;
+						}
+					} else {
+						if (emp.employee.email == "" && emp.employee.mobile == "") {
+							swal("Error!", "Email Address or Mobile Number is required.", 'error');
+							return false;
+						}
 					}
 
 					// if( !emp.employee.mobile_area_code ) {
@@ -1335,11 +1344,13 @@ app.directive('benefitsTiersDirective', [
 									dob: moment(emp.employee.dob, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 									email: emp.employee.email,
 									mobile: emp.employee.mobile,
+									nric: emp.employee.nric,
 									job_title: emp.employee.job_title,
 									medical_credits: parseFloat(emp.employee.credits),
 									wellness_credits: parseFloat(emp.employee.wellness_credits),
 									plan_start: moment(emp.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY'),
 									postal_code: emp.employee.postal_code,
+									passport: emp.employee.passport,
 									mobile_area_code: emp.employee.mobile_area_code,
 								}
 								dependentsSettings.updateTempEnrollee(data)

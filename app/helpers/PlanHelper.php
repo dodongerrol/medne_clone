@@ -1513,7 +1513,8 @@ class PlanHelper
 			'Email'         => $data_enrollee->email,
 			'PhoneNo'       => (int)$data_enrollee->mobile,
 			'PhoneCode'     => $data_enrollee->mobile_area_code ? '+' . $data_enrollee->mobile_area_code : "+65",
-			'NRIC'          => null,
+			'NRIC'          => $data_enrollee->nric,
+			'passport'      => $data_enrollee->passport,
 			'Job_Title'     => $data_enrollee->job_title,
 			'Active'        => 1,
 			'Zip_Code'      => $data_enrollee->postal_code,
@@ -1828,25 +1829,25 @@ class PlanHelper
 			->update(['enrolled_status' => "true", 'active_plan_id' => $active_plan->customer_active_plan_id]);
 
 		// check if there is a plan tier
-		if ($data_enrollee->plan_tier_id) {
-			// check plan tier if exist
-			$plan_tier = DB::table('plan_tiers')
-				->where('plan_tier_id', $data_enrollee->plan_tier_id)
-				->first();
-			if ($plan_tier) {
-				$plan_tier_user = new PlanTierUsers();
-				$tier_history = array(
-					'plan_tier_id'              => $data_enrollee->plan_tier_id,
-					'user_id'                   => $user_id,
-					'status'                    => 1
-				);
+		// if ($data_enrollee->plan_tier_id) {
+		// 	// check plan tier if exist
+		// 	$plan_tier = DB::table('plan_tiers')
+		// 		->where('plan_tier_id', $data_enrollee->plan_tier_id)
+		// 		->first();
+		// 	if ($plan_tier) {
+		// 		$plan_tier_user = new PlanTierUsers();
+		// 		$tier_history = array(
+		// 			'plan_tier_id'              => $data_enrollee->plan_tier_id,
+		// 			'user_id'                   => $user_id,
+		// 			'status'                    => 1
+		// 		);
 
-				$plan_tier_user->createData($tier_history);
-				// increment member head count
-				$plan_tier_class = new PlanTier();
-				$plan_tier_class->increamentMemberEnrolledHeadCount($data_enrollee->plan_tier_id);
-			}
-		}
+		// 		$plan_tier_user->createData($tier_history);
+		// 		// increment member head count
+		// 		$plan_tier_class = new PlanTier();
+		// 		$plan_tier_class->increamentMemberEnrolledHeadCount($data_enrollee->plan_tier_id);
+		// 	}
+		// }
 
 		// record enrollment status for member
 		PlanHelper::createEnrollmentHistoryStatus($user_id, $active_plan->customer_active_plan_id, date('Y-m-d'), $start_date, $schedule_date, $communcation_send, "employee");

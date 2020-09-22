@@ -7340,4 +7340,39 @@ public function payCreditsNew( )
       $returnObject->data = $checker;
       return Response::json($returnObject);
   }
+
+  function registerMobileNumber() {
+    $input = Input::all();
+    $returnObject = new stdClass();
+    $userDetails = new User();
+
+    if (empty($input['mobile_number'])) {
+      $returnObject->status = false;
+      $returnObject->message = 'Mobile number is required.';
+      return Response::json($returnObject);
+    } else if (empty($input['userId'])) {
+      $returnObject->status = false;
+      $returnObject->message = 'user ID is required.';
+      return Response::json($returnObject);
+    } else {
+      // Check if mobile number already
+      $mobileExist = $userDetails->checkMemberExistence(array( 
+                                  array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile_number']),
+                                  array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
+                              ));
+      
+      if ($mobileExist) {
+        $returnObject->status = false;
+        $returnObject->message = 'Mobile number already been used.';
+        return Response::json($returnObject); 
+      } else {
+        // Update User OTP record
+        $userDetails->updateMemberRecord($input['userId'], array('PhoneNo' => $input['mobile_number']));
+        $returnObject->status = true;
+        $returnObject->message = 'Mobile number successfully registered.';
+        return Response::json($returnObject); 
+      }
+
+    }
+  }
 }

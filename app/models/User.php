@@ -134,7 +134,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->DOB = $data['DOB'];
                 $this->Lat = '';
                 $this->Lng = '';
-                $this->NRIC = null;
+                $this->NRIC = $data['NRIC'];
+                $this->passport = $data['passport'];
                 $this->Zip_Code = $data['Zip_Code'];
                 $this->FIN = '';
                 $this->Image = 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1427972951/ls7ipl3y7mmhlukbuz6r.png';
@@ -921,7 +922,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     function checkMemberExistence ($params) {
         $query = User::query();
 
-        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('(case when Zip_Code <= 0 then 0 else Zip_Code end)as postal_code'), 'disabled_otp', 'PhoneNo');
+        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo');
        
         // Append where clause
         foreach ($params as $key => $value) {

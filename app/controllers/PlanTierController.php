@@ -364,23 +364,8 @@ class PlanTierController extends \BaseController {
 	public function createWebInputTier( )
 	{
 		$input = Input::all();
-		// return $input;
-		// if(empty($input['customer_id']) || $input['customer_id'] == null) {
-		// 	return array('status' => false, 'message' => 'Customer ID is required.');
-		// }
-
 		$customer_id = PlanHelper::getCusomerIdToken();
 		$plan_tier_id = null;
-		// if(!empty($input['plan_tier_id']) || $input['plan_tier_id'] != null) {
-		// 	$plan_tier = DB::table('plan_tiers')->where('plan_tier_id', $input['plan_tier_id'])->where('active', 1)->first();
-
-		// 	if(!$plan_tier) {
-		// 		return array('satus' => false, 'message' => 'Plan Tier not found.');
-		// 	}
-
-		// 	$plan_tier_id = $input['plan_tier_id'];
-		// }
-
 
 		if(empty($input['employees']) || sizeof($input['employees']) == 0) {
 			return array('satus' => false, 'message' => 'Employee/s is required.');
@@ -489,13 +474,7 @@ class PlanTierController extends \BaseController {
 		$group_number = CustomerHelper::getMemberLastGroupNumber($customer_id);
 		foreach ($input['employees'] as $key => $user) {
 			$credit = 0;
-			$postal_code = null;
-
-			if(!empty($user['postal_code']) && $user['postal_code'] != null) {
-				$postal_code = $user['postal_code'];
-			}
-
-
+			$user['mobile'] = !empty($user['mobile']) ? trim($user['mobile']) : null;
 			$mobile = preg_replace('/\s+/', '', $user['mobile']);
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
 			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
