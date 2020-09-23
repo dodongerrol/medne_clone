@@ -17213,14 +17213,29 @@ class BenefitsDashboardController extends \BaseController {
 		$id = $result->hr_dashboard_id;
 		$format = [];
 		
-		$departments = CorporateHrDepartment::where('customer_id', $id)->orderBy('created_at','desc')->get();
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
+		$corporate_members = DB::table('corporate_members')
+		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+		->where('corporate_members.corporate_id', $account_link->corporate_id)
+		->where('user.Active', 1)
+		->get();
+
+		$total_active_members = sizeof($corporate_members);
+
+		$departments = CorporateHrDepartment::where('customer_id', $id)->get();
 		
 
-		$data = array (
-			'department_name' 	=> $departments 
-		);
+		$container = array();
+		foreach ($departments as $key => $department) {
+			$container[] = array(
+				'customer_id'			=> $department->customer_id,
+				'department_name' 		=> $department->department_name, 
+				'total_employees'		=> $total_active_members
+			);
+		  }
 
-		return array('data' => $data);
+		return $container;
 	}
 
 	public function createHrDepartment ()
