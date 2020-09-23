@@ -217,6 +217,8 @@ Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@ge
 
 // update agree status
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
+// business contact
+Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
 
 
@@ -234,6 +236,9 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_location_list', 'BenefitsDashboardController@getLocationList');
 	Route::post('hr/update_location', 'BenefitsDashboardController@updateHrLocation');
 	Route::get('hr/remove_location', 'BenefitsDashboardController@deleteHrLocation');
+
+	// business contact
+	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
 
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
@@ -280,6 +285,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateBusinessInformation');
 	// update business contact
 	Route::post('hr/update/business_contact', 'BenefitsDashboardController@updateBusinessContact');
+	// business contact
+	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
 	// update billing contact
 	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateBillingContact');
 	// update billing address

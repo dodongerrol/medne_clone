@@ -4834,7 +4834,7 @@ class BenefitsDashboardController extends \BaseController {
 		// get admin session from mednefits admin login
 		$admin_id = Session::get('admin-session-id');
 		$hr_data = StringHelper::getJwtHrSession();
-		$hr_id = $hr_data->hr_dashboard_id;
+		$hr_id = $hr_data->customer_buy_start_id;
 		$input = Input::all();
 
 		$check = DB::table('customer_business_information')->where('customer_business_information_id', $input['customer_business_information_id'])->count();
@@ -4845,13 +4845,20 @@ class BenefitsDashboardController extends \BaseController {
 				'message'	=> 'No business information exist'
 			);
 		}
+		// $info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
 
 		$business_information = new CorporateBusinessInformation();
 
 		$data = array(
-			'company_address'	=> $input['address'],
-			'postal_code'			=> $input['postal']
+			// 'account_name'			=> $input['account_name'],
+			// 'currency_type' 		=> $info->currency_type == 'sgd' ? 'singapore' : 'malaysia',
+			'company_name'			=> $input['company_name'],
+			'company_address'		=> $input['company_address']
 		);
+
+		// $result = DB::table('customer_buy_start')
+		// ->where('customer_buy_start_id', $input['customer_buy_start_id'])
+		// ->update($data);
 
 		$result = $business_information->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
 
@@ -17419,5 +17426,24 @@ public function createHrLocation ()
 			'status'		=> TRUE,
 			'message'		=> 'Successfully deleted location.'
 		);
+	}
+
+	public function addMoreBusinessContact ()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		if($id) {
+			$data = array (
+				'customer_buy_start_id'			=> $input['customer_buy_start_id'],
+				'first_name'					=> $input['first_name'],
+				'last_name'						=> $input['last_name'],
+				'work_email' 					=> $input['work_email'],
+				'phone'							=> $input['phone']
+			);
+			\CorporateBusinessContact::create($data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully added business contact.', 'id'	=> $id);			
 	}
 }
