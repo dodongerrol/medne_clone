@@ -18,6 +18,10 @@
 .btn-top-up-credits:focus {
   background-color: #fff;;
 }
+.btn-top-up-credits[disabled]{
+  cursor: not-allowed;
+  opacity: 0.3;
+}
 .available-credits-container {
   /* margin: 0 0 40px; */
 }

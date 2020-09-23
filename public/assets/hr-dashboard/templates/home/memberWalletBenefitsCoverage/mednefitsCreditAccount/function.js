@@ -354,7 +354,11 @@ app.directive('mednefitsCreditAccountDirective', [
                 scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
               }
             })
-				}
+        }
+        
+        scope.closeModal  = function(){
+          $(".modal").modal('close');
+        }
 
        
         scope.onLoad = async function () {

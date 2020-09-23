@@ -16885,16 +16885,11 @@ class BenefitsDashboardController extends \BaseController {
 		$session = self::checkSession();
 		$customer_id = $session->customer_buy_start_id;
 
-		$temp_employees = DB::table('customer_temp_enrollment')->where('customer_buy_start_id', $customer_id)->get();
+		$temp_employees = DB::table('customer_temp_enrollment')
+			->where('customer_buy_start_id', $customer_id)
+			->where('enrolled_status', 'false')
+			->delete();
 
-		// return [$temp_employees];
-
-		foreach ($temp_employees as $data => $emp)
-		{
-			if($emp->enrolled_status === false || $emp->enrolled_status === 'false'){
-				DB::table('customer_temp_enrollment')->where('temp_enrollment_id', $emp->temp_enrollment_id)->delete();
-			}
-		}
 		return array(
 			'status'	=> TRUE,
 			'message'	=> 'Success.'
