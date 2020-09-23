@@ -16891,7 +16891,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		foreach ($temp_employees as $data => $emp)
 		{
-			DB::table('customer_temp_enrollment')->where('temp_enrollment_id', $emp->temp_enrollment_id)->delete();
+			if($emp->enrolled_status === false || $emp->enrolled_status === 'false'){
+				DB::table('customer_temp_enrollment')->where('temp_enrollment_id', $emp->temp_enrollment_id)->delete();
+			}
 		}
 		return array(
 			'status'	=> TRUE,
