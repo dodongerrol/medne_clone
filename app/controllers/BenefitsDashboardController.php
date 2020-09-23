@@ -4845,51 +4845,31 @@ class BenefitsDashboardController extends \BaseController {
 				'message'	=> 'No business information exist'
 			);
 		}
-		// $info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
+		
 
-		$business_information = new CorporateBusinessInformation();
+		$business_information = new CorporateBusinessInformation;
 
 		$data = array(
-			'account_name'			=> $input['account_name'],
-			'currency_type' 		=> $info->currency_type == 'sgd' ? 'singapore' : 'malaysia',
+			// 'account_name'			=> $input['account_name'],
+			// 'currency_type' 		=> $info->currency_type == 'sgd' ? 'singapore' : 'malaysia',
 			'company_name'			=> $input['company_name'],
 			'company_address'		=> $input['company_address']
 		);
 
-		// $result = DB::table('customer_buy_start')
-		// ->where('customer_buy_start_id', $input['customer_buy_start_id'])
-		// ->update($data);
+		$result = $business_information
+		->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
 
-		$result = $business_information->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
-
-		if($result) {
-			if($admin_id) {
-				$admin_logs = array(
-					'admin_id'  => $admin_id,
-					'admin_type' => 'mednefits',
-					'type'      => 'admin_hr_updated_company_business_information',
-					'data'      => SystemLogLibrary::serializeData($input)
-				);
-				SystemLogLibrary::createAdminLog($admin_logs);
-			} else {
-				$admin_logs = array(
-					'admin_id'  => $hr_id,
-					'admin_type' => 'hr',
-					'type'      => 'admin_hr_updated_company_business_information',
-					'data'      => SystemLogLibrary::serializeData($input)
-				);
-				SystemLogLibrary::createAdminLog($admin_logs);
-			}
-			return array(
-				'status'	=> TRUE,
-				'message'	=> 'Success.'
-			);
-		}
-
-		return array(
-			'status'	=> FALSE,
-			'message'	=> 'Failed.'
+		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
+		$customer = array(
+			'account_name'			=> $input['account_name'],
+			'currency_type' 		=> $input['currency_type']
 		);
+
+		$account = DB::table('customer_buy_start')
+		->where('customer_buy_start_id', $hr_id)
+		->update($customer);
+
+		return array('status' => TRUE, 'message'	=> 'successfully updated business information.');
 	}
 
 	public function updateBusinessContact( )
