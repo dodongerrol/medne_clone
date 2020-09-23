@@ -1766,12 +1766,21 @@ app.directive('benefitsTiersDirective', [
 					},100)
 				}
 
+				scope.deleteTempEmpAllData	=	function(){
+					$http.get(serverUrl.url + '/delete_all_temp_employees')
+						.success(function(response){
+							console.log(response);
+						});
+				}
+				
+
 				scope.onLoad = function () {
 					// if (localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true) {
 					// 	scope.isTiering = true;
 					// } else {
 					// 	scope.isTiering = false;
 					// }
+					scope.deleteTempEmpAllData();
 					scope.getProgress();
 					scope.companyDependents();
 					scope.getMethod();
