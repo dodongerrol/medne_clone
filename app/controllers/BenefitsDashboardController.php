@@ -17446,4 +17446,24 @@ public function createHrLocation ()
 		} 
 		return array('status' => TRUE, 'message' => 'Successfully added business contact.', 'id'	=> $id);			
 	}
+
+	public function getHrBusinessContact()
+	{	
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+		
+		$contacts = CorporateBusinessContact::where('customer_buy_start_id', $id)->get();
+		
+		$container = array();
+		foreach ($contacts as $key => $contact) {
+			$container[] = array(
+				'first_name' 	=> $contact->first_name, 
+				'last_name' 	=> $contact->last_name,
+				'work_email' 	=> $contact->work_email,
+				'phone' 		=> $contact->phone
+			);
+		  }
+
+		return $container;
+	}
 }
