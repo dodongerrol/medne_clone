@@ -17372,15 +17372,24 @@ public function createHrLocation ()
 
 		$total_active_members = sizeof($corporate_members);
 
-		$locations = CorporateHrLocation::where('customer_id', $id)->orderBy('created_at','desc')->get();
+		$locations = CorporateHrLocation::where('customer_id', $id)->get();
 		
 
-		$data = array (
-			'Locations' 		=> $locations,
-			'total_employee' 	=> $total_active_members
-		);
+		$container = array();
+		foreach ($locations as $key => $location) {
+			$address = explode(',', $location->business_address);
+			$container[] = array(
+				'location' 				=> $location->location, 
+				'postal_code' 			=> $location->postal_code,
+				'country' 				=> $location->country,
+				'business_address' 		=> $location->business_address,
+				'street_address'		=> $address[0] ?? null,
+				'unit'					=> $address[1] ?? null,
+				'building'				=> $address[2] ?? null
+			);
+		  }
 
-		return array('data' => $data);
+		return $container;
 	}
 
 	public function updateHrLocation ()
