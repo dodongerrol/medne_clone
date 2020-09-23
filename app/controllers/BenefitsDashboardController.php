@@ -17374,10 +17374,10 @@ public function createHrLocation ()
 
 		$locations = CorporateHrLocation::where('customer_id', $id)->get();
 		
-		$address = explode(',', $locations->business_address);
 
 		$container = array();
 		foreach ($locations as $key => $location) {
+			$address = explode(',', $location->business_address);
 			$container[] = array(
 				'location' 				=> $location->location, 
 				'postal_code' 			=> $location->postal_code,
