@@ -1,0 +1,40 @@
+  <!-- Confirmation modal -->
+<div class="modal fade" id="remove-department-confirm-modal" tabindex="-1" role="dialog"
+aria-labelledby="remove-department-confirm-modal" aria-hidden="true">
+    <div class="modal-dialog max-w-xl bg-transparent mt-56" role="document">
+        <div class="modal-content">
+            <div class="modal-body py-0">
+                <div class="py-1 px-16">
+                    <div class="grid grid-cols-1 pt-6">
+                        <h4 class="section-title font-bold text-center mb-6">
+                            Remove Department
+                        </h4>
+                        <div class="grid grid-cols-1">
+                            <p class="helvetica-medium text-sm font-medium text-gray-900 mb-6">
+                                Are you sure you want to remove your Product department? If you do, the 5 current employees in Product won’t be assigned to a department.
+                            </p>
+                            <p class="helvetica-medium text-sm font-medium text-gray-900 mb-8">
+                                Please confirm to proceed.
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-center space-x-4 w-full pb-6">
+                            <button
+                                ng-click="$ctrl.presentModal('remove-department-confirm-modal', false)"
+                                type="button"
+                                class="ui-btn ui-btn-primary-outline h-8"
+                                >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                class="ui-btn ui-btn-primary w-48 h-8"
+                                ng-click="$ctrl.delete()">
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,26 +1,26 @@
 (function (angular) {
     'use strict';
 
-    class WorkLocationService {
+    class LocationAPI {
         constructor($http, serverUrl) {
             this.$http = $http;
             this.serverUrl = serverUrl.url;
         }
-        getLocations() {
-            // return this.$http.get('http://localhost:3000/locations')
-            //     .then(response => response.data)
+        get() {
+            return this.$http.get(`${this.serverUrl}/hr/get_location_list`)
+                .then(response => response.data)
         }
-        storeLocation() {
-            //
+        store(location) {
+            return this.$http.post(`${this.serverUrl}/hr/create_locations`, { ...location });
         }
-        updateLocation() {
-            //
+        update (location) {
+            return this.$http.post(`${this.serverUrl}/hr/update_location`, { ...location });
         }
-        removeLocation() {
-            //
+        delete (id) {
+            return this.$http.get(`${this.serverUrl}/hr/remove_location?id=${id}`)
         }
     }
 
     angular.module('app')
-        .service('workLocationService', WorkLocationService);
+        .service('locationAPI', LocationAPI);
 }(angular));
