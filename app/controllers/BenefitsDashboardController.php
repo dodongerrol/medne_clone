@@ -17385,7 +17385,8 @@ public function createHrLocation ()
 				'business_address' 		=> $location->business_address,
 				'street_address'		=> $address[0] ?? null,
 				'unit'					=> $address[1] ?? null,
-				'building'				=> $address[2] ?? null
+				'building'				=> $address[2] ?? null,
+				'total_employees'		=> $total_active_members
 			);
 		  }
 
