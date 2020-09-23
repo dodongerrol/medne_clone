@@ -1,8 +1,10 @@
-<div class="grid grid-layout-one gap-4">
+<div class="grid grid-cols-1 gap-2">
     <ng-include src="$ctrl.views + '/modals/create.html'"></ng-include>
     <ng-include src="$ctrl.views + '/modals/edit.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/confirm.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/success.html'"></ng-include>
     <div>
-        <p class="ui-label-lg mb-4"> Work Locations </p>
+        <p class="ui-label-lg mb-5"> Work Locations </p>
         <div class="ui-card border-color border-solid">
             <div class="bottom-border">
                 <button type="button" ng-click="$ctrl.add()"
@@ -16,22 +18,22 @@
             </div>
             <div>
                 <div class="grid grid-cols-1 gap-2">
-                    <div ng-if="!$ctrl.loading" ng-repeat="location in $ctrl.locations">
+                    <div ng-repeat="location in $ctrl.locations">
                         <div class="ui-card-inner bottom-border">
                             <div class="flex items-center justify-between">
                                 <div class="w-40">
-                                    <p class="ui-label-md" ng-bind="location.location_name"></p>
+                                    <p class="ui-label-md" ng-bind="location.location"></p>
                                 </div>
                                 <div class="w-64">
                                     <p class="ui-label">
-                                        <span ng-bind="location.business_address"></span>
+                                        <span ng-bind="location.street_address"></span>
                                         <span ng-bind="location.unit"></span>
                                         <span ng-bind="location.building"></span>,
                                         <span ng-bind="location.country"></span>
                                         <span ng-bind="location.postal_code"></span>
                                     </p>
                                     <p class="ui-label text-teal-600">
-                                        <span ng-bind="location.employees"></span>
+                                        <span ng-bind="location.total_employees"></span>
                                         Current Employees
                                     </p>
                                 </div>

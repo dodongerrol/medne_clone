@@ -8,7 +8,7 @@
         }
         get() {
             return this.$http.get(`${this.serverUrl}/hr/get_department_list`)
-                .then((response) => response.data.data.department_name);
+                .then((response) => response.data);
         }
         store (department_name) {
             return this.$http.post(`${this.serverUrl}/hr/create_department`, {
@@ -21,7 +21,7 @@
                 department_name: department.department_name
             });
         }
-        delete (id) {
+        remove (id) {
             return this.$http.get(`${this.serverUrl}/hr/remove_department?id=${id}`)
         }
     }

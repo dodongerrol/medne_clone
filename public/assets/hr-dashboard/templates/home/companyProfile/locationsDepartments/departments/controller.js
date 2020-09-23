@@ -50,14 +50,19 @@
                 this.get();
             });
         }
+        attemptDelete() {
+            this.presentModal('edit-department-modal', false);
+            this.presentModal('remove-department-confirm-modal', true);
+        }
         delete() {
+            this.presentModal('remove-department-confirm-modal', false);
             $(".circle-loader").fadeIn();
-            const request = this.departmentAPI.delete(this.state.department.id);
+            const request = this.departmentAPI.remove(this.state.department.id);
 
             request.then(() => {
                 $(".circle-loader").fadeOut();
                 this.reset();
-                this.presentModal('edit-department-modal', false);
+                this.presentModal('success-department-confirm-modal', true);
                 this.get();
             });
         }

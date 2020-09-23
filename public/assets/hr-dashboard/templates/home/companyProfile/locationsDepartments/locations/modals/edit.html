@@ -13,7 +13,10 @@
                                 <div>
                                     <label class="form-label">Work Location Name</label>
                                     <div class="form-input-group">
-                                        <input class="form-input" required ng-model="$ctrl.formFields.location_name"
+                                        <input
+                                            class="form-input"
+                                            required
+                                            ng-model="$ctrl.state.form.location"
                                             type="text">
                                     </div>
                                 </div>
@@ -22,15 +25,15 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div class="form-input-group col-span-1 md:col-span-2">
                                             <input class="form-input" required
-                                                ng-model="$ctrl.formFields.business_address" type="text">
+                                                ng-model="$ctrl.state.form.street_address" type="text">
                                         </div>
                                         <div class="form-input-group">
                                             <input class="form-input" type="text" required
-                                                ng-model="$ctrl.formFields.unit">
+                                                ng-model="$ctrl.state.form.unit">
                                         </div>
                                         <div class="form-input-group">
                                             <input class="form-input" type="text" required
-                                                ng-model="$ctrl.formFields.building">
+                                                ng-model="$ctrl.state.form.building">
                                         </div>
                                     </div>
                                 </div>
@@ -43,7 +46,7 @@
                                             <button type="button"
                                                 class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                {{ $ctrl.formFields.country }}
+                                                {{ $ctrl.state.form.country }}
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                     class="w-4 text-gray-600" fill="currentColor">
                                                     <path fill-rule="evenodd"
@@ -51,7 +54,7 @@
                                                         clip-rule="evenodd" />
                                                 </svg>
                                             </button>
-                                            <input ng-model="$ctrl.formFields.country" class="hidden" required readonly>
+                                            <input ng-model="$ctrl.state.form.country" class="hidden" required readonly>
                                             <ul class="dropdown-menu">
                                                 <li ng-repeat="country in $ctrl.countries">
                                                     <a ng-click="$ctrl.setField('country', country.name)"
@@ -69,7 +72,7 @@
                                         </label>
                                         <div class="form-input-group">
                                             <input class="form-input" type="text" required
-                                                ng-model="$ctrl.formFields.postal_code">
+                                                ng-model="$ctrl.state.form.postal_code">
                                         </div>
                                     </div>
                                 </div>
@@ -77,7 +80,7 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2">
                             <div>
-                                <button ng-click="$ctrl.delete()" class="ui-btn ui-btn-danger-outline">
+                                <button ng-click="$ctrl.attemptDelete()" class="ui-btn ui-btn-danger-outline">
                                     Remove
                                 </button>
                             </div>

@@ -1,8 +1,10 @@
-<div class="grid grid-layout-one gap-4">
+<div class="grid grid-cols-1 gap-2">
     <ng-include src="$ctrl.views + '/modals/create.html'"></ng-include>
     <ng-include src="$ctrl.views + '/modals/edit.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/confirm.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/success.html'"></ng-include>
     <div>
-        <p class="ui-label-lg mb-4"> Departments </p>
+        <p class="ui-label-lg mb-5"> Departments </p>
         <div class="ui-card border-color border-solid">
             <div>
                 <div class="bottom-border">
@@ -30,7 +32,7 @@
                                     </div>
                                     <div class="w-64">
                                         <p class="ui-label text-teal-600 text-center">
-                                            <!-- {{ department.employees }} -->
+                                            <span ng-bind="department.total_employees"></span>
                                             Current Employees
                                         </p>
                                     </div>
