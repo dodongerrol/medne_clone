@@ -4850,8 +4850,8 @@ class BenefitsDashboardController extends \BaseController {
 		$business_information = new CorporateBusinessInformation();
 
 		$data = array(
-			// 'account_name'			=> $input['account_name'],
-			// 'currency_type' 		=> $info->currency_type == 'sgd' ? 'singapore' : 'malaysia',
+			'account_name'			=> $input['account_name'],
+			'currency_type' 		=> $info->currency_type == 'sgd' ? 'singapore' : 'malaysia',
 			'company_name'			=> $input['company_name'],
 			'company_address'		=> $input['company_address']
 		);
@@ -17379,6 +17379,7 @@ public function createHrLocation ()
 		foreach ($locations as $key => $location) {
 			$address = explode(',', $location->business_address);
 			$container[] = array(
+				'LocationID'			=> $location->LocationID,
 				'location' 				=> $location->location, 
 				'postal_code' 			=> $location->postal_code,
 				'country' 				=> $location->country,
@@ -17475,5 +17476,19 @@ public function createHrLocation ()
 		  }
 
 		return $container;
+	}
+
+	public function getHrBusinessInformation()
+	{
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		$business = CorporateBusinessInformation::where('customer_buy_start_id', $id)->orderBy('created_at','desc')->first();
+
+		$data = array (
+			'business_information' 	=> $business 
+		);
+
+		return array('data' => $data);
 	}
 }
