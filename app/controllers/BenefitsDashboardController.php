@@ -16879,4 +16879,24 @@ class BenefitsDashboardController extends \BaseController {
 		}
 		return $response;
 	}
+
+	public function removeAllEnrolleeTemp()
+	{
+		$session = self::checkSession();
+		$customer_id = $session->customer_buy_start_id;
+
+		$temp_employees = DB::table('customer_temp_enrollment')->where('customer_buy_start_id', $customer_id)->get();
+
+		// return [$temp_employees];
+
+		foreach ($temp_employees as $data => $emp)
+		{
+			DB::table('customer_temp_enrollment')->where('temp_enrollment_id', $emp->temp_enrollment_id)->delete();
+		}
+		return array(
+			'status'	=> TRUE,
+			'message'	=> 'Success.'
+		);
+
+	}
 }
