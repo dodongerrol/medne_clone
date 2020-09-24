@@ -146,8 +146,9 @@
 
     <div ng-if="!benefitsCoverageData.status && benefitsCoverageData.account_type == 'out_of_pocket'">
       <div> 
-        <div class="wellness-not-active-text">Mednefits Basic Plan is currently not activated. Would you like to activate Mednefits Basic Plan?</div>
-        <button  data-toggle="modal" data-target="#active-basic-plan-modal" ng-click="showConfirmationModal()" class="activate-well-btn">Activate Mednefits Basic Plan</button>
+        <div class="wellness-not-active-text">This plan enables customised employee benefits by setting employee entitlement for cashless payments at panel providers and e-claim submissions at non-panel providers.</div>
+        <!-- <button  data-toggle="modal" data-target="#active-basic-plan-modal" ng-click="showConfirmationModal()" class="activate-well-btn">Activate Mednefits Basic Plan</button> -->
+        <p class="not-activated-basic-plan-text">Mednefits Basic Plan is currently not activated. <a href="/sa-landing" target="_blank"> Learn more >>.</a></p>
       </div>  
     </div>
   </div>

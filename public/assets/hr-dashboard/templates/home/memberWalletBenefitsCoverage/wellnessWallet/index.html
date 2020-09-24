@@ -321,7 +321,7 @@
               <tr>
                 <td ng-bind="list.created_at">01 Jan 2020</td>
                 <td ng-bind="list.label || 'N/A'">Bonus Credits</td>
-                <td class="amount-value" ng-class="{'add':list.type == 'add','deduct':list.type != 'add' }">{{list.type == 'add' ? '+':'-' }} <span style="text-transform: uppercase">{{list.currency_type}}</span> {{list.credit}}</td>
+                <td class="amount-value" ng-class="{'add':list.type_status == 'add','deduct':list.type_status != 'add' }">{{list.type_status == 'add' ? '+':'-' }} <span style="text-transform: uppercase">{{list.currency_type}}</span> {{list.credit}}</td>
               </tr>
             </tbody>
           </table>

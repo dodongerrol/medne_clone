@@ -86,3 +86,10 @@
 .mednefits-basic-plan-wrapper .prepaid-not-activated .btn-activate-credits {
   padding: 2px 20px;
 }
+.wellness-not-active-text{
+  color: #999;
+  margin-bottom: 10px;
+}
+.not-activated-basic-plan-text a{
+  color: #3192CF;
+}

@@ -264,7 +264,7 @@
             <span>*The credits amount will be added to company account</span>
             <div class="top-up-input-wrapper">
               <div class="currency-type">SGD</div>
-              <input type="text" ng-model="activateCreditsData.total_credits" ng-change="calculateActivateCredits('total_credits', activateCreditsData.total_credits)" ng-model-options="{ debounce: 500 }">
+              <input type="text" ng-model="activateCreditsData.total_credits" ng-focus="onCreditFocus('total_credits')" ng-blur="calculateActivateCredits('total_credits', activateCreditsData.total_credits)" placeholder="0.00">
             </div>
           </div>
           <div class="top-up-calculation-wrapper">
@@ -297,7 +297,7 @@
             <span>*The credits amount company will be paying for</span>
             <div class="top-up-input-wrapper">
               <div class="currency-type">SGD</div>
-              <input type="text" ng-model="activateCreditsData.purchased_credits" ng-change="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" ng-model-options="{ debounce: 500 }">
+              <input type="text" ng-model="activateCreditsData.purchased_credits" ng-focus="onCreditFocus('purchased_credits')" ng-blur="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" placeholder="0.00">
             </div>
           </div>
           <!-- <div class="bonus-credtits-rate-container">
@@ -311,7 +311,7 @@
               <span>*The percentage of Purchased Credits given by Mednefits</span>
               <div class="top-up-input-wrapper">
                 <div>%</div>
-                <input type="number" ng-model="activateCreditsData.bonus_credits_percentage" ng-change="calculateActivateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
+                <input type="number" ng-model="activateCreditsData.bonus_credits_percentage" ng-change="calculateActivateCredits('bonus_credits_percentage')" >
               </div>
             </div>
           </div> -->
@@ -358,7 +358,7 @@
                   <span>*The credits amount will be added to company account</span>
                   <div class="top-up-input-wrapper">
                     <div>SGD</div>
-                    <input type="text" ng-model="creditsTopUpData.total_credits" ng-change="calculateCredits('total_credits', creditsTopUpData.total_credits)" ng-model-options="{ debounce: 500 }">
+                    <input type="text" ng-model="creditsTopUpData.total_credits" ng-focus="onCreditFocus('total_credits')" ng-blur="calculateCredits('total_credits', creditsTopUpData.total_credits)" placeholder="0.00">
                   </div>
                 </div>
                 <div class="top-up-calculation-wrapper">
@@ -392,7 +392,7 @@
                   <span>*The credits amount company will be paying for</span>
                   <div class="top-up-input-wrapper">
                     <div>SGD</div>
-                    <input type="text" ng-model="creditsTopUpData.purchased_credits" ng-change="calculateCredits('purchased_credits', creditsTopUpData.purchased_credits)" ng-model-options="{ debounce: 500 }">
+                    <input type="text" ng-model="creditsTopUpData.purchased_credits" ng-focus="onCreditFocus('purchased_credits')" ng-blur="calculateCredits('purchased_credits', creditsTopUpData.purchased_credits)" placeholder="0.00">
                   </div>
                 </div>
                 <!-- <div class="bonus-credtits-rate-container">
@@ -406,7 +406,7 @@
                     <span>*The percentage of Purchased Credits given by Mednefits</span>
                     <div class="top-up-input-wrapper">
                       <div>%</div>
-                      <input type="text"  ng-model="creditsTopUpData.bonus_credits_percentage" ng-change="calculateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
+                      <input type="text"  ng-model="creditsTopUpData.bonus_credits_percentage" ng-change="calculateCredits('bonus_credits_percentage')" >
                     </div>
                   </div>
                 </div> -->
