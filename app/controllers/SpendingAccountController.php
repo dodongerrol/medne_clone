@@ -56,45 +56,49 @@ class SpendingAccountController extends \BaseController {
 		foreach($account_credits as $key => $credits) {
 			if((int)$credits->payment_status == 1) {
 				$payment_status = true;
+			} else {
+				$payment_status = false;
 			}
+		
 			$purchased_credits += $credits->credits;
-
+		
 			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
 				$top_up_purchase += $credits->credits;
 			}
 		}
-
+	
 		foreach($account_credits as $key => $credits) {
 			$bonus_credits += $credits->bonus_credits;
 			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
 				$top_up_bonus_credits += $credits->credits;
 			}
 		}
-
+	
 		$total_credits = $purchased_credits + $bonus_credits;
 		// get utilised credits both medical and wellness
-		$utilised_credits = SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
-
+		$creditAccount = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+	
+		$utilised_credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
 		$format = array(
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
 			// 'mednefits_credits_id'  => $account_credits->id,
-			'total_credits'         => number_format($total_credits, 2),
-			'available_credits'     => number_format($total_credits - $utilised_credits['credits'], 2),
-			'purchased_credits'     => number_format($purchased_credits, 2),
-			'bonus_credits'         => number_format($bonus_credits, 2),
-			'total_utilised_credits'  => number_format($utilised_credits['credits'], 2),
-			'top_up_total_credits'  => $top_up_purchase,
-			'top_up_purchase'       => $top_up_purchase,
+			'total_credits'         => $total_credits,
+			'available_credits'     => $total_credits - $utilised_credits['credits'],
+			'purchased_credits'     => $purchased_credits,
+			'bonus_credits'         => $bonus_credits,
+			'total_utilised_credits'  => $utilised_credits['credits'],
+			'top_up_total_credits'  => $toTopUp,
+			'top_up_purchase'       => $toTopUp,
 			'top_up_bonus_credits'  => $top_up_bonus_credits,
 			'payment_status'        =>  $payment_status,
 			'to_top_up_status'      => $toTopUp > 0 ? true : false,
 			'to_top_value'          => $toTopUp,
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
-			'currency_type'			=> strtoupper($customer->currency_type)
+			'currency_type'			    => strtoupper($customer->currency_type)
 		);
 		return ['status' => true, 'data' => $format];
-	  }
+	}
 	  
 	public function getMemberWalletDetails( )
 	{
@@ -616,7 +620,7 @@ class SpendingAccountController extends \BaseController {
 			
 			return [
 				'status' => true,
-				'spent' => $credits['credits'],
+				'spent' => $credits,
 				'currency_type' => $customer->currency_type,
 				'id'			=> $spending_account_settings->spending_account_setting_id,
 				'customer_id'	=> $customer_id,
@@ -1045,8 +1049,8 @@ class SpendingAccountController extends \BaseController {
 				"plan_end"					=> date('Y-m-d', strtotime($end)),
 				"duration"					=> "12 months",
 				"invoice_number"			=> $invoice_number,
-				"invoice_date"				=> date('Y-m-d', strtotime($input['invoice_date'])),
-				"invoice_due"				=> date('Y-m-d', strtotime('+1 month', strtotime($input['invoice_date']))),
+				"invoice_date"				=> date('Y-m-d'),
+				"invoice_due"				=> date('Y-m-d', strtotime('+1 month')),
 				"payment_amount"			=> 0,
 				"payment_date"				=> null,
 				"remarks"					=> null,
