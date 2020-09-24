@@ -205,7 +205,7 @@ class SpendingAccountController extends \BaseController {
 				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		} else {
-			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'welenss', true);
+			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'wellness', true);
 			// format details
 			$format = array(
 				'customer_id'		  => $spending_account_settings->customer_id,

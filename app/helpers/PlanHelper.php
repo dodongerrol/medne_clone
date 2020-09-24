@@ -2453,6 +2453,9 @@ class PlanHelper {
 	public static function memberMedicalAllocatedCredits($wallet_id, $user_id)
 	{
 		
+		$customer_id = \PlanHelper::getCustomerId($user_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+		$spending_method = $spending['medical_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
 		$get_allocation = 0;
 		$deducted_credits = 0;
 		$credits_back = 0;
@@ -2489,12 +2492,16 @@ class PlanHelper {
 				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 				$wallet_history = DB::table('wallet_history')
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
-									->where('wallet_history.wallet_id', $wallet_id)
-									->where('e_wallet.UserID', $user_id)
-									->where('wallet_history.created_at',  '>=', $start)
+								->where('wallet_history.wallet_id', $wallet_id)
+								->where('e_wallet.UserID', $user_id)
+								->where('wallet_history.created_at',  '>=', $start)
+								->where('wallet_history.spending_method', $spending_method)
 								->get();
 			} else {
-				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
+				$wallet_history = DB::table('wallet_history')
+									->where('wallet_id', $wallet_id)
+									->where('spending_method', $spending_method)
+									->get();
 			}
 
 			foreach ($wallet_history as $key => $history) {
