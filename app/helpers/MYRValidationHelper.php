@@ -44,6 +44,18 @@ class MYRValidationHelper
             $messages['passport_message'] = 'Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.';
         }
 
+        if (!in_array('nric', $validated) && $this->checkDuplicates('nric', $input['nric'])) {
+            $messages['error'] = true;
+            $messages['nric_error'] = true;
+            $messages['nric_message'] = 'NRIC already taken.';
+        }
+
+        if (!in_array('passport', $validated) && $this->checkDuplicates('passport', $input['passport'])) {
+            $messages['error'] = true;
+            $messages['passport_error'] = true;
+            $messages['passport_message'] = 'Passport already taken.';
+        }
+
         return $messages;
     }
 
@@ -75,6 +87,29 @@ class MYRValidationHelper
         );
 
         return $validator->fails();
+    }
+
+    public function checkDuplicates($field, $value): bool
+    {
+        $user = DB::table('user')
+            ->where($field, $value)
+            ->where('Active', 1)
+            ->first();
+
+        if ($user) {
+            return true;
+        }
+
+        $tempUser = DB::table('customer_temp_enrollment')
+            ->where($field, $value)
+            ->where('enrolled_status', true)
+            ->first();
+
+        if ($tempUser) {
+            return true;
+        }
+
+        return false;
     }
 
     public function invalidPassport($passport): bool
