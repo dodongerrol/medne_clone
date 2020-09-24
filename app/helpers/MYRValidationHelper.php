@@ -17,6 +17,7 @@ class MYRValidationHelper
         $validated = $this->validated_inputs($input);
 
         if (count($validated) === 3) {
+            $messages['error'] = true;
             $messages['mobile_error']       = true;
             $messages['mobile_message']     = $generic_message;
             $messages['nric_error']         = true;
@@ -26,16 +27,19 @@ class MYRValidationHelper
         }
 
         if (!in_array('mobile', $validated) && $this->invalidMobileNumber($input['mobile'])) {
+            $messages['error'] = true;
             $messages['mobile_error'] = true;
             $messages['mobile_message'] = 'Invalid mobile format. Please enter mobile format 9-10 digit number without the prefix 0.';
         }
 
         if (!in_array('nric', $validated) && $this->invalidNRIC($input['nric'])) {
+            $messages['error'] = true;
             $messages['nric_error'] = true;
             $messages['nric_message'] = 'Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.';
         }
 
         if (!in_array('passport', $validated) && $this->invalidPassport($input['passport'])) {
+            $messages['error'] = true;
             $messages['passport_error'] = true;
             $messages['passport_message'] = 'Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.';
         }
