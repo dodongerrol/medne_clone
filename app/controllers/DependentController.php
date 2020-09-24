@@ -273,12 +273,13 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
-				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
-				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
+				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
+				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
 				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
 				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
+				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
@@ -298,10 +299,10 @@ class DependentController extends \BaseController {
 					'bank_name'				=> $user['bank_name'],
 					'bank_account_number'	=> $user['bank_account_number'],
 					'cap_per_visit'			=> $user['cap_per_visit'],
-					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
-					'medical_balance_entitlement'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
-					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
-					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
+					'credits'				=> !isset($user['medical_credits']) || $user['medical_credits'] == null ? 0 : $user['medical_credits'],
+					'medical_balance_entitlement'				=> !isset($user['medical_credits']) || $user['medical_credits'] == null ? 0 : $user['medical_credits'],
+					'wellness_credits'		=> !isset($user['wellness_credits']) || $user['wellness_credits'] == null ? 0 : $user['wellness_credits'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_credits']) || $user['wellness_credits'] == null ? 0 : $user['wellness_credits'],
 					'postal_code'			=> null,
 					'start_date'			=> $user['plan_start'],
 					'group_number'			=> $group_number,
