@@ -7080,7 +7080,7 @@ public function payCreditsNew( )
                                       array( 'paramKey' => 'PhoneCode', 'paramKeyValue'=> $keys['PhoneCode'])
                                   ));
 
-        if (!$userDetails) {
+        if (!$userDetails || $keys['PhoneCode'] != '+60') {
           $returnObject->status = false;
           $returnObject->message = 'Unregistered member.';
 
