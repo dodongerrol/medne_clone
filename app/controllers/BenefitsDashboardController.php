@@ -2126,58 +2126,61 @@ class BenefitsDashboardController extends \BaseController {
 				$active_plan = DB::table('customer_active_plan')
 				->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
 				->first();
-
-				$plan = DB::table('customer_plan')
-				->where('customer_plan_id', $active_plan->plan_id)
-				->orderBy('created_at', 'desc')
-				->first();
-
-				$active_plan_first = DB::table('customer_active_plan')
-				->where('plan_id', $active_plan->plan_id)
-				->first();
-
-				if((int)$active_plan_first->plan_extention_enable == 1) {            
-					$plan_user = DB::table('user_plan_type')
-					->where('user_id', $user->UserID)
-					->orderBy('created_at', 'desc')
-					->first();
-
-					$active_plan_extension = DB::table('plan_extensions')
-					->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
-					->first();
-
-					if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
-						$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
-						$expiry_date = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
-					} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-						$expiry_date = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
-					}
-
-					if($active_plan_extension->account_type == 'stand_alone_plan') {
-						$plan_name = "Pro Plan";
-					} else if($active_plan_extension->account_type == 'insurance_bundle') {
-						$plan_name = "Insurance Bundle";
-					} else if($active_plan_extension->account_type == 'trial_plan'){
-						$plan_name = "Trial Plan";
-					} else if($active_plan_extension->account_type == 'lite_plan') {
-						$plan_name = "Lite Plan";
-					}
-				} else {
-					$plan_user = DB::table('user_plan_type')
-					->where('user_id', $user->UserID)
-					->orderBy('created_at', 'desc')
-					->first();
-
+				if(($active_plan->account_type != "lite_plan") && ($active_plan->account_type != "out_of_pocket")) {
 					$plan = DB::table('customer_plan')
 					->where('customer_plan_id', $active_plan->plan_id)
+					->orderBy('created_at', 'desc')
 					->first();
 
-					if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
-						$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
-						$expiry_date = date('m/d/Y', strtotime('-1 day', strtotime($temp_valid_date)));
-					} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-						$expiry_date = date('m/d/Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+					$active_plan_first = DB::table('customer_active_plan')
+					->where('plan_id', $active_plan->plan_id)
+					->first();
+
+					if((int)$active_plan_first->plan_extention_enable == 1) {            
+						$plan_user = DB::table('user_plan_type')
+						->where('user_id', $user->UserID)
+						->orderBy('created_at', 'desc')
+						->first();
+
+						$active_plan_extension = DB::table('plan_extensions')
+						->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
+						->first();
+
+						if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
+							$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
+							$expiry_date = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+						} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+							$expiry_date = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+						}
+
+						if($active_plan_extension->account_type == 'stand_alone_plan') {
+							$plan_name = "Pro Plan";
+						} else if($active_plan_extension->account_type == 'insurance_bundle') {
+							$plan_name = "Insurance Bundle";
+						} else if($active_plan_extension->account_type == 'trial_plan'){
+							$plan_name = "Trial Plan";
+						} else if($active_plan_extension->account_type == 'lite_plan') {
+							$plan_name = "Lite Plan";
+						}
+					} else {
+						$plan_user = DB::table('user_plan_type')
+						->where('user_id', $user->UserID)
+						->orderBy('created_at', 'desc')
+						->first();
+
+						$plan = DB::table('customer_plan')
+						->where('customer_plan_id', $active_plan->plan_id)
+						->first();
+
+						if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
+							$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
+							$expiry_date = date('m/d/Y', strtotime('-1 day', strtotime($temp_valid_date)));
+						} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+							$expiry_date = date('m/d/Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+						}
 					}
+				} else {
+					$expiry_date = date('m/d/Y', strtotime($spending_account->medical_spending_end_date));
 				}
 			}
 

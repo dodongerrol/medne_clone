@@ -107,7 +107,7 @@
         </tr>
         <tr>
           <td style="padding: 5px 0;">
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Date of Credit Expiry: {{$plan_start}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Date of Credit Expiry: {{$plan_end}}</p>
           </td>
           <td colspan="4"></td>
         </tr>
