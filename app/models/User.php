@@ -354,8 +354,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
             $findEmail = DB::table('user')
                         ->where('Email', '=', $email)
-                        // ->where('Active', '=', 1)
-                        // ->where('UserType', '=', 1)
                         ->where('UserType', '=', 5)
                         ->first();
 
