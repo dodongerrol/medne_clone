@@ -1899,21 +1899,6 @@ class PlanHelper
 					$compose['message'] = SmsHelper::formatWelcomeEmployeeMessage($compose);
 					$result_sms = SmsHelper::sendSms($compose);
 				}
-			} else {
-				$email_data = [];
-				$email_data['company']   = ucwords($company->company_name);
-				$email_data['emailName'] = $data_enrollee->first_name;
-				$email_data['emailTo']   = $data_enrollee->email;
-				$email_data['email'] = $data_enrollee->mobile ? $data_enrollee->mobile : $data_enrollee->email;
-				$email_data['emailPage'] = 'email-templates.newAccountLogin.member-activation-email';
-				$email_data['start_date'] = date('d F Y', strtotime($start_date));
-				$email_data['name'] = $data_enrollee->first_name;
-				$email_data['plan'] = $active_plan;
-				$email_data['code'] = $data['PhoneCode'];
-				$email_data['phone'] = $data['PhoneNo'];
-				$email_data['emailSubject'] = "WELCOME TO MEDNEFITS CARE";
-				$email_data['pw'] = $password;
-				EmailHelper::sendEmail($email_data);
 			}
 		}
 
