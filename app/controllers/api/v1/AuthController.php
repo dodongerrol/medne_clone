@@ -7076,10 +7076,11 @@ public function payCreditsNew( )
     if (isset($keys['mobile'])) {
         // Check Member mobile number if already registered
         $userDetails = $userModel->checkMemberExistence(array( 
-                                      array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $keys['mobile'])
+                                      array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $keys['mobile']),
+                                      array( 'paramKey' => 'PhoneCode', 'paramKeyValue'=> $keys['PhoneCode'])
                                   ));
 
-        if (!$userDetails || $keys['PhoneCode'] != '+60') {
+        if (!$userDetails) {
           $returnObject->status = false;
           $returnObject->message = 'Unregistered member.';
 
