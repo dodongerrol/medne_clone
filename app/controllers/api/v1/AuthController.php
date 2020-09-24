@@ -7051,7 +7051,7 @@ public function payCreditsNew( )
 
     if(!$checker) {
         $returnObject->status = false;
-        $returnObject->message = 'Unregistered member.';
+        $returnObject->message = 'Unregistered Member.';
         return Response::json($returnObject);
     }
 
@@ -7082,7 +7082,7 @@ public function payCreditsNew( )
 
         if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered member.';
+          $returnObject->message = 'Unregistered Member.';
 
           return Response::json($returnObject);
         } else  {
@@ -7102,7 +7102,7 @@ public function payCreditsNew( )
         
       if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered member.';
+          $returnObject->message = 'Unregistered Member.';
 
           return Response::json($returnObject);
       } else {
@@ -7122,7 +7122,7 @@ public function payCreditsNew( )
 
       if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered member.';
+          $returnObject->message = 'Unregistered Member.';
 
           return Response::json($returnObject);
       } else {
