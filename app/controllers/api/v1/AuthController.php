@@ -7079,7 +7079,7 @@ public function payCreditsNew( )
                                       array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $keys['mobile'])
                                   ));
 
-        if (!$userDetails) {
+        if (!$userDetails || $keys['PhoneCode'] != '+60') {
           $returnObject->status = false;
           $returnObject->message = 'Unregistered member.';
 
@@ -7179,7 +7179,7 @@ public function payCreditsNew( )
         $userDetails->updateMemberRecord($input['user_id'], array( 'OTPCode' => NULL ));
       } else {
         // update user mobile number and remove otp data record.
-        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $input['mobile'], 'OTPCode' => NULL));
+        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $input['mobile'], 'OTPCode' => NULL, 'PhoneCode' => $input['phoneCode']));
       }
 
       // Get new set of member records.
@@ -7339,5 +7339,40 @@ public function payCreditsNew( )
       $returnObject->message = 'OTP SMS sent';
       $returnObject->data = $checker;
       return Response::json($returnObject);
+  }
+
+  function registerMobileNumber() {
+    $input = Input::all();
+    $returnObject = new stdClass();
+    $userDetails = new User();
+
+    if (empty($input['mobile_number']) || empty($input['phoneCode'])) {
+      $returnObject->status = false;
+      $returnObject->message = 'Mobile number and Phone code are required.';
+      return Response::json($returnObject);
+    } else if (empty($input['userId'])) {
+      $returnObject->status = false;
+      $returnObject->message = 'user ID is required.';
+      return Response::json($returnObject);
+    } else {
+      // Check if mobile number already
+      $mobileExist = $userDetails->checkMemberExistence(array( 
+                                  array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile_number']),
+                                  array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
+                              ));
+      
+      if ($mobileExist) {
+        $returnObject->status = false;
+        $returnObject->message = 'Mobile number already been used.';
+        return Response::json($returnObject); 
+      } else {
+        // Update User OTP record
+        $userDetails->updateMemberRecord($input['userId'], array('PhoneNo' => $input['mobile_number'], 'PhoneCode' => $input['phoneCode']));
+        $returnObject->status = true;
+        $returnObject->message = 'Mobile number successfully registered.';
+        return Response::json($returnObject); 
+      }
+
+    }
   }
 }

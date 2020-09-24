@@ -1010,7 +1010,7 @@ app.directive('benefitsTiersDirective', [
 				scope.checkEmployeeForm = function () {
 					if ( scope.showCurrencyType == 'myr' ) {
 						if ( !scope.employee_data.nric && !scope.employee_data.mobile && !scope.employee_data.passport ) {
-							sweetAlert("Oops...", "Please key in Mobile No., NRIC, or Passport Number.", "error");
+							sweetAlert("Error!", "Mobile Number,NRIC or Passport Number is required", "error");
 							return false;
 						}
 					} else {
@@ -1041,7 +1041,8 @@ app.directive('benefitsTiersDirective', [
 							return false;
 						}
 						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10) {
-							swal('Error!', 'Mobile Number for your country code should be 10 digits.', 'error');
+							// swal('Error!', 'Mobile Number for your country code should be 10 digits.', 'error');
+							swal('Error!', 'Invalid mobile format. Please enter mobile in the format of 9-10 digit number without the prefix “0”.', 'error');
 							return false;
 						}
 						if (iti.getSelectedCountryData().iso2 == 'ph' && scope.employee_data.mobile.length < 9) {
@@ -1052,16 +1053,16 @@ app.directive('benefitsTiersDirective', [
 					if ( scope.showCurrencyType == 'myr' ) {
 						if ( scope.employee_data.nric ) {
 							if (scope.employee_data.nric.includes("-")) {
-								sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+								sweetAlert("Oops...", "Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.", "error");
 								return false;
 							} else if (!scope.checkNRIC(scope.employee_data.nric)) {
-								sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+								sweetAlert("Oops...", "Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.", "error");
 								return false;
 							}
 						}
 						if ( scope.employee_data.passport ) {
 							if (!scope.checkPassport(scope.employee_data.passport)) {
-								sweetAlert("Oops...", "Invalid Passport Format.", "error");
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
 									return false;
 							}
 						}

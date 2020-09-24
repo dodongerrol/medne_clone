@@ -354,8 +354,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
             $findEmail = DB::table('user')
                         ->where('Email', '=', $email)
-                        // ->where('Active', '=', 1)
-                        // ->where('UserType', '=', 1)
                         ->where('UserType', '=', 5)
                         ->first();
 
@@ -922,7 +920,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     function checkMemberExistence ($params) {
         $query = User::query();
 
-        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('(case when Zip_Code <= 0 then 0 else Zip_Code end)as postal_code'), 'disabled_otp', 'PhoneNo');
+        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo');
        
         // Append where clause
         foreach ($params as $key => $value) {
