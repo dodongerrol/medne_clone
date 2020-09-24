@@ -1115,25 +1115,10 @@ class PlanHelper
 
 		if ($customer_wallet->currency_type === 'myr') {
 			$myrValidator = new \MYRValidationHelper;
-
+			$user['nric'] = $user['nric'] ?? null;
+			$user['passport'] = $user['passport'] ?? null;
 			$myr_messages =  $myrValidator->validateAll($user);
 		} else {
-
-			if (!empty(trim($user['mobile'] ?? null))) {
-				// check mobile number
-				$check_mobile = DB::table('user')
-					->where('UserType', 5)
-					->where('PhoneNo', $user['mobile'])
-					->where('Active', 1)
-					->first();
-				if ($check_mobile) {
-					$mobile_error = true;
-					$mobile_message = '*Mobile Phone No already taken.';
-				} else {
-					$mobile_error = false;
-					$mobile_message = '';
-				}
-			}
 
 			if (is_null($user['mobile'])) {
 				$mobile_error = true;

@@ -2,7 +2,7 @@
 
 class MYRValidationHelper
 {
-    public function validateAll(array $input): array
+    public function validateAll($input): array
     {
         $generic_message = 'Please key in either Mobile No. NRIC or Password Number to proceed.';
         $messages = [
