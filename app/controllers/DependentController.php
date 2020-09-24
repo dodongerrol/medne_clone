@@ -286,6 +286,8 @@ class DependentController extends \BaseController {
 					'active_plan_id'		=> $customer_active_plan_id,
 					'plan_tier_id'			=> $plan_tier_id,
 					'first_name'			=> trim($user['fullname']),
+					'nric'					=> isset($user['nric']) ? trim($user['nric']) : null,
+					'passport'				=> isset($user['passport']) ? trim($user['passport']) : null,
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
 					'emp_no'				=> trim($user['employee_id']),
@@ -336,6 +338,7 @@ class DependentController extends \BaseController {
 									'plan_tier_id'			=> $plan_tier_id,
 									'first_name'			=> trim($dependent['fullname']),
 									'dob'					=> $dependent['dob'],
+									'nric'					=> null,
 									'plan_start'			=> $dependent['plan_start'],
 									'relationship'			=> trim($dependent['relationship']),
 									'error_logs'			=> serialize($error_dependent_logs)
