@@ -183,6 +183,15 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.creditsTopUpData.total_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.total_credits ).toFixed(2) );
           scope.creditsTopUpData.purchased_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.purchased_credits ).toFixed(2) );
         }
+
+        scope.onCreditFocus = function(type){
+          if(type == 'total_credits' && scope.creditsTopUpData.total_credits == '0.00'){
+            scope.creditsTopUpData.total_credits = '';
+          }
+          if(type == 'purchased_credits' && scope.creditsTopUpData.purchased_credits == '0.00'){
+            scope.creditsTopUpData.purchased_credits = '';
+          }
+        }
         scope.numberWithCommas = function(number) {
           var parts = number.toString().split(".");
           parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -354,7 +363,11 @@ app.directive('mednefitsCreditAccountDirective', [
                 scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
               }
             })
-				}
+        }
+        
+        scope.closeModal  = function(){
+          $(".modal").modal('close');
+        }
 
        
         scope.onLoad = async function () {

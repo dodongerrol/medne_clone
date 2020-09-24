@@ -27,7 +27,7 @@ class SpendingHelper {
                     $medical = DB::table('wallet_history')
                             ->whereIn('wallet_id', $wallet_ids)
                             ->whereIn('where_spend', ['in_network_transaction', 'e_claim_transaction'])
-                            ->where('spending_method', 'pre_paid')
+                            // ->where('spending_method', 'pre_paid')
                             ->where('created_at', '>=', $start)
                             ->where('created_at', '<=', $end)
                             ->sum('credit');
@@ -35,7 +35,7 @@ class SpendingHelper {
                     $medical_refund = DB::table('wallet_history')
                             ->whereIn('wallet_id', $wallet_ids)
                             ->where('logs', 'credits_back_from_in_network')
-                            ->where('spending_method', 'pre_paid')
+                            // ->where('spending_method', 'pre_paid')
                             ->where('created_at', '>=', $start)
                             ->where('created_at', '<=', $end)
                             ->sum('credit');

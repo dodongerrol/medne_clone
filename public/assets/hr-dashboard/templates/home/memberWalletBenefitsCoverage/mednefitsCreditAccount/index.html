@@ -26,8 +26,12 @@
       <h4 class="member-bold-text"> Prepaid Credits Account</h4>
       <p class="prepaid-subtext">Prepaid Credits Account stores prepaid credits. Prepaid credits can be used to pay for employee benefits charges.</p>
       <!-- add class "pending" if the account is still pending -->
-      <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false }">
-        <span ng-if="mednefitsCreditsData.payment_status == false" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
+      <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : mednefitsCreditsData.payment_status == false || mednefitsCreditsData.disable}">
+        <span ng-if="mednefitsCreditsData.payment_status == false && !mednefitsCreditsData.disable" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
+        <span ng-if="mednefitsCreditsData.disable" class="credits-on-hold-text deactivated-text">
+          Credits amounts are on hold as this account has been deactivated.<br>
+          Credits amount of SGD 10,000.00 will be refunded on 31/12/2020.
+        </span>
         <div class="mednefits-available-credits display-flex">
           <div class="available-credits flex-1">
             <span class="available-credits-container dp-flex-ai">
@@ -49,7 +53,7 @@
             </span>
           </div>
           <div>
-            <button ng-click="topUpCredits()" data-toggle="modal" data-target="#top-up-credits-modal" class="btn-top-up-credits">Top up credits</button>
+            <button ng-disabled="!mednefitsCreditsData.to_top_up_status" ng-click="topUpCredits()" data-toggle="modal" data-target="#top-up-credits-modal" class="btn-top-up-credits">Top up credits</button>
           </div>
         </div>
         <div class="credits-info-details-container display-flex">
@@ -260,7 +264,7 @@
             <span>*The credits amount will be added to company account</span>
             <div class="top-up-input-wrapper">
               <div class="currency-type">SGD</div>
-              <input type="text" ng-model="activateCreditsData.total_credits" ng-change="calculateActivateCredits('total_credits', activateCreditsData.total_credits)" ng-model-options="{ debounce: 500 }">
+              <input type="text" ng-model="activateCreditsData.total_credits" ng-focus="onCreditFocus('total_credits')" ng-blur="calculateActivateCredits('total_credits', activateCreditsData.total_credits)" placeholder="0.00">
             </div>
           </div>
           <div class="top-up-calculation-wrapper">
@@ -293,7 +297,7 @@
             <span>*The credits amount company will be paying for</span>
             <div class="top-up-input-wrapper">
               <div class="currency-type">SGD</div>
-              <input type="text" ng-model="activateCreditsData.purchased_credits" ng-change="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" ng-model-options="{ debounce: 500 }">
+              <input type="text" ng-model="activateCreditsData.purchased_credits" ng-focus="onCreditFocus('purchased_credits')" ng-blur="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" placeholder="0.00">
             </div>
           </div>
           <!-- <div class="bonus-credtits-rate-container">
@@ -307,20 +311,21 @@
               <span>*The percentage of Purchased Credits given by Mednefits</span>
               <div class="top-up-input-wrapper">
                 <div>%</div>
-                <input type="number" ng-model="activateCreditsData.bonus_credits_percentage" ng-change="calculateActivateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
+                <input type="number" ng-model="activateCreditsData.bonus_credits_percentage" ng-change="calculateActivateCredits('bonus_credits_percentage')" >
               </div>
             </div>
           </div> -->
         </div>
       </div>
-      <div class="display-flex">
+      <div class="white-space-10"></div>
+      <div class="display-flex mg-top-10">
         <div>
           <div class="company-account-text"><span class="asterisk-red">*</span>Invoice Date</div>
         </div>
         <div>
           <div class="top-up-credits-container invoice-date">
             <div class="top-up-input-wrapper">
-              <input class="datepicker" ng-model="activateCreditsData.invoice_date">
+              <input class="datepicker" ng-model="activateCreditsData.invoice_date" ng-disabled="true">
               <img src="../../assets/hr-dashboard/img/calendar.png">
             </div>
           </div>
@@ -353,7 +358,7 @@
                   <span>*The credits amount will be added to company account</span>
                   <div class="top-up-input-wrapper">
                     <div>SGD</div>
-                    <input type="text" ng-model="creditsTopUpData.total_credits" ng-change="calculateCredits('total_credits', creditsTopUpData.total_credits)" ng-model-options="{ debounce: 500 }">
+                    <input type="text" ng-model="creditsTopUpData.total_credits" ng-focus="onCreditFocus('total_credits')" ng-blur="calculateCredits('total_credits', creditsTopUpData.total_credits)" placeholder="0.00">
                   </div>
                 </div>
                 <div class="top-up-calculation-wrapper">
@@ -387,7 +392,7 @@
                   <span>*The credits amount company will be paying for</span>
                   <div class="top-up-input-wrapper">
                     <div>SGD</div>
-                    <input type="text" ng-model="creditsTopUpData.purchased_credits" ng-change="calculateCredits('purchased_credits', creditsTopUpData.purchased_credits)" ng-model-options="{ debounce: 500 }">
+                    <input type="text" ng-model="creditsTopUpData.purchased_credits" ng-focus="onCreditFocus('purchased_credits')" ng-blur="calculateCredits('purchased_credits', creditsTopUpData.purchased_credits)" placeholder="0.00">
                   </div>
                 </div>
                 <!-- <div class="bonus-credtits-rate-container">
@@ -401,27 +406,28 @@
                     <span>*The percentage of Purchased Credits given by Mednefits</span>
                     <div class="top-up-input-wrapper">
                       <div>%</div>
-                      <input type="text"  ng-model="creditsTopUpData.bonus_credits_percentage" ng-change="calculateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
+                      <input type="text"  ng-model="creditsTopUpData.bonus_credits_percentage" ng-change="calculateCredits('bonus_credits_percentage')" >
                     </div>
                   </div>
                 </div> -->
               </div>
             </div>
-            <div class="display-flex">
+            <div class="white-space-10"></div>
+            <div class="display-flex mg-top-10">
               <div>
                 <div class="company-account-text"><span class="asterisk-red">*</span>Invoice Date</div>
               </div>
               <div>
                 <div class="top-up-credits-container invoice-date">
                   <div class="top-up-input-wrapper">
-                    <input class="datepicker" type="text" ng-model="creditsTopUpData.invoice_date">
+                    <input class="datepicker" type="text" ng-model="creditsTopUpData.invoice_date" ng-disabled="true">
                     <img src="../../assets/hr-dashboard/img/calendar.png">
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div ng-if="isCreditsConfirmShow" class="modal-body top-up-body-container top-up-success">
+          <div ng-if="isCreditsConfirmShow" class="modal-body top-up-body-container top-up-success text-center">
             <p ng-if="!isTopUpSuccess" >
               A Prepaid Credits invoice will be billed to your company after this top-up has been successfully completed. Please pay your invoice to utilise the top-up Prepaid Credits.
             </p>
@@ -430,6 +436,8 @@
             </p>
 
             <img ng-if="isTopUpSuccess" src="../assets/images/success-circle.png" alt="">
+            <div class="white-space-10"></div>
+            <div class="white-space-10"></div>
             <p ng-if="isTopUpSuccess" class="text-center">This top-up has been successfully completed.</p>
           </div>
           <div class="modal-footer">
@@ -437,7 +445,7 @@
             <button ng-click="toggleTopUpCreditsConfirm(true)" ng-if="isCreditsInputFormShow" ng-disabled="creditsTopUpData.purchased_credits == 0" class="btn-update">Top Up</button>
             <button ng-if="isCreditsConfirmShow && !isTopUpSuccess" class="btn-edit-cancel btn-close" ng-click="toggleTopUpCreditsConfirm(false)">Cancel</button>
             <button ng-click="submitTopUpCredits(creditsTopUpData)" ng-if="isCreditsConfirmShow && !isTopUpSuccess" class="btn-update">Confrim</button>
-            <button ng-if="isTopUpSuccess" class="btn-update">Close</button>
+            <button ng-if="isTopUpSuccess" class="btn-update" data-dismiss="modal">Close</button>
           </div>
         </form>
       </div>

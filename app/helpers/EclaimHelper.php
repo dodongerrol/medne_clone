@@ -134,7 +134,7 @@ class EclaimHelper
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
                 ->where('user_type', 'employee')
-                ->where('spending_method', $spending_method)
+                // ->where('spending_method', $spending_method)
                 ->orderBy('created_at', 'asc')
                 ->get();
     

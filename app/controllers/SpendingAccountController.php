@@ -56,44 +56,49 @@ class SpendingAccountController extends \BaseController {
 		foreach($account_credits as $key => $credits) {
 			if((int)$credits->payment_status == 1) {
 				$payment_status = true;
+			} else {
+				$payment_status = false;
 			}
+		
 			$purchased_credits += $credits->credits;
-
+		
 			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
 				$top_up_purchase += $credits->credits;
 			}
 		}
-
+	
 		foreach($account_credits as $key => $credits) {
 			$bonus_credits += $credits->bonus_credits;
 			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
 				$top_up_bonus_credits += $credits->credits;
 			}
 		}
-
+	
 		$total_credits = $purchased_credits + $bonus_credits;
 		// get utilised credits both medical and wellness
-		$utilised_credits = SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
-
+		$creditAccount = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+	
+		$utilised_credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
 		$format = array(
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
 			// 'mednefits_credits_id'  => $account_credits->id,
-			'total_credits'         => number_format($total_credits, 2),
-			'available_credits'     => number_format($total_credits - $utilised_credits['credits'], 2),
-			'purchased_credits'     => number_format($purchased_credits, 2),
-			'bonus_credits'         => number_format($bonus_credits, 2),
-			'total_utilised_credits'  => number_format($utilised_credits['credits'], 2),
-			'top_up_total_credits'  => $top_up_purchase,
-			'top_up_purchase'       => $top_up_purchase,
+			'total_credits'         => $total_credits,
+			'available_credits'     => $total_credits - $utilised_credits['credits'],
+			'purchased_credits'     => $purchased_credits,
+			'bonus_credits'         => $bonus_credits,
+			'total_utilised_credits'  => $utilised_credits['credits'],
+			'top_up_total_credits'  => $toTopUp,
+			'top_up_purchase'       => $toTopUp,
 			'top_up_bonus_credits'  => $top_up_bonus_credits,
 			'payment_status'        =>  $payment_status,
 			'to_top_up_status'      => $toTopUp > 0 ? true : false,
 			'to_top_value'          => $toTopUp,
-			'currency_type'			=> strtoupper($customer->currency_type)
+			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
+			'currency_type'			    => strtoupper($customer->currency_type)
 		);
 		return ['status' => true, 'data' => $format];
-	  }
+	}
 	  
 	public function getMemberWalletDetails( )
 	{
@@ -200,7 +205,7 @@ class SpendingAccountController extends \BaseController {
 				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		} else {
-			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'welenss', true);
+			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'wellness', true);
 			// format details
 			$format = array(
 				'customer_id'		  => $spending_account_settings->customer_id,
@@ -424,8 +429,15 @@ class SpendingAccountController extends \BaseController {
 			'wellness_spending_end_date'        => date('Y-m-d', strtotime($data['benefits_end'])),
 			'wellness_payment_method_non_panel' => $data['non_panel_payment_method'],
 			'wellness_benefits_coverage'        => 'lite_plan',
-			'wellness_reimbursement'            => $non_panel_reimbursement
+			'wellness_reimbursement'            => $non_panel_reimbursement,
+			'wellness_benefits_coverage'        => $spending_account_settings->medical_benefits_coverage,
+			'wellness_activate_allocation'      => 1,
+			'wellness_enable'                   => 1,
 		);
+
+		if((int)$non_panel_reimbursement == 1) {
+			$update['wellness_benefits_coverage'] = "lite_plan";
+		  }
 
 		$updateData = DB::table('spending_account_settings')
 						->where('spending_account_setting_id', $input['id'])
@@ -608,7 +620,7 @@ class SpendingAccountController extends \BaseController {
 			
 			return [
 				'status' => true,
-				'spent' => $credits['credits'],
+				'spent' => $credits,
 				'currency_type' => $customer->currency_type,
 				'id'			=> $spending_account_settings->spending_account_setting_id,
 				'customer_id'	=> $customer_id,
@@ -755,7 +767,7 @@ class SpendingAccountController extends \BaseController {
 		$format = [];
 		$info = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 
-		if($spending_method == "pre_paid") {
+		// if($spending_method == "pre_paid") {
 			$credit_wallet_activity = DB::table('credit_wallet_activity')
 								->where('customer_id', $customer_id)
 								->where('spending_type', $input['spending_type'])
@@ -776,14 +788,20 @@ class SpendingAccountController extends \BaseController {
 				if($activity->type == "added_employee_credits") {
 					$label = "Member Enrollment";
 					$type_status = "add";
+				} if($activity->type == "added_employee_entitlement") {
+					$label = "Entitlement Increase";
+					$type_status = "add";
 				} else if($activity->type == "deducted_employee_credits") {
-					$label = "Entitlement Decreased";
+					$label = "Entitlement Decrease";
+					$type_status = "deduct";
+				} else if($activity->type == "deducted_employee_entitlement") {
+					$label = "Entitlement Decrease";
 					$type_status = "deduct";
 				} else {
 					$label = "Member Removal";
 					$type_status = "deduct";
 				}
-
+				
 				$temp = array(
 					'mednefits_credits_id'	=> $activity->mednefits_credits_id,
 					'customer_id'	=> $activity->customer_id,
@@ -799,56 +817,56 @@ class SpendingAccountController extends \BaseController {
 
 				array_push($format, $temp);
 			}
-		} else {
-			$ids = \CustomerHelper::getCompanyWalletEmployeeIds($customer_id);
-			if($input['spending_type'] == 'medical') {
-				$table_wallet_history = 'wallet_history';
-			} else {
-				$table_wallet_history = 'wellness_wallet_history';
-			}
+		// } else {
+		// 	$ids = \CustomerHelper::getCompanyWalletEmployeeIds($customer_id);
+		// 	if($input['spending_type'] == 'medical') {
+		// 		$table_wallet_history = 'wallet_history';
+		// 	} else {
+		// 		$table_wallet_history = 'wellness_wallet_history';
+		// 	}
 
-			if(sizeof($ids) > 0) {
-				$histories = DB::table($table_wallet_history)
-					->whereIn('logs', ['added_by_hr', 'deducted_by_hr'])
-					->whereIn('wallet_id', $ids)
-					->where('spending_method', $spending_method)
-					->orderBy('created_at', 'desc')
-					->paginate($per_page);
+		// 	if(sizeof($ids) > 0) {
+		// 		$histories = DB::table($table_wallet_history)
+		// 			->whereIn('logs', ['added_by_hr', 'deducted_by_hr'])
+		// 			->whereIn('wallet_id', $ids)
+		// 			->where('spending_method', $spending_method)
+		// 			->orderBy('created_at', 'desc')
+		// 			->paginate($per_page);
 			
-				$pagination['current_page'] = $histories->getCurrentPage();
-				$pagination['last_page'] = $histories->getLastPage();
-				$pagination['total'] = $histories->getTotal();
-				$pagination['per_page'] = $histories->getPerPage();
-				$pagination['count'] = $histories->count();
+		// 		$pagination['current_page'] = $histories->getCurrentPage();
+		// 		$pagination['last_page'] = $histories->getLastPage();
+		// 		$pagination['total'] = $histories->getTotal();
+		// 		$pagination['per_page'] = $histories->getPerPage();
+		// 		$pagination['count'] = $histories->count();
 
-				foreach($histories as $key => $history) {
-					$label = null;
-					$type_status = null;
+		// 		foreach($histories as $key => $history) {
+		// 			$label = null;
+		// 			$type_status = null;
 
-					if($history->logs == "added_by_hr") {
-						$label = "Entitlement Increase";
-						$type_status = "add";
-					} else if($history->logs == "deducted_by_hr") {
-						$label = "Entitlement Decreased";
-						$type_status = "deduct";
-					}
+		// 			if($history->logs == "added_by_hr") {
+		// 				$label = "Entitlement Increase";
+		// 				$type_status = "add";
+		// 			} else if($history->logs == "deducted_by_hr") {
+		// 				$label = "Entitlement Decreased";
+		// 				$type_status = "deduct";
+		// 			}
 					
-					$temp = array(
-						'customer_id'	=> $customer_id,
-						'credit'	=> number_format($history->credit, 2),
-						'type' => $history->logs,
-						'label'	=> $label,
-						'type_status'	=> $type_status,
-						'spending_type'	=> $history->spending_type,
-						'currency_type' => $history->currency_type,
-						'created_at' => date('j M Y', strtotime($history->created_at)),
-						'company' => $info->company_name,
-					);
+		// 			$temp = array(
+		// 				'customer_id'	=> $customer_id,
+		// 				'credit'	=> number_format($history->credit, 2),
+		// 				'type' => $history->logs,
+		// 				'label'	=> $label,
+		// 				'type_status'	=> $type_status,
+		// 				'spending_type'	=> $history->spending_type,
+		// 				'currency_type' => $history->currency_type,
+		// 				'created_at' => date('j M Y', strtotime($history->created_at)),
+		// 				'company' => $info->company_name,
+		// 			);
 
-					array_push($format, $temp);
-				}
-			}
-		}
+		// 			array_push($format, $temp);
+		// 		}
+		// 	}
+		// }
 
 		$pagination['data'] = $format;
 		return $pagination;
@@ -1031,8 +1049,8 @@ class SpendingAccountController extends \BaseController {
 				"plan_end"					=> date('Y-m-d', strtotime($end)),
 				"duration"					=> "12 months",
 				"invoice_number"			=> $invoice_number,
-				"invoice_date"				=> date('Y-m-d', strtotime($input['invoice_date'])),
-				"invoice_due"				=> date('Y-m-d', strtotime('+1 month', strtotime($input['invoice_date']))),
+				"invoice_date"				=> date('Y-m-d'),
+				"invoice_due"				=> date('Y-m-d', strtotime('+1 month')),
 				"payment_amount"			=> 0,
 				"payment_date"				=> null,
 				"remarks"					=> null,

@@ -596,8 +596,8 @@
 								</div>
 								<!-- <div ng-if="selectedEmployee.medical_wallet || selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon"> -->
 									<div ng-if="selectedEmployee.account_type != 'enterprise_plan' " class="entitlementWithIcon">
-									<strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
-									<!-- <strong class="font-helvetica-medium">Medical Entitlement</strong> -->
+									<!-- <strong class="font-helvetica-medium">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong> -->
+									<strong class="font-helvetica-medium">Medical Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_medical_entitlement"></span> 
 										<span ng-if="entitlement_status.medical_entitlement" class="custom small">(The amount of 
@@ -617,8 +617,8 @@
 									<span ng-click="toggleEmpTab(2)" ng-if="dropdownEntitlement.medical" class="dropdown-entitlement">Update</span>
 								</div>
 								<div ng-if="selectedEmployee.wellness_wallet" class="entitlementWithIcon">
-									<strong class="font-helvetica-medium">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong>
-									<!-- <strong class="font-helvetica-medium">Wellness Entitlement</strong> -->
+									<!-- <strong class="font-helvetica-medium">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }}</strong> -->
+									<strong class="font-helvetica-medium">Wellness Entitlement</strong>
 									<span>
 										<span ng-bind="emp_entitlement.original_wellness_entitlement"></span>
 										<span ng-if="entitlement_status.wellness_entitlement" class="custom small">

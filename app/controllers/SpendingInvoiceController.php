@@ -542,7 +542,7 @@ class SpendingInvoiceController extends \BaseController {
 		// }
 
 		$customer_id = $session->customer_buy_start_id;
-
+		
 		if(empty($input['type']) || $input['type'] == null) {
 			return array('status' => false, 'message' => 'type is required.');
 		}
@@ -557,8 +557,8 @@ class SpendingInvoiceController extends \BaseController {
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-			$all_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
-			$credits_statements = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
+			$all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
+			$credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
 
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
 			$pagination['last_page'] = $credits_statements->getLastPage();
@@ -781,7 +781,7 @@ class SpendingInvoiceController extends \BaseController {
 					$result['customer_id'] = $active->customer_buy_start_id;
 
 					$temp = array(
-						'id' => $customer_id,
+						'id' => $result['invoice_id'],
 						'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
 						'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
 						'number' => $result['invoice_number'],
@@ -1127,7 +1127,7 @@ class SpendingInvoiceController extends \BaseController {
 				
 				$totalCredits = $data['medical_credits_purchase'] + $data['wellness_credits_purchase'];
 				$totalBalance = $totalCredits - $spendingPurchase->payment_amount;
-
+				
 				$temp = array(
 					'id'		=> $data['spending_purchase_invoice_id'],
 					'invoice_date' => date('j M Y', strtotime($data['invoice_date'])),

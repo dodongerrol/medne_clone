@@ -32,7 +32,7 @@
                 <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div x-show="open" @click.away="open = false" class="credits-tooltip-container wellness-balance">
                   <div class="tooltip-title">Wellness Entitlement Balance</div>
-                  <p>The remaining amount available for use from the Wellness Budget.
+                  <p>The remaining amount available for use from the Total Wellness Entitlement.
                   </p>
                   <div class="tooltip-btn-footer">
                     <button @click="open = false" >Got it</button>
@@ -63,7 +63,7 @@
                 </span> 
               </span>
               <span>
-                <div class="member-bold-text"><span style="text-transform: uppercase">{{wellnessWalletData.currency_type}}</span> {{ wellnessWalletData.total_medical_entitlement | number: 2 }}</div>
+                <div class="member-bold-text"><span style="text-transform: uppercase">{{wellnessWalletData.currency_type}}</span> {{ wellnessWalletData.total_wellness_entitlement | number: 2 }}</div>
               </span>
             </div>
             <div class="credits-border-container"></div>
@@ -321,7 +321,7 @@
               <tr>
                 <td ng-bind="list.created_at">01 Jan 2020</td>
                 <td ng-bind="list.label || 'N/A'">Bonus Credits</td>
-                <td class="amount-value" ng-class="{'add':list.type == 'add','deduct':list.type != 'add' }">{{list.type == 'add' ? '+':'-' }} <span style="text-transform: uppercase">{{list.currency_type}}</span> {{list.credit}}</td>
+                <td class="amount-value" ng-class="{'add':list.type_status == 'add','deduct':list.type_status != 'add' }">{{list.type_status == 'add' ? '+':'-' }} <span style="text-transform: uppercase">{{list.currency_type}}</span> {{list.credit}}</td>
               </tr>
             </tbody>
           </table>
