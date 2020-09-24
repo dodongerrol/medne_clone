@@ -7077,7 +7077,7 @@ public function payCreditsNew( )
         // Check Member mobile number if already registered
         $userDetails = $userModel->checkMemberExistence(array( 
                                       array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $keys['mobile']),
-                                      array( 'paramKey' => 'PhoneCode', 'paramKeyValue'=> $keys['PhoneCode'])
+                                      array( 'paramKey' => 'PhoneCode', 'paramKeyValue'=> "+63")
                                   ));
 
         if (!$userDetails) {
