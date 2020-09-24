@@ -608,7 +608,7 @@ class AuthLibrary{
           }
         }else{
           $returnObject->status = FALSE;
-          $returnObject->message = StringHelper::errorMessage("EmptyValues");
+          $returnObject->message = 'Sorry, your email address has not been signed up with Mednefits';
         }
         return $returnObject;
 
