@@ -246,6 +246,7 @@ class DependentController extends \BaseController {
 				$user['mobile'] = isset($user['mobile_number']) ? trim($user['mobile_number']) : trim($user['mobile']);
 				$user['job_title'] = 'Other';
 				$user['fullname'] = $user['full_name'];
+				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
 				
 				if(isset($user['date_of_birth_ddmmyyyy'])) {
 					$dob = $user['date_of_birth_ddmmyyyy'];
