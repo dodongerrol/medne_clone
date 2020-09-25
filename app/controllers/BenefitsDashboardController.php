@@ -2330,7 +2330,7 @@ class BenefitsDashboardController extends \BaseController {
 				'employee_id'			=> $user->emp_no,
 				'member_activated'		=> (int)$user->member_activated == 1 ? true : false,
 				'nric'					=> $user->NRIC,
-				'mobile_no'				=> $phone_no == 0 || $phone_no == null ? null : $country_code.(string)$phone_no,
+				'mobile_no'				=> $phone_no == 0 || $phone_no == null || $phone_no == '' || $phone_no == '0' ? null : $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
 				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
