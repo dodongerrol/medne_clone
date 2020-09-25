@@ -631,9 +631,8 @@ class AuthLibrary{
                           ->where('Active', 1)
                           ->whereIn('access_type', [1, 0])
                           ->get();
-            
           if(sizeof($findUserEmail) > 0) {
-            if(sizeof($findUserEmail) == 1) {
+            if(sizeof($findUserEmail) > 0) {
               $findUserID = $findUserEmail[0]->UserID;
             } else {
               $returnObject->status = false;
@@ -649,9 +648,9 @@ class AuthLibrary{
             ->where('Active', 1)
             ->whereIn('access_type', [1, 0])
             ->get();
-
+            
             if(sizeof($findUserPhone) > 0) {
-              if(sizeof($findUserPhone) == 1) {
+              if(sizeof($findUserPhone) > 0) {
                 $findUserID = $findUserPhone[0]->UserID;
               } else {
                 $returnObject->status = false;
