@@ -44,6 +44,12 @@ class MYRValidationHelper
             $messages['passport_message'] = 'Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.';
         }
 
+        if (!in_array('mobile', $validated) && $this->checkDuplicates('PhoneNo', $input['mobile'])) {
+            $messages['error'] = true;
+            $messages['mobile_error'] = true;
+            $messages['mobile_message'] = 'Mobile No. already taken.';
+        }
+
         if (!in_array('nric', $validated) && $this->checkDuplicates('NRIC', $input['nric'])) {
             $messages['error'] = true;
             $messages['nric_error'] = true;
