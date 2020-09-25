@@ -2970,4 +2970,41 @@ class InvoiceController extends \BaseController {
 		->paginate($limit);
 	}
 
+	public function getListCompanyPlanWithdrawal( )
+	{
+		$input = Input::all();
+		$limit = $input['limit'] ?? 5;
+
+		if(empty($input['customer_active_plan_id']) || $input['customer_active_plan_id'] == null) {
+			return ['status' => false, 'messsage' => 'customer_active_plan_id is required'];
+		}
+
+		$refunds = DB::table('payment_refund')
+					->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', '=', 'payment_refund.customer_active_plan_id')
+					->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
+					->where('payment_refund.customer_active_plan_id', $input['customer_active_plan_id'])
+					->orderBy('payment_refund.created_at', 'desc')
+					->paginate($limit);
+		
+		$pagination = [];
+		$pagination['last_page'] = $refunds->getLastPage();
+		$pagination['current_page'] = $refunds->getCurrentPage();
+		$pagination['total_data'] = $refunds->getTotal();
+		$pagination['from'] = $refunds->getFrom();
+		$pagination['to'] = $refunds->getTo();
+		$pagination['count'] = $refunds->count();
+		$format = [];
+
+		foreach ($refunds as $key => $refund) {
+			$result = \PlanHelper::getRefundLists($refund->payment_refund_id);
+			$result['invoice_id'] = $refund->payment_refund_id;
+			$result['payment_refund_id'] = $refund->payment_refund_id;
+			$result['customer_buy_start_id'] = $refund->customer_buy_start_id;
+			$result['customer_id'] = $refund->customer_buy_start_id;
+			array_push($format, $result);
+		}
+		
+		$pagination['data'] = $format;
+		return $pagination;
+	}
 }

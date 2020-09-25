@@ -2,7 +2,7 @@
 <html><head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Panel Invoice</title>
+    <title>Spending Transaction Invoice</title>
     <style type="text/css">
       @page { 
         margin: 10px 10px 0 10px; 
@@ -101,18 +101,18 @@
             1.00
           </td>
           <td style="padding: 10px 0 5px 0;text-align: right;">
-            {{ $medical }}
+            {{ $total_spent }}
           </td>
           <td style="padding: 10px 0 5px 0;text-align: right;">
             No Tax
           </td>
           <td style="padding: 10px 0 5px 0;text-align: right;">
-            {{ $medical }}
+            {{ $total_spent }}
           </td>
         </tr>
         <tr>
           <td style="border-bottom: 1px solid #BFBFBF;padding: 5px 0 15px 0;" >
-            <p style="font-size: 14px;line-height: 14px;margin: 0;">Statement for 01 Jan to 31 Jan 2020</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0;">Statement for {{ $period_start }} to {{ $period_end }}</p>
           </td>
           <td colspan="4" style="border-bottom: 1px solid #BFBFBF;"></td>
         </tr>
@@ -124,7 +124,7 @@
             Subtotal
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            {{$statement_amount_due}}
+            {{$total_spent}}
           </td>
         </tr>
         <tr>
@@ -133,7 +133,7 @@
             TOTAL {{$currency_type}}
           </td>
           <td style="text-align: right;font-weight: 700;padding: 10px 0;">
-            {{$statement_total_amount}}
+            {{$total_spent}}
           </td>
         </tr>
 
@@ -144,7 +144,7 @@
             (via Prepaid Credits Account)
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            {{$statement_amount_due}}
+            {{$total_pre_paid_spent}}
           </td>
         </tr>
         <tr>
@@ -152,7 +152,7 @@
             AMOUNT DUE {{$currency_type}}
           </td>
           <td style="text-align: right;font-weight: 700;padding: 10px 0;">
-            {{$statement_total_amount}}
+            {{$statement_amount_due}}
           </td>
         </tr>
       </table>

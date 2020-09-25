@@ -642,3 +642,29 @@
 	cursor: pointer;
 	font-weight: 700;
 }
+
+.invoice-history-header{
+	display: flex;
+	position: relative;
+	align-items: flex-end;
+	margin-bottom: 20px;
+}
+.invoice-history-header h4{
+	width: 150px;
+	margin: 0;
+}
+.invoice-history-header .drop-filter-wrapper{
+	flex: 1;
+	display: flex;
+	align-items: center;
+}
+.invoice-history-header .drop-filter-wrapper select{
+	display: block;
+	width: 140px;
+	height: 30px;
+	padding: 3px 10px;
+	border: 2px solid #e2dcdc;
+	border-radius: 4px;
+	font-family: 'Helvetica Light';
+	font-weight: 700;
+}

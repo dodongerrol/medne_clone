@@ -9,7 +9,10 @@ class TransctionServices extends Eloquent
   public function createTransctionServices($data, $id)
   {
   	foreach ($data as $key => $value) {
-  		TransctionServices::create(['service_id' => $value, 'transaction_id' => $id]);
+		if($value) {
+			TransctionServices::create(['service_id' => $value, 'transaction_id' => $id]);
+		}
+  		
   	}
 
   	return TRUE;

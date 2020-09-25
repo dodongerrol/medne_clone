@@ -5,19 +5,14 @@
       <div class="current-term-wrapper"> 
         <div ng-click="termSelector()" class="current-term-input-wrapper">
           <span>{{ selectedTerm.term }}</span>
-          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
-            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-          </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
-          <!-- <span>Last term</span> -->
-          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+        <div ng-if="showLastTermSelector && selectedTerm != list" ng-repeat="list in dateTerm" class="last-term-selector">
           <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
         </div>
       </div>
       <div>
-        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
+        <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
@@ -26,6 +21,7 @@
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text">Out of pocket</h4>
+    <p class="prepaid-subtext">This indicates that no plan is in effect to enable employee benefits budget allocation, meaning all employees will be charged for the cost of their own benefits usage.</p>
     <div class="mwbc-card-box-container">
       <div class="available-credits-container">
         <div class="available-credits">
@@ -44,7 +40,7 @@
             </span>
           </span>
           <span>
-            <div class="available-credits-amount member-bold-text">SGD 5,0000.00</div>
+            <div class="available-credits-amount member-bold-text"><span class="currency-type" ng-bind="benefitsCoverageData.currency_type"></span> {{ benefitsCoverageData.spent ? benefitsCoverageData.spent : 0 | number : 2 }}</div>
           </span>
         </div>
       </div>
@@ -57,10 +53,10 @@
         <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
       </div>
     </div>
-    <div ng-if="false" class="mednefits-credits-pending">
+    <div ng-if="(!benefitsCoverageData.medical.panel || !benefitsCoverageData.medical.non_panel) && (!benefitsCoverageData.wellness.panel || !benefitsCoverageData.wellness.non_panel)" class="mednefits-credits-pending">
       <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
     </div>
-    <div ng-if="true">
+    <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel) || (benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)">
       <div>
         <span ng-if="medical_wallet_details.panel_payment_method == 'giro'">Mednefits Credits</span>
         <span ng-if="medical_wallet_details.panel_payment_method == 'bank_transfer'">Mednefits Credits</span>

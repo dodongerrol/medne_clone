@@ -681,8 +681,9 @@ class PlanHelper {
 		return $current_balance;
 	}
 
-	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history)
+	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history, $owner_id)
 	{
+		$user_wallet = DB::table('e_wallet')->where('UserID', $owner_id)->orderBy('created_at', 'desc')->first();
 		$dependent_plan = DB::table('dependent_plans')
 		->where('dependent_plan_id', $dependent_plan_id)
 		->first();
@@ -732,6 +733,7 @@ class PlanHelper {
 		$package_bundle = DB::table('package_bundle')
 		->join('care_package', 'care_package.care_package_id', '=', 'package_bundle.care_package_id')
 		->where('package_bundle.package_group_id', $package_group->package_group_id)
+		->where('care_package.currency_type', $user_wallet->currency_type)
 		->orderBy('care_package.position', 'desc')
 		->get();
 		return $package_bundle;
@@ -1444,7 +1446,8 @@ class PlanHelper {
 		$planned = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$plan_status = DB::table('customer_plan_status')->where('customer_plan_id', $planned->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
-		if($planned->account_type != "lite_plan")	{
+		$checkEnrollVacantSeats = $planned->account_type == "lite_plan" || $planned->account_type == "out_of_pocket" ? false : true;
+		if($checkEnrollVacantSeats)	{
 			$total = $plan_status->employees_input - $plan_status->enrolled_employees;
 			if($total <= 0) {
 				return array(
@@ -1457,7 +1460,8 @@ class PlanHelper {
 		$user = new User();
 		// $customer_spending = CustomerHelper::getCustomerWalletStatus($customer_id);
 		$customer_spending = CustomerHelper::getAccountSpendingStatus($customer_id);
-
+		$medical_spending_method = $customer_spending['medical_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
+		$wellness_spending_method = $customer_spending['wellness_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
 		$pre_paid_status = false;
 		$total_balance_remaining = 0;
 		$top_up_credits = false;
@@ -1607,7 +1611,7 @@ class PlanHelper {
 				$customer_credit_logs = new CustomerCreditLogs( );
 				$credits = $data_enrollee->credits;
 
-				if($credits > 0 && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
+				if($customer_spending['medical_payment_method_panel'] != "mednefits_credits") {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 
 					if($result_customer_active_plan) {
@@ -1625,7 +1629,8 @@ class PlanHelper {
 							'running_balance'		=> $customer->balance + $credits,
 							'customer_active_plan_id' => $customer_active_plan_id,
 							'currency_type'	=> $customer->currency_type,
-							'user_id'               => null
+							'user_id'               => null,
+							'spending_method'		=> $medical_spending_method
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($customer_credits_logs);
@@ -1643,7 +1648,7 @@ class PlanHelper {
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
 						'currency_type'		=> $customer->currency_type,
-						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
+						'spending_method'		=> $medical_spending_method
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1661,13 +1666,27 @@ class PlanHelper {
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
 							'currency_type'		=> $customer->currency_type,
-							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
+							'spending_method'		=> $medical_spending_method
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 						\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'medical', $credits);
 					}
-				} else if($credits > 0 && $customer_spending['medical_payment_method_panel'] == "mednefits_credits" && $customer_spending['paid_status'] == true) {
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+				} else if($credits > 0 && $customer_spending['medical_payment_method_panel'] == "mednefits_credits") {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 					if($result_customer_active_plan) {
 						$customer_active_plan_id = $result_customer_active_plan;
@@ -1687,7 +1706,7 @@ class PlanHelper {
 						'running_balance'   => $credits,
 						'customer_active_plan_id' => $customer_active_plan_id,
 						'currency_type'		=> $customer->currency_type,
-						'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
+						'spending_method'		=> $medical_spending_method
 					);
 
 					$employee_logs->createWalletHistory($wallet_history);
@@ -1705,11 +1724,25 @@ class PlanHelper {
 							'running_balance'       => 0,
 							'customer_active_plan_id' => $customer_active_plan_id,
 							'currency_type'		=> $customer->currency_type,
-							'spending_method'	=> $pre_paid_status == true ? 'pre_paid' : 'post_paid'
+							'spending_method'		=> $medical_spending_method
 						);
 
 						$customer_credit_logs->createCustomerCreditLogs($company_deduct_logs);
 					}
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
 
 					if($pre_paid_status) {
 						$medicalCreditsHistory = array(
@@ -1725,20 +1758,6 @@ class PlanHelper {
 						);
 	
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
-	
-						// credit wallet activity
-						$creditWalletActivityData = array(
-							'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
-							'customer_id'			=> $customer_id,
-							'credit'				=> $credits,
-							'type'					=> "added_employee_credits",
-							'spending_type'			=> "medical",
-							'currency_type'			=> $customer->currency_type,
-							'created_at'			=> date('Y-m-d H:i:s'),
-							'updated_at'			=> date('Y-m-d H:i:s')
-						);
-	
-						DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
 	
 						if($top_up_credits) {
 							// create top up data
@@ -1820,7 +1839,21 @@ class PlanHelper {
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 						\CustomerHelper::addSupplementaryCredits($customer->customer_id, 'wellness', $credits);
 					}
-				} else if($credits > 0 && $customer_spending['wellness_payment_method_panel'] == "mednefits_credits" && $customer_spending['paid_status'] == true) {
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "wellness",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+				} else if($credits > 0 && $customer_spending['wellness_payment_method_panel'] == "mednefits_credits") {
 					$wallet_class = new Wallet();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
 
@@ -1853,6 +1886,20 @@ class PlanHelper {
 						$customer_credits_logs->createCustomerWellnessCreditLogs($company_deduct_logs);
 					}
 
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $credits,
+						'type'					=> "added_employee_credits",
+						'spending_type'			=> "wellness",
+						'currency_type'			=> $customer->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
 					if($pre_paid_status) {
 						$medicalCreditsHistory = array(
 							'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
@@ -1867,20 +1914,6 @@ class PlanHelper {
 						);
 	
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
-	
-						// credit wallet activity
-						$creditWalletActivityData = array(
-							'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
-							'customer_id'			=> $customer_id,
-							'credit'				=> $credits,
-							'type'					=> "added_employee_credits",
-							'spending_type'			=> "medical",
-							'currency_type'			=> $customer->currency_type,
-							'created_at'			=> date('Y-m-d H:i:s'),
-							'updated_at'			=> date('Y-m-d H:i:s')
-						);
-	
-						DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
 	
 						if($top_up_credits) {
 							// create top up data
@@ -2420,6 +2453,9 @@ class PlanHelper {
 	public static function memberMedicalAllocatedCredits($wallet_id, $user_id)
 	{
 		
+		$customer_id = \PlanHelper::getCustomerId($user_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+		$spending_method = $spending['medical_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
 		$get_allocation = 0;
 		$deducted_credits = 0;
 		$credits_back = 0;
@@ -2456,12 +2492,16 @@ class PlanHelper {
 				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
 				$wallet_history = DB::table('wallet_history')
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
-									->where('wallet_history.wallet_id', $wallet_id)
-									->where('e_wallet.UserID', $user_id)
-									->where('wallet_history.created_at',  '>=', $start)
+								->where('wallet_history.wallet_id', $wallet_id)
+								->where('e_wallet.UserID', $user_id)
+								->where('wallet_history.created_at',  '>=', $start)
+								->where('wallet_history.spending_method', $spending_method)
 								->get();
 			} else {
-				$wallet_history = DB::table('wallet_history')->where('wallet_id', $wallet_id)->get();
+				$wallet_history = DB::table('wallet_history')
+									->where('wallet_id', $wallet_id)
+									->where('spending_method', $spending_method)
+									->get();
 			}
 
 			foreach ($wallet_history as $key => $history) {
@@ -3711,16 +3751,16 @@ class PlanHelper {
 	public static function getActivePlanUsers($customer_id)
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
-		$active_plan_ids = [];
+		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
+		// $active_plan_ids = [];
 
-		foreach($customer_active_plans as $key => $customer_active_plan)	{
-			$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
-		}
+		// foreach($customer_active_plans as $key => $customer_active_plan)	{
+		// 	$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
+		// }
 		
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
-					->whereIn('customer_active_plan_id', $active_plan_ids)
+					->whereIn('customer_active_plan_id', $customer_active_plans)
 					->where('type', 'started')
 					->get();
 		$user_ids = [];
@@ -7124,7 +7164,8 @@ class PlanHelper {
 		$data['company'] = ucwords($business_info->company_name);
 		$data['postal'] = $business_info->postal_code;
 		$data['currency_type'] = strtoupper($invoice->currency_type);
-		
+		$data['payment_remarks'] = null;
+
 		if($contact->billing_status == "true" || $contact->billing_status == true) {
 			$data['name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
 			$data['address'] = $business_info->company_address;
@@ -7136,9 +7177,7 @@ class PlanHelper {
 
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $get_active_plan->plan_id)->first();
 		$plan_start = $plan->plan_start;
-
 		$account = DB::table('customer_buy_start')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
 		$data['account_type'] = $get_active_plan->account_type;
 		$data['complimentary'] = FALSE;
 		$data['plan_type'] = "Standalone Mednefits Care (Corporate)";
@@ -7586,9 +7625,12 @@ class PlanHelper {
 			array_push($dependents_data, $temp);
 		}
 
+		$data['payment_remarks'] = $data['notes'];
 		$data['dependents'] = $dependents_data;
-		$data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
-		$data['amount_due'] = \DecimalHelper::formatDecimal($data['amount_due'] + $dependent_amount_due, 2);
+		$data['amount_due'] = $data['amount_due'] + $dependent_amount_due;
+		$data['total'] = $data['amount_due'];
+		// $data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
+		
 		$data['customer_active_plan_id'] = $get_active_plan->customer_active_plan_id;
 		return $data;
 	}
@@ -7627,12 +7669,10 @@ class PlanHelper {
 
 					// $total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
 					$total_days = \MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
-					$remaining_days = $total_days - $days;
+					$remaining_days = $total_days - $days + 1;
 
-					// return $remaining_days;
 					$cost_plan_and_days = ($invoice->individual_price/$total_days);
 					$temp_total = $cost_plan_and_days * $remaining_days;
-
 					$temp_sub_total = $temp_total * 0.70;
 
 					// check withdraw amount
@@ -7642,7 +7682,7 @@ class PlanHelper {
 					}
 
 					$withdraw_data = DB::table('customer_plan_withdraw')->where('user_id', $user->user_id)->first();
-					$total_refund += $withdraw_data->amount;
+					$total_refund += $temp_sub_total;
 
 					$temp = array(
 						'user_id'			=> $user->user_id,
@@ -7656,7 +7696,7 @@ class PlanHelper {
 						'remaining_days' => $remaining_days,
 						'total_days'		=> $total_days,
 						'before_amount'	=> \DecimalHelper::formatDecimal($temp_total),
-						'after_amount' => \DecimalHelper::formatDecimal($withdraw_data->amount)
+						'after_amount' => \DecimalHelper::formatDecimal($temp_sub_total)
 					);
 				} else {
 					$total_refund += $user->amount;
@@ -7712,12 +7752,16 @@ class PlanHelper {
 			}
 
 			return array(
-				'total_refund' => number_format($total_refund, 2),
-				'amount_due'	=> number_format($amount_due, 2),
+				'total_refund' => \DecimalHelper::formatDecimal($total_refund, 2),
+				'amount_due'	=> \DecimalHelper::formatDecimal($amount_due, 2),
 				'cancellation_number' => $refund_payment->cancellation_number,
 				'paid' => $refund_payment->payment_amount,
 				'date_refund' => $refund_payment->date_refund,
+				'payment_due'	=> $refund_payment->invoice_due,
+				'payment_date'	=> $refund_payment->payment_date,
+				'payment_amount'	=> $refund_payment->payment_amount,
 				'payment_status' => $refund_payment->status,
+				'payment_remarks' => $refund_payment->payment_remarks,
 				'billing_info' => $data,
 				'cancellation_date' => date('F j, Y', strtotime($refund_payment->date_refund)),
 				'currency_type' => $refund_payment->currency_type,
@@ -7768,6 +7812,7 @@ class PlanHelper {
 		$wellness_deposit_amount = 0;
 		$data['total_wellness'] = 0;
 		$data['total_medical'] = 0;
+		$data['payment_remarks'] = null;
 
 		if($deposit->medical_credits > 0) {
 			$data['total_medical'] = $deposit->medical_credits;
@@ -7812,6 +7857,7 @@ class PlanHelper {
 			$data['payment_date'] = date('F d, Y', strtotime($deposit->payment_date));
 			if($deposit->payment_remarks) {
 				$data['notes'] = $deposit->payment_remarks;
+				$data['payment_remarks'] = $deposit->payment_remarks;
 			}
 		}
 

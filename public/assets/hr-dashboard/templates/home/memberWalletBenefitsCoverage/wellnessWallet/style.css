@@ -63,11 +63,11 @@
 .credits-tooltip-container.wellness-budget,
 .credits-tooltip-container.company-budget,
 .credits-tooltip-container.mednefits-basic-plan {
-  display: none;
+  /* display: none; */
 }
 
 .member-wellness-wallet-wrapper .mwbc-card-box-container {
-  width: 380px;
+  width: 450px;
 }
 
 .member-wellness-wallet-wrapper .activate-well-btn {

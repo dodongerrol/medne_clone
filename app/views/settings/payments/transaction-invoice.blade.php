@@ -80,7 +80,7 @@
             </div>
         </div>
         <button id="invoice-date-go-btn" class="btn">Go</button>
-        <a href="javascript:void(0)" id="invoice-download-as-peedf" class="btn btn-default btn-export"><i class="glyphicon glyphicon-file" hidden></i>  Export as .PDF</a>
+        <a href="javascript:void(0)" id="invoice-download-as-pdf" class="btn btn-default btn-export"><i class="glyphicon glyphicon-file" hidden></i>  Export as .PDF</a>
     </div>
 
     <div class="col-md-12 invoice-wrapper no-padding" id="error-log" hidden>

@@ -112,9 +112,10 @@ class SpendingInvoiceLibrary
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$lite_plan = false;
 		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
+		$payment_method = $spending['medical_payment_method_panel'];
 
 		$business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
 		$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
@@ -123,52 +124,52 @@ class SpendingInvoiceLibrary
 		$total_in_network_amount = 0;
 		$transactions = [];
 
-		if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid") {
-			foreach ($corporate_members as $key => $member) {
-				$ids = StringHelper::getSubAccountsID($member->user_id);
+		// if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid") {
+			// foreach ($corporate_members as $key => $member) {
+			// 	$ids = StringHelper::getSubAccountsID($member->user_id);
 	
-				$in_network = DB::table('transaction_history')
-				->whereIn('UserID', $ids)
-				->where('lite_plan_enabled', 1)
-				->where('credit_cost', 0)
-				->where('deleted', 0)
-				->where('paid', 1)
-				->where('created_at', '>=', $start)
-				->where('created_at', '<=', $end)
-				->orderBy('created_at', 'desc')
-				->get();
+			// 	$in_network = DB::table('transaction_history')
+			// 	->whereIn('UserID', $ids)
+			// 	->where('lite_plan_enabled', 1)
+			// 	->where('credit_cost', 0)
+			// 	->where('deleted', 0)
+			// 	->where('paid', 1)
+			// 	->where('created_at', '>=', $start)
+			// 	->where('created_at', '<=', $end)
+			// 	->orderBy('created_at', 'desc')
+			// 	->get();
 		
-				$e_claim = DB::table('e_claim')
-				->where('status', 1)
-				->whereIn('user_id', $ids)
-				->where('date', '>=', $start)
-				->where('date', '<=', $end)
-				->orderBy('created_at', 'desc')
-				->get();
+			// 	// $e_claim = DB::table('e_claim')
+			// 	// ->where('status', 1)
+			// 	// ->whereIn('user_id', $ids)
+			// 	// ->where('date', '>=', $start)
+			// 	// ->where('date', '<=', $end)
+			// 	// ->orderBy('created_at', 'desc')
+			// 	// ->get();
 	
-				foreach($e_claim as $key => $res) {
-					$total_e_claim_amount += $res->amount;
-				}
+			// 	// foreach($e_claim as $key => $res) {
+			// 	// 	$total_e_claim_amount += $res->amount;
+			// 	// }
 	
-				foreach ($in_network as $key => $trans) {
-					if($trans->spending_type == 'medical') {
-						$table_wallet_history = 'wallet_history';
-					} else {
-						$table_wallet_history = 'wellness_wallet_history';
-					}
-					$logs_lite_plan = DB::table($table_wallet_history)
-						->where('logs', 'deducted_from_mobile_payment')
-						->where('lite_plan_enabled', 1)
-						->where('id', $trans->transaction_id)
-						->first();
+			// 	foreach ($in_network as $key => $trans) {
+			// 		if($trans->spending_type == 'medical') {
+			// 			$table_wallet_history = 'wallet_history';
+			// 		} else {
+			// 			$table_wallet_history = 'wellness_wallet_history';
+			// 		}
+			// 		$logs_lite_plan = DB::table($table_wallet_history)
+			// 			->where('logs', 'deducted_from_mobile_payment')
+			// 			->where('lite_plan_enabled', 1)
+			// 			->where('id', $trans->transaction_id)
+			// 			->first();
 
-					if(!$logs_lite_plan)	{
-						$total_in_network_amount += $trans->credit_cost;
-						array_push($transactions, $trans->transaction_id);
-					}
-				}
-			}
-		} else {
+			// 		if(!$logs_lite_plan)	{
+			// 			$total_in_network_amount += $trans->credit_cost;
+			// 			array_push($transactions, $trans->transaction_id);
+			// 		}
+			// 	}
+			// }
+		// } else {
 			foreach ($corporate_members as $key => $member) {
 				$ids = StringHelper::getSubAccountsID($member->user_id);
 	
@@ -195,24 +196,24 @@ class SpendingInvoiceLibrary
 				$transactions_temp = array_merge($temp_trans_lite_plan, $temp_trans);
 				$in_network = self::my_array_unique($transactions_temp);
 	
-				$e_claim = DB::table('e_claim')
-				->where('status', 1)
-				->whereIn('user_id', $ids)
-				->where('date', '>=', $start)
-				->where('date', '<=', $end)
-				->orderBy('created_at', 'desc')
-				->get();
+				// $e_claim = DB::table('e_claim')
+				// ->where('status', 1)
+				// ->whereIn('user_id', $ids)
+				// ->where('date', '>=', $start)
+				// ->where('date', '<=', $end)
+				// ->orderBy('created_at', 'desc')
+				// ->get();
 	
-				foreach($e_claim as $key => $res) {
-					$total_e_claim_amount += $res->amount;
-				}
+				// foreach($e_claim as $key => $res) {
+				// 	$total_e_claim_amount += $res->amount;
+				// }
 	
 				foreach ($in_network as $key => $trans) {
 					$total_in_network_amount += $trans->credit_cost;
 					array_push($transactions, $trans->transaction_id);
 				}
 			}
-		}
+		// }
 		
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 		$number = InvoiceLibrary::getInvoiceNuber('company_credits_statement', 3);
@@ -259,13 +260,15 @@ class SpendingInvoiceLibrary
 			'statement_in_network_amount'   => $total_in_network_amount,
 			'statement_e_claim_amount'  => $total_e_claim_amount,
 			'currency_type'				=> $customer->currency_type,
-			'currency_value'			=> $currency
+			'currency_value'			=> $currency,
+			'payment_method'			=> $payment_method
 		);
 
 		if($lite_plan) {
 			$statement_data['lite_plan'] = 1;
 		}
 
+		// $statement_data = $spending['medical_payment_method_panel'];
 		if($spending['medical_method'] == "pre_paid" && $plan_method == "pre_paid" || $spending['account_type'] == "enterprise_plan") {
 			if($spending['account_type'] != "enterprise_plan") {
 				$statement_data['plan_method'] = 'pre_paid';
@@ -301,23 +304,32 @@ class SpendingInvoiceLibrary
 		$transaction_details = [];
 		$total_consultation = 0;
 		$in_network_transactions = 0;
-		$consultation_status = false;
 		$lite_plan = false;
 		$total_gp_medicine = 0;
 		$total_gp_consultation = 0;
 		$total_dental = 0;
 		$total_tcm = 0;
 		$total_transactions = 0;
-		$transaction_invoices = SpendingInvoiceTransactions::where('invoice_id', $invoice_id)->get();
+		$total_post_paid_spent = 0;
+		$total_pre_paid_spent = 0;
+		$with_post_paid = false;
 
+		$statement = DB::table('company_credits_statement')
+						->where('statement_id', $invoice_id)
+						->first();
+		// check new transactions added
+		$check_invoice_transactions = self::checkSpendingInvoiceNewTransactions($customer_id, $statement->statement_start_date, $statement->statement_end_date, $statement->statement_id, 'post_paid');
+		$statement_id = $statement->statement_id;
+
+		$transaction_invoices = SpendingInvoiceTransactions::where('invoice_id', $invoice_id)->get();
+		// return $invoice_id;
 		foreach ($transaction_invoices as $key => $transaction) {
 			$mednefits_fee = 0;
-			$consultation = 0;
+			$mednefits_credits = 0;
 			$trans = Transaction::where('transaction_id', $transaction->transaction_id)
-			->where('deleted', 0)
-			->where('paid', 1)
-			->first();
-
+						->where('deleted', 0)->where('paid', 1)
+						->first();
+						
 			if($trans) {
 				$consultation_cash = false;
 				$consultation_credits = false;
@@ -338,48 +350,77 @@ class SpendingInvoiceLibrary
 						$table_wallet_history = 'wellness_wallet_history';
 					}
 
+					$total_transactions++;
+
+
+					$history = DB::table($table_wallet_history)
+						->where('logs', 'deducted_from_mobile_payment')
+						->where('id', $trans['transaction_id'])
+						->first();
+
+					if($history && $history->spending_method == "pre_paid") {
+						$total_pre_paid_spent += $history->credit;
+					} else {
+						$with_post_paid = true;
+						$total_post_paid_spent += $trans['credit_cost'];
+					}
+
 					if((int)$trans['lite_plan_enabled'] == 1) {
 						$lite_plan = true;
-						$consultation_status = true;
 						$logs_lite_plan = DB::table($table_wallet_history)
 						->where('logs', 'deducted_from_mobile_payment')
 						->where('lite_plan_enabled', 1)
 						->where('id', $trans['transaction_id'])
 						->first();
 
-						if($logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_use_credits'] == 0 || $logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_enabled'] == 1) {
+						if($logs_lite_plan && (int)$trans['credit_cost'] >= 0 && (int)$trans['lite_plan_use_credits'] == 0) {
 							$total_consultation += floatval($logs_lite_plan->credit);
-							$total_gp_consultation += floatval($logs_lite_plan->credit);
-							$consultation = number_format($logs_lite_plan->credit, 2);
+							$mednefits_credits = floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
-						} else if($logs_lite_plan && floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
-							$total_consultation += floatval($logs_lite_plan->credit);
 							$total_gp_consultation += floatval($logs_lite_plan->credit);
-							$consultation = $logs_lite_plan->credit;
+							if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
+								$total_pre_paid_spent += $logs_lite_plan->credit;
+							} else {
+								$total_post_paid_spent += $logs_lite_plan->credit;
+							}	
+						} else if($logs_lite_plan && $trans['procedure_cost'] >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
+							$total_consultation += floatval($logs_lite_plan->credit);
+							$mednefits_credits = floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
-						} else if(floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 0){
-							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+							$total_gp_consultation += floatval($logs_lite_plan->credit);
+							if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
+								$total_pre_paid_spent += $logs_lite_plan->credit;
+							} else {
+								$total_post_paid_spent += $logs_lite_plan->credit;
+							}	
+						} else if($trans['procedure_cost'] >= 0 && $trans['lite_plan_use_credits'] === 0 || $trans['procedure_cost'] >= 0 && $trans['lite_plan_use_credits'] === "0"){
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 								$total_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
-								$consultation = number_format($trans['consultation_fees'] * $trans->currency_amount, 2);
-								$total_gp_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
+								$total_gp_consultation + floatval($trans['consultation_fees']) * $trans->currency_amount;
 							} else {
 								$total_consultation += floatval($trans['consultation_fees']);
-								$consultation = number_format($trans['consultation_fees'], 2);
 								$total_gp_consultation += floatval($trans['consultation_fees']);
 							}
 						}
 					}
 
-
 					if($fields == true) {
-						if((float)$trans['credit_cost'] > 0) {
-							$mednefits_credits = (float)$trans['credit_cost'];
+						if($trans['credit_cost'] > 0) {
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+								$mednefits_credits += (float)$trans['credit_cost'] * $trans->currency_amount;
+							} else {
+								$mednefits_credits += (float)$trans['credit_cost'];
+							}
 							$cash = 0;
 						} else {
-							$mednefits_credits = 0;
-							$cash = (float)$trans['procedure_cost'];
+							$mednefits_credits += 0;
+							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								$cash = (float)$trans['procedure_cost'] * $trans->currency_amount;
+							} else {
+								$cash = (float)$trans['procedure_cost'];
+							}
 						}
 
 						$receipt_images = DB::table('user_image_receipt')->where('transaction_id', $trans['transaction_id'])->get();
@@ -387,16 +428,14 @@ class SpendingInvoiceLibrary
 						$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 						$customer = DB::table('user')->where('UserID', $trans['UserID'])->first();
 						$procedure_temp = "";
-						$services = "";
-						$procedure = "";
-							// get services
-						if((int)$trans['multiple_service_selection'] == 1)
+						// get services
+						if($trans['multiple_service_selection'] == 1 || $trans['multiple_service_selection'] == "1")
 						{
-							  // get multiple service
+							// get multiple service
 							$service_lists = DB::table('transaction_services')
-							->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
-							->where('transaction_services.transaction_id', $trans['transaction_id'])
-							->get();
+												->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
+												->where('transaction_services.transaction_id', $trans['transaction_id'])
+												->get();
 
 							foreach ($service_lists as $key => $service) {
 								if(sizeof($service_lists) - 2 == $key) {
@@ -409,145 +448,168 @@ class SpendingInvoiceLibrary
 							$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
 						} else {
 							$service_lists = DB::table('clinic_procedure')
-							->where('ProcedureID', $trans['ProcedureID'])
-							->first();
+												->where('ProcedureID', $trans['ProcedureID'])
+												->first();
 							if($service_lists) {
 								$procedure = ucwords($service_lists->Name);
 								$clinic_name = ucwords($clinic_type->Name).' - '.$procedure;
 							} else {
-							      // $procedure = "";
+								// $procedure = "";
 								$clinic_name = ucwords($clinic_type->Name);
 							}
 						}
 
-							// check if there is a receipt image
-						$receipt = DB::table('user_image_receipt')->where('transaction_id', $trans['transaction_id'])->get();
+						// check if there is a receipt image
+						$receipt = DB::table('user_image_receipt')->where('transaction_id', $trans['transaction_id'])->count();
 
-						if(sizeof($receipt) > 0) {
+						if($receipt > 0) {
 							$receipt_status = TRUE;
-							foreach ($receipt as $key => $doc) {
-								if($doc->type == "image") {
-									$doc->file = FileHelper::formatImageAutoQualityCustomer($doc->file, 40);
-								}
-							}
-							$receipt_files = $receipt;
 						} else {
 							$receipt_status = FALSE;
-							$receipt_files = FALSE;
 						}
 
-						$half_credits = false;
 						$total_amount = (float)$trans['credit_cost'];
 						$procedure_cost = (float)$trans['procedure_cost'];
 						$treatment = (float)$trans->credit_cost;
-							// $consultation = 0;
+
 						if((int)$trans['health_provider_done'] == 1) {
 							$receipt_status = TRUE;
 							$health_provider_status = TRUE;
 							$payment_type = "Cash";
 							$transaction_type = "cash";
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-								$procedure_cost = "0.00";
-								$treatment = $trans->credit_cost + $trans->cash_cost;
-                      				// $consultation = number_format($trans['co_paid_amount'], 2);
+							$treatment = 0;
+							$logs_lite_plan = DB::table($table_wallet_history)
+								->where('logs', 'deducted_from_mobile_payment')
+								->where('lite_plan_enabled', 1)
+								->where('id', $trans['transaction_id'])
+								->first();
+
+								if($logs_lite_plan) {
+									// if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+									// 	$total_amount = ($trans['credit_cost'] * $trans->currency_amount) + $logs_lite_plan->credit;
+									// } else {
+										$total_amount = (float)$trans['credit_cost'] + $logs_lite_plan->credit;
+									// }
+								} else {
+									// if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+									// 	$total_amount = $trans['consultation_fees'] * $trans->currency_amount;
+									// } else {
+										$total_amount = $trans['consultation_fees'];
+									// }
+								}
+								$procedure_cost = (float)$trans['credit_cost'];
 							}
 						} else {
-							  // $payment_type = "Mednefits Credits";
+							$payment_type = "Mednefits Credits";
 							$transaction_type = "credits";
 							$health_provider_status = FALSE;
-							$procedure_cost = (float)$trans->credit_cost;
-							if((float)$trans->credit_cost > 0 && (float)$trans->cash_cost > 0) {
-								$payment_type = 'Mednefits Credits + Cash';
-								$half_credits = true;
-							} else {
-								$payment_type = 'Mednefits Credits';
-							}
-
+							$procedure_cost = $trans->credit_cost;
 							if((int)$trans['lite_plan_enabled'] == 1) {
-								$total_amount = (float)$trans['credit_cost'] + $trans['consultation_fees'];
-								$treatment = (float)$trans->credit_cost;
+							$logs_lite_plan = DB::table($table_wallet_history)
+								->where('logs', 'deducted_from_mobile_payment')
+								->where('lite_plan_enabled', 1)
+								->where('id', $trans['transaction_id'])
+								->first();
+
+							if($logs_lite_plan) {
+								// if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+								// 	$total_amount = ($trans['credit_cost'] * $trans->currency_amount) + $logs_lite_plan->credit;
+								// 	$treatment = $trans->credit_cost * $trans->currency_amount;
+								// } else {
+									$total_amount = (float)$trans['credit_cost'] + $logs_lite_plan->credit;
+									$treatment = $trans->credit_cost;
+								// }
+							}
 							}
 						}
 
-							// get clinic type
+						// get clinic type
 						$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
 						$type = "";
 						$clinic_type_name = "";
-						$image = "";
-						
-						$clinic_type_data = ClinicHelper::getClinicTypeImage($clinic_type);
-						$type = $clinic_type_data['type_name'];
-						$clinic_type_name = $clinic_type_data['type'];
-						$image = $clinic_type_data['image'];
-
 						if($clinic_type->head == 1 || $clinic_type->head == "1") {
-							if($clinic_type->Name == "GP") { 
+							if($clinic_type->Name == "GP") {
+								$type = "general_practitioner";
+								$clinic_type_name = "GP";
 								$total_gp_medicine += $treatment;
 							} else if($clinic_type->Name == "Dental") {
-							$total_dental += $treatment;
-							 $type = "Dental";
-							 $type_name = "dental_care";
-							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-						   } else if($clinic_type->Name == "TCM") {
-							 $total_dental += $total_tcm;
-							 $type = "TCM";
-							 $type_name = "tcm";
-							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-						   }
-						  } else {
+								$type = "dental_care";
+								$clinic_type_name = "Dental";
+								$total_dental += $treatment;
+							} else if($clinic_type->Name == "TCM") {
+								$type = "tcm";
+								$clinic_type_name = "TCM";
+								$total_tcm += $treatment;
+							} else if($clinic_type->Name == "Screening") {
+								$type = "health_screening";
+								$clinic_type_name = "Screening";
+							} else if($clinic_type->Name == "Wellness") {
+								$type = "wellness";
+								$clinic_type_name = "Wellness";
+							} else if($clinic_type->Name == "Specialist") {
+								$type = "health_specialist";
+								$clinic_type_name = "Specialist";
+							}
+						} else {
 							$find_head = DB::table('clinic_types')
-							->where('ClinicTypeID', $clinic_type->sub_id)
-							->first();
-							if($clinic_type->Name == "GP") { 
+										->where('ClinicTypeID', $clinic_type->sub_id)
+										->first();
+							if($find_head->Name == "GP") {
+								$type = "general_practitioner";
+								$clinic_type_name = "GP";
 								$total_gp_medicine += $treatment;
 							} else if($find_head->Name == "Dental") {
-							 $total_dental += $treatment;
-							 $type = "Dental";
-							 $type_name = "dental_care";
-							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515231/lhp4yyltpptvpfxe3dzj.png";
-						   } else if($find_head->Name == "TCM") {
-							 $total_dental += $total_tcm;
-							 $type = "TCM";
-							 $type_name = "tcm";
-							 $image = "https://res.cloudinary.com/dzh9uhsqr/image/upload/v1514515256/jyocn9mr7mkdzetjjmzw.png";
-						   }
-						  }
+								$type = "dental_care";
+								$clinic_type_name = "Dental";
+								$total_dental += $treatment;
+							} else if($find_head->Name == "TCM") {
+								$type = "tcm";
+								$clinic_type_name = "TCM";
+								$total_tcm += $treatment;
+							} else if($find_head->Name == "Screening") {
+								$type = "health_screening";
+								$clinic_type_name = "Screening";
+							} else if($find_head->Name == "Wellness") {
+								$type = "wellness";
+								$clinic_type_name = "Wellness";
+							} else if($find_head->Name == "Specialist") {
+								$type = "health_specialist";
+								$clinic_type_name = "Specialist";
+							}
+						}
 
 						// check user if it is spouse or dependent
-
-						$employee = $customer->Name;
-						$dependent = null;
 						if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 							$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 							$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
 							$sub_account = ucwords($temp_account->Name);
-							$employee = $sub_account;
 							$sub_account_type = $temp_sub->user_type;
 							$owner_id = $temp_sub->owner_id;
-							$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-							$dependent = $customer->Name;
+							$employee = ucwords($temp_account->Name);
+							$dependent = ucwords($customer->Name);
 						} else {
 							$sub_account = FALSE;
 							$sub_account_type = FALSE;
 							$owner_id = $customer->UserID;
-							$dependent_relationship = FALSE;
+							$employee = ucwords($customer->Name);
+							$dependent = null;
 						}
 
-						if($trans->default_currency == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "sgd" && $trans->default_currency == "myr") {
+						if($trans->default_currency == "myr" && $trans->currency_type == "sgd" || $trans->default_currency == "myr" && $trans->currency_type == "myr") {
+							// $trans['consultation_fees'] = $trans['consultation_fees'] * $trans->currency_amount;
 							$procedure_cost = $procedure_cost * $trans->currency_amount;
 							$consultation_credits = $consultation_credits * $trans->currency_amount;
 							// $consultation = $consultation * $trans->currency_amount;
 							$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
-							$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
+							$trans->cash_cost = (float)$trans->cash_cost * $trans->currency_amount;
 							$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
 							$total_amount = $total_amount * $trans->currency_amount;
 							$cash = $cash * $trans->currency_amount;
 							$mednefits_credits = $mednefits_credits * $trans->currency_amount;
 							$treatment = $treatment * $trans->currency_amount;
-							$trans->currency_type = "myr";
-						} else {
-							$trans->currency_type = "sgd";
+							$trans->default_currency = "myr";
+							$trans['consultation_fees'] = $trans['consultation_fees'] * $trans->currency_amount;
 						}
 
 						// check for
@@ -555,18 +617,17 @@ class SpendingInvoiceLibrary
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
 						$format = array(
 							'clinic_name'       => $clinic->Name,
-							'clinic_image'      => $clinic->image,
-							'total_amount'      => number_format($total_amount, 2),
+							'amount'            => number_format($total_amount, 2),
+							'total_amount'            => number_format($total_amount, 2),
 							'procedure_cost'	=> number_format($procedure_cost, 2),
 							'clinic_type_and_service' => $clinic_name,
-							'service'			=> $procedure,
+							'clinic_type_name'	=> $clinic_type_name,
 							'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
 							'member'            => ucwords($customer->Name),
-							'employee'            => ucwords($employee),
-							'dependent'					=> ucwords($dependent),
+							'employee'					=> $employee,
+							'dependent'					=> $dependent,
 							'transaction_id'    => strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 							'receipt_status'    => $receipt_status,
-							'receipt_files'      => $receipt_files,
 							'health_provider_status' => $health_provider_status,
 							'user_id'           => $trans['UserID'],
 							'type'              => 'In-Network',
@@ -574,8 +635,6 @@ class SpendingInvoiceLibrary
 							'day'               => date('d', strtotime($trans['date_of_transaction'])),
 							'time'              => date('h:ia', strtotime($trans['date_of_transaction'])),
 							'clinic_type'       => $type,
-							'clinic_type_name'  => $clinic_type_name,
-							'clinic_type_image' => $image,
 							'owner_account'     => $sub_account,
 							'owner_id'          => $owner_id,
 							'sub_account_user_type' => $sub_account_type,
@@ -585,20 +644,11 @@ class SpendingInvoiceLibrary
 							'mednefits_credits'			=> number_format($mednefits_credits, 2),
 							'cash'									=> number_format($cash, 2),
 							'consultation_credits' => number_format($consultation_credits, 2),
-							'consultation'		=> number_format($consultation, 2),
+							'consultation'		=> (int)$trans['lite_plan_enabled'] == 1 ? number_format($trans['consultation_fees'], 2) : "0.00",
 							'service_credits'   => $service_credits,
 							'transaction_type'  => $transaction_type,
 							'treatment'			=> number_format($treatment, 2),
-							'amount'			=> number_format($treatment, 2),
-							'spending_type'		=> $trans->spending_type,
-							'dependent_relationship'	=> $dependent_relationship,
-							'lite_plan'			=> (int)$trans['lite_plan_enabled'] == 1 ? true : false,
-							'cap_transaction'   => $half_credits,
-							'cap_per_visit'     => number_format($trans->cap_per_visit, 2),
-							'paid_by_cash'      => number_format($trans->cash_cost, 2),
-							'paid_by_credits'   => number_format((float)$trans->credit_cost, 2),
-							"currency_symbol" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD",
-							"currency_type" 	=> $trans->currency_type == "myr" ? "MYR" : "SGD"
+							'currency_type'	=> strtoupper($trans->default_currency)
 						);
 
 						array_push($transaction_details, $format);
@@ -608,22 +658,25 @@ class SpendingInvoiceLibrary
 		}
 
 		if($fields == true) {
-				// return $transaction_details;
+			// return $transaction_details;
 			usort($transaction_details, function($a, $b) {
 				return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
 			});
 		}
+
 		return array(
-			'credits' => $in_network_transactions,
-			'consultation_status'	=> $consultation_status,
+			'credits' 				=> $in_network_transactions,
 			'total_consultation'	=> $total_consultation, 
-			'transactions' => $transaction_details,
-			'lite_plan'		=> $lite_plan,
 			'total_gp_medicine'		=> $total_gp_medicine,
 			'total_gp_consultation'	=> $total_gp_consultation,
 			'total_dental'			=> $total_dental,
 			'total_tcm'				=> $total_tcm,
-			'total_transactions'	=> $total_transactions
+			'transactions' 			=> $transaction_details,
+			'lite_plan'				=> $lite_plan,
+			'total_transactions'	=> $total_transactions,
+			'total_post_paid_spent' => $total_post_paid_spent,
+			'total_pre_paid_spent'	=> $total_pre_paid_spent,
+			'with_post_paid'		=> $with_post_paid
 		);
 	}
 
@@ -803,7 +856,7 @@ class SpendingInvoiceLibrary
 		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 		if((int)$data->lite_plan == 1) {
 			$lite_plan = true;
-		} else if($results['consultation_status'] == true) {
+		} else if($results['lite_plan'] == true) {
 			$lite_plan = true;
 		}
 
@@ -837,11 +890,12 @@ class SpendingInvoiceLibrary
 			'statement_end_date'	=> date('d F', strtotime($data->statement_end_date)),
 			'start_date' => date('j M', strtotime($data->statement_start_date)),
 			'end_date'	=> date('j M Y', strtotime($data->statement_end_date)),
-			'period'			=> date('d F', strtotime($data->statement_start_date)).' - '.date('d F Y', strtotime($data->statement_end_date)),
+			'period'			=> date('d-m-Y', strtotime($data->statement_start_date)).' - '.date('d-m-Y', strtotime($data->statement_end_date)),
 			'statement_id'	=> $data->statement_id,
 			'statement_number' => $data->statement_number,
 			'statement_status'	=> $data->statement_status,
 			'statement_total_amount' => DecimalHelper::formatDecimal($results['credits'] + $results['total_consultation']),
+			'total_amount' => DecimalHelper::formatDecimal($results['credits'] + $results['total_consultation']),
 			'total_in_network_amount'		=> $results['credits'],
 			'statement_amount_due' => DecimalHelper::formatDecimal($amount_due),
 			'consultation_amount_due'	=> $consultation_amount_due,
@@ -864,45 +918,45 @@ class SpendingInvoiceLibrary
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-		$transactions_data = [];
-		$array_of_users = [];
+		// $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+		// $transactions_data = [];
+		// $array_of_users = [];
 		$lite_plan = false;
-		$lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
+		// $lite_plan = StringHelper::liteCompanyPlanStatus($customer_id);
 		$transactions = [];
 
-		if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid")	{
-			foreach ($corporate_members as $key => $member) {
-				$ids = StringHelper::getSubAccountsID($member->user_id);
-				$in_network = DB::table('transaction_history')
-				->whereIn('UserID', $ids)
-				->where('lite_plan_enabled', 1)
-				->where('credit_cost', 0)
-				->where('deleted', 0)
-				->where('paid', 1)
-				->where('created_at', '>=', $start)
-				->where('created_at', '<=', $end)
-				->orderBy('created_at', 'desc')
-				->get();
+		// if($spending['medical_method'] == "pre_paid" && $plan_method == "post_paid")	{
+		// 	foreach ($corporate_members as $key => $member) {
+		// 		$ids = StringHelper::getSubAccountsID($member->user_id);
+		// 		$in_network = DB::table('transaction_history')
+		// 		->whereIn('UserID', $ids)
+		// 		->where('lite_plan_enabled', 1)
+		// 		->where('credit_cost', 0)
+		// 		->where('deleted', 0)
+		// 		->where('paid', 1)
+		// 		->where('created_at', '>=', $start)
+		// 		->where('created_at', '<=', $end)
+		// 		->orderBy('created_at', 'desc')
+		// 		->get();
 	
-				foreach ($in_network as $key => $trans) {
-					if($trans->spending_type == 'medical') {
-						$table_wallet_history = 'wallet_history';
-					} else {
-						$table_wallet_history = 'wellness_wallet_history';
-					}
-					$logs_lite_plan = DB::table($table_wallet_history)
-						->where('logs', 'deducted_from_mobile_payment')
-						->where('lite_plan_enabled', 1)
-						->where('id', $trans->transaction_id)
-						->first();
+		// 		foreach ($in_network as $key => $trans) {
+		// 			if($trans->spending_type == 'medical') {
+		// 				$table_wallet_history = 'wallet_history';
+		// 			} else {
+		// 				$table_wallet_history = 'wellness_wallet_history';
+		// 			}
+		// 			$logs_lite_plan = DB::table($table_wallet_history)
+		// 				->where('logs', 'deducted_from_mobile_payment')
+		// 				->where('lite_plan_enabled', 1)
+		// 				->where('id', $trans->transaction_id)
+		// 				->first();
 
-					if(!$logs_lite_plan)	{
-						array_push($transactions, $trans->transaction_id);
-					}
-				}
-			}
-		} else {
+		// 			if(!$logs_lite_plan)	{
+		// 				array_push($transactions, $trans->transaction_id);
+		// 			}
+		// 		}
+		// 	}
+		// } else {
 			foreach ($corporate_members as $key => $member) {
 				$ids = StringHelper::getSubAccountsID($member->user_id);
 				$temp_trans_lite_plan = DB::table('transaction_history')
@@ -931,8 +985,8 @@ class SpendingInvoiceLibrary
 					array_push($transactions, $trans->transaction_id);
 				}
 			}
-		}
-
+		// }
+		
 		foreach ($transactions as $key => $trans) {
 			$check_transaction = \SpendingInvoiceTransactions::where('transaction_id',  $trans)->first();
 

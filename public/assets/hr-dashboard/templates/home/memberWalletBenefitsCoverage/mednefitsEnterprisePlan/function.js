@@ -11,6 +11,7 @@ app.directive('mednefitsEnterprisePlanDirective', [
 				console.log($location);
 
         scope.showLastTermSelector = false;
+        scope.applyTerm = false;
         
 
         scope.termSelector = function () {
@@ -60,6 +61,7 @@ app.directive('mednefitsEnterprisePlanDirective', [
             scope.termSelector();
             console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);

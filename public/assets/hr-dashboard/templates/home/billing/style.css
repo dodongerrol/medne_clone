@@ -51,7 +51,7 @@
   border: 2px solid #E0E0E0;
   border-radius: 3px;
   position: relative;
-  width: 150px;
+  width: 190px;  
   height: 32px;
 }
 .invoice-type-select-wrapper select {
@@ -142,6 +142,10 @@
 .download-dp-container >div {
   padding: 15px;
   cursor: pointer;
+}
+.download-dp-container >div.disabled {
+  pointer-events: none;
+  opacity: .3;
 }
 .download-dp-container >div:hover {
   background-color: rgba(158,158,158,0.2);

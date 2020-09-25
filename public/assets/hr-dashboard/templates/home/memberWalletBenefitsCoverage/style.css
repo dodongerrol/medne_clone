@@ -1,3 +1,6 @@
+.member-wallet-benefits-wrapper input{
+  outline: none;
+}
 .member-wallet-benefits-wrapper {
   height: 100%;
 }
@@ -7,6 +10,7 @@
 .member-wallet-benefits-wrapper >div:last-child {
   padding: 100px 0 0;
   height: 100%;
+  min-height: 100vh;
 }
 .member-wallet-body-info-container {
   display: flex;
@@ -36,10 +40,13 @@
   font-size: 17px;
   font-family: 'Helvetica Medium';
   color: #000000;
-  padding: 0 50px;
+  padding: 10px 50px;
 }
 .side-menu-selector .active { 
   background-color: #fff;
+}
+.side-menu-selector .active a{ 
+  text-decoration: underline;
 }
 .side-menu-selector .side-selector-text {
   padding: 10px 50px;
@@ -67,6 +74,14 @@
   padding: 5px 10px;
   font-size: 14px;
   margin: 0 20px;
+}
+.show-details-on-container .current-term-input-wrapper.disable {
+  pointer-events: none;
+  background: #e2e1e1;
+  opacity: .5;
+}
+.show-details-on-container .current-term-input-wrapper.disable > span {
+  opacity: 0;
 }
 .show-details-on-container button {
   width: 110px;
@@ -442,4 +457,37 @@
   padding: 0;
   border: 0;
   -webkit-appearance: none;
+}
+
+.prepaid-credits-toggle[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.out-of-pocket-wrapper .mwbc-box-container .prepaid-subtext {
+  font-size: 17px;
+  line-height: 24px;
+  color: #848484;
+  margin: 15px 0;
+}
+.payment-current-method >div:first-child {
+  margin: 0 50px 0 0;
+}
+.input-readonly,
+.input-readonly input {
+  background-color: #f2f2f2;
+  pointer-events: none;
+}
+.reimbursement-text {
+  font-family: 'Helvetica Medium';
+  text-decoration: underline;
+}
+.non-panel-claim-container >div.reimbursement-text-wrapper {
+  margin: 30px 0 0;
+}
+.show-details-on-container .btn-apply-term {
+  pointer-events: none;
+}
+.show-details-on-container .btn-apply-term.active {
+  background-color: #0392CF;
+  pointer-events: initial;
 }

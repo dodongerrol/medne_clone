@@ -20,6 +20,8 @@ app.directive('mednefitsBasicPlanDirective', [
           non_panel_payment_method: 'mednefits_credits',
         }
         scope.isConfirmModal = false;
+        scope.edit_medical_wallet_details = {};
+        scope.applyTerm = false;
 
         scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
@@ -34,8 +36,8 @@ app.directive('mednefitsBasicPlanDirective', [
         };
         
 
-        scope.getDateTerms = function () {
-          hrSettings.fetchDateTerms()
+        scope.getDateTerms = async function () {
+          await hrSettings.fetchDateTerms()
           .then(function(response){
             scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
@@ -74,27 +76,22 @@ app.directive('mednefitsBasicPlanDirective', [
             scope.termSelector();
             console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
             scope.getBenefitsCoverageData(data);
+            scope._getPaymentDetails_(data);
           }
           console.log(scope.selectedTerm)
         }
 
-        scope.getBenefitsCoverageData = function ( data ) {
-					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
+        scope.getBenefitsCoverageData = async function ( data ) {
           scope.showLoading();
-          hrSettings.fetchBenefitsCoverageData( scope.currentTermStartDate, scope.currentTermEndDate, 'basic_plan' )
+          await hrSettings.fetchBenefitsCoverageData( data.start, data.end, 'basic_plan' )
             .then(function(response){
               console.log(response);
 							scope.benefitsCoverageData = response.data;
-							// scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
-							// scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
-							// scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
-							console.log(scope.benefitsCoverageData);
-							
 							scope.hideLoading();
             })
 				}
@@ -109,37 +106,23 @@ app.directive('mednefitsBasicPlanDirective', [
         }
 
         scope.editMednefitsCredits = function () {
+          scope.edit_medical_wallet_details = {
+            panel: scope.medical_wallet_details.panel_payment_method,
+            non_panel: scope.medical_wallet_details.non_panel_payment_method
+          };
+          scope.edit_wellness_wallet_details = {
+            // panel: scope.wellness_wallet_details.panel_payment_method,
+            non_panel: scope.wellness_wallet_details.non_panel_payment_method
+          };
+
+
           scope.isConfirmPaymentShow = false;
+          scope.updateButtonStatus = false;
         }
 
-        scope.updatePaymentMethods = function ( type ) {
-          if ( type == 'update' ) {
-            scope.isConfirmPaymentShow = true;
-          }
-          if ( type == 'confirm' ) {
-            let data = {
-              id: 1,
-              customer_id: 334,
-              medical_panel_payment_method: scope.medical_wallet_details.panel_payment_method,
-              medical_non_panel_payment_method: scope.medical_wallet_details.non_panel_payment_method,
-              wellness_non_panel_payment_method: scope.wellness_wallet_details.non_panel_payment_method,
-            }
-            console.log(data);
-            scope.showLoading();
-            hrSettings.updatePaymentMethods( data )
-            .then(function(response){
-              console.log(response);
-              if ( response.data.status == true ) {
-                $('#edit-payment-methods-modal').modal('hide');
-                scope.hideLoading();
-              }							
-            })
-          }
-        }
-
-        scope._getPaymentDetails_ = function ( data ) {
+        scope._getPaymentDetails_ = async function ( data ) {
           // console.log(data);
-          hrSettings.fetchMemberWallet( data.start, data.end, 'medical' )
+          await hrSettings.fetchMemberWallet( data.start, data.end, 'medical' )
             .then(function(response){
               // console.log(response);
               scope.medical_wallet_details = response.data.data;
@@ -147,14 +130,70 @@ app.directive('mednefitsBasicPlanDirective', [
 							scope.hideLoading();
             })
 
-            hrSettings.fetchMemberWallet( data.start, data.end, 'wellness' )
-            .then(function(response){
-              // console.log(response);
-							scope.wellness_wallet_details = response.data.data;
-              console.log(scope.wellness_wallet_details);
-						
-							scope.hideLoading();
+          await hrSettings.fetchMemberWallet( data.start, data.end, 'wellness' )
+          .then(function(response){
+            // console.log(response);
+            scope.wellness_wallet_details = response.data.data;
+            console.log(scope.wellness_wallet_details);
+          
+            scope.hideLoading();
+          })
+        }
+
+        scope.updatePaymentMethods = async function ( type ) {
+          if ( type == 'update' ) {
+            scope.isConfirmPaymentShow = true;
+          }
+          if ( type == 'confirm' ) {
+            let data = {
+              id: 1,
+              customer_id: 334,
+              medical_panel_payment_method: scope.edit_medical_wallet_details.panel,
+              medical_non_panel_payment_method: scope.edit_medical_wallet_details.non_panel,
+              wellness_non_panel_payment_method: scope.edit_wellness_wallet_details.non_panel,
+            }
+            console.log(data);
+            scope.showLoading();
+            await hrSettings.updatePaymentMethods( data )
+            .then(async function(response){
+              console.log(response);
+              if ( response.data.status == true ) {
+                $('#edit-payment-methods-modal').modal('hide');
+                await scope._getPaymentDetails_(scope.selectedTerm);
+                await scope.getBenefitsCoverageData(scope.selectedTerm);
+                scope.hideLoading();
+              }							
             })
+          }
+        }
+
+        scope.submitTopUpCredits = function ( formData ) {
+          var data = {
+            // customer_id: Number( scope.selected_customer_id ),
+            total_credits: Number( formData.total_credits.replace(/,/g, "") ),
+            purchase_credits: Number( formData.purchased_credits.replace(/,/g, "") ),
+            bonus_percentage: Number( formData.bonus_credits_percentage / 100 ),
+            bonus_credits: Number( formData.bonus_credits.replace(/,/g, "") ),
+            invoice_date: moment( formData.invoice_date ).format('YYYY-MM-DD')
+          }
+          scope.showLoading();
+          console.log(data);
+          hrSettings.updateTopUp( data )
+            .then(function(response){
+              console.log(response);
+              scope.hideLoading();
+              if(response.data.status){
+                scope.isTopUpSuccess = true;
+                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData)
+              }else{
+                swal('Error!', response.data.message, 'error');
+              }
+            })
+        }
+
+        scope.updateButtonStatus = false;
+        scope.panelSelector = function () {
+          scope.updateButtonStatus = true;
         }
 
         scope.showLoading = function () {
@@ -176,20 +215,25 @@ app.directive('mednefitsBasicPlanDirective', [
         scope._isConfirmModalBtn_ = async function ( type, src ) {
           if ( type == 'confirm' && src == 'activate' ) {
             await hrSettings.fetchBasicPlan( )
-            .then(function(response){
+            .then(async function(response){
               console.log(response);	
               scope.hideLoading();
               
-              scope.getBenefitsCoverageData(scope.selectedTerm);
+              await scope._getPaymentDetails_(scope.selectedTerm);
+              await scope.getBenefitsCoverageData(scope.selectedTerm);
               scope.isConfirmModal = true;
             })
           }
         }
 
        
-        scope.onLoad = function () {
+        scope.onLoad = async function () {
           scope.showLoading();
-          scope.getDateTerms();
+          if (scope.defaultDateTerms == null) {
+            await scope.getDateTerms();
+          }
+          await scope.getBenefitsCoverageData(scope.defaultDateTerms);
+          await scope._getPaymentDetails_(scope.defaultDateTerms);
         }
 
         scope.onLoad();

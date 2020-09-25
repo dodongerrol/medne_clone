@@ -43,7 +43,7 @@
         </tr>
         <tr>
           <td style="width: 60%;padding-left: 40px;padding-bottom: 80px;">
-            <p style="font-size: 35px;line-height: 35px;margin: 0 0 15px 0;">CANCELLATION</p>
+            <p style="font-size: 35px;line-height: 35px;margin: 0 0 15px 0;">TERMINATION</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['company']}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$billing_info['first_name']}} {{$billing_info['last_name']}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['address']}}</p>
@@ -53,28 +53,35 @@
           <td style="vertical-align: top;padding-right: 40px;">
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">
               <div class="one" style="width: 46%;display: inline-block;vertical-align: top;">
-                <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Date</p>
+                <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Reference Number</p>
+                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$cancellation_number}}</p>
+
+                <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Termination Date</p>
                 <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_date}}</p>
     
-                <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Number</p>
-                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$cancellation_number}}</p>
+                <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Refund Date</p>
+                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_date}}</p>
               </div>
               <div class="two" style="width: 52%;display: inline-block;vertical-align: top;">
                 <p style="font-size: 14px;line-height: 16px;margin: 0;">
                   <!-- IF SINGAPORE -->
-                  <!-- <span>
+                  @if($currency_type == "SGD")
+                  <span>
+                  Medicloud Pte Ltd<br>
                     7 Temasek Boulevard<br>
                     #18-02 Suntec Tower One<br>
                     038987<br>
                     Singapore
-                  </span> -->
-                  <span>
-                    Mednefits Sdn Bhd<br>
-                    Komune, Level 2,<br>
-                    No. 20, Jalan Kerinchi Kiri 3,<br>
-                    59200, Kuala Lumpur,<br>
-                    Malaysia<br>
                   </span>
+                  @else
+                    <span>
+                      Mednefits Sdn Bhd<br>
+                      Komune, Level 2,<br>
+                      No. 20, Jalan Kerinchi Kiri 3,<br>
+                      59200, Kuala Lumpur,<br>
+                      Malaysia<br>
+                    </span>
+                    @endif
                 </p>
               </div>
             </div>
@@ -155,13 +162,14 @@
 
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank Transfer:</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Bank: UOB</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Mednefits Sdn. Bhd.</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 2213020031</p>
-            
-            <!-- IF SINGAPORE -->
-            <!-- <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Medicloud Pte Ltd</p> -->
-            <!-- <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 3743069399</p> -->
-
+            @if($currency_type == "SGD")
+              <!-- IF SINGAPORE -->
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Medicloud Pte Ltd</p>
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 3743069399</p>
+            @else
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Account Name: Mednefits Sdn. Bhd.</p>
+              <p style="font-size: 14px;line-height: 14px;margin: 0 0 25px 0;">Account Number: 2213020031</p>
+            @endif
             <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Note: Please quote invoice number when submitting payment</p>
           </td>
         </tr>

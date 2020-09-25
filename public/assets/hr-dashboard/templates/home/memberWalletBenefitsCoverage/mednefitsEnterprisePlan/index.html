@@ -5,19 +5,14 @@
       <div class="current-term-wrapper"> 
         <div ng-click="termSelector()" class="current-term-input-wrapper">
           <span>{{ selectedTerm.term }}</span>
-          <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
-            (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
-          </span> -->
           <i class="fa fa-angle-down"></i>
         </div>
-        <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
-          <!-- <span>Last term</span> -->
-          <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+        <div ng-if="showLastTermSelector && selectedTerm != list" ng-repeat="list in dateTerm" class="last-term-selector">
           <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
         </div>
       </div>
       <div>
-        <button ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
+        <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
     <div>
@@ -31,20 +26,20 @@
         <div class="available-credits">
           <span class="available-credits-container dp-flex-ai">
             <div class="available-credits-text member-bold-text">Total Utilised Visits</div>
-            <span class="credits-tooltip-wrapper">
-              <img ng-click="toggleVisits('total-utilised-visits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-              <div class="credits-tooltip-container total-utilised-visits">
+            <span x-data="{ open: false }" class="credits-tooltip-wrapper">
+              <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <div x-show="open" @click.away="open = false" class="credits-tooltip-container total-utilised-visits">
                 <div class="tooltip-title">Total Utilised Visits</div>
                 <p>The total number of panel and non-panel visits used by employees.
                 </p>
                 <div class="tooltip-btn-footer">
-                  <button>Got it</button>
+                  <button @click="open = false">Got it</button>
                 </div>
               </div> 
             </span>
           </span>
           <span>
-            <div class="available-credits-amount member-bold-text">50</div>
+            <div class="available-credits-amount member-bold-text">{{ benefitsCoverageData.total_panel + benefitsCoverageData.total_non_panel }}</div>
           </span>
         </div>
       </div>
@@ -53,14 +48,14 @@
           <div>
             <span class="dp-flex-ai">
               <div>Utilised Panel Visits</div>
-              <span class="credits-tooltip-wrapper">
-                <img ng-click="toggleVisits('utilised-panel-visits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
-                <div ng-if="false" class="credits-tooltip-container utilised-panel-visits">
+              <span x-data="{ open: false }" class="credits-tooltip-wrapper">
+                <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                <div x-show="open" @click.away="open = false" class="credits-tooltip-container utilised-panel-visits">
                   <div class="tooltip-title">Utilised Panel Visits</div>
                   <p>The total number of panel visits used by employees.
                   </p>
                   <div class="tooltip-btn-footer">
-                    <button>Got it</button>
+                    <button @click="open = false">Got it</button>
                   </div>
                 </div> 
               </span>
@@ -75,14 +70,14 @@
           <div>
             <span class="dp-flex-ai">
               <div>Utilised Non-Panel Visits</div>
-              <span class="credits-tooltip-wrapper">
-                <img ng-click="toggleVisits('utilised-non-panel-visits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
-                <div class="credits-tooltip-container utilised-non-panel-visits">
+              <span x-data="{ open: false }" class="credits-tooltip-wrapper">
+                <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+                <div x-show="open" @click.away="open = false" class="credits-tooltip-container utilised-non-panel-visits">
                   <div class="tooltip-title">Utilised Non-Panel Visits</div>
                   <p>The total number of non-panel visits used by employees.
                   </p>
                   <div class="tooltip-btn-footer">
-                    <button>Got it</button>
+                    <button @click="open = false">Got it</button>
                   </div>
                 </div> 
               </span>
@@ -96,14 +91,14 @@
         <div>
           <span class="dp-flex-ai">
             <div>Visits Per Member</div>
-            <span class="credits-tooltip-wrapper">
-              <img ng-click="toggleVisits('visits-per-member')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
-              <div class="credits-tooltip-container visits-per-member">
+            <span x-data="{ open: false }" class="credits-tooltip-wrapper">
+              <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
+              <div x-show="open" @click.away="open = false" class="credits-tooltip-container visits-per-member">
                 <div class="tooltip-title">Visits Per Member</div>
                 <p>Average number of visits per employee since their Benefits Start Date.
                 </p>
                 <div class="tooltip-btn-footer">
-                  <button>Got it</button>
+                  <button @click="open = false">Got it</button>
                 </div>
               </div> 
             </span>

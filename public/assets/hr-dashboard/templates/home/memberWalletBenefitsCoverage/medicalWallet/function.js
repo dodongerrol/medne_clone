@@ -17,25 +17,22 @@ app.directive('memberMedicalWalletDirective', [
 				scope.nonPanelBankTransfer = false;
 				scope.nonPanelMednefitsCredits = false;
 				scope.defaultDateTerms = {};
+				scope.applyTerm = false;
+
+
 
 				scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
         }
 				
-				scope.getDateTerms = function () {
-          hrSettings.fetchDateTerms()
-          .then(function(response){
-            scope.dateTerm = response.data.data;
+				scope.getDateTerms = async function () {
+          await hrSettings.fetchDateTerms()
+          .then(async function(response){
+						scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
-
-            // scope.currentTerm = scope.dateTerm.slice(-1).pop();
-						// console.log(scope.currentTerm );
-						
 						let termLength = scope.dateTerm.length;
-            // console.log(termLength);
-
-            scope.dateTerm.map(function(value,index) {
-              if (index == termLength-1) {
+            await scope.dateTerm.map(function(value,index) {
+              if (index == 0) {
                 value.term = `Current term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
                 value.index = index;
                 scope.defaultDateTerms = value;
@@ -45,9 +42,6 @@ app.directive('memberMedicalWalletDirective', [
                 value.term = `Last term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
               }
             });
-						
-						scope.getMemberWalletData(scope.defaultDateTerms);
-						scope.getMemberActivity(scope.defaultDateTerms);
           })
 				}
 				
@@ -58,7 +52,8 @@ app.directive('memberMedicalWalletDirective', [
             // scope.dateTermIndex = parseInt(data);
             scope.termSelector();
             console.log(data);
-            scope.selectedTerm = data;
+						scope.selectedTerm = data;
+						scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
@@ -67,20 +62,21 @@ app.directive('memberMedicalWalletDirective', [
           console.log(scope.selectedTerm)
         }
 
-				scope.getMemberWalletData = function ( data ) {
-					console.log( data );
+				scope.getMemberWalletData = async function ( data ) {
 					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
           scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
-          scope.showLoading();
-          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical' )
+          await hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical' )
             .then(function(response){
 							scope.medicalWalletData = response.data.data;
 							scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
-							scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
-							scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
-							console.log(scope.medicalWalletData);
-							
-							scope.hideLoading();
+							if(scope.medicalWalletData.benefits_coverage == 'out_of_pocket'){
+								scope.medicalWalletData.benefits_start = '';
+								scope.medicalWalletData.benefits_end = '';
+							}else{
+								scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
+								scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+							}
+							// console.log(scope.medicalWalletData);
             })
 				}
 
@@ -142,22 +138,21 @@ app.directive('memberMedicalWalletDirective', [
 					if ( type == 'non-panel-submission' ) {
 						scope.medicalWalletData.non_panel_submission = opt;
 					}
+
+					scope._saveWallet_();
 				}
 
-				scope.getMemberActivity = function ( data ) {
-					console.log(data);
+				scope.getMemberActivity = async function ( data ) {
 					data.type = 'medical';
-					
-					hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
+					await hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
             .then(function(response){
 							console.log(response);
 							scope.activity_pagination = response;
 							scope.activity_data = response.data.data;
-							scope.hideLoading();
             })
 				}
 
-				scope._saveWallet_ = function () {
+				scope._saveWallet_ = async function () {
 
 					let data = {
 						id: scope.medicalWalletData.id,
@@ -170,13 +165,21 @@ app.directive('memberMedicalWalletDirective', [
 						payment_method_panel:scope.medicalWalletData.panel_payment_method,
 						payment_method_non_panel:scope.medicalWalletData.non_panel_payment_method,
 					}
-
-					hrSettings.updateMemberWallet( data )
-					.then(function(response){
+					scope.showLoading();
+					await hrSettings.updateMemberWallet( data )
+					.then(async function(response){
 						console.log(response);
-						scope.getMemberWalletData( scope.selectedTerm );
+						await scope.getMemberWalletData( scope.selectedTerm );
 						scope.hideLoading();
 					})
+				}
+				
+				scope.getStatus = async function () {
+					await hrSettings.getPlanStatus( )
+            .then(function(response){
+							scope.planStatusData = response.data;
+							console.log(scope.planStatusData);
+						})		
 				}
 
 				scope._saveButtonTrigger_ = function () {
@@ -196,9 +199,13 @@ app.directive('memberMedicalWalletDirective', [
         };
 			
 
-				scope.onLoad = function () {
+				scope.onLoad = async function () {
 					scope.showLoading();
-					scope.getDateTerms();
+					await scope.getDateTerms();
+					await scope.getMemberWalletData(scope.defaultDateTerms);
+					await scope.getMemberActivity(scope.defaultDateTerms);
+					await scope.getStatus();
+					scope.hideLoading();
 				}
 
 				scope.onLoad();

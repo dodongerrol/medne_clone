@@ -195,6 +195,7 @@ class StringHelper{
                         $hr->under_customer_id = $result->under_customer_id;
                         $hr->hr_activated = 1;
                         $hr->active = 1;
+                        $hr->hr_activated = true;
                         if(isset($result->expire_in)) {
                             $hr->expire_in = $result->expire_in;
                         } else {

@@ -5,7 +5,10 @@ app.directive('benefitsTiersDirective', [
 	'$timeout',
 	'dependentsSettings',
 	'$compile',
-	function directive($state, hrSettings, dashboardFactory, $timeout, dependentsSettings, $compile) {
+	'$window',
+	'$http',
+	'serverUrl',
+	function directive($state, hrSettings, dashboardFactory, $timeout, dependentsSettings, $compile, $window, $http, serverUrl) {
 		return {
 			restrict: "A",
 			scope: true,
@@ -1034,7 +1037,7 @@ app.directive('benefitsTiersDirective', [
 							swal('Error!', 'Mobile Number for your country code should be 8 digits.', 'error');
 							return false;
 						}
-						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10) {
+						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 9) {
 							swal('Error!', 'Mobile Number for your country code should be 10 digits.', 'error');
 							return false;
 						}
@@ -1721,7 +1724,37 @@ app.directive('benefitsTiersDirective', [
             scope.isBankNameColShow = true;
             scope.isBankNumColShow = true;
           }
-        }
+				}
+				
+				scope.removeAllTempEmployeeOnClose	=	async function(){
+					// swal({
+					// 	title: "Confirm",
+					// 	text: "Temporary employee data will be deleted, Proceed?",
+					// 	type: "warning",
+					// 	showCancelButton: true,
+					// 	confirmButtonColor: "#0392CF",
+					// 	confirmButtonText: "Confirm",
+					// 	cancelButtonText: "No",
+					// 	closeOnConfirm: true,
+					// 	customClass: "updateEmp"
+					// },
+					// 	async function (isConfirm) {
+					// 		if (isConfirm) {
+								if (scope.temp_employees.length > 0) {
+									await angular.forEach(scope.temp_employees, async function (value, key) {
+										await dependentsSettings.deleteTempEmployees(value.employee.temp_enrollment_id)
+											.then(function (response) {
+												if (key == scope.temp_employees.length - 1) {
+													return true;
+												}
+											});
+									});
+								}else{
+									return true;
+								}
+						// 	}
+						// });
+				}
 
 				scope.showLoading = function () {
 					$(".circle-loader").fadeIn();
@@ -1735,12 +1768,20 @@ app.directive('benefitsTiersDirective', [
 					},100)
 				}
 
+				scope.deleteTempEmpAllData	=	function(){
+					$http.get(serverUrl.url + '/delete_all_temp_employees')
+						.success(function(response){
+							console.log(response);
+						});
+				}
+
 				scope.onLoad = function () {
 					// if (localStorage.getItem('enrollmentOptionTiering') == 'true' || localStorage.getItem('enrollmentOptionTiering') == true) {
 					// 	scope.isTiering = true;
 					// } else {
 					// 	scope.isTiering = false;
 					// }
+					scope.deleteTempEmpAllData();
 					scope.getProgress();
 					scope.companyDependents();
 					scope.getMethod();
@@ -1838,6 +1879,19 @@ app.directive('benefitsTiersDirective', [
 					console.log(iti);
 					console.log(iti2);
 				})
+
+
+				window.addEventListener('beforeunload', async function (e) {
+					console.log(e);
+					if(scope.isReviewEnroll){
+						e.preventDefault(); 
+						e.returnValue = ''; 
+						await scope.removeAllTempEmployeeOnClose();
+					}
+				});
+
+				
+
 			}
 		}
 	}

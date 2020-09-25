@@ -84,7 +84,7 @@
                     Panel Monthly Spending For
                   </td>
                   <td style="border-bottom: 0.5px solid #848484;padding: 5px 8px;">
-                    {{ $statement_start_date }} - {{ $statement_end_date }}
+                    {{ $period }}
                   </td>
                 </tr>
                 <tr>

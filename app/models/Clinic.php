@@ -575,6 +575,39 @@ public function getFavouriteClinics($userID)
                 Clinic::where('ClinicID', $id)->update(['co_paid_amount' => $type->discount_amount]);
             }
         }
+
+        public function updateClinicInfo($data, $clinic_id) {
+            // Update user table first
+            DB::table('user')
+                ->where('Ref_ID', $clinic_id)
+                ->where('UserType', 3)
+                ->update($data);
+            
+            // Update Clinic Table.
+           return Clinic::where('ClinicID', $clinic_id)
+                    ->update($data);
+        }
+
+        public function updateOperatingHours($data, $clinic_id) {
+            // Get manage time id
+            $manageTime = DB::table('manage_times')
+                            ->where('PartyID', $clinic_id)
+                            ->first();
+            // Delete existing time record
+            DB::table('clinic_time')
+                ->where('ManageTimeID', $manageTime['ManageTimeID'])
+                ->delete();
+            // Insert new record
+           return  DB::table('clinic_time')
+                ->insert($data); 
+        }
+
+        public function updateBreakHours($data, $clinic_id) {
+            // update manage events
+           return  DB::table('extra_events')
+                ->where('clinic_id', $clinic_id)
+                ->update($data);
+        }
        
 
 }

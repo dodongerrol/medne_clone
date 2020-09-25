@@ -72,7 +72,7 @@
           <p style="margin-top:0;">Mon - Fri 10:00 to 19:00</p>
 
           <p style="margin:0;font-weight: 700">Drop us a note, anytime</p>
-          <p style="margin-top:0;margin-bottom: 40px;">wanwen@mednefits.com</p>
+          <p style="margin-top:0;margin-bottom: 40px;">happiness@mednefits.com</p>
 
 
           <p style="">Thank you</p>
@@ -94,7 +94,7 @@
             </div>
 
             <div class="social-contact">
-              <img src="https://s3-ap-southeast-1.amazonaws.com/mednefits/e-template-img/mednefits+logo+v3+(blue-box)+LARGE.png" style="width: 35px;margin-bottom: 10px;">
+              <img src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/new_logo_icon.png" style="width: 35px;margin-bottom: 10px;">
 
               <p style="color: #807b7b;margin: 0;font-size: 12px;">7 Temasek Boulevard, #18-02,</p>
               <p style="color: #807b7b;margin: 0;font-size: 12px;">Suntec Tower One, Singapore 038987</p>

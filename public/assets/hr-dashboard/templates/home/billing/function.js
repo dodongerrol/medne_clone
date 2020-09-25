@@ -15,12 +15,13 @@ app.directive('spendingBillingDirective', [
         scope.page_active = 1;
         scope.per_page = 5;
         scope.billing_pagination_dropdown = false;
+        scope.applyTerm = false
         // scope.showLastTermSelector = false;
         
 
-        // scope.termSelector = function () {
-        //   scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
-        // }
+        scope.termSelector = function () {
+          scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
+        }
 
         scope.formatDate = function (date) {
           return moment(new Date(date)).format("DD/MM/YYYY");
@@ -65,10 +66,11 @@ app.directive('spendingBillingDirective', [
             scope.termSelector();
             console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
-            // scope.getBenefitsCoverageData(data);
+            scope.getBillingInvoiceHistory();
           }
           console.log(scope.selectedTerm)
         }
@@ -84,6 +86,14 @@ app.directive('spendingBillingDirective', [
               scope.billingData = response.data.data;
               scope.billingPagination = response.data;
               scope.totalOutstanding = response.data.total_due;
+
+              scope.billingData.map( function(value,index) {
+                if(moment(value.invoice_date, 'D MMM YYYY') <= moment()){
+                  value.isEnableInvoices  = true;
+                }else{
+                  value.isEnableInvoices  = false;
+                }
+              })
 							scope.hideLoading();
             })
 				}
@@ -140,7 +150,28 @@ app.directive('spendingBillingDirective', [
         }
 
         scope.downloadViewInvoice = function ( id ) {
-          window.open(serverUrl.url + '/benefits/invoice/' + id );
+          if(scope.invoiceSelectorValue == 'spending'){
+            if(scope.download_token.live == true) {
+              window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + id + '&token=' + scope.download_token.token);
+            } else {
+              window.open(serverUrl.url + '/hr/statement_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+            }
+          }
+          if(scope.invoiceSelectorValue == 'spending_purchase'){
+            window.open(serverUrl.url + '/hr/download_spending_purchase_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
+          }
+          if(scope.invoiceSelectorValue == 'plan'){
+            window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + id + '&token=' + window.localStorage.getItem('token'));
+          }
+          if(scope.invoiceSelectorValue == 'plan_withdrawal'){
+            window.open(serverUrl.url + '/hr/get_cancellation_details/' + id + '&token=' + window.localStorage.getItem('token'));
+          }
+          if(scope.invoiceSelectorValue == 'deposit'){
+            window.open(serverUrl.url + '/hr/spending_desposit?id=' + id + '&token=' + window.localStorage.getItem('token'));
+          }
+        }
+        scope.downloadViewTransactions = function ( id ) {
+          window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
         }
 
         scope._selectNumList_ = function ( num ) {
@@ -191,11 +222,19 @@ app.directive('spendingBillingDirective', [
             })
 
         }
+
+        scope.getDownloadToken = async function( ) {
+          await hrSettings.getDownloadToken( )
+          .then(function(response){
+            scope.download_token = response.data;
+          });
+        }
        
-        scope.onLoad = function () {
+        scope.onLoad = async function () {
           // scope.showLoading();
-          scope.getDateTerms();
-          scope.getBillingInvoiceHistory( scope.invoiceSelectorValue );
+          await scope.getDownloadToken();
+          await scope.getDateTerms();
+          await scope.getBillingInvoiceHistory( scope.invoiceSelectorValue );
         }
 
         scope.onLoad();

@@ -8,9 +8,9 @@
 				<li>
 					<a ui-sref="company-and-contacts">Company & Contacts</a>
 				</li>
-				<li>
+				<!-- <li>
 					<a ui-sref="transactions">Transactions</a>
-				</li>
+				</li> -->
 				<li>
 					<a ui-sref="document-center">Document Center</a>
 				</li>
@@ -289,7 +289,7 @@
 								<span ng-bind="employee_acount_details.total_enrolled_employees"></span>
 							</div>
 							<div class="btn-edit-container">
-								<button ng-click="_editDetails_('employee', employee_acount_details)" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<!-- <button ng-click="_editDetails_('employee', employee_acount_details)" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button> -->
 							</div>
 						</div>
 						<div class="account-card-container">
@@ -307,7 +307,7 @@
 								<span ng-bind="dependent_acount_details.total_enrolled_employees">0</span>
 							</div>
 							<div class="btn-edit-container">
-								<button ng-click="_editDetails_('dependent', dependent_acount_details)" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<!-- <button ng-click="_editDetails_('dependent', dependent_acount_details)" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button> -->
 							</div>
 						</div>
 					</div>
@@ -322,8 +322,14 @@
 										<th>
 											Date <br><span>of enrollment</span>
 										</th>
-										<th>Plan Type</th>
-										<th>Plan Start Date</th>
+										<th>
+											<!-- Plan Type -->
+											(Medical) Benefits Coverage
+										</th>
+										<th>
+											<!-- Plan Start Date -->
+											(Medical) Benefits Start Date
+										</th>
 										<th>Total <br> Enrolled Employees</th>
 										<th>Total <br> Enrolled Dependents</th>
 										<th>Actions</th>
@@ -404,8 +410,16 @@
 					</div>
 				</div>
 				<div ng-if="spending_account_status.account_type == 'enterprise_plan'" class="invoice-history-container">
-					<h4>Invoice History</h4>
-					<button ng-if="spending_account_status.account_type == 'enterprise_plan'" class="btn-download-invoice" ng-click="_downloadInvoiceHistoryPDF_()">Download Invoice</button>
+					<div class="invoice-history-header">
+						<h4>Invoice History</h4>
+						<div class="drop-filter-wrapper">
+							<select ng-model="invoiceHistoryType" ng-change="changeInvoiceHistoryType(invoiceHistoryType)">
+								<option value="plan">Plan</option>
+								<option value="refund">Refund</option>
+							</select>
+						</div>
+						<button ng-if="spending_account_status.account_type == 'enterprise_plan'" class="btn-download-invoice" ng-click="_downloadInvoiceHistoryPDF_()">Download Invoice</button>
+					</div>
 					<div class="invoice-history-tbl-wrapper">
 						<div class="invoice-history-tbl-container">
 							<table>
@@ -424,7 +438,51 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr ng-repeat="list in getPlanInvoiceData">
+									<tr ng-if="invoiceHistoryType == 'refund'" ng-repeat="list in getPlanInvoiceData">
+										<td>
+											<div ng-if="list.payment_status == 0" class="status pending">Pending</div>
+											<div ng-if="list.payment_status == 1" class="status paid">Paid</div>
+										</td>
+										<td>
+											<span ng-bind="list.cancellation_date">18 Feb 2020</span>
+										</td>
+										<td>
+											<span ng-bind="list.cancellation_number">MC00000238283</span>
+										</td>
+										<td>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.total_refund">300.00</span>
+										</td>
+										<td>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.amount_due">600.00</span>
+										</td>
+										<td>
+											<span ng-bind="list.payment_due">18 Feb 2020</span>
+										</td>
+										<td>
+											<span ng-bind="list.currency_type" class="currency-type">SGD</span>
+											<span ng-bind="list.payment_amount">0.00</span>
+										</td>
+										<td>
+											<span ng-if="list.payment_status" ng-bind="list.payment_date"></span>
+										</td>
+										<td>
+											<span ng-bind="list.payment_remarks"></span>
+										</td>
+										<td>
+											<span class="invoice-history-drop-click" ng-click="toggleInvoiceHistoryDrop( list,$index )">
+												<img src="../assets/hr-dashboard/img/down-arrow.svg">
+												<div ng-if="list.isShowDrop" class="custom-dropdown">
+													<div ng-click="downloadRefund(list.payment_refund_id)">
+														Download PDF
+													</div>
+												</div>
+											</span>
+										</td>
+									</tr>
+
+									<tr ng-if="invoiceHistoryType == 'plan'" ng-repeat="list in getPlanInvoiceData">
 										<td>
 											<div ng-if="list.payment_status == false" class="status pending">Pending</div>
 											<div ng-if="list.payment_status == true" class="status paid">Paid</div>

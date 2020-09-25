@@ -522,7 +522,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   // Download SOA
   hrFactory.downloadSoaData = function ( type,download ) {
-    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download );
+    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download + '&token=' + window.localStorage.getItem('token'));
     // return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
   }
 
@@ -531,14 +531,6 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/activate_mednefits_basic_plan"  );
   }
 
-  // Linked Account
-  hrFactory.fetchLinkAccount = function ( limit,page ) {
-    return $http.get( serverUrl.url + "/hr/get/corporate_linked_account/?limit=" + limit + "page=" + page );
-  }
-
-  hrFactory.updateUnlinkAccount = function ( data ) {
-    return $http.post( serverUrl.url + "/hr/unlink/company_account", data);
-  }
 
   return hrFactory;
 });

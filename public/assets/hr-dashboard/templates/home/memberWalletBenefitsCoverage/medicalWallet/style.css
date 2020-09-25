@@ -2,7 +2,7 @@
   margin: 0 0 10px;
 }
 .member-medical-wallet-wrapper .mwbc-card-box-container {
-  width: 380px;
+  width: 450px;
 }
 .mwbc-benefits-container {
   margin: 20px 0 0;
@@ -52,5 +52,5 @@
 .credits-tooltip-container.mednefits-basic-plan,
 .credits-tooltip-container.panel-mednefits-credits,
 .credits-tooltip-container.non-panel-mednefits-credits {
-  display: none;
+  /* display: none; */
 }

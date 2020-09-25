@@ -11,6 +11,7 @@ app.directive('outOfPocketDirective', [
 				console.log($location);
 
         scope.showLastTermSelector = false;
+        scope.applyTerm = false;
         
 
         scope.termSelector = function () {
@@ -50,7 +51,6 @@ app.directive('outOfPocketDirective', [
             });
 
             scope.getBenefitsCoverageData(scope.defaultDateTerms);
-            scope._getPaymentDetails_(scope.defaultDateTerms);
           })
         }
 
@@ -62,6 +62,7 @@ app.directive('outOfPocketDirective', [
             scope.termSelector();
             console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
             console.log(data);
@@ -184,6 +185,7 @@ app.directive('outOfPocketDirective', [
         scope.onLoad = async function () {
           scope.showLoading();
           await scope.getDateTerms();
+          await scope._getPaymentDetails_(scope.defaultDateTerms);
           await scope.getActivitiesDataTable(scope.defaultDateTerms);
         }
 

@@ -2164,7 +2164,7 @@ p.number-of-enrollees.inactive-enroll-text {
 
 .employee-overview-table .spending-account-spending-title,
 .employee-overview-table .spending-details-container {
-  width: 20%;
+  width: 18%;
   float: left;
 }
 
@@ -9800,7 +9800,7 @@ span.dropdown-entitlement.disabled {
 }
 .mednefits-logo-container .mednefits-logo {
   width: 180px;
-  margin: 40px 0 90px;
+  margin: 40px 0 50px;
 }
 .mednefits-logo-container {
   text-align: center;
@@ -9891,6 +9891,7 @@ span.dropdown-entitlement.disabled {
 }
 .btn-footer {
   text-align: right;
+  margin-bottom: 50px;
 }
 .privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
   /* margin: 0 0 40px; */
@@ -10743,6 +10744,7 @@ span.dropdown-entitlement.disabled {
 .datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
   color: #e4e4e4;
 }
+
 .welcome-container .fa-angle-down {
   color: #fff;
   font-size: 16px;

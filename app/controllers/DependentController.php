@@ -379,7 +379,11 @@ class DependentController extends \BaseController {
 			->first();
 
 			if($dependents) {
-				return array('status' => true, 'total_number_of_seats' => $dependents->total_dependents, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => $dependents->total_dependents - $dependents->total_enrolled_dependents);
+				if($plan->account_type == "lite_plan") {
+					return array('status' => true, 'total_number_of_seats' => 9999, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => 999, 'account_type' => $plan->account_type);
+				} else {
+					return array('status' => true, 'total_number_of_seats' => $dependents->total_dependents, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => $dependents->total_dependents - $dependents->total_enrolled_dependents, 'account_type' => $plan->account_type);
+				}
 			}
 		}
 
@@ -447,50 +451,61 @@ class DependentController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
-		$dependent_plan_status = DB::table('dependent_plan_status')
-		->where('customer_plan_id', $planned->customer_plan_id)
-		->orderBy('created_at', 'desc')
-		->first();
-		$total_dependents = 0;
-		if($dependent_plan_status) {
-			$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+		if($planned->account_type != "lite_plan") {
+			$dependent_plan_status = DB::table('dependent_plan_status')
+			->where('customer_plan_id', $planned->customer_plan_id)
+			->orderBy('created_at', 'desc')
+			->first();
+			$total_dependents = 0;
+			if($dependent_plan_status) {
+				$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
+			} else {
+				return array(
+					'status'	=> false,
+					'message'	=> "This Company does not have a Dependent Purchase. Please request a Dependent Plan Purchase to enable dependent accounts."
+				);
+			}
+
+			if($total_dependents <= 0) {
+				return array(
+					'status'	=> false,
+					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
+				);
+			} else if(sizeof($input['dependents']) > $total_dependents) {
+				return array(
+					'status'	=> false,
+					'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
+				);
+			}
 		} else {
-			return array(
-				'status'	=> false,
-				'message'	=> "This Company does not have a Dependent Purchase. Please request a Dependent Plan Purchase to enable dependent accounts."
-			);
+			$dependent_plan_status = DB::table('dependent_plan_status')
+			->where('customer_plan_id', $planned->customer_plan_id)
+			->orderBy('created_at', 'desc')
+			->first();
+
+			if(!$dependent_plan_status) {
+				return ['status' => false, 'message' => 'Unable to create dependent account as company has no dependent account purchased.'];
+			}
 		}
 
-		if($total_dependents <= 0) {
-			return array(
-				'status'	=> false,
-				'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
-			);
-		} else if(sizeof($input['dependents']) > $total_dependents) {
-			return array(
-				'status'	=> false,
-				'message'	=> "We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s."
-			);
-		}
-
-		// get plan tier if employee has a plan tier
-		$plan_tier = DB::table('plan_tier_users')
-		->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
-		->where('plan_tier_users.user_id', $input['employee_id'])
-		->where('plan_tiers.active', 1)
-		->first();
+		// // get plan tier if employee has a plan tier
+		// $plan_tier = DB::table('plan_tier_users')
+		// ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
+		// ->where('plan_tier_users.user_id', $input['employee_id'])
+		// ->where('plan_tiers.active', 1)
+		// ->first();
 
 		$plan_tier_status = false;
 		$plan_tier_id = null;
-		if($plan_tier) {
-			$plan_tier_status = true;
-			$plan_tier_id = $plan_tier->plan_tier_id;
-			// check plan tier enrollment count
-			$vacant_seats = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
-			if(sizeof($input['dependents']) > $vacant_seats) {
-				return array('status' => 'We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s of this Plan Tier.');
-			}
-		}
+		// if($plan_tier) {
+		// 	$plan_tier_status = true;
+		// 	$plan_tier_id = $plan_tier->plan_tier_id;
+		// 	// check plan tier enrollment count
+		// 	$vacant_seats = $plan_tier->dependent_head_count - $plan_tier->dependent_enrolled_count;
+		// 	if(sizeof($input['dependents']) > $vacant_seats) {
+		// 		return array('status' => 'We realised the current dependent headcount you wish to enroll is over the current vacant member seat/s of this Plan Tier.');
+		// 	}
+		// }
 
 		// validations for dependents input
 		// foreach ($input['dependents'] as $key => $validation) {

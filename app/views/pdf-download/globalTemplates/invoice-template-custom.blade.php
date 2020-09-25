@@ -64,6 +64,7 @@
                 <p style="font-size: 14px;line-height: 16px;margin: 0;">
                   <!-- IF SINGAPORE -->
                   <!-- <span>
+                    Medicloud Pte Ltd<br>
                     7 Temasek Boulevard<br>
                     #18-02 Suntec Tower One<br>
                     038987<br>

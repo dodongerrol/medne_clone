@@ -8,7 +8,7 @@ app.directive('mednefitsCreditAccountDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("mednefits credit account directive Runnning !");
-				console.log($location);
+				// console.log($location);
 
         scope.showLastTermSelector = false;
         scope.defaultDateTerms = {};
@@ -17,6 +17,7 @@ app.directive('mednefitsCreditAccountDirective', [
         scope.isCreditsInputFormShow = true;
         scope.isCreditsConfirmShow = false;
         scope.isTopUpSuccess = false;
+        scope.applyTerm = false;
 
         scope.creditsTopUpData  = {
           total_credits: '0.00',
@@ -56,18 +57,12 @@ app.directive('mednefitsCreditAccountDirective', [
         scope.getDateTerms = async function () {
           await hrSettings.fetchDateTerms()
           .then(function(response){
-            console.log(response);
+            // console.log(response);
             scope.dateTerm = response.data.data;
-            // console.log(scope.dateTerm);
-
-            // scope.currentTerm = scope.dateTerm.slice(-1).pop();
-            // console.log(scope.currentTerm );
-
+            console.log(scope.dateTerm);
             let termLength = scope.dateTerm.length;
-            // console.log(termLength);
-
             scope.dateTerm.map(function(value,index) {
-              if (index == termLength-1) {
+              if (index == 0) {
                 value.term = `Current term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
                 value.index = index;
                 scope.defaultDateTerms = value;
@@ -77,9 +72,6 @@ app.directive('mednefitsCreditAccountDirective', [
                 value.term = `Last term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
               }
             });
-
-            // scope.getMedicalMemberWallet(scope.defaultDateTerms);
-            // scope.getWellnessMemberWallet(scope.defaultDateTerms);
           })
         }
 
@@ -89,14 +81,12 @@ app.directive('mednefitsCreditAccountDirective', [
           if( src == 'select') {
             // scope.dateTermIndex = parseInt(data);
             scope.termSelector();
-            console.log(data);
             scope.selectedTerm = data;
+            scope.applyTerm = true;
           } else if (src == 'applyBtn') {
             // let termData = _.filter(scope.dateTerms, index => index.index == scope.dateTermIndex);  //{ 'index': scope.dateTermIndex }
-            console.log(data);
             scope.getMednefitsCreditAccount(data);
           }
-          console.log(scope.selectedTerm)
         }
 
         scope.getMednefitsCreditAccount = async function (data,status_data) {
@@ -106,12 +96,11 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.showLoading();
           await hrSettings.fetchMednefitsCreditsAccountData( scope.currentTermStartDate, scope.currentTermEndDate )
             .then(function(response){
-              console.log(response);
+              // console.log(response);
               if ( response.data.status  ) {
                 scope.mednefitsCreditsData = response.data.data;
                 scope.isPrepaidCreditsActivated = response.data.status
                 scope.hideLoading();
-                console.log(scope.mednefitsCreditsData);
               } else {
                 scope.isPrepaidCreditsActivated = response.data.status;
                 scope.hideLoading();
@@ -128,7 +117,6 @@ app.directive('mednefitsCreditAccountDirective', [
               scope.hideLoading();
               scope.mednefitsActivitiesData = response.data.data.data;
               scope.spending_activity = response.data.data
-              console.log(scope.spending_activity);
             })
         }
 
@@ -144,7 +132,6 @@ app.directive('mednefitsCreditAccountDirective', [
         }
 
         scope._selectNumList_ = function (type, num) {
-          console.log(num);
           scope.page = num;
           scope.getMednefitsCreditActivities(scope.selectedTerm);
           // scope.getEnrollmentHistory(scope.customer_active_plan_id);
@@ -197,6 +184,15 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.creditsTopUpData.total_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.total_credits ).toFixed(2) );
           scope.creditsTopUpData.purchased_credits = scope.numberWithCommas( parseFloat( scope.creditsTopUpData.purchased_credits ).toFixed(2) );
         }
+
+        scope.onCreditFocus = function(type){
+          if(type == 'total_credits' && scope.creditsTopUpData.total_credits == '0.00'){
+            scope.creditsTopUpData.total_credits = '';
+          }
+          if(type == 'purchased_credits' && scope.creditsTopUpData.purchased_credits == '0.00'){
+            scope.creditsTopUpData.purchased_credits = '';
+          }
+        }
         scope.numberWithCommas = function(number) {
           var parts = number.toString().split(".");
           parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -204,16 +200,9 @@ app.directive('mednefitsCreditAccountDirective', [
         }
 
         scope.toggleTopUpCreditsConfirm  = function(opt){
-          // console.log(opt);
-          // if ( opt == false ) {
-          //   scope.isCreditsConfirmShow = true;
-          //   scope.isCreditsInputFormShow = false;
-          //   scope.isTopUpSuccess = false;
-          // }
           scope.isCreditsInputFormShow = opt ? false : true;
           scope.isCreditsConfirmShow = opt;
           scope.isTopUpSuccess = false;
-          console.log( scope.isCreditsInputFormShow );
         }
 
         scope.submitTopUpCredits = function ( formData ) {
@@ -226,10 +215,9 @@ app.directive('mednefitsCreditAccountDirective', [
             invoice_date: moment( formData.invoice_date ).format('YYYY-MM-DD')
           }
           scope.showLoading();
-          console.log(data);
           hrSettings.updateTopUp( data )
             .then(function(response){
-              console.log(response);
+              // console.log(response);
               scope.hideLoading();
               if(response.data.status){
                 scope.isTopUpSuccess = true;
@@ -254,7 +242,6 @@ app.directive('mednefitsCreditAccountDirective', [
 					await hrSettings.getPlanStatus( )
             .then(function(response){
 							scope.planStatusData = response.data;
-							console.log(scope.planStatusData);
 						})
 						
 				}
@@ -271,31 +258,6 @@ app.directive('mednefitsCreditAccountDirective', [
             loading_trap = false;
           }, 10);
         };
-
-        // get the keys for member wallet 
-        scope.getMedicalMemberWallet = function ( data ) {
-          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
-
-          console.log('gkan sa member ug wellness',data);
-          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'medical')
-            .then(function(response){
-              console.log('medical',response);
-             
-            })
-        }
-
-        scope.getWellnessMemberWallet = function ( data ) {
-          scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
-          scope.currentTermEndDate = moment( data.end ).format('YYYY-MM-DD');
-
-          console.log('gkan sa member ug wellness',data);
-          hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, 'wellness' )
-            .then(function(response){
-              console.log('wellness',response);
-             
-            })
-        }
 
         scope.toggleCreditsActivation = function(){
           scope.isPrepaidCreditsFormShow = scope.isPrepaidCreditsFormShow ? false : true;
@@ -345,7 +307,6 @@ app.directive('mednefitsCreditAccountDirective', [
         }
 
         scope.submitActivateMednefitsCredits = function (formData) {
-          console.log(formData);
           var data = {
             // customer_id: Number( scope.selected_customer_id ),
             total_credits: Number( formData.total_credits.replace(/,/g, "") ),
@@ -354,19 +315,15 @@ app.directive('mednefitsCreditAccountDirective', [
             bonus_credits: Number( formData.bonus_credits.replace(/,/g, "") ),
             invoice_date: moment( formData.invoice_date,'DD/MM/YYYY' ).format('YYYY-MM-DD')
           }
-          console.log(data);
           scope.showLoading();
           hrSettings.updatePrepaidCredits( data )
             .then(function(response){
-              console.log(response);
+              // console.log(response);
               if (response.status) {
-            
                 scope.isMednefitsCreditsSuccessShow = true;
                 scope.isPrepaidCreditsFormShow = false;
                 scope.isPrepaidCreditsActivated = true;
-
                 scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
-                
               } else {
                 swal('Error!', response.message, 'error');
               }
@@ -378,7 +335,6 @@ app.directive('mednefitsCreditAccountDirective', [
             return '0.00';
           }
           return value.replace(/[a-zA-Z\s]/gi, '');
-          console.log(value);
         }
 
         scope.range = function (num) {
@@ -389,6 +345,31 @@ app.directive('mednefitsCreditAccountDirective', [
           return arr;
         };
 
+        scope.getMemberWalletData = async function ( data, type ) {
+					scope.currentTermStartDate = moment(data.start).format('YYYY-MM-DD');
+          scope.currentTermEndDate = moment(data.end).format('YYYY-MM-DD');
+          await hrSettings.fetchMemberWallet( scope.currentTermStartDate, scope.currentTermEndDate, type )
+            .then(function(response){
+              if(type == 'medical'){
+                scope.medicalWalletData = response.data.data;
+                scope.medicalWalletData.roll_over = scope.medicalWalletData.roll_over.toString();
+                scope.medicalWalletData.benefits_start = moment(scope.medicalWalletData.benefits_start).format('DD/MM/YYYY');
+                scope.medicalWalletData.benefits_end = moment(scope.medicalWalletData.benefits_end).format('DD/MM/YYYY');
+              }
+              if(type == 'wellness'){
+                scope.wellnessActivated = response.data.status;
+                scope.wellnessWalletData = response.data.data;
+                scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
+                scope.wellnessWalletData.benefits_start = moment(scope.wellnessWalletData.benefits_start).format('DD/MM/YYYY');
+                scope.wellnessWalletData.benefits_end = moment(scope.wellnessWalletData.benefits_end).format('DD/MM/YYYY');
+              }
+            })
+        }
+        
+        scope.closeModal  = function(){
+          $(".modal").modal('close');
+        }
+
        
         scope.onLoad = async function () {
           scope.showLoading();
@@ -396,6 +377,9 @@ app.directive('mednefitsCreditAccountDirective', [
           await scope.getDateTerms();
           await scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
           await scope.getMednefitsCreditActivities();
+          await scope.getMemberWalletData(scope.defaultDateTerms, 'medical');
+          await scope.getMemberWalletData(scope.defaultDateTerms, 'wellness');
+
         }
 
         scope.onLoad();

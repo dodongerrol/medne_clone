@@ -251,6 +251,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/enrollment_progress', 'BenefitsDashboardController@employeeEnrollmentProgress');
 	Route::get('hr/get/temp_enrollment', 'BenefitsDashboardController@getTempEnrollment');
 	Route::get('remove/temp_enrollee/{id}', 'BenefitsDashboardController@removeEnrollee');
+	// Delete all existing temp employees in enrollment summary
+	Route::get('delete_all_temp_employees', 'BenefitsDashboardController@removeAllEnrolleeTemp');
 	Route::post('insert/enrollee_web_input', 'BenefitsDashboardController@insertFromWebInput');
 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
@@ -522,7 +524,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	// get member allocation activity
 	Route::get('hr/get_member_allocation_activity', 'SpendingAccountController@getMemberAllocationActivity');
-	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 	// get mednefits credits account
 	Route::get('hr/get_mednefits_credits_account', 'SpendingAccountController@getMednefitsCreditsAccount');
 	// get company wallet details
@@ -556,9 +557,14 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get/corporate_linked_account', 'CorporateController@getCorporateLinkedAccount');
 	// create unlinked account
 	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
-});
+
 	// login company link account
 	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
+	// get refund invoice
+	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
+});
+	
+	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 	// download non-panel reimbursement
 	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
@@ -571,7 +577,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
-	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
+	Route::get('hr/download_spending_purchase_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
@@ -1330,8 +1336,14 @@ Route::group(array('prefix' => 'app'), function()
 
         Route::get('clinic/opening-times-home','App_ClinicController@ClinicOpeningTimesPage');
         Route::get('clinic/doctor-availability','App_ClinicController@ClinicDoctorAvailabilityPage');
-        Route::get('clinic/appointment-home-view','HomeController@showCalender'); //boom
-        Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
+		Route::get('clinic/appointment-home-view','HomeController@showCalender'); //boom
+		/*
+			Refactor API for gettting providers information for the first time.
+		*/
+		Route::get('clinic/getProvidersDetail', '@DashboardController@getProvidersDetail');
+		/* End Here. */
+		
+		Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
         Route::get('clinic/appointment-doctor-view/{id}','App_ClinicController@SingleDoctorAppointmentPage');
 
         Route::get('clinic/calendar-view-single','HomeController@showMainCalendarSingleView'); //boom
@@ -1385,9 +1397,15 @@ Route::group(array('prefix' => 'app'), function()
         Route::post('clinic/change-startdate','App_ClinicController@ChangeStartDate');
         Route::get('clinic/doctor-update-page/{id}','App_ClinicController@UpdateDoctorPage');
         Route::post('clinic/update-doctor','App_ClinicController@UpdateDoctorDetails');
-        Route::post('clinic/channel_update','App_ClinicController@UpdateBookingChannel');
-
-        //Route::get('clinic/','App_ClinicController@index');
+		Route::post('clinic/channel_update','App_ClinicController@UpdateBookingChannel');
+		
+		/*****************Clinic : PUT*****************/
+		//Refactor API for gettting providers information for the first time.
+			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+		/* End Here. */
+	   
+		
+		//Route::get('clinic/','App_ClinicController@index');
         //Route::get('auth/create', 'App_AuthController@create');
     		Route::resource('auth', 'App_AuthController');
 

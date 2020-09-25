@@ -186,7 +186,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/enrollment-options',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/enrollment-options.html'
@@ -197,7 +197,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/create-team-benefits-tiers',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/create-team-benefits-tiers.html'
@@ -208,7 +208,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/enrollment-method',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/enrollment-method.html'
@@ -219,7 +219,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/web-input',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/web-input.html'
@@ -230,7 +230,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/excel-enrollment',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/excel-enrollment.html'
@@ -457,7 +457,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/bulk-cred-allocation',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/bulk-cred-allocation.html'
@@ -469,7 +469,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       url: '/cred-allocation',
       views: {
         'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/bdn.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/bulk-cred-allocation.html'
