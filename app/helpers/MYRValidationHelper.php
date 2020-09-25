@@ -50,7 +50,7 @@ class MYRValidationHelper
             $messages['mobile_message'] = 'Mobile No. already taken.';
         }
 
-        if (!in_array('nric', $validated) && $this->checkDuplicates('nric', $input['nric'])) {
+        if (!in_array('nric', $validated) && $this->checkDuplicates('NRIC', $input['nric'])) {
             $messages['error'] = true;
             $messages['nric_error'] = true;
             $messages['nric_message'] = 'NRIC already taken.';
