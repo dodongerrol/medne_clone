@@ -1117,7 +1117,6 @@ class MemberHelper
 
 			// check if account is active
 			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
-
 			if($accountStatus != "active") {
 				return true;
 			}
