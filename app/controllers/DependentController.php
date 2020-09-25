@@ -293,7 +293,7 @@ class DependentController extends \BaseController {
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
 					'emp_no'				=> trim($user['employee_id']),
-					'mobile'				=> (int)$mobile,
+					'mobile'				=> $user['mobile'],
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
 					'bank_name'				=> $user['bank_name'],
