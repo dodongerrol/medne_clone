@@ -2021,13 +2021,13 @@ class BenefitsDashboardController extends \BaseController {
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->where('user.Name', 'like', '%'.$search.'%')
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','emp_no', 'member_activated', 'Status')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
 				->paginate($per_page);
 			} else {
 				$users = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'member_activated', 'Status')
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport')
 				->orderBy('corporate_members.removed_status', 'asc')
 				->orderBy('user.UserID', 'asc')
 				->paginate($per_page);
@@ -2330,7 +2330,7 @@ class BenefitsDashboardController extends \BaseController {
 				'employee_id'			=> $user->emp_no,
 				'member_activated'		=> (int)$user->member_activated == 1 ? true : false,
 				'nric'					=> $user->NRIC,
-				'mobile_no'				=> $country_code.(string)$phone_no,
+				'mobile_no'				=> $phone_no == 0 || $phone_no == null || $phone_no == '' || $phone_no == '0' ? null : $country_code.(string)$phone_no,
 				'phone_no'				=> $phone_no,
 				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
@@ -2340,6 +2340,8 @@ class BenefitsDashboardController extends \BaseController {
 				'bank_code'				=> $user->bank_code,
 				'bank_branch'			=> $user->bank_brh,
 				'bank_name'				=> $user->bank_name,
+				'passport'				=> $user->passport,
+				'nric'					=> $user->NRIC,
 				// 'company'				=> ucwords($user->company_name),
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
@@ -3607,19 +3609,32 @@ class BenefitsDashboardController extends \BaseController {
 		$admin_id = Session::get('admin-session-id');
 		$hr_id = $result->hr_dashboard_id;
 		$input = Input::all();
-
 		$mobile = preg_replace('/\s+/', '', $input['phone_no']);
 		$mobile = (int)$mobile;
 		// check if mobile already existed or duplicate
+		if(!empty($input['phone_no'])) {
 		$check_mobile = DB::table('user')
 		->where('PhoneNo', (string)$mobile)
 		->whereNotIn('UserID', [$input['user_id']])
+		->where('UserType', 5)
 		->where('Active', 1)
 		->first();
 
 		if($check_mobile) {
 			return array('status' => false, 'message' => 'Mobile Number already taken.');
 		}
+	}	
+		if(
+			$this->isEmpty($input['phone_no'])
+		 	&& $this->isEmpty($input['nric']) 
+			&& $this->isEmpty($input['passport'])
+		  )
+		{
+			return array('status' => false, 'message' => 'Please key in either Mobile No, NRIC or passport number to proceed.');
+		}
+
+
+
 
 		// check email address
 		if(!empty($input['email'])) {
@@ -3637,7 +3652,8 @@ class BenefitsDashboardController extends \BaseController {
 		
 		$update = array(
 			'Name'				=> $input['name'],
-			// 'NRIC'				=> $input['nric'],
+			'NRIC'				=> $input['nric'],
+			'Passport'			=> $input['passport'],
 			'Zip_Code'			=> !empty($input['postal_code']) ? $input['postal_code'] : null,
 			'bank_account'		=> $input['bank_account'],
 			'Email'				=> $input['email'],
@@ -3680,6 +3696,11 @@ class BenefitsDashboardController extends \BaseController {
 				'reason'	=> var_dump($e)
 			);
 		}
+	}
+
+	private function isEmpty ($input)
+	{
+		return empty($input) || $input === null;
 	}
 
 	public function withDrawEmployees( )
@@ -15263,7 +15284,8 @@ class BenefitsDashboardController extends \BaseController {
 		$customer_id = $customer->customer_buy_start_id;
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
-		$members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
+		// $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
+		$members = \CustomerHelper::getActivePlanUsers($customer_id);
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
 		$pending = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where('payment_status', 0)->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
@@ -15297,26 +15319,27 @@ class BenefitsDashboardController extends \BaseController {
 		$term_duration = $interval->m + 1;
 
 		foreach ($members as $key => $member) {
-			$wallet = DB::table('e_wallet')->where('UserID', $member->user_id)->first();
+			$member_id = $member;
+			$wallet = DB::table('e_wallet')->where('UserID', $member_id)->first();
 			if($spending_type == 'medical') {
-				$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'medical');
-				$allocation  = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'medical');
+				$allocation  = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
 				$total_supp += $allocation['total_supp'];
 				$total_allocation += $allocation['allocation'];
 				$total_company_medical_allocation += $allocation['allocation'];
 				$total_company_medical_supp += $allocation['total_supp'];
 			} else if($spending_type == 'wellness'){
-				$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'wellness');
-				$allocation  = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+				$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'wellness');
+				$allocation  = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $member_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 				$total_supp += $allocation['total_supp'];
 				$total_allocation += $allocation['allocation'];
 				$total_company_wellness_allocation += $allocation['allocation'];
 				$total_company_wellness_supp += $allocation['total_supp'];
 			} else {
-				$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'medical');
-				$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, 'current_term', 'wellness');
-				$allocation_medical  = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
-				$allocation_wellness  = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+				$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'medical');
+				$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member_id, 'current_term', 'wellness');
+				$allocation_medical  = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$allocation_wellness  = PlanHelper::memberWellnessUpdatedCreditsSummary($wallet->wallet_id, $member_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 				$temp_allocation = $allocation_medical['allocation'] + $allocation_wellness['allocation'];
 				$temp_supp = $allocation_medical['total_supp'] + $allocation_wellness['total_supp'];
 				$total_company_medical_allocation += $allocation_medical['allocation'];
@@ -16875,5 +16898,22 @@ class BenefitsDashboardController extends \BaseController {
 			ob_clean();
 		}
 		return $response;
+	}
+
+	public function removeAllEnrolleeTemp()
+	{
+		$session = self::checkSession();
+		$customer_id = $session->customer_buy_start_id;
+
+		$temp_employees = DB::table('customer_temp_enrollment')
+			->where('customer_buy_start_id', $customer_id)
+			->where('enrolled_status', 'false')
+			->delete();
+
+		return array(
+			'status'	=> TRUE,
+			'message'	=> 'Success.'
+		);
+
 	}
 }
