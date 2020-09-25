@@ -1275,8 +1275,10 @@ app.directive('benefitsTiersDirective', [
 							console.log( response );
 							scope.temp_employees = response.data.data;
 							angular.forEach(scope.temp_employees, function (value, key) {
-								if ( (value.email != null || value.mobile != null) || (value.email != '' || value.mobile != '') ) {
+								console.log(value);
+								if ( (value.employee.email != '' && value.employee.email != null) || (value.employee.mobile != '' && value.employee.mobile != null) ) {
 									scope.hasEmailOrMobile = true;
+									console.log('proceed enroll');
 								}
 								if (value.dependents.length > scope.table_dependents_ctr) {
 									scope.table_dependents_ctr = value.dependents.length;
@@ -1463,8 +1465,11 @@ app.directive('benefitsTiersDirective', [
 						});
 				}
 				scope.goToCommunication	=	function(){
+					console.log(scope.hasEmailOrMobile);
 					if(scope.hasEmailOrMobile == false){
 						scope.saveTempUser();
+						scope.isReviewEnroll = false;
+						scope.isCommunicationShow = false;
 					}else{
 						scope.isReviewEnroll = false;
 						scope.isCommunicationShow = true;

@@ -106,13 +106,15 @@ class MYRValidationHelper
             return true;
         }
 
-        $tempUser = DB::table('customer_temp_enrollment')
+        if ($field !== 'PhoneNo') {
+            $tempUser = DB::table('customer_temp_enrollment')
             ->where($field, $value)
             ->where('enrolled_status', true)
             ->first();
 
-        if ($tempUser) {
-            return true;
+            if ($tempUser) {
+                return true;
+            }
         }
 
         return false;
