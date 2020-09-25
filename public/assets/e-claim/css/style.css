@@ -2379,3 +2379,123 @@ body::-webkit-scrollbar-thumb {
 button{
   outline: none !important;
 }
+.dp-flex-ai {
+  display: flex;
+  align-items: center;
+}
+.login-wrapper .new-login-container.med-form {
+  margin: 40px auto;
+}
+.new-login-container .med-input {
+  padding: 0 10px;
+}
+.new-login-container .form-group {
+  margin: 0;
+}
+.new-login-container .mobile-input-wrapper >div:first-child {
+  width: 30%;
+  margin: 0 10px 0 0;
+  display: flex;
+  align-items: center;
+}
+.new-login-container .mobile-input-wrapper >div:first-child img {
+  width: 30px;
+  height: 20px;
+  margin: 0 5px 0 0; 
+}
+.new-login-container .mobile-input-wrapper >div:first-child input {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: none;
+}
+.new-login-container .form-group .med-input {
+  margin-bottom: 20px;
+}
+.new-login-container .footer-btn {
+  padding: 10px 0 0;
+}
+.new-login-container .pass-created-text {
+  margin: 0 0 30px;
+}
+.new-login-container .postal-code-text {
+  color: #848484;
+  margin: 0 0 20px;
+}
+.checkbox.stay-signed-container {
+  margin: 0;
+}
+.stay-signed-container.checkbox input[type=checkbox] {
+  margin: 0 0 0 -20px;
+}
+.stay-signed-container label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.new-login-container .otp-container label {
+  margin: 0 0 20px;
+  width: 320px;
+}
+.new-login-container .resend-otp-container {
+  font-size: 16px;
+  margin: 40px 0 0;
+}
+.mobile-input-wrapper {
+  position: relative;
+}
+.mobile-country-code-wrapper .country-code-wrapper {
+  position: absolute;
+  width: 100%;
+  top: 55px;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 1px rgba(75, 77, 82, 0.48), 0px 16px 32px rgba(75, 77, 82, 0.24);
+  border-radius: 4px;
+  z-index: 1;
+  padding: 25px 30px;
+}
+.mobile-country-code-wrapper .country-info img {
+  width: 30px;
+}
+.mobile-country-code-wrapper .country-code-wrapper >span {
+  font-size: 16px;
+  font-family: 'Helvetica Medium';
+  margin: 0;
+}
+.mobile-country-code-wrapper .country-row-details {
+  margin: 30px 0 0;
+  cursor: pointer;
+}
+.mobile-country-code-wrapper .country-row-details .country-info{
+  /* flex: 1; */
+  width: 90%;
+}
+.country-row-details .country-info .country-name {
+  margin: 0 0 0 20px;
+  width: 30%;
+}
+.country-row-details .country-info .country-code   { 
+  color: #848484;
+}
+.country-row-details .blue-check-active {
+  width: 10%;
+  text-align: center;
+}
+
+.mobile-num-input.error {
+  border: 2px solid #EB635D;
+}
+
+.mobile-message-container {
+  color: #EB635D;
+  margin: 20px 0 0;
+}
+.new-login-container .form-group .med-button.disabled {
+  pointer-events: none;
+}
+.resend-otp-text {
+  text-decoration: underline;
+}
+.footer-btn .forgot-password {
+  margin: 15px 0 0;
+}

@@ -246,6 +246,7 @@ class DependentController extends \BaseController {
 				$user['mobile'] = isset($user['mobile_number']) ? trim($user['mobile_number']) : trim($user['mobile']);
 				$user['job_title'] = 'Other';
 				$user['fullname'] = $user['full_name'];
+				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
 				
 				if(isset($user['date_of_birth_ddmmyyyy'])) {
 					$dob = $user['date_of_birth_ddmmyyyy'];
@@ -272,12 +273,13 @@ class DependentController extends \BaseController {
 					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
 				}
 				
-				$user['medical_credits'] = !isset($user['medical_allocation']) ? 0 : $user['medical_allocation'];
-				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? 0 : $user['wellness_allocation'];
-				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
+				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
+				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
+				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
 				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
+				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
@@ -286,25 +288,27 @@ class DependentController extends \BaseController {
 					'active_plan_id'		=> $customer_active_plan_id,
 					'plan_tier_id'			=> $plan_tier_id,
 					'first_name'			=> trim($user['fullname']),
+					'nric'					=> isset($user['nric']) ? trim($user['nric']) : null,
+					'passport'				=> isset($user['passport']) ? trim($user['passport']) : null,
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
 					'emp_no'				=> trim($user['employee_id']),
-					'mobile'				=> (int)$mobile,
+					'mobile'				=> $user['mobile'],
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
 					'bank_name'				=> $user['bank_name'],
 					'bank_account_number'	=> $user['bank_account_number'],
 					'cap_per_visit'			=> $user['cap_per_visit'],
-					'credits'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
-					'medical_balance_entitlement'				=> !isset($user['medical_allocation']) || $user['medical_allocation'] == null ? 0 : $user['medical_allocation'],
-					'wellness_credits'		=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
-					'wellness_balance_entitlement'				=> !isset($user['wellness_allocation']) || $user['wellness_allocation'] == null ? 0 : $user['wellness_allocation'],
+					'credits'				=> !isset($user['medical_credits']) || $user['medical_credits'] == null ? 0 : $user['medical_credits'],
+					'medical_balance_entitlement'				=> !isset($user['medical_credits']) || $user['medical_credits'] == null ? 0 : $user['medical_credits'],
+					'wellness_credits'		=> !isset($user['wellness_credits']) || $user['wellness_credits'] == null ? 0 : $user['wellness_credits'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_credits']) || $user['wellness_credits'] == null ? 0 : $user['wellness_credits'],
 					'postal_code'			=> null,
 					'start_date'			=> $user['plan_start'],
 					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)
 				);
-
+				
 				try {
 					$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 					if($enroll_result) {
@@ -336,6 +340,7 @@ class DependentController extends \BaseController {
 									'plan_tier_id'			=> $plan_tier_id,
 									'first_name'			=> trim($dependent['fullname']),
 									'dob'					=> $dependent['dob'],
+									'nric'					=> null,
 									'plan_start'			=> $dependent['plan_start'],
 									'relationship'			=> trim($dependent['relationship']),
 									'error_logs'			=> serialize($error_dependent_logs)

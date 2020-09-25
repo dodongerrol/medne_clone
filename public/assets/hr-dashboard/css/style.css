@@ -10732,3 +10732,7 @@ span.dropdown-entitlement.disabled {
   flex-direction: column;
   justify-content: center;
 }
+
+.employee-details.tier-feature-item .iti__country-list {
+  z-index: 1000;
+}
