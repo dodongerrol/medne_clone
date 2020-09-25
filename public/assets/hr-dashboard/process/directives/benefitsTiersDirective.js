@@ -1275,7 +1275,7 @@ app.directive('benefitsTiersDirective', [
 							console.log( response );
 							scope.temp_employees = response.data.data;
 							angular.forEach(scope.temp_employees, function (value, key) {
-								if ( value.email != null || value.mobile != null ) {
+								if ( (value.email != null || value.mobile != null) || (value.email != '' || value.mobile != '') ) {
 									scope.hasEmailOrMobile = true;
 								}
 								if (value.dependents.length > scope.table_dependents_ctr) {
@@ -1463,16 +1463,19 @@ app.directive('benefitsTiersDirective', [
 						});
 				}
 				scope.goToCommunication	=	function(){
-					scope.isReviewEnroll = false;
-					scope.isCommunicationShow = true;
-					
-					$timeout(function(){
-						$('.comm-schedule-datepicker').datepicker({
-							format: 'dd/mm/yyyy',
-							startDate : new Date( moment().add(1, 'days') )
-						});
-					},400);
-					
+					if(scope.hasEmailOrMobile == false){
+						scope.saveTempUser();
+					}else{
+						scope.isReviewEnroll = false;
+						scope.isCommunicationShow = true;
+						
+						$timeout(function(){
+							$('.comm-schedule-datepicker').datepicker({
+								format: 'dd/mm/yyyy',
+								startDate : new Date( moment().add(1, 'days') )
+							});
+						},400);
+					}
 				}
 
 				scope.saveTempUser = function () {
