@@ -222,6 +222,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/enrollment_progress', 'BenefitsDashboardController@employeeEnrollmentProgress');
 	Route::get('hr/get/temp_enrollment', 'BenefitsDashboardController@getTempEnrollment');
 	Route::get('remove/temp_enrollee/{id}', 'BenefitsDashboardController@removeEnrollee');
+	Route::get('delete_all_temp_employees', 'BenefitsDashboardController@removeAllEnrolleeTemp');
 	Route::post('insert/enrollee_web_input', 'BenefitsDashboardController@insertFromWebInput');
 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
