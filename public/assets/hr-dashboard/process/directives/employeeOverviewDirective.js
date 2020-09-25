@@ -967,27 +967,22 @@ app.directive("employeeOverviewDirective", [
           //   return false;
           // }
 
-          if(!data.nric) {
-            sweetAlert("Oops...", "Please input NRIC Number.", "error");
-            return false;
-          } else {
+          if(data.nric) {
             if (data.nric.includes("-")) {
-              sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+              sweetAlert("Oops...", "Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.", "error");
               return false;
             } else if (!scope.checkNRIC(data.nric)) {
-              sweetAlert("Oops...", "Invalid NRIC Format.", "error");
+              sweetAlert("Oops...", "Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.", "error");
               return false;
             }
 					}
 					
-					if(!data.passport) {
-            sweetAlert("Oops...", "Please input Passport Number.", "error");
-            return false;
-          } else if (!scope.checkPassport(data.passport)) {
-            sweetAlert("Oops...", "Invalid Passport Format.", "error");
+					if(data.passport) {
+            if (!scope.checkPassport(data.passport)) {
+              sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
               return false;
+            }
           }
-
           return true;
         }
 
@@ -1325,6 +1320,7 @@ app.directive("employeeOverviewDirective", [
             scope.selectedEmployee.start_date_dmy = moment(scope.selectedEmployee.start_date,['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
             scope.selectedEmployee.end_date_dmy = moment(scope.selectedEmployee.expiry_date).format('DD/MM/YYYY');
             console.log( emp );
+            console.log( scope.selectedEmployee )
 
             scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
 

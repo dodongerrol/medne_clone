@@ -34,12 +34,13 @@ app.directive('benefitsTiersDirective', [
 				}
 				scope.dependent_data = {};
 				scope.added_dependent_data = {};
+				scope.showCurrencyType = localStorage.getItem("currency_type");
 				scope.employee_data = {
 					medical_credits: 0,
 					wellness_credits: 0,
 					dependents: [],
-					mobile_area_code: '65',
-					mobile_area_code_country: 'sg'
+					mobile_area_code: scope.showCurrencyType == 'myr' ? '60' : '65' ,
+					mobile_area_code_country: scope.showCurrencyType
 				};
 				scope.upload_file_dependent = null;
 				scope.customer_data = null;
@@ -84,7 +85,7 @@ app.directive('benefitsTiersDirective', [
 				scope.isAllPreviewEmpChecked = false;
 				scope.showDependentsAdded = false;
 				scope.isEditDetailModalOpen = false;
-				scope.showCurrencyType = localStorage.getItem("currency_type");
+				
 				scope.spending_account_status = {}
 
 				scope.isCommunicationShow = false;
@@ -371,8 +372,8 @@ app.directive('benefitsTiersDirective', [
 							wellness_credits: scope.tierSelected.wellness_annual_cap,
 							dependents: [],
 							plan_start: scope.customer_data.plan.plan_start,
-							mobile_area_code: '65',
-							mobile_area_code_country: 'sg'
+							mobile_area_code: scope.showCurrencyType == 'myr' ? '60' : '65' ,
+							mobile_area_code_country: scope.showCurrencyType
 						};
 					}
 				}
@@ -671,8 +672,8 @@ app.directive('benefitsTiersDirective', [
 						wellness_credits: 0,
 						dependents: [],
 						plan_start: scope.customer_data.plan.plan_start,
-						mobile_area_code: '65',
-						mobile_area_code_country: 'sg'
+						mobile_area_code: scope.showCurrencyType == 'myr' ? '60' : '65' ,
+						mobile_area_code_country: scope.showCurrencyType
 					};
 
 					if (scope.employee_arr[scope.employee_ctr]) {
@@ -710,15 +711,27 @@ app.directive('benefitsTiersDirective', [
 							}
 						}
 						scope.employee_ctr += 1;
-						scope.employee_data = {
-							medical_credits: 0,
-							wellness_credits: 0,
-							dependents: [],
-							plan_start: scope.customer_data.plan.plan_start,
-							mobile_area_code: '65',
-							mobile_area_code_country: 'sg'
-						};
-						iti.setCountry("SG");
+						if ( scope.showCurrencyType == 'myr' ) {
+							scope.employee_data = {
+								medical_credits: 0,
+								wellness_credits: 0,
+								dependents: [],
+								plan_start: scope.customer_data.plan.plan_start,
+								mobile_area_code: '60',
+								mobile_area_code_country: 'my'
+							};
+						} else {
+							scope.employee_data = {
+								medical_credits: 0,
+								wellness_credits: 0,
+								dependents: [],
+								plan_start: scope.customer_data.plan.plan_start,
+								mobile_area_code: '65',
+								mobile_area_code_country: 'sg'
+							};
+						}
+						
+						iti.setCountry(scope.showCurrencyType.toUpperCase());
 						scope.dependent_data = {};
 						scope.dependent_data.plan_start = scope.customer_data.plan.plan_start;
 						scope.employee_data.plan_start = scope.customer_data.plan.plan_start;
@@ -794,15 +807,15 @@ app.directive('benefitsTiersDirective', [
 										wellness_credits: 0,
 										dependents: [],
 										plan_start: scope.customer_data.plan.plan_start,
-										mobile_area_code: '65',
-										mobile_area_code_country: 'sg',
+										mobile_area_code: scope.showCurrencyType == 'myr' ? '60' : '65' ,
+										mobile_area_code_country: scope.showCurrencyType,
 										medical_entitlement: null,
 										wellness_entitlement: null,
 										bank_name: null,
 										bank_account: null,
 										cap_per_visit: null,
 									};
-									iti.setCountry("SG");
+									iti.setCountry(scope.showCurrencyType.toUpperCase());
 								}
 								if (scope.employee_data.dependents.length > 0) {
 									scope.added_dependent_data = scope.employee_data.dependents[0];
@@ -822,15 +835,15 @@ app.directive('benefitsTiersDirective', [
 										wellness_credits: 0,
 										dependents: [],
 										plan_start: scope.customer_data.plan.plan_start,
-										mobile_area_code: '65',
-										mobile_area_code_country: 'sg',
+										mobile_area_code: scope.showCurrencyType == 'myr' ? '60' : '65',
+										mobile_area_code_country: scope.showCurrencyType,
 										medical_entitlement: null,
 										wellness_entitlement: null,
 										bank_name: null,
 										bank_account: null,
 										cap_per_visit: null,
 									};
-									iti.setCountry("SG");
+									iti.setCountry( scope.showCurrencyType.toUpperCase() );
 								}
 								if (scope.employee_data.dependents.length > 0) {
 									scope.added_dependent_data = scope.employee_data.dependents[0];
@@ -1040,7 +1053,7 @@ app.directive('benefitsTiersDirective', [
 							swal('Error!', 'Mobile Number for your country code should be 8 digits.', 'error');
 							return false;
 						}
-						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 10) {
+						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 9 || scope.employee_data.mobile.length > 10) {
 							// swal('Error!', 'Mobile Number for your country code should be 10 digits.', 'error');
 							swal('Error!', 'Invalid mobile format. Please enter mobile in the format of 9-10 digit number without the prefix “0”.', 'error');
 							return false;
@@ -1253,6 +1266,7 @@ app.directive('benefitsTiersDirective', [
 				scope.getEnrollTempEmployees = function () {
 					scope.temp_employees = [];
 					scope.hasError = false;
+					scope.hasEmailOrMobile = false;
 					scope.table_dependents_ctr = 0;
 					
 					scope.showLoading();
@@ -1261,6 +1275,9 @@ app.directive('benefitsTiersDirective', [
 							console.log( response );
 							scope.temp_employees = response.data.data;
 							angular.forEach(scope.temp_employees, function (value, key) {
+								if ( value.email != null || value.mobile != null ) {
+									scope.hasEmailOrMobile = true;
+								}
 								if (value.dependents.length > scope.table_dependents_ctr) {
 									scope.table_dependents_ctr = value.dependents.length;
 								}
@@ -1303,19 +1320,19 @@ app.directive('benefitsTiersDirective', [
         }
 
 				scope.updateEnrolleEmp = function (emp) {
-					
+					console.log(emp);
 
-					if ( scope.showCurrencyType == 'myr' ) {
-						if ( emp.employee.nric == '' && emp.employee.mobile == '' && emp.employee.passport == '' ) {
-							sweetAlert("Error!", "Please key in Mobile No., NRIC, or Passport Number.", "error");
-							return false;
-						}
-					} else {
-						if (emp.employee.email == "" && emp.employee.mobile == "") {
-							swal("Error!", "Email Address or Mobile Number is required.", 'error');
-							return false;
-						}
-					}
+					// if ( scope.showCurrencyType == 'myr' ) {
+					// 	if ( emp.employee.nric == '' && emp.employee.mobile == '' && emp.employee.passport == '' ) {
+					// 		sweetAlert("Error!", "Please key in Mobile No., NRIC, or Passport Number.", "error");
+					// 		return false;
+					// 	}
+					// } else {
+					// 	if (emp.employee.email == "" && emp.employee.mobile == "") {
+					// 		swal("Error!", "Email Address or Mobile Number is required.", 'error');
+					// 		return false;
+					// 	}
+					// }
 
 					// if( !emp.employee.mobile_area_code ) {
 					// 	swal("Error!", "Please prvoide a Mobile Area Code is required.", 'error');
@@ -1662,14 +1679,31 @@ app.directive('benefitsTiersDirective', [
 							utilsScript: "../assets/hr-dashboard/js/utils.js",
 						};
 
+						let my_settings = {
+							separateDialCode: true,
+							initialCountry: "MY",
+							autoPlaceholder: "off",
+							utilsScript: "../assets/hr-dashboard/js/utils.js",
+						};
+
 						if (scope.isEditDetailModalOpen == false) {
-							var input = document.querySelector("#area_code");
-							iti = intlTelInput(input, settings);
-							input.addEventListener("countrychange", function () {
-								console.log(iti.getSelectedCountryData());
-								scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
-								scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
-							});
+							if ( scope.showCurrencyType == 'myr' ) {
+								var input = document.querySelector("#area_code");
+								iti = intlTelInput(input, my_settings);
+								input.addEventListener("countrychange", function () {
+									console.log(iti.getSelectedCountryData());
+									scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
+									scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+								});
+							} else {
+								var input = document.querySelector("#area_code");
+								iti = intlTelInput(input, settings);
+								input.addEventListener("countrychange", function () {
+									console.log(iti.getSelectedCountryData());
+									scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
+									scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+								});
+							}
 						}
 						if (scope.isEditDetailModalOpen == true) {
 							var input2 = document.querySelector("#area_code2");

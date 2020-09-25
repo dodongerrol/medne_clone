@@ -690,11 +690,11 @@
 									<strong class="font-helvetica-medium">Mobile Number</strong>
 									<span ng-bind="selectedEmployee.phone_no">87589582</span>
 								</div>
-								<div>
+								<div ng-if="selectedEmployee.spending_account.currency_type == 'myr'">
 									<strong class="font-helvetica-medium">NRIC</strong>
 									<span ng-bind="selectedEmployee.nric">87589582</span>
 								</div>
-								<div>
+								<div ng-if="selectedEmployee.spending_account.currency_type == 'myr'>
 									<strong class="font-helvetica-medium">Passport Number</strong>
 									<span ng-bind="selectedEmployee.passport">87589582</span>
 								</div>
@@ -2103,13 +2103,13 @@
 											</div>
 										</div>
 									</div>
-									<div>
+									<div ng-if="selectedEmployee.spending_account.currency_type == 'myr'">
 	                  <div class="form-group">
 	                    <label class="edit-employee-modal-label">NRIC</label>
 	                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.nric">
 	                  </div>
 									</div>
-									<div>
+									<div ng-if="selectedEmployee.spending_account.currency_type == 'myr'">
 	                  <div class="form-group">
 	                    <label class="edit-employee-modal-label">Passport Number</label>
 	                    <input type="text" class="form-control edit-employee-modal-input" ng-model="selectedEmployee.passport">
