@@ -1283,7 +1283,6 @@ app.directive('benefitsTiersDirective', [
 								console.log(value);
 								if ( (value.employee.email != '' && value.employee.email != null) || (value.employee.mobile != '' && value.employee.mobile != null) ) {
 									scope.hasEmailOrMobile = true;
-									console.log('proceed enroll');
 								}
 								if (value.dependents.length > scope.table_dependents_ctr) {
 									scope.table_dependents_ctr = value.dependents.length;
