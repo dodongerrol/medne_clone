@@ -920,7 +920,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     function checkMemberExistence ($params) {
         $query = User::query();
 
-        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo');
+        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo', 'Active');
        
         // Append where clause
         foreach ($params as $key => $value) {
@@ -928,7 +928,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         }
         
         $user = $query->first();
-
+        return $user;
         return count((array)$user) > 0? $user: 0;
     }
 
