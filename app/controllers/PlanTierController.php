@@ -474,8 +474,8 @@ class PlanTierController extends \BaseController {
 		$group_number = CustomerHelper::getMemberLastGroupNumber($customer_id);
 		foreach ($input['employees'] as $key => $user) {
 			$credit = 0;
+			$user['mobile_country_code'] = !empty($user['mobile_area_code']) ? trim($user['mobile_area_code']) : null;
 			$user['mobile'] = !empty($user['mobile']) ? trim($user['mobile']) : null;
-			$mobile = preg_replace('/\s+/', '', $user['mobile']);
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
 			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
