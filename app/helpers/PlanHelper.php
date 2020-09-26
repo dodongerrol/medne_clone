@@ -1104,6 +1104,11 @@ class PlanHelper
 		$credits_medical_message = '';
 		$credits_wellness_error = false;
 		$credits_wellnes_message = '';
+		$postal_code_error = false;
+		$postal_code_message = '';
+		$nric_error = false;
+		$nric_message = '';
+
 		$myr_messages = [
 			'mobile_error'      => false,
             'mobile_message'    => '',
@@ -1140,6 +1145,16 @@ class PlanHelper
 			}
 		}
 
+		if (!empty(trim($user['mobile'] ?? null))) {
+			if(is_null($user['mobile_country_code']) || empty($user['mobile_country_code'])) {
+				$mobile_area_error = true;
+				$mobile_area_message = '*Country Code is empty';
+			} else {
+				$mobile_area_error = false;
+				$mobile_area_message = '';
+			}
+		}
+
 		if (!empty($user['email'])) {
 			$check_user = DB::table('user')->where('Email', $user['email'])->where('Active', 1)->where('UserType', 5)->count();
 
@@ -1168,7 +1183,6 @@ class PlanHelper
 			}
 		}
 
-
 		if (is_null($user['fullname'])) {
 			$full_name_error = true;
 			$full_name_message = '*Full Name is empty';
@@ -1177,13 +1191,13 @@ class PlanHelper
 			$full_name_message = '';
 		}
 
-		if (isset($user['mobile_area_code']) && is_null($user['mobile_area_code']) || isset($inpt['mobile_country_code']) && is_null($user['mobile_country_code'])) {
-			$mobile_area_error = true;
-			$mobile_area_message = '*Mobile Country Code is empty';
-		} else {
-			$mobile_area_error = false;
-			$mobile_area_message = '';
-		}
+		// if (isset($user['mobile_area_code']) && is_null($user['mobile_area_code']) || isset($inpt['mobile_country_code']) && is_null($user['mobile_country_code'])) {
+		// 	$mobile_area_error = true;
+		// 	$mobile_area_message = '*Mobile Country Code is empty';
+		// } else {
+		// 	$mobile_area_error = false;
+		// 	$mobile_area_message = '';
+		// }
 
 		if (is_null($user['dob'])) {
 			$dob_error = true;
@@ -1199,16 +1213,19 @@ class PlanHelper
 			}
 		}
 
-		$postal_code_error = false;
-		$postal_code_message = '';
-		$nric_error = false;
-		$nric_message = '';
-
 		if (is_null($user['plan_start'])) {
 			$start_date_error = true;
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
+			$plan_start = strftime("%Y-%m-%d",strtotime($user['plan_start']));
+			if($plan_start == "1970-01-01") {
+				$temp = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
+				$user['plan_start'] = $temp->format('d/m/Y');
+			} else {
+				$user['plan_start'] = date('d/m/Y', strtotime($plan_start));
+			}
+
 			$validate = self::isDate($user['plan_start']);
 			if (!$validate) {
 				$start_date_error = true;
@@ -1229,7 +1246,6 @@ class PlanHelper
 				}
 			}
 		}
-
 
 		if (!isset($user['medical_credits']) || is_null($user['medical_credits'])) {
 			$credits_medical_error = false;

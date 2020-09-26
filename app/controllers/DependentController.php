@@ -48,7 +48,7 @@ class DependentController extends \BaseController {
 			$file->move('excel_upload', $temp_file);
 			try {
 				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(true, 'd/m/Y')->get();
 			} catch(Exception $e) {
 				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
 			}
@@ -266,15 +266,17 @@ class DependentController extends \BaseController {
 					$start_date = $user['start_date'];
 				}
 
-				$start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
-				if($start_date_format) {
-					$user['plan_start'] = $start_date;
-				} else {
-					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
-				}
-				
+				// $start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
+				// if($start_date_format) {
+				// 	$user['plan_start'] = $start_date;
+				// } else {
+				// 	$user['plan_start'] = date('d/m/Y', strtotime($start_date));
+				// }
+				$user['plan_start'] = $start_date;
 				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
+				$user['medical_credits'] = !isset($user['medical_allocation']) ? $user['medical_credits'] : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
+				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? $user['wellness_credits'] : $user['wellness_allocation'];
 				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
@@ -314,8 +316,8 @@ class DependentController extends \BaseController {
 					if($enroll_result) {
 						if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
 							foreach ($user['dependents'] as $key => $dependent) {
-								$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
-								$dependent['plan_start'] = $plan_start->format('Y-m-d');
+								$dependent['plan_start'] = isset($user['start_date']) ? $user['start_date'] : $user['start_date_ddmmyyyy'];
+								$dependent['plan_start'] = $dependent['plan_start'] && $dependent['plan_start'] != null ? strtotime(date_format(date_create_from_format('d/m/Y', $dependent['plan_start']), 'Y-m-d')) : null; 
 								$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
 								$dependent['relationship'] = strtolower($dependent['relationship']);
 								$dependent['fullname'] = $dependent['full_name'];
