@@ -3585,7 +3585,7 @@ class PlanHelper
 		// $active_plan_ids = [];
 
 		foreach ($customer_active_plans as $key => $customer_active_plan) {
-			$active_plan_ids[] = $customer_active_plan->customer_active_plan_id;
+			$active_plan_ids[] = $customer_active_plan;
 		}
 
 		// get users base on the customer active plan ids
