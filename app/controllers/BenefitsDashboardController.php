@@ -3613,17 +3613,17 @@ class BenefitsDashboardController extends \BaseController {
 		$mobile = (int)$mobile;
 		// check if mobile already existed or duplicate
 		if(!empty($input['phone_no'])) {
-		$check_mobile = DB::table('user')
-		->where('PhoneNo', (string)$mobile)
-		->whereNotIn('UserID', [$input['user_id']])
-		->where('UserType', 5)
-		->where('Active', 1)
-		->first();
+			$check_mobile = DB::table('user')
+			->where('PhoneNo', (string)$mobile)
+			->whereNotIn('UserID', [$input['user_id']])
+			->where('UserType', 5)
+			->where('Active', 1)
+			->first();
 
-		if($check_mobile) {
-			return array('status' => false, 'message' => 'Mobile Number already taken.');
-		}
-	}	
+			if($check_mobile) {
+				return array('status' => false, 'message' => 'Mobile Number already taken.');
+			}
+		}	
 		if(
 			$this->isEmpty($input['phone_no'])
 		 	&& $this->isEmpty($input['nric']) 
