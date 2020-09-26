@@ -6,7 +6,8 @@ app.directive('benefitsTiersDirective', [
 	'dependentsSettings',
 	'$compile',
 	'$window',
-	function directive($state, hrSettings, dashboardFactory, $timeout, dependentsSettings, $compile, $window) {
+	'$http',
+	function directive($state, hrSettings, dashboardFactory, $timeout, dependentsSettings, $compile, $window, $http) {
 		return {
 			restrict: "A",
 			scope: true,
