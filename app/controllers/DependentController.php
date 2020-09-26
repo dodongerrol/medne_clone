@@ -274,7 +274,9 @@ class DependentController extends \BaseController {
 				}
 				
 				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
+				$user['medical_credits'] = !isset($user['medical_allocation']) ? $user['medical_credits'] : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
+				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? $user['wellness_credits'] : $user['wellness_allocation'];
 				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
