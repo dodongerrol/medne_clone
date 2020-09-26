@@ -601,7 +601,11 @@ class PlanTierController extends \BaseController {
 						$dependent_error = true;
 					}
 
-					$dep->plan_start = date('d/m/Y', strtotime($dep->plan_start));
+					if(($dep->plan_start == "1970-01-01") || ($dep->plan_start == "0000-00-00") || ($dep->plan_start == null)) {
+						$dep->plan_start = null;
+					} else {
+						$dep->plan_start = date('d/m/Y', strtotime($dep->plan_start));
+					}
 					if($dep->dob) {
 						$dob = date_create_from_format("Y-m-d", $dep->dob);
 						if($dob) {
