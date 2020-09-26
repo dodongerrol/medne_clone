@@ -474,8 +474,8 @@ class PlanTierController extends \BaseController {
 		$group_number = CustomerHelper::getMemberLastGroupNumber($customer_id);
 		foreach ($input['employees'] as $key => $user) {
 			$credit = 0;
+			$user['mobile_country_code'] = !empty($user['mobile_area_code']) ? trim($user['mobile_area_code']) : null;
 			$user['mobile'] = !empty($user['mobile']) ? trim($user['mobile']) : null;
-			$mobile = preg_replace('/\s+/', '', $user['mobile']);
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
 			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
@@ -601,7 +601,11 @@ class PlanTierController extends \BaseController {
 						$dependent_error = true;
 					}
 
-					$dep->plan_start = date('d/m/Y', strtotime($dep->plan_start));
+					if(($dep->plan_start == "1970-01-01") || ($dep->plan_start == "0000-00-00") || ($dep->plan_start == null)) {
+						$dep->plan_start = null;
+					} else {
+						$dep->plan_start = date('d/m/Y', strtotime($dep->plan_start));
+					}
 					if($dep->dob) {
 						$dob = date_create_from_format("Y-m-d", $dep->dob);
 						if($dob) {
@@ -677,6 +681,7 @@ class PlanTierController extends \BaseController {
 		);
 
 		$temp_enroll->updateEnrollee($data);
+		$input['mobile_country_code'] = $input['mobile_area_code'];
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
 

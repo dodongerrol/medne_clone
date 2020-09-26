@@ -7264,7 +7264,7 @@ public function payCreditsNew( )
       // Check if mobile number already
       $mobileExist = $userDetails->checkMemberExistence(array( 
           array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile']),
-          array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
+          // array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
       ));
       
       if ($mobileExist) {
@@ -7359,7 +7359,8 @@ public function payCreditsNew( )
       // Check if mobile number already
       $mobileExist = $userDetails->checkMemberExistence(array( 
                                   array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile_number']),
-                                  array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
+                                  // array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId']),
+                                  array( 'paramKey' => 'Active', 'paramKeyValue'=> 1),
                               ));
       
       if ($mobileExist) {

@@ -443,6 +443,11 @@ app.directive('benefitsTiersDirective', [
 				scope.openEditDetailsModal = function (index) {
 					scope.isEditDetailModalOpen = true;
 					scope.selected_edit_details_data = scope.temp_employees[index];
+					if(scope.selected_edit_details_data.employee.isStartDateNull){
+            scope.selected_edit_details_data.employee.start_date = moment().format('DD/MM/YYYY');
+          }else{
+            scope.selected_edit_details_data.employee.start_date = moment(scope.selected_edit_details_data.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY');
+          }
 					$("#edit-employee-details").modal('show');
 					$('.edit-employee-details-form .datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.dob);
 					$('.edit-employee-details-form .start-date-datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.start_date);
@@ -1278,10 +1283,14 @@ app.directive('benefitsTiersDirective', [
 								console.log(value);
 								if ( (value.employee.email != '' && value.employee.email != null) || (value.employee.mobile != '' && value.employee.mobile != null) ) {
 									scope.hasEmailOrMobile = true;
-									console.log('proceed enroll');
 								}
 								if (value.dependents.length > scope.table_dependents_ctr) {
 									scope.table_dependents_ctr = value.dependents.length;
+								}
+								if(value.employee.start_date == null){
+									value.employee.isStartDateNull = true;
+								}else{
+									value.employee.isStartDateNull = false;
 								}
 								if (value.error_logs.error == true) {
 									scope.hasError = true;
@@ -1977,6 +1986,13 @@ app.directive('benefitsTiersDirective', [
 					iti2.destroy();
 					console.log(iti);
 					console.log(iti2);
+				})
+				$('#edit-employee-details').on('hidden.bs.modal', function () {
+					if(scope.selected_edit_details_data.employee.isStartDateNull){
+            scope.selected_edit_details_data.employee.start_date = null;
+          }else{
+            scope.selected_edit_details_data.employee.start_date = moment(scope.selected_edit_details_data.employee.start_date).format('DD/MM/YYYY');
+          }
 				})
 
 
