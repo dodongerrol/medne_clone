@@ -317,7 +317,7 @@ class DependentController extends \BaseController {
 						if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
 							foreach ($user['dependents'] as $key => $dependent) {
 								$dependent['plan_start'] = isset($user['start_date']) ? $user['start_date'] : $user['start_date_ddmmyyyy'];
-								$dependent['plan_start'] = $dependent['plan_start'] && $dependent['plan_start'] != null ? strtotime(date_format(date_create_from_format('d/m/Y', $dependent['plan_start']), 'Y-m-d')) : null; 
+								$plan_start = $dependent['plan_start'] && $dependent['plan_start'] != null ? strtotime(date_format(date_create_from_format('d/m/Y', $dependent['plan_start']), 'Y-m-d')) : null; 
 								$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
 								$dependent['relationship'] = strtolower($dependent['relationship']);
 								$dependent['fullname'] = $dependent['full_name'];
@@ -343,7 +343,7 @@ class DependentController extends \BaseController {
 									'first_name'			=> trim($dependent['fullname']),
 									'dob'					=> $dependent['dob'],
 									'nric'					=> null,
-									'plan_start'			=> $dependent['plan_start'],
+									'plan_start'			=> $plan_start ? date('Y-m-d', $plan_start) : null,
 									'relationship'			=> trim($dependent['relationship']),
 									'error_logs'			=> serialize($error_dependent_logs)
 								);
