@@ -3187,7 +3187,9 @@ public static function getDoctorAvailablity()
 				
 				$data['clinicid'] = $clinicid;
 				$data['Name'] = $input['clinicname'];
-				$data['Clinic_Type'] = $input['speciality'];
+				if (isset($input['speciality'])) {
+					$data['Clinic_Type'] = $input['speciality'];
+				}
 				$data['Phone'] = $input['mobile'];
 				$data['Phone_Code'] = $input['Phonecode'];
 				$data['active'] = 1;

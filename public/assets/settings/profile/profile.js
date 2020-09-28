@@ -27,6 +27,7 @@ jQuery(document).ready(function($) {
     .done(function(data) {
       $('.operatingHours-div').css('display', 'none');
       $("#profile-detail-wrapper").html(data);
+      $("#profile-detail-wrapper").css('display', 'inline-block');
     });
 
     $("#Configure-list div b").css("color", "#777676");
@@ -40,6 +41,7 @@ jQuery(document).ready(function($) {
     $('.clinic-detail-container').css('display', 'none');
     $('.operatingHours-div').css('display', 'inline-block');
     $('#profile-breakHours-savebreakHours').css('display', 'none');
+    $('#profile-detail-wrapper').css('display', 'none');
     $("#Configure-list div b").css("color", "#777676");
     $("#Integrate-list div b").css("color", "#777676");
     $('#clinic-hours').css("color", "black");
@@ -58,8 +60,10 @@ jQuery(document).ready(function($) {
       type: "post"
     })
     .done(function(data) {
+      $("#profile-detail-wrapper").css('display', 'inline-block');
       $("#profile-detail-wrapper").html(data);
       getBankDetails();
+      $('.operatingHours-div').css('display', 'none');
       // $( "#clinic-hours-tab" ).trigger( "click" );
     });
 
@@ -76,8 +80,10 @@ jQuery(document).ready(function($) {
       type: "post"
     })
     .done(function(data) {
+      $("#profile-detail-wrapper").css('display', 'inline-block');
       $("#profile-detail-wrapper").html(data);
-      $("#clinic-hours-tab").trigger("click");
+      // $("#clinic-hours-tab").trigger("click");
+      $('.operatingHours-div').css('display', 'none');
     });
 
     $("#Configure-list div b").css("color", "#777676");
@@ -93,9 +99,10 @@ jQuery(document).ready(function($) {
       type: "post"
     })
     .done(function(data) {
+      $("#profile-detail-wrapper").css('display', 'inline-block');
       $("#profile-detail-wrapper").html(data);
-    });
-
+      $('.operatingHours-div').css('display', 'none');
+    }); 
     $("#Configure-list div b").css("color", "#777676");
     $("#Integrate-list div b").css("color", "#777676");
     $(this).css("color", "black");
@@ -107,7 +114,9 @@ jQuery(document).ready(function($) {
       type: "post"
     })
     .done(function(data) {
+      $("#profile-detail-wrapper").css('display', 'inline-block');
       $("#profile-detail-wrapper").html(data);
+      $('.operatingHours-div').css('display', 'none');
     });
 
     $("#Configure-list div b").css("color", "#777676");
@@ -123,6 +132,7 @@ jQuery(document).ready(function($) {
       type: "post"
     })
     .done(function(data) {
+      $("#profile-detail-wrapper").css('display', 'inline-block');
       $("#profile-detail-wrapper").html(data);
     });
 
