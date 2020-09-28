@@ -756,7 +756,7 @@ class PlanTierController extends \BaseController {
 		}
 
 		$dependent_enrollment = new DependentTempEnrollment();
-		$input['plan_start'] = date('Y-m-d', strtotime($input['plan_start']));
+		$input['plan_start'] = date('d/m/Y', strtotime($input['plan_start']));
 		$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($input);
 		$temp_enrollment_dependent = array(
 			'dependent_temp_id'		=> $input['dependent_temp_id'],
