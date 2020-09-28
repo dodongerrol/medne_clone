@@ -31,3 +31,241 @@
 .nav-drop-wrapper .nav-drop-item:hover{
   background: rgba(230, 247, 255, 0.9);
 }
+.header-navigation-section{
+  height: 60px;
+  display: flex;
+  background: #02597E;
+  padding: 0 50px;
+}
+.header-navigation-section .logo-div{
+  width: 230px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 50px;
+}
+.header-navigation-section .header-menu-div{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.header-menu-div .menu-div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 21px;
+  color: #FFFFFF;
+  padding: 0 20px;
+  cursor: pointer;
+  height: 100%;
+}
+.header-menu-div .menu-div.active{
+  background-color: #014968;
+}
+.header-navigation-section .header-settings-div{
+  /* width: 350px; */
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-settings-div .icon-selection-container{
+  margin-right: 12px;
+  border-right: 0.8px solid #FFFFFF;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.icon-selection-container img{
+  width: 25px;
+  height: 25px;
+  margin-right: 20px;
+}
+.user-info-drop-container{
+  height: 100%;
+  position: relative;
+}
+.user-info-drop-container.active{
+  background: #014968;
+}
+.user-info-drop-container .drop-select-wrapper{
+  display: flex;
+  height: 100%;
+  align-items: center;
+  cursor: pointer;
+}
+.user-info-drop-container .user-img-icon{
+  width: 60px;
+  text-align: center;
+}
+.user-info-drop-container .user-img-icon .circle{
+  width: 40px;
+  height: 40px;
+  background: #40A5A3;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.user-img-icon .circle .letter{
+  font-size: 24px;
+  line-height: 29px;
+  color: #FFFFFF;
+}
+.drop-select-wrapper .company-name{
+  flex: 1;
+  color: #FFFFFF;
+}
+.drop-select-wrapper .icon{
+  width: 15px;
+  text-align: center;
+  margin:0 10px 0 8px;
+}
+.drop-select-wrapper .icon i{
+  font-size: 22px;
+  color: #FFF;
+  position: relative;
+  top: 2px;
+}
+.icon-selection-container .tooltip-container a.tooltips {
+  position: relative;
+  display: inline;
+}
+
+.icon-selection-container .tooltip-container {
+  position: absolute;
+  width: 310px;
+  color: #ffffff;
+  background: #f1eded;
+  height: auto;
+  line-height: 30px;
+  padding: 35px 35px;
+  visibility: hidden;
+  margin-left: -600px;
+  z-index: 9999;
+  box-shadow: 0px 2px 10px rgba(191, 191, 191, 0.6);
+}
+
+.icon-selection-container .tooltip-container:after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 90%;
+  margin-left: -8px;
+  width: 0;
+  height: 0;
+  border-bottom: 8px solid #efefef;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+.icon-selection-container .help-icon:hover + .tooltip-container {
+  visibility: visible;
+  top: 30px;
+  margin-top: 24px;
+  margin-left: -223px;
+  z-index: 999;
+}
+
+.user-setting-drop-wrapper{
+  background: #FFFFFF;
+  border: 0.7px solid #BFBFBF;
+  box-shadow: 0px 2px 10px rgba(191, 191, 191, 0.6);
+  border-radius: 5px;
+  width: 320px;
+  min-height: 100px;
+  position: absolute;
+  right: -30px;
+  top: 65px;
+  z-index: 20;
+}
+.user-setting-drop-wrapper .drop-user-details{
+  padding: 25px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.7px solid #BFBFBF;
+}
+.drop-user-details .user-img-icon .circle{
+  margin: 0;
+}
+.drop-user-details .drop-user-info p{
+  line-height: 1;
+}
+.drop-user-info p.name{
+  color: #2E4057;
+  font-family: 'Helvetica Medium';
+  font-weight: 300;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+.drop-user-info p.email{
+  color: #A6A6A6;
+  font-size: 14px;
+  margin: 0px;
+}
+.user-setting-drop-wrapper .linked-accounts-wrapper{
+  border-bottom: 0.7px solid #BFBFBF;
+}
+.linked-accounts-wrapper .linked-account{
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.linked-accounts-wrapper .linked-account:hover{
+  background: #F2F2F2;
+}
+.linked-account .comp-name{
+  flex: 2;
+}
+.linked-account .comp-name p.company{
+  font-size: 14px;
+  font-family: 'Helvetica Medium';
+  color: #2E4057;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+.linked-account .comp-name p.comp-id{
+  font-size: 14px;
+  color: #848484;
+  margin: 0;
+  line-height: 1;
+}
+.linked-account .switch-account{
+  flex: 1;
+  font-size: 12px;
+  color: #BFBFBF;
+  font-style: italic;
+  text-align: right;
+}
+.linked-accounts-wrapper .more-linked{
+  padding: 15px 20px;
+  text-align: center;
+  background: linear-gradient(180deg, #FFFEFE 20.83%, #F2F2F2 100%);
+  cursor: pointer;
+}
+.linked-accounts-wrapper .more-linked span{
+  font-size: 14px;
+  color: #848484;
+}
+.linked-accounts-wrapper .more-linked span i{
+  font-size: 16px;
+  color: #848484;
+}
+.user-setting-drop-wrapper .drop-items-wrapper{
+  padding: 10px 0;
+}
+.drop-items-wrapper .drop-item{
+  padding: 0px 20px;
+  font-size: 14px;
+  color: #2E4057;
+  line-height: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
