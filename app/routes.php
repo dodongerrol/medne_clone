@@ -163,7 +163,13 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	// get date terms
 	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
 });
-
+	Route::post('employee/add_postal_code_member', 'EmployeeController@addPostalCodeEmployee');
+	Route::post('employee/create_new_password_member', 'EmployeeController@createNewPasswordEmployee');
+	Route::get('employee/check_user_otp_status', 'EmployeeController@checkUserOtp');
+	Route::post('employee/send_otp_web', 'EmployeeController@sendOtpWeb');
+	Route::get('employee/check_member', 'EmployeeController@checkMember');
+	Route::post('employee/validate_otp_web', 'EmployeeController@validateOtpWeb');
+	Route::post('employee/check_member_password', 'EmployeeController@confirmMemberPassword');
 
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
@@ -1040,6 +1046,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
 		Route::post('auth/send-otp-mobile', 'Api_V1_AuthController@sendOtpMobile');
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
+		Route::put('auth/registerMobileNumber', 'Api_V1_AuthController@registerMobileNumber');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 

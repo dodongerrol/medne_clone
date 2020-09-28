@@ -10745,3 +10745,6 @@ span.dropdown-entitlement.disabled {
 .welcome-container .nav-drop-wrapper.account-drop-wrapper {
   width: 250px;
 }
+.employee-details.tier-feature-item .iti__country-list {
+  z-index: 1000;
+}
