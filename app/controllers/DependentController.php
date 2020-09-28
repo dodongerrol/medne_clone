@@ -239,49 +239,23 @@ class DependentController extends \BaseController {
 			$temp_dependent_enroll = new DependentTempEnrollment();
 
 			$group_number = CustomerHelper::getMemberLastGroupNumber($customer_id);
-		  	// check employee and dependents validation
+			  // check employee and dependents validation
 			foreach ($temp_users as $key => $user) {
-				$credit = 0;
-				$user['email'] = isset($user['work_email']) ? trim($user['work_email']) : null;
-				$user['mobile'] = isset($user['mobile_number']) ? trim($user['mobile_number']) : trim($user['mobile']);
+				$user['email'] = isset($user['work_email']) ? $user['work_email'] : null;
+				$user['mobile'] = isset($user['mobile']) ? $user['mobile'] : $user['mobile_number'];
+				$user['dob'] = isset($user['date_of_birth']) ? $user['date_of_birth'] : $user['date_of_birth_ddmmyyyy'];
+				$user['plan_start'] = isset($user['start_date']) ? $user['start_date'] : $user['start_date_ddmmyyyy'];
 				$user['job_title'] = 'Other';
-				$user['fullname'] = $user['full_name'];
-				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
-				
-				if(isset($user['date_of_birth_ddmmyyyy'])) {
-					$dob = $user['date_of_birth_ddmmyyyy'];
-				} else {
-					$dob = $user['date_of_birth'];
-				}
-				$dob_format = PlanHelper::validateDate($dob, 'd/m/Y');
-				if($dob_format) {
-					$user['dob'] = $dob;
-				} else {
-					$user['dob'] = date('d/m/Y', strtotime($dob));
-				}
-
-				if(isset($user['start_date_ddmmyyyy'])) {
-					$start_date = $user['start_date_ddmmyyyy'];
-				} else {
-					$start_date = $user['start_date'];
-				}
-
-				// $start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
-				// if($start_date_format) {
-				// 	$user['plan_start'] = $start_date;
-				// } else {
-				// 	$user['plan_start'] = date('d/m/Y', strtotime($start_date));
-				// }
-				$user['plan_start'] = $start_date;
+				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
 				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
 				$user['medical_credits'] = !isset($user['medical_allocation']) ? $user['medical_credits'] : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
 				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? $user['wellness_credits'] : $user['wellness_allocation'];
-				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
-				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
-				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
-				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
+				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
+				$user['bank_name'] = !isset($user['bank_name']) ? null : $user['bank_name'];
+				$user['bank_account_number'] = !isset($user['bank_account_number']) ? null : $user['bank_account_number'];
 				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
+				$user['fullname'] = isset($user['full_name']) ? $user['full_name'] : $user['fullname'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
@@ -289,14 +263,15 @@ class DependentController extends \BaseController {
 					'customer_buy_start_id'	=> $customer_id,
 					'active_plan_id'		=> $customer_active_plan_id,
 					'plan_tier_id'			=> $plan_tier_id,
-					'first_name'			=> trim($user['fullname']),
+					'first_name'			=> trim($user['full_name']),
+					'last_name'				=> null,
 					'nric'					=> isset($user['nric']) ? trim($user['nric']) : null,
 					'passport'				=> isset($user['passport']) ? trim($user['passport']) : null,
 					'dob'					=> $user['dob'],
-					'email'					=> $user['email'],
+					'email'					=> trim($user['email']),
 					'emp_no'				=> trim($user['employee_id']),
-					'mobile'				=> $user['mobile'],
-					'mobile_area_code'		=> trim($user['mobile_country_code']),
+					'mobile'				=> isset($user['mobile']) ? trim($mobile) : null,
+					'mobile_area_code'		=> isset($user['mobile_country_code']) ? trim($user['mobile_country_code']) : '65',
 					'job_title'				=> $user['job_title'],
 					'bank_name'				=> $user['bank_name'],
 					'bank_account_number'	=> $user['bank_account_number'],
