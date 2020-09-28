@@ -967,6 +967,22 @@ app.directive("employeeOverviewDirective", [
           //   return false;
           // }
 
+          if(data.nric) {
+            if (data.nric.includes("-")) {
+              sweetAlert("Oops...", "Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.", "error");
+              return false;
+            } else if (!scope.checkNRIC(data.nric)) {
+              sweetAlert("Oops...", "Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.", "error");
+              return false;
+            }
+					}
+					
+					if(data.passport) {
+            if (!scope.checkPassport(data.passport)) {
+              sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+              return false;
+            }
+          }
           return true;
         }
 
@@ -1304,6 +1320,7 @@ app.directive("employeeOverviewDirective", [
             scope.selectedEmployee.start_date_dmy = moment(scope.selectedEmployee.start_date,['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
             scope.selectedEmployee.end_date_dmy = moment(scope.selectedEmployee.expiry_date).format('DD/MM/YYYY');
             console.log( emp );
+            console.log( scope.selectedEmployee )
 
             scope.selectedEmployee.dob = moment(scope.selectedEmployee.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
 
@@ -2509,6 +2526,7 @@ app.directive("employeeOverviewDirective", [
                   user_id: data.user_id,
                   bank_name: data.bank_name,
                   emp_id: data.employee_id,
+                  passport: data.passport,
                 };
                 console.log(update_data);
                 dependentsSettings.updateEmployee(update_data)
@@ -2751,6 +2769,7 @@ app.directive("employeeOverviewDirective", [
               initialCountry: "SG",
               autoPlaceholder: "off",
               utilsScript: "../assets/hr-dashboard/js/utils.js",
+              onlyCountries: ['SG','MY','PH'],
             };
             iti = intlTelInput(input, settings);
             iti.setNumber(scope.selectedEmployee.mobile_no);
@@ -2784,7 +2803,7 @@ app.directive("employeeOverviewDirective", [
               initialCountry: "SG",
               autoPlaceholder: "off",
               utilsScript: "../assets/hr-dashboard/js/utils.js",
-              onlyCountries: ["sg","my"],
+              onlyCountries: ["sg","my", "ph"],
             }
             
             var input3 = document.querySelector("#phoneNum");
@@ -2888,6 +2907,29 @@ app.directive("employeeOverviewDirective", [
           scope.selectedEmployee.bank_name = data;
           $('.bank-list-wrapper').hide();
         }
+
+        scope.checkNRIC = function (theNric) {
+          var nric_pattern = null;
+          if (theNric.length == 9) {
+            nric_pattern = new RegExp("^[stfgSTFG]{1}[0-9]{7}[a-zA-z]{1}$");
+          } else if (theNric.length == 12) {
+            // nric_pattern = new RegExp("^[0-9]{2}(?:0[1-9]|1[-2])(?:[0-1]|[1-2][0-9]|[3][0-1])[0-9]{6}$");
+            return true;
+          } else {
+            return false;
+          }
+          return nric_pattern.test(theNric);
+				};
+				
+				scope.checkPassport = function (value) {
+          let passport_pattern = null;
+          if (value) {
+            passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
+          } else {
+            return false;
+          }
+          return passport_pattern.test(value);
+        };
 
         scope.onLoad = function () {
           console.log($state.current);

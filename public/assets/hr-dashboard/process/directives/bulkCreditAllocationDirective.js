@@ -605,8 +605,13 @@ app.directive('bulkCreditAllocationDirective', [ //creditAllocationDirective
           return arr;
         };
 
+		scope.dashCredits = function () {
+			hrSettings.getCheckCredits('current_term');
+		}
+
         scope.onLoad = function( ) {
-        	scope.checkSession( );
+			scope.checkSession( );
+			scope.dashCredits( );
 					// scope.getEmployeeList( );
 					// scope.userCompanyCreditsAllocated();
 					scope.getSpendingAcctStatus();

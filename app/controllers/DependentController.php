@@ -48,7 +48,7 @@ class DependentController extends \BaseController {
 			$file->move('excel_upload', $temp_file);
 			try {
 				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(true, 'd/m/Y')->get();
 			} catch(Exception $e) {
 				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
 			}
@@ -246,6 +246,7 @@ class DependentController extends \BaseController {
 				$user['mobile'] = isset($user['mobile_number']) ? trim($user['mobile_number']) : trim($user['mobile']);
 				$user['job_title'] = 'Other';
 				$user['fullname'] = $user['full_name'];
+				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
 				
 				if(isset($user['date_of_birth_ddmmyyyy'])) {
 					$dob = $user['date_of_birth_ddmmyyyy'];
@@ -265,19 +266,22 @@ class DependentController extends \BaseController {
 					$start_date = $user['start_date'];
 				}
 
-				$start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
-				if($start_date_format) {
-					$user['plan_start'] = $start_date;
-				} else {
-					$user['plan_start'] = date('d/m/Y', strtotime($start_date));
-				}
-				
+				// $start_date_format = PlanHelper::validateDate($start_date, 'd/m/Y');
+				// if($start_date_format) {
+				// 	$user['plan_start'] = $start_date;
+				// } else {
+				// 	$user['plan_start'] = date('d/m/Y', strtotime($start_date));
+				// }
+				$user['plan_start'] = $start_date;
 				$user['medical_credits'] = !isset($user['medical_entitlement']) ? 0 : $user['medical_entitlement'];
+				$user['medical_credits'] = !isset($user['medical_allocation']) ? $user['medical_credits'] : $user['medical_allocation'];
 				$user['wellness_credits'] = !isset($user['wellness_entitlement']) ? 0 : $user['wellness_entitlement'];
-				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
+				$user['wellness_credits'] = !isset($user['wellness_allocation']) ? $user['wellness_credits'] : $user['wellness_allocation'];
+				$user['cap_per_visit'] = isset($user['cap_per_visit']) && is_numeric($user['cap_per_visit']) ? $user['cap_per_visit'] : 0;
 				$user['bank_name'] = !isset($user['bank_name']) ? 0 : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? 0 : $user['bank_account_number'];
 				$user['mobile_country_code'] = isset($user['mobile_country_code']) ? $user['mobile_country_code'] : $user['country_code'];
+				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
 
@@ -286,32 +290,34 @@ class DependentController extends \BaseController {
 					'active_plan_id'		=> $customer_active_plan_id,
 					'plan_tier_id'			=> $plan_tier_id,
 					'first_name'			=> trim($user['fullname']),
+					'nric'					=> isset($user['nric']) ? trim($user['nric']) : null,
+					'passport'				=> isset($user['passport']) ? trim($user['passport']) : null,
 					'dob'					=> $user['dob'],
 					'email'					=> $user['email'],
 					'emp_no'				=> trim($user['employee_id']),
-					'mobile'				=> (int)$mobile,
+					'mobile'				=> $user['mobile'],
 					'mobile_area_code'		=> trim($user['mobile_country_code']),
 					'job_title'				=> $user['job_title'],
 					'bank_name'				=> $user['bank_name'],
 					'bank_account_number'	=> $user['bank_account_number'],
 					'cap_per_visit'			=> $user['cap_per_visit'],
-					'credits'				=> !isset($user['medical_entitlement']) || $user['medical_entitlement'] == null ? 0 : $user['medical_entitlement'],
-					'medical_balance_entitlement'				=> !isset($user['medical_entitlement']) || $user['medical_entitlement'] == null ? 0 : $user['medical_entitlement'],
-					'wellness_credits'		=> !isset($user['wellness_entitlement']) || $user['wellness_entitlement'] == null ? 0 : $user['wellness_entitlement'],
-					'wellness_balance_entitlement'				=> !isset($user['wellness_entitlement']) || $user['wellness_entitlement'] == null ? 0 : $user['wellness_entitlement'],
+					'credits'				=> !isset($user['medical_credits']) || $user['medical_credits'] == null ? 0 : $user['medical_credits'],
+					'medical_balance_entitlement'				=> !isset($user['medical_credits']) || $user['medical_credits'] == null ? 0 : $user['medical_credits'],
+					'wellness_credits'		=> !isset($user['wellness_credits']) || $user['wellness_credits'] == null ? 0 : $user['wellness_credits'],
+					'wellness_balance_entitlement'				=> !isset($user['wellness_credits']) || $user['wellness_credits'] == null ? 0 : $user['wellness_credits'],
 					'postal_code'			=> null,
 					'start_date'			=> $user['plan_start'],
 					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)
 				);
-
+				
 				try {
 					$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 					if($enroll_result) {
 						if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
 							foreach ($user['dependents'] as $key => $dependent) {
-								$plan_start = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
-								$dependent['plan_start'] = $plan_start->format('Y-m-d');
+								$dependent['plan_start'] = isset($user['start_date']) ? $user['start_date'] : $user['start_date_ddmmyyyy'];
+								$plan_start = $dependent['plan_start'] && $dependent['plan_start'] != null ? strtotime(date_format(date_create_from_format('d/m/Y', $dependent['plan_start']), 'Y-m-d')) : null; 
 								$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
 								$dependent['relationship'] = strtolower($dependent['relationship']);
 								$dependent['fullname'] = $dependent['full_name'];
@@ -336,7 +342,8 @@ class DependentController extends \BaseController {
 									'plan_tier_id'			=> $plan_tier_id,
 									'first_name'			=> trim($dependent['fullname']),
 									'dob'					=> $dependent['dob'],
-									'plan_start'			=> $dependent['plan_start'],
+									'nric'					=> null,
+									'plan_start'			=> $plan_start ? date('Y-m-d', $plan_start) : null,
 									'relationship'			=> trim($dependent['relationship']),
 									'error_logs'			=> serialize($error_dependent_logs)
 								);
