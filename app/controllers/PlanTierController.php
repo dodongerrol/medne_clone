@@ -764,7 +764,7 @@ class PlanTierController extends \BaseController {
 			// 'last_name'				=> $input['last_name'],
 			// 'nric'					=> $input['nric'],
 			'dob'					=> $input['dob'],
-			'plan_start'			=> $input['plan_start'],
+			'plan_start'			=> date('Y-m-d', strtotime($input['plan_start'])),
 			'relationship'			=> $input['relationship'],
 			'error_logs'			=> serialize($error_dependent_logs)
 		);
