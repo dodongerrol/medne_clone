@@ -244,6 +244,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 
 	// business information
 	Route::get('hr/get_business_information', 'BenefitsDashboardController@getHrBusinessInformation');
+	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateBusinessInformation');
 
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
@@ -288,8 +289,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_refunds', 'BenefitsDashboardController@getWithdrawEmployees');
 	// get account and billing data
 	Route::get('hr/account_billing', 'BenefitsDashboardController@accountBilling');
-	// update business information
-	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateBusinessInformation');
 	// update business contact
 	Route::post('hr/update/business_contact', 'BenefitsDashboardController@updateBusinessContact');
 	// update billing contact

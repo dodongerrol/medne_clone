@@ -4840,23 +4840,21 @@ class BenefitsDashboardController extends \BaseController {
 		$hr_id = $hr_data->customer_buy_start_id;
 		$input = Input::all();
 
-		$check = DB::table('customer_business_information')->where('customer_business_information_id', $input['customer_business_information_id'])->count();
+		$check = DB::table('customer_business_information')->where('customer_business_information_id', $hr_id)->first();
 
-		if($check == 0) {
-			return array(
-				'status'	=> FALSE,
-				'message'	=> 'No business information exist'
-			);
-		}
+		// if($check == 0) {
+		// 	return array(
+		// 		'status'	=> FALSE,
+		// 		'message'	=> 'No business information exist'
+		// 	);
+		// }
 		
 
 		$business_information = new CorporateBusinessInformation;
 
 		$data = array(
-			// 'account_name'			=> $input['account_name'],
-			// 'currency_type' 		=> $info->currency_type == 'sgd' ? 'singapore' : 'malaysia',
-			'company_name'			=> $input['company_name'],
-			'company_address'		=> $input['company_address']
+			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
+			'company_address'		=> !empty($input['company_address']) ? $input['company_address'] : $check->company_address
 		);
 
 		$result = $business_information
@@ -4864,8 +4862,8 @@ class BenefitsDashboardController extends \BaseController {
 
 		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
 		$customer = array(
-			'account_name'			=> $input['account_name'],
-			'currency_type' 		=> $input['currency_type']
+			'account_name'			=> !empty($input['account_name']) ? $input['account_name'] : $info->account_name,
+			'currency_type' 		=> !empty($input['currency_type']) ? $input['currency_type'] : $info->currency_type,
 		);
 
 		$account = DB::table('customer_buy_start')
@@ -17265,7 +17263,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($id) {
 			$data = array (
 				'id'				=> $input['id'],
-				'department_name' 	=> !empty($input['department_name']) ? $input['department_name'] : $check->first_name,
+				'department_name' 	=> !empty($input['department_name']) ? $input['department_name'] : $check->department_name,
 			);
 			$update = DB::table('company_departments')
 			->where('id', $input['id'])->update($data);
@@ -17423,10 +17421,10 @@ public function createHrLocation ()
 		$company_location = new CorporateHrLocation();
 
 		$data = array(
-			'location'					=> !empty($input['location']) ? $input['location'] : $check->first_name,
-			'business_address'			=> !empty($input['business_address']) ? $input['business_address'] : $check->first_name,
-			'postal_code'				=> !empty($input['postal_code']) ? $input['postal_code'] : $check->first_name,
-			'country'					=> !empty($input['country']) ? $input['country'] : $check->first_name,
+			'location'					=> !empty($input['location']) ? $input['location'] : $check->location,
+			'business_address'			=> !empty($input['business_address']) ? $input['business_address'] : $check->business_address,
+			'postal_code'				=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
+			'country'					=> !empty($input['country']) ? $input['country'] : $check->country,
 		);
 		if($id) {
 			$update = $company_location->updateCorporateHrLocations($input['LocationID'], $data);
@@ -17525,9 +17523,9 @@ public function createHrLocation ()
 
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
-			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->first_name,
-			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->first_name,
-			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->first_name,
+			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->last_name,
+			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->work_email,
+			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 		);
 		if($id) {
 			$update = $business->updateBusinessContact($input['customer_business_contact_id'], $data);
@@ -17549,9 +17547,9 @@ public function createHrLocation ()
 
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
-			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->first_name,
-			'email'							=> !empty($input['email']) ? $input['email'] : $check->first_name,
-			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->first_name,
+			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->last_name,
+			'email'							=> !empty($input['email']) ? $input['email'] : $check->email,
+			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 		);
 		if($id) {
 			$update = $contact->updateCompanyContacts($input['medi_company_contact_id'], $data);
