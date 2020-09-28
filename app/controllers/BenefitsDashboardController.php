@@ -2242,20 +2242,21 @@ class BenefitsDashboardController extends \BaseController {
 				->where('status', 0)
 				->sum('claim_amount');
 
+				$medicalBalance = $medical_credit_data['balance'] > 0 ? number_format($medical_credit_data['balance'], 2) : "0.00";
 				$medical = array(
 					'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
 					'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
 					'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
-					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $medicalBalance,
 					'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
 				);
 
-				$wellness_balance = $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'];
+				$wellnessBalance = $wellness_credit_data['balance'] > 0 ? number_format($wellness_credit_data['balance'], 2) : "0.00";
 				$wellness = array(
 					'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
 					'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
 					'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellnessBalance,
 					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
 				);
 			}
