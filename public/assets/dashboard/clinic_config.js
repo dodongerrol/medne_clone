@@ -224,7 +224,7 @@ jQuery(document).ready(function($) {
 				$('#lbl-step-5').html('');
 				$('#lbl-step-5').css("position", "absolute");
 				$('#lbl-step-5').css("background", "#2AA4D8");
-			}, 1000);
+			}, 500);
 		});
   	});
 
