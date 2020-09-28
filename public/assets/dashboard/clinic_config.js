@@ -532,14 +532,39 @@ jQuery(document).ready(function($) {
 	/****************************Operating Hours**********************************/
 
 	$(document).on('change', 'div#setupHours .timepicker.time-to', function (time) {
-		const timeselected = time.currentTarget.value,
-				parentElement = this.parentElement.parentElement.id.split('-div')[0],
-				fromTime = $('div#setupHours #'+parentElement+'-div .timepicker.time-from').val();
-		if (new Date().getTime(timeselected) <= new Date().getTime(fromTime)) {
+		const 	parentElement = this.parentElement.parentElement.id.split('-div')[0],
+				fromTime = $('div#setupHours #'+parentElement+'-div .timepicker.time-from').val(),
+                timeselected = $('div#setupHours #'+parentElement+'-div .timepicker.time-to').val(),
+                fullYear = new Date().getFullYear(),
+                month = ("0" + (new Date().getMonth() + 1)).slice(-2),
+                day = new Date().getDate();
+			
+		if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
 			$('div#setupHours #'+parentElement+'-div .timepicker.time-to').val('09:00 PM');
+			setTimeout(function () {
+				$('#config_alert_box').css('display', 'none');
+				$('#config_alert_box').css('color', 'black');
+			}, 1000);
+		}
+		
+	});
+
+	$(document).on('change', 'div#setupHours .timepicker.time-from', function (time) {
+		const 	parentElement = this.parentElement.parentElement.id.split('-div')[0],
+				fromTime = $('div#setupHours #'+parentElement+'-div .timepicker.time-from').val(),
+                timeselected = $('div#setupHours #'+parentElement+'-div .timepicker.time-to').val(),
+                fullYear = new Date().getFullYear(),
+                month = ("0" + (new Date().getMonth() + 1)).slice(-2),
+                day = new Date().getDate();
+				
+		if (new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime()) {
+			$('#config_alert_box').css('display', 'block');
+			$('#config_alert_box').css('color', 'red');
+			$('#config_alert_box').html('Invalid time selecteds!');
+			$('div#setupHours #'+parentElement+'-div .timepicker.time-from').val('09:00 PM');
 			setTimeout(function () {
 				$('#config_alert_box').css('display', 'none');
 				$('#config_alert_box').css('color', 'black');
