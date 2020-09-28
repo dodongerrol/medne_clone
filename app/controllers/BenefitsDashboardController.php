@@ -17265,7 +17265,7 @@ class BenefitsDashboardController extends \BaseController {
 		if($id) {
 			$data = array (
 				'id'				=> $input['id'],
-				'department_name' 	=> $input['department_name']
+				'department_name' 	=> !empty($input['department_name']) ? $input['department_name'] : $check->first_name,
 			);
 			$update = DB::table('company_departments')
 			->where('id', $input['id'])->update($data);
@@ -17423,10 +17423,10 @@ public function createHrLocation ()
 		$company_location = new CorporateHrLocation();
 
 		$data = array(
-			'location'					=> $input['location'],
-			'business_address'			=> $input['business_address'],
-			'postal_code'				=> $input['postal_code'],
-			'country'					=> $input['country']
+			'location'					=> !empty($input['location']) ? $input['location'] : $check->first_name,
+			'business_address'			=> !empty($input['business_address']) ? $input['business_address'] : $check->first_name,
+			'postal_code'				=> !empty($input['postal_code']) ? $input['postal_code'] : $check->first_name,
+			'country'					=> !empty($input['country']) ? $input['country'] : $check->first_name,
 		);
 		if($id) {
 			$update = $company_location->updateCorporateHrLocations($input['LocationID'], $data);
@@ -17460,13 +17460,13 @@ public function createHrLocation ()
 
 		if($id) {
 			$data = array (
-				'customer_buy_start_id'			=> $input['customer_buy_start_id'],
+				'customer_id'					=> $id,
 				'first_name'					=> $input['first_name'],
 				'last_name'						=> $input['last_name'],
-				'work_email' 					=> $input['work_email'],
+				'email' 						=> $input['email'],
 				'phone'							=> $input['phone']
 			);
-			\CorporateBusinessContact::create($data);
+			\CorporateCompanyContacts::create($data);
 		} 
 		return array('status' => TRUE, 'message' => 'Successfully added business contact.', 'id'	=> $id);			
 	}
@@ -17483,7 +17483,27 @@ public function createHrLocation ()
 			$container[] = array(
 				'first_name' 	=> $contact->first_name, 
 				'last_name' 	=> $contact->last_name,
-				'email' 	=> $contact->work_email,
+				'email' 		=> $contact->work_email,
+				'phone' 		=> $contact->phone
+			);
+		  }
+
+		return $container;
+	}
+
+	public function getCompanyContact()
+	{	
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+		
+		$contacts = CorporateCompanyContacts::where('customer_id', $id)->get();
+		
+		$container = array();
+		foreach ($contacts as $key => $contact) {
+			$container[] = array(
+				'first_name' 	=> $contact->first_name, 
+				'last_name' 	=> $contact->last_name,
+				'email' 		=> $contact->email,
 				'phone' 		=> $contact->phone
 			);
 		  }
@@ -17496,6 +17516,47 @@ public function createHrLocation ()
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
+
+
+		$check = DB::table('customer_business_contact')->where('customer_business_contact_id', $id)->first();
+
+		
+		$business = new CorporateBusinessContact();
+
+		$data = array(
+			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
+			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->first_name,
+			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->first_name,
+			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->first_name,
+		);
+		if($id) {
+			$update = $business->updateBusinessContact($input['customer_business_contact_id'], $data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully updated Business Contact.');
+	}
+
+	public function updateHrCompanyContact()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+
+		$check = DB::table('company_contacts')->where('medi_company_contact_id', $id)->first();
+
+		
+		$contact = new CorporateCompanyContacts();
+
+		$data = array(
+			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
+			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->first_name,
+			'email'							=> !empty($input['email']) ? $input['email'] : $check->first_name,
+			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->first_name,
+		);
+		if($id) {
+			$update = $contact->updateCompanyContacts($input['medi_company_contact_id'], $data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully updated Company Contact.');
 	}
 
 	public function getHrBusinessInformation()
