@@ -15615,7 +15615,7 @@ class BenefitsDashboardController extends \BaseController {
 					'invoice_date'        => date('d/m/Y', strtotime($data->statement_date)),
 					'type'              => 'Invoice',
 					'total'            => 'S$'.$statement['statement_total_amount'],
-					'status'            => (int)$data->statement_status,
+					'paid'            => (int)$data->statement_status,
 					'statement_id'      => $data->statement_id,
 					'currency_type'     => $statement['currency_type'],
 					'spending_type'		=> 'transaction'
