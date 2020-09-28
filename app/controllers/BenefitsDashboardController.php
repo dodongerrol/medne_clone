@@ -17483,12 +17483,19 @@ public function createHrLocation ()
 			$container[] = array(
 				'first_name' 	=> $contact->first_name, 
 				'last_name' 	=> $contact->last_name,
-				'work_email' 	=> $contact->work_email,
+				'email' 	=> $contact->work_email,
 				'phone' 		=> $contact->phone
 			);
 		  }
 
 		return $container;
+	}
+
+	public function updateHrBusinessContact()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
 	}
 
 	public function getHrBusinessInformation()
