@@ -17460,7 +17460,6 @@ public function createHrLocation ()
 			$data = array (
 				'customer_id'					=> $id,
 				'first_name'					=> $input['first_name'],
-				'last_name'						=> $input['last_name'],
 				'email' 						=> $input['email'],
 				'phone'							=> $input['phone']
 			);
@@ -17480,7 +17479,6 @@ public function createHrLocation ()
 		foreach ($contacts as $key => $contact) {
 			$container[] = array(
 				'first_name' 	=> $contact->first_name, 
-				'last_name' 	=> $contact->last_name,
 				'email' 		=> $contact->work_email,
 				'phone' 		=> $contact->phone
 			);
@@ -17523,7 +17521,6 @@ public function createHrLocation ()
 
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
-			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->last_name,
 			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->work_email,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 		);
@@ -17547,7 +17544,6 @@ public function createHrLocation ()
 
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
-			'last_name'						=> !empty($input['last_name']) ? $input['last_name'] : $check->last_name,
 			'email'							=> !empty($input['email']) ? $input['email'] : $check->email,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 		);
