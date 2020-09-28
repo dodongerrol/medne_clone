@@ -2769,6 +2769,7 @@ app.directive("employeeOverviewDirective", [
               initialCountry: "SG",
               autoPlaceholder: "off",
               utilsScript: "../assets/hr-dashboard/js/utils.js",
+              onlyCountries: ['SG','MY','PH'],
             };
             iti = intlTelInput(input, settings);
             iti.setNumber(scope.selectedEmployee.mobile_no);
@@ -2802,7 +2803,7 @@ app.directive("employeeOverviewDirective", [
               initialCountry: "SG",
               autoPlaceholder: "off",
               utilsScript: "../assets/hr-dashboard/js/utils.js",
-              onlyCountries: ["sg","my"],
+              onlyCountries: ["sg","my", "ph"],
             }
             
             var input3 = document.querySelector("#phoneNum");

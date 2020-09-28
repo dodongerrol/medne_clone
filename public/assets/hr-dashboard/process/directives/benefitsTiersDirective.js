@@ -480,6 +480,8 @@ app.directive('benefitsTiersDirective', [
 								$('.start-date-datepicker-dependent').datepicker('setDate', scope.customer_data.plan.plan_start);
 							}
 						})
+
+
 					}, 300);
 					scope.inititalizeGeoCode();
 				}
@@ -1301,6 +1303,9 @@ app.directive('benefitsTiersDirective', [
 									scope.hideLoading();
 								}
 							})
+							if(scope.temp_employees.length == 0){
+								scope.hideLoading();
+							}
 						});
 				}
 
@@ -1693,36 +1698,20 @@ app.directive('benefitsTiersDirective', [
 					$timeout(function () {
 						var settings = {
 							separateDialCode: true,
-							initialCountry: "SG",
+							initialCountry: scope.showCurrencyType == 'myr' ? "MY" : "SG",
 							autoPlaceholder: "off",
 							utilsScript: "../assets/hr-dashboard/js/utils.js",
-						};
-
-						let my_settings = {
-							separateDialCode: true,
-							initialCountry: "MY",
-							autoPlaceholder: "off",
-							utilsScript: "../assets/hr-dashboard/js/utils.js",
+							onlyCountries: ['SG','MY','PH'],
 						};
 
 						if (scope.isEditDetailModalOpen == false) {
-							if ( scope.showCurrencyType == 'myr' ) {
-								var input = document.querySelector("#area_code");
-								iti = intlTelInput(input, my_settings);
-								input.addEventListener("countrychange", function () {
-									console.log(iti.getSelectedCountryData());
-									scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
-									scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
-								});
-							} else {
-								var input = document.querySelector("#area_code");
-								iti = intlTelInput(input, settings);
-								input.addEventListener("countrychange", function () {
-									console.log(iti.getSelectedCountryData());
-									scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
-									scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
-								});
-							}
+							var input = document.querySelector("#area_code");
+							iti = intlTelInput(input, settings);
+							input.addEventListener("countrychange", function () {
+								console.log(iti.getSelectedCountryData());
+								scope.employee_data.mobile_area_code = iti.getSelectedCountryData().dialCode;
+								scope.employee_data.mobile_area_code_country = iti.getSelectedCountryData().iso2;
+							});
 						}
 						if (scope.isEditDetailModalOpen == true) {
 							var input2 = document.querySelector("#area_code2");
