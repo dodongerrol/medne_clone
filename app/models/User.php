@@ -928,7 +928,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         }
         
         $user = $query->first();
-        return $user;
         return count((array)$user) > 0? $user: 0;
     }
 
