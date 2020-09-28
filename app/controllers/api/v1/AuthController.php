@@ -7005,14 +7005,14 @@ public function payCreditsNew( )
         if($findUserID){
           $user_type = PlanHelper::getUserAccountType($findUserID);
 
-          if($user_type == "employee") {
+          // if($user_type == "employee") {
             // check and update login status
             $user = DB::table('user')->where('UserID', $findUserID)->first();
             if($user) {
               // update
               DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
             }
-          }
+          // }
         }
       }
 
