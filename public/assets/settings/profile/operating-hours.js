@@ -175,16 +175,41 @@ jQuery(document).ready( function ($) {
         
     });
 
+     // Validate Time-From and Time-to value
     $(document).on('change', 'div#profile-operatingHours-time-panel .timepicker.profile-operatingHours-time-to', function (time) {
-		const timeselected = time.currentTarget.value,
-				parentElement = this.parentElement.parentElement.id.split('-div')[0],
-                fromTime = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-from').val();
+		const   parentElement = this.parentElement.parentElement.id.split('-div')[0],
+                fromTime = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-from').val(),
+                timeselected = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-to').val(),
+                fullYear = new Date().getFullYear(),
+                month = ("0" + (new Date().getMonth() + 1)).slice(-2),
+                day = new Date().getDate();
             
-		if (new Date().getTime(timeselected) <= new Date().getTime(fromTime)) {
+        if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
 			$('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-to').val('09:00 PM');
+			setTimeout(function () {
+				$('#config_alert_box').css('display', 'none');
+				$('#config_alert_box').css('color', 'black');
+			}, 1000);
+		}
+		
+    });
+
+    $(document).on('change', 'div#profile-operatingHours-time-panel .timepicker.profile-operatingHours-time-from', function (time) {
+		const   parentElement = this.parentElement.parentElement.id.split('-div')[0],
+                fromTime = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-from').val(),
+                timeselected = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-to').val(),
+                fullYear = new Date().getFullYear(),
+                month = ("0" + (new Date().getMonth() + 1)).slice(-2),
+                day = new Date().getDate();
+            
+        if (new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime()) {
+			$('#config_alert_box').css('display', 'block');
+			$('#config_alert_box').css('color', 'red');
+			$('#config_alert_box').html('Invalid time selected!');
+			$('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-from').val('09:00 AM');
 			setTimeout(function () {
 				$('#config_alert_box').css('display', 'none');
 				$('#config_alert_box').css('color', 'black');
