@@ -199,7 +199,7 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_reimbursement' => (int)$spending_account_settings->medical_reimbursement == 1 ? true : false,
 				'benefits_coverage' => $spending_account_settings->medical_benefits_coverage,
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
-				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 0 || $pendingInvoice ? true : false,
+				'wallet_status'         => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
 				'payment_status'  => $pendingInvoice ? false : true,
 				'currency_type'	=> strtoupper($customer->currency_type)
@@ -223,7 +223,7 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_reimbursement' => (int)$spending_account_settings->wellness_reimbursement == 1 ? true : false,
 				'benefits_coverage' => (int)$spending_account_settings->wellness_enable == 1 ? $spending_account_settings->wellness_benefits_coverage : 'out_of_pocket',
 				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
-				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 0 || $pendingInvoice ? true : false,
+				'wallet_status'         => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
 				'payment_status'  => $pendingInvoice ? false : true,
 				'currency_type'	=> strtoupper($customer->currency_type)
