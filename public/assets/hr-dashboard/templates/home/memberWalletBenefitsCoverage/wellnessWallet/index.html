@@ -21,7 +21,7 @@
       </div> -->
     </div>
     <div class="mwbc-box-container">
-      <h4 class="member-bold-text">Wellness Wallet <span ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="status" ng-class="{'active' : !wellnessWalletData.disable, 'inactive' : wellnessWalletData.disable }">({{!wellnessWalletData.disable ? 'Active':'Deactivated'}})</span></h4>
+      <h4 class="member-bold-text">Wellness Wallet <span ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="status" ng-class="{'active' : wellnessWalletData.wallet_status, 'inactive' : !wellnessWalletData.wallet_status }">({{wellnessWalletData.wallet_status ? 'Active':'Deactivated'}})</span></h4>
       <label ng-if="wellnessWalletData.benefits_coverage != 'lite_plan'" class="font-helvetica-medium">Benefits Period</label>
       <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="mwbc-card-box-container">
         <div class="available-credits-container">

@@ -186,8 +186,8 @@ class SpendingAccountController extends \BaseController {
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
-				'panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel,
-				'non_panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel,
+				'panel_payment_method'	=> $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel,
+				'non_panel_payment_method'	=> $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel,
 				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
 				'total_company_budget' => $credits['total_company_entitlement'],
@@ -199,7 +199,7 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_reimbursement' => (int)$spending_account_settings->medical_reimbursement == 1 ? true : false,
 				'benefits_coverage' => $spending_account_settings->medical_benefits_coverage,
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
-				'disable'         => (int)$spending_account_settings->medical_activate_allocation == 0 || $pendingInvoice ? true : false,
+				'wallet_status'         => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
 				'payment_status'  => $pendingInvoice ? false : true,
 				'currency_type'	=> strtoupper($customer->currency_type)
@@ -210,10 +210,10 @@ class SpendingAccountController extends \BaseController {
 			$format = array(
 				'customer_id'		  => $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
-				'panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel,
-				'non_panel_payment_method'	=> $pendingInvoice ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_non_panel,
-				'benefits_start'	=> $spending_account_settings->medical_spending_start_date,
-				'benefits_end'		=> $spending_account_settings->medical_spending_end_date,
+				'panel_payment_method'	=> $pendingInvoice && $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel,
+				'non_panel_payment_method'	=> $pendingInvoice && $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_non_panel,
+				'benefits_start'	=> $spending_account_settings->wellness_spending_start_date,
+				'benefits_end'		=> $spending_account_settings->wellness_spending_end_date,
 				'total_company_budget' => $total_credits,
 				'total_company_entitlement' => $credits['total_company_entitlement'],
 				'total_wellness_entitlement' => $credits['total_wellness_entitlement'],
@@ -223,7 +223,7 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_reimbursement' => (int)$spending_account_settings->wellness_reimbursement == 1 ? true : false,
 				'benefits_coverage' => (int)$spending_account_settings->wellness_enable == 1 ? $spending_account_settings->wellness_benefits_coverage : 'out_of_pocket',
 				'status'          => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
-				'disable'         => (int)$spending_account_settings->wellness_activate_allocation == 0 || $pendingInvoice ? true : false,
+				'wallet_status'         => (int)$spending_account_settings->wellness_enable == 1 ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
 				'payment_status'  => $pendingInvoice ? false : true,
 				'currency_type'	=> strtoupper($customer->currency_type)
