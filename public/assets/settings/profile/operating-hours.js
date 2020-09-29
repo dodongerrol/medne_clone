@@ -182,9 +182,11 @@ jQuery(document).ready( function ($) {
                 timeselected = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-to').val(),
                 fullYear = new Date().getFullYear(),
                 month = ("0" + (new Date().getMonth() + 1)).slice(-2),
-                day = new Date().getDate();
+                day = new Date().getDate(),
+                allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
             
-        if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
+        if (!(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
+            && (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime())) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
@@ -203,9 +205,11 @@ jQuery(document).ready( function ($) {
                 timeselected = $('div#profile-operatingHours-time-panel #'+parentElement+'-div .timepicker.profile-operatingHours-time-to').val(),
                 fullYear = new Date().getFullYear(),
                 month = ("0" + (new Date().getMonth() + 1)).slice(-2),
-                day = new Date().getDate();
+                day = new Date().getDate(),
+                allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
             
-        if (new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime()) {
+        if (!(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
+            && (new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
