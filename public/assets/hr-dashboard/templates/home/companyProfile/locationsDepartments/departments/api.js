@@ -17,7 +17,7 @@
         }
         update (department) {
             return this.$http.post(`${this.serverUrl}/hr/update_department`, {
-                id: department.id,
+                id: department.customer_id,
                 department_name: department.department_name
             });
         }

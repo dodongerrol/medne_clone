@@ -1,3 +1,3 @@
 <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeOverview/export-members/controller.js?_={{ $date->format('U') }}"></script>
-<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeOverview/function.js?_={{ $date->format('U') }}"></script>
+<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeOverview/bulk-update/controller.js?_={{ $date->format('U') }}"></script>
 <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeOverview/function.js?_={{ $date->format('U') }}"></script>

@@ -1,4 +1,4 @@
-<button class="btn-export-member" ng-click="$ctrl.open()">
+<button class="btn-export-member medi-border-primary medi-text-primary bg-white" ng-click="$ctrl.open()">
     <img src="../assets/hr-dashboard/img/new-assets/Download.png">
     Export members details
 </button>
@@ -15,22 +15,22 @@
                         </h4>
                         <div class="flex items-start justify-center space-x-12 w-full">
                             <div class="grid grid-cols-1 gap-4 w-1/2">
-                                <div class="relative w-full div-input-group">
-                                    <svg viewBox="0 0 20 20" fill="currentColor"
-                                        class="absolute text-gray-600 w-5 h-5 ml-2 left-0">
-                                        <path fill-rule="evenodd"
-                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                            clip-rule="evenodd"></path>
-                                    </svg>
-                                    <input
-                                        class="form-input pl-5 text-gray-600"
-                                        type="text"
-                                        placeholder="Search by name"
-                                        ng-model="state.search"
-                                    >
+                                <div>
+                                    <div class="relative">
+                                        <input
+                                            type="search"
+                                            class="rounded border-solid border-b-2 border-t-2 border-gray-300 px-2 py-1 text-sm w-full pl-8"
+                                            placeholder="Search properties"
+                                        >
+                                        <div class="absolute inset-y-0 left-0 mt-2 ml-2 text-gray-800">
+                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                          </svg>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
-                                    <label class="section-title text-sm mb-1">
+                                    <label class="section-title text-sm mb-1 text-left flex items-center justify-start">
                                         Properties
                                     </label>
                                     <div class="flex flex-col h-56 overflow-y-scroll">
@@ -41,7 +41,7 @@
                             <div
                                 class="h-84 w-1 border-l border-r-0 border-t-0 border-b-0 border-solid border-color">
                             </div>
-                            <div class="w-1/2">
+                            <div class="w-1/2 flex items-start flex-col">
                                 <label class="section-title text-sm mb-1">
                                     Selected Properties
                                 </label>

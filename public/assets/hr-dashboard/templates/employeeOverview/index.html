@@ -4,7 +4,7 @@
       <h1>Employee Overview</h1>
       <h4><span ng-bind="member_count"></span> total members</h4>
     </div>
-    <div class="overview-menu">
+    <div class="overview-menu flex items-center">
       <span ng-click="_showAddFilterModal_()" class="add-filter-container">
         <img src="../assets/hr-dashboard/img/plus-gray.png"> <span>Add filter</span>
       </span>
@@ -18,6 +18,7 @@
       <button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ui-sref="cred-allocation">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
       <!-- <button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button> -->
       <exportmembers></exportmembers>
+      <bulkupdate></bulkupdate>
       <button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
     </div>
   </div>

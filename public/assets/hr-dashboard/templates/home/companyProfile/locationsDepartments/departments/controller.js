@@ -3,7 +3,7 @@
     class DepartmentsController {
         constructor(departmentAPI) {
             this.views = window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/departments',
-                this.loading = false;
+            this.loading = false;
             this.departments = [];
             this.countries = countries();
             this.state = {
@@ -57,7 +57,8 @@
         delete() {
             this.presentModal('remove-department-confirm-modal', false);
             $(".circle-loader").fadeIn();
-            const request = this.departmentAPI.remove(this.state.department.id);
+
+            const request = this.departmentAPI.remove(this.state.department.customer_id);
 
             request.then(() => {
                 $(".circle-loader").fadeOut();

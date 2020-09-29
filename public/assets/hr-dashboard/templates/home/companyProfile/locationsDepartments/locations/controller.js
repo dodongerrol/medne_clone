@@ -21,6 +21,9 @@
         $onInit() {
             this.get();
         }
+        buttonState () {
+            return this.locations.length > 0 ? 'h-10' : 'h-40';
+        }
         get() {
             this.locationAPI.get().then(response => {
                 this.locations = response;

@@ -7,8 +7,7 @@ login.run(function($http) {
 login.factory('serverUrl',[
     function factory(){
       return {
-        // url: window.location.origin,
-        url: 'https://hrapi.medicloud.sg',
+        url: window.location.origin,
       }
     }
 ]);
@@ -111,7 +110,7 @@ login.directive('loginSection', [
 					$http.post(serverUrl.url + `/hr/resend_hr_activation_link?token=${scope.token}`)
 					.success(function(response){
 						console.log(response);
-						
+
 					});
 				}
 				scope.searchAccount	=	function(search){
@@ -142,7 +141,7 @@ login.directive('loginSection', [
 								// window.location.href = window.location.origin + "/company-benefits-dashboard/";
 							}
 						}
-						
+
 					});
 				}
 				scope.prevPage	=	function(){
@@ -150,7 +149,7 @@ login.directive('loginSection', [
 						scope.pageActive -= 1;
 						scope.checkLinkedAccounts();
 					}
-					
+
 				}
 				scope.nextPage	=	function(){
 					if(true){
@@ -190,7 +189,7 @@ login.directive('loginSection', [
 					scope.checkUserLogin();
 				}
 				scope.onLoad();
-				
+
 			}
 		}
 	}

@@ -1,11 +1,11 @@
-.employee-overview-container{
-  padding: 15px 85px;
-  min-height: calc( 100vh - 180px );
-  height: 100%;
+.medi-body-color {
+  background-color: #f5f5f5;
 }
-.employee-overview-container .employee-pagination-wrapper {
-  background: transparent;
+
+.medi-text-primary {
+  color: var(--primary);
 }
-.employee-overview-container .per_page{
-  display: block;
+
+.medi-border-primary {
+  border-color: var(--primary);
 }
