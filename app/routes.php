@@ -248,6 +248,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 
 	// billing contact
 	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateBillingContact');
+	Route::get('hr/get_billing_contact', 'BenefitsDashboardController@getBillingContact');
 
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');

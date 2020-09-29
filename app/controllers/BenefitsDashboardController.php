@@ -17595,4 +17595,20 @@ public function createHrLocation ()
 		);
 
 	}
+	public function getBillingContact()
+	{
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		$contact = CorporateBillingContact::where('customer_buy_start_id', $id)->first();
+
+		$data = array (
+			'customer_billing_contact_id'			=> $contact->customer_billing_contact_id,
+			'first_name'							=> $contact->first_name,
+			'phone' 								=> $contact->phone,
+			'work_email'							=> $contact->work_email
+		);
+
+		return array('data' => $data);
+	}
 }
