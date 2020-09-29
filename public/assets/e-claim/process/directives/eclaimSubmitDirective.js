@@ -204,6 +204,9 @@ app.directive('eclaimSubmitDirective', [
 
 				scope.backStep = function( ) {
 					scope.step_active--;
+					if(scope.step_active == 1){
+						scope.initializeDatepickers();
+					}
 				}
 
 				scope.close_new_popup = function() {
@@ -286,7 +289,8 @@ app.directive('eclaimSubmitDirective', [
 					}else{
 						if( moment(info.visit_date).isBefore( moment( scope.user_status.valid_start_claim ).subtract( 1, 'days' ) ) 
 							|| moment(info.visit_date).isAfter( moment( ).add( 1, 'days' ) ) ){
-							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( scope.user_status.valid_end_claim ).format("MM/DD/YYYY") );
+							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( ).format("MM/DD/YYYY") );
+							// scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( scope.user_status.valid_end_claim ).format("MM/DD/YYYY") );
 							return false;
 						}
 					}
@@ -524,9 +528,9 @@ app.directive('eclaimSubmitDirective', [
 					setTimeout(function() {
 	        	var visit_date_dp =  $('#visitDateInput').datetimepicker({
 				    	format : 'DD MMMM, YYYY',
-				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
-				    	maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
+				    	maxDate : new Date( ),
+				    	// maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
 				    	useCurrent : false,
 				    });
 

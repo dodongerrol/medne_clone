@@ -20,7 +20,7 @@
     </div> -->
   </div>
   <div class="mwbc-box-container">
-    <h4 class="member-bold-text">Medical Wallet <span ng-if="medicalWalletData.benefits_coverage == 'lite_plan'" class="status" ng-class="{'active' : !medicalWalletData.disable, 'inactive' : medicalWalletData.disable }">({{!medicalWalletData.disable ? 'Active':'Deactivated'}})</span></h4>
+    <h4 class="member-bold-text">Medical Wallet <span ng-if="medicalWalletData.benefits_coverage == 'lite_plan'" class="status" ng-class="{'active' : medicalWalletData.wallet_status, 'inactive' : !medicalWalletData.wallet_status }">({{medicalWalletData.wallet_status ? 'Active':'Deactivated'}})</span></h4>
     <label ng-if="medicalWalletData.benefits_coverage != 'lite_plan'" class="font-helvetica-medium">Benefits Period</label>
     <div ng-if="medicalWalletData.benefits_coverage == 'lite_plan'" class="mwbc-card-box-container">
       <div class="available-credits-container">
@@ -190,7 +190,7 @@
           </div>
         </div>
         <div ng-if="false" class="dp-flex-ai">
-          <div ng-disabled="medicalWalletData.disable" class="dp-flex-ai flex-1 prepaid-credits-toggle">
+          <div ng-disabled="medicalWalletData.wallet_status == false" class="dp-flex-ai flex-1 prepaid-credits-toggle">
             <span>Prepaid Credits</span>
             <span class="credits-tooltip-wrapper">
               <img ng-click="toggleMednefitsCredits('panel-mednefits-credits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
@@ -272,7 +272,7 @@
           </div>
         </div>
         <div ng-if="false" class="display-flex">
-          <div ng-disabled="medicalWalletData.disable" class="dp-flex-ai flex-1 prepaid-credits-toggle">
+          <div ng-disabled="medicalWalletData.wallet_status == false" class="dp-flex-ai flex-1 prepaid-credits-toggle">
             <span>Prepaid Credits</span>
             <span class="credits-tooltip-wrapper">
               <img ng-click="toggleMednefitsCredits('non-panel-mednefits-credits')" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
