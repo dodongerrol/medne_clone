@@ -238,17 +238,17 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// business contact
 	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
 	Route::get('hr/get_business_contact', 'BenefitsDashboardController@getHrBusinessContact');
-	Route::get('hr/get_company_contacts', 'BenefitsDashboardController@getCompanyContact');
+	Route::get('hr/get_company_contacts', 'BenefitsDashboardController@getHrCompanyContact');
 	Route::post('hr/update_business_contact', 'BenefitsDashboardController@updateHrBusinessContact');
 	Route::post('hr/update_company_contact', 'BenefitsDashboardController@updateHrCompanyContact');
 
 	// business information
 	Route::get('hr/get_business_information', 'BenefitsDashboardController@getHrBusinessInformation');
-	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateBusinessInformation');
+	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateHrBusinessInformation');
 
 	// billing contact
-	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateBillingContact');
-	Route::get('hr/get_billing_contact', 'BenefitsDashboardController@getBillingContact');
+	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateHrBillingContact');
+	Route::get('hr/get_billing_contact', 'BenefitsDashboardController@getHrBillingContact');
 
 	// billing information
 	Route::post('hr/update/billing_information', 'BenefitsDashboardController@updateBillingInformation');

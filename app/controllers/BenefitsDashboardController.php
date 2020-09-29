@@ -4832,7 +4832,7 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function updateBusinessInformation( )
+	public function updateHrBusinessInformation( )
 	{
 		// get admin session from mednefits admin login
 		$admin_id = Session::get('admin-session-id');
@@ -4935,7 +4935,7 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function updateBillingContact( )
+	public function updateHrBillingContact( )
 	{
 		$admin_id = Session::get('admin-session-id');
 		$hr_data = StringHelper::getJwtHrSession();
@@ -4947,6 +4947,7 @@ class BenefitsDashboardController extends \BaseController {
 		$details = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'billing_email'					=> !empty($input['billing_email']) ? $input['billing_email'] : $check->billing_email,
+			'phone_code'					=> !empty($input['phone_code']) ? $input['phone_code'] : $check->phone_code,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 			'updated_at'					=> date('Y-m-d H:i:s')
 		);
@@ -17462,6 +17463,7 @@ public function createHrLocation ()
 				'customer_id'					=> $id,
 				'first_name'					=> $input['first_name'],
 				'email' 						=> $input['email'],
+				'phone_code'					=> $input['phone_code'],
 				'phone'							=> $input['phone']
 			);
 			\CorporateCompanyContacts::create($data);
@@ -17488,7 +17490,7 @@ public function createHrLocation ()
 		return $container;
 	}
 
-	public function getCompanyContact()
+	public function getHrCompanyContact()
 	{	
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
@@ -17523,6 +17525,7 @@ public function createHrLocation ()
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->work_email,
+			'phone_code'					=> !empty($input['phone_code']) ? $input['phone_code'] : $check->phone_code,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 		);
 		if($id) {
@@ -17546,6 +17549,7 @@ public function createHrLocation ()
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'email'							=> !empty($input['email']) ? $input['email'] : $check->email,
+			'phone_code'					=> !empty($input['phone_code']) ? $input['phone_code'] : $check->phone_code,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 		);
 		if($id) {
@@ -17595,7 +17599,7 @@ public function createHrLocation ()
 		);
 
 	}
-	public function getBillingContact()
+	public function getHrBillingContact()
 	{
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
