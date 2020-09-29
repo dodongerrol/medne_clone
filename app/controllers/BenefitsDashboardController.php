@@ -17566,6 +17566,7 @@ public function createHrLocation ()
 		$data = array (
 			'customer_business_information_id'		=> $business->customer_business_information_id,
 			'company_name' 							=> $business->company_name,
+			'postal_code'							=> $business->postal_code,
 			'company_address'						=> $business->company_address,
 			'street_address'						=> $address[0] ?? null,
 			'unit'									=> $address[1] ?? null,
