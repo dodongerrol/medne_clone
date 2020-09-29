@@ -4859,7 +4859,7 @@ class BenefitsDashboardController extends \BaseController {
 		);
 
 		$result = $business_information
-		->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
+		->updateBillingAddress($input['customer_business_information_id'], $data);
 
 		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
 		$customer = array(
@@ -4942,11 +4942,11 @@ class BenefitsDashboardController extends \BaseController {
 		$id = $hr_data->customer_buy_start_id;
 		$input = Input::all();
 
-		$check = DB::table('customer_business_contact')->where('customer_business_contact_id', $id)->first();
+		$check = DB::table('customer_billing_contact')->where('customer_buy_start_id', $id)->first();
 		// customer_billing_contact_id
 		$details = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
-			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->work_email,
+			'billing_email'					=> !empty($input['billing_email']) ? $input['billing_email'] : $check->billing_email,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 			'updated_at'					=> date('Y-m-d H:i:s')
 		);
@@ -17606,7 +17606,61 @@ public function createHrLocation ()
 			'customer_billing_contact_id'			=> $contact->customer_billing_contact_id,
 			'first_name'							=> $contact->first_name,
 			'phone' 								=> $contact->phone,
-			'work_email'							=> $contact->work_email
+			'billing_email'							=> $contact->billing_email
+		);
+
+		return array('data' => $data);
+	}
+
+	public function updateBillingInformation()
+	{
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$id = $hr_data->customer_buy_start_id;
+		$input = Input::all();
+
+		$check = DB::table('customer_billing_contact')->where('customer_buy_start_id', $id)->first();
+
+		$billing = new CorporateBillingContact;
+
+		$data = array(
+			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
+			'billing_address'		=> !empty($input['billing_address']) ? $input['billing_address'] : $check->billing_address,
+		);
+
+		$result = $billing
+		->updateBillingContact($input['customer_billing_contact_id'], $data);
+
+		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+		$customer = array(
+			'currency_type' 		=> !empty($input['currency_type']) ? $input['currency_type'] : $info->currency_type,
+		);
+
+		$account = DB::table('customer_buy_start')
+		->where('customer_buy_start_id', $id)
+		->update($customer);
+
+		return array('status' => TRUE, 'message'	=> 'successfully updated billing information.');
+	}
+
+	public function getBillingInformation()
+	{
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		$billing_info = CorporateBillingAddress::where('customer_buy_start_id', $id)->first();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+
+		$address = explode(',', $business->company_address);
+
+		$data = array (
+			'customer_billing_contact_id'			=> $billing_info->customer_billing_contact_id,
+			'billing_name' 							=> $billing_info->billing_name,
+			'billing_address'						=> $billing_info->billing_address,
+			'street_address'						=> $address[0] ?? null,
+			'unit'									=> $address[1] ?? null,
+			'building'								=> $address[2] ?? null,
+			'currency_type'							=> $customer->currency_type
 		);
 
 		return array('data' => $data);
