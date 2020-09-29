@@ -17564,13 +17564,14 @@ public function createHrLocation ()
 		$address = explode(',', $business->company_address);
 
 		$data = array (
-			'company_name' 			=> $business->company_name,
-			'company_address'		=> $business->company_address,
-			'street_address'		=> $address[0] ?? null,
-			'unit'					=> $address[1] ?? null,
-			'building'				=> $address[2] ?? null,
-			'account_name'			=> $info->account_name,
-			'currency_type'			=> $info->currency_type
+			'customer_business_information_id'		=> $business->customer_business_information_id,
+			'company_name' 							=> $business->company_name,
+			'company_address'						=> $business->company_address,
+			'street_address'						=> $address[0] ?? null,
+			'unit'									=> $address[1] ?? null,
+			'building'								=> $address[2] ?? null,
+			'account_name'							=> $info->account_name,
+			'currency_type'							=> $info->currency_type
 		);
 
 		return array('data' => $data);
