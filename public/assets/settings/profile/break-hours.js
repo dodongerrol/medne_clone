@@ -149,7 +149,8 @@ jQuery(document).ready( function ($) {
                 timeselected = $('div#profile-breakHours-time-panel #'+parentElement+'-div .row.'+rowIndexClass+' .timepicker.profile-breakHours-time-to').val(),
                 fullYear = new Date().getFullYear(),
                 month = ("0" + (new Date().getMonth() + 1)).slice(-2),
-                day = new Date().getDate();
+                day = new Date().getDate(),
+                allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
            
 		if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
 			$('#config_alert_box').css('display', 'block');
