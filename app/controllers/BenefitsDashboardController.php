@@ -4943,29 +4943,46 @@ class BenefitsDashboardController extends \BaseController {
 		$input = Input::all();
 
 		$check = DB::table('customer_business_contact')->where('customer_business_contact_id', $id)->first();
-		
-		$business_contact = new CorporateBusinessContact;
-
 		// customer_billing_contact_id
-		$data = array(
+		$details = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'work_email'					=> !empty($input['work_email']) ? $input['work_email'] : $check->work_email,
+			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 			'updated_at'					=> date('Y-m-d H:i:s')
 		);
 
-		$result = $business_contact
-		->updateBusinessContact($input['customer_business_contact_id'], $data);
+		$result = DB::table('customer_billing_contact')
+		->where('customer_billing_contact_id', $input['customer_billing_contact_id'])
+		->update($details);
 
-		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
-		$customer = array(
-			'currency_type'					=> !empty($input['currency_type']) ? $input['currency_type'] : $info->currency_type,
+		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_company_billing_contact',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_company_billing_contact',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			}
+			return array(
+				'status'	=> TRUE,
+				'message'	=> 'Success.'
+			);
+		}
+
+		return array(
+			'status'	=> FALSE,
+			'message'	=> 'Failed.'
 		);
-
-		$account = DB::table('customer_buy_start')
-		->where('customer_buy_start_id', $id)
-		->update($customer);
-
-		return array('status' => TRUE, 'message'	=> 'successfully updated business contact.');
 	}
 
 	public function benefitsTransactions( )

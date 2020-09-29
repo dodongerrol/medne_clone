@@ -246,6 +246,9 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_business_information', 'BenefitsDashboardController@getHrBusinessInformation');
 	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateBusinessInformation');
 
+	// billing contact
+	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateBillingContact');
+
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
 	Route::get('hr/get_plan_status', 'BenefitsDashboardController@getPlanStatus');
@@ -291,8 +294,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/account_billing', 'BenefitsDashboardController@accountBilling');
 	// update business contact
 	Route::post('hr/update/business_contact', 'BenefitsDashboardController@updateBusinessContact');
-	// update billing contact
-	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateBillingContact');
 	// update billing address
 	Route::post('hr/update/billing_address', 'BenefitsDashboardController@updateBillingAddress');
 	// update payment method
