@@ -4854,7 +4854,8 @@ class BenefitsDashboardController extends \BaseController {
 
 		$data = array(
 			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
-			'company_address'		=> !empty($input['company_address']) ? $input['company_address'] : $check->company_address
+			'company_address'		=> !empty($input['company_address']) ? $input['company_address'] : $check->company_address,
+			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
 		);
 
 		$result = $business_information
