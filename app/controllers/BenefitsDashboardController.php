@@ -17558,10 +17558,19 @@ public function createHrLocation ()
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 
-		$business = CorporateBusinessInformation::where('customer_buy_start_id', $id)->orderBy('created_at','desc')->first();
+		$business = CorporateBusinessInformation::where('customer_buy_start_id', $id)->first();
+		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+
+		$address = explode(',', $business->company_address);
 
 		$data = array (
-			'business_information' 	=> $business 
+			'company_name' 			=> $business->company_name,
+			'company_address'		=> $business->company_address,
+			'street_address'		=> $address[0] ?? null,
+			'unit'					=> $address[1] ?? null,
+			'building'				=> $address[2] ?? null,
+			'account_name'			=> $info->account_name,
+			'currency_type'			=> $info->currency_type
 		);
 
 		return array('data' => $data);
