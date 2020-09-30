@@ -1066,7 +1066,7 @@ class PlanHelper
 											->where('customer_id', $customer_id)
 											->orderBy('created_at', 'desc')
 											->first();
-			$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($medical_spending_end_date)));
+			$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($spending_account_settings->medical_spending_end_date)));
 			return array('plan_start' => $spending_account_settings->medical_spending_start_date, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
 		}
 	}
@@ -1243,10 +1243,9 @@ class PlanHelper
 				$start_date_result = false;
 			} else {
 				$plan = self::getCompanyPlanDates($customer_id);
-				return $plan;
 				$start = strtotime($plan['plan_start']);
 				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
+				$plan_start = strtotime(date('Y-m-d', strtotime($user['plan_start'])));
 				if ($plan_start >= $start && $plan_start <= $end) {
 					$start_date_error = false;
 					$start_date_message = '';

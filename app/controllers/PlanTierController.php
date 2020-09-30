@@ -479,7 +479,7 @@ class PlanTierController extends \BaseController {
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
 			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
-			return $error_member_logs;
+			
 			$temp_enrollment_data = array(
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,
