@@ -17655,10 +17655,10 @@ public function createHrLocation ()
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 
-		$billing_info = CorporateBillingAddress::where('customer_buy_start_id', $id)->first();
+		$billing_info = CorporateBillingContact::where('customer_buy_start_id', $id)->first();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
 
-		$address = explode(',', $billing_info->company_address);
+		$address = explode(',', $billing_info->billing_address);
 
 		$data = array (
 			'customer_billing_contact_id'			=> $billing_info->customer_billing_contact_id,
