@@ -1991,14 +1991,14 @@ public function getNewClinicDetails($id)
           $returnObject->status = FALSE;
           $returnObject->status_type = 'access_block';
           $returnObject->head_message = 'Registration Unavailable';
-          $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+          $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
           return Response::json($returnObject);
         }
       } else {
         $returnObject->status = FALSE;
         $returnObject->status_type = 'access_block';
         $returnObject->head_message = 'Registration Unavailable';
-        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+        $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
         return Response::json($returnObject);
       }
      }
@@ -2010,7 +2010,7 @@ public function getNewClinicDetails($id)
         $returnObject->status = FALSE;
         $returnObject->status_type = 'access_block';
         $returnObject->head_message = 'Registration Unavailable';
-        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+        $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
         return Response::json($returnObject);
       }
 

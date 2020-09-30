@@ -1303,6 +1303,9 @@ app.directive('benefitsTiersDirective', [
 									scope.hideLoading();
 								}
 							})
+							if(scope.temp_employees.length == 0){
+								scope.hideLoading();
+							}
 						});
 				}
 
