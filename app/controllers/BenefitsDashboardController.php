@@ -17227,6 +17227,7 @@ class BenefitsDashboardController extends \BaseController {
 		$container = array();
 		foreach ($departments as $key => $department) {
 			$container[] = array(
+				'id'					=> $department->id,
 				'customer_id'			=> $department->customer_id,
 				'department_name' 		=> $department->department_name, 
 				'total_employees'		=> $total_active_members
@@ -17481,9 +17482,10 @@ public function createHrLocation ()
 		$container = array();
 		foreach ($contacts as $key => $contact) {
 			$container[] = array(
-				'first_name' 	=> $contact->first_name, 
-				'email' 		=> $contact->work_email,
-				'phone' 		=> $contact->phone
+				'customer_business_contact_id'		=> $contact->customer_business_contact_id,
+				'first_name' 						=> $contact->first_name, 
+				'email' 							=> $contact->work_email,
+				'phone' 							=> $contact->phone
 			);
 		  }
 
@@ -17500,10 +17502,11 @@ public function createHrLocation ()
 		$container = array();
 		foreach ($contacts as $key => $contact) {
 			$container[] = array(
-				'first_name' 	=> $contact->first_name, 
-				'last_name' 	=> $contact->last_name,
-				'email' 		=> $contact->email,
-				'phone' 		=> $contact->phone
+				'medi_company_contact_id'	=> $contact->medi_company_contact_id,
+				'first_name' 				=> $contact->first_name, 
+				'last_name' 				=> $contact->last_name,
+				'email' 					=> $contact->email,
+				'phone' 					=> $contact->phone
 			);
 		  }
 
