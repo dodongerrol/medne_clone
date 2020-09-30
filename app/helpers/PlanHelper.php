@@ -1434,7 +1434,7 @@ class PlanHelper
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
-			$validate = self::validateStartDate($user['plan_start']);
+			$validate = self::isDate($user['plan_start']);
 			if (!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
@@ -1443,7 +1443,7 @@ class PlanHelper
 				$plan = self::getCompanyPlanDates($customer_id);
 				$start = strtotime($plan['plan_start']);
 				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime($user['plan_start']);
+				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
 				if ($plan_start >= $start && $plan_start <= $end) {
 					$start_date_error = false;
 					$start_date_message = '';

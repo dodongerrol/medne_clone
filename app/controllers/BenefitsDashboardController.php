@@ -2236,20 +2236,21 @@ class BenefitsDashboardController extends \BaseController {
 				->where('status', 0)
 				->sum('claim_amount');
 
+				$medicalBalance = $medical_credit_data['balance'] > 0 ? number_format($medical_credit_data['balance'], 2) : "0.00";
 				$medical = array(
 					'entitlement' => number_format($wallet_entitlement->medical_entitlement, 2),
 					'credits_allocation' => number_format($medical_credit_data['allocation'], 2),
 					'credits_spent' 	=> number_format($medical_credit_data['get_allocation_spent'], 2),
-					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' :  number_format($medical_credit_data['balance'], 2),
+					'balance'			=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $medicalBalance,
 					'e_claim_amount_pending_medication' => number_format($e_claim_amount_pending_medication, 2)
 				);
 
-				$wellness_balance = $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'];
+				$wellnessBalance = $wellness_credit_data['balance'] > 0 ? number_format($wellness_credit_data['balance'], 2) : "0.00";
 				$wellness = array(
 					'entitlement' => number_format($wallet_entitlement->wellness_entitlement, 2),
 					'credits_allocation_wellness'	 => number_format($wellness_credit_data['allocation'], 2),
 					'credits_spent_wellness' 		=> number_format($wellness_credit_data['get_allocation_spent'], 2),
-					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : number_format($wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'], 2),
+					'balance'						=> $active_plan->account_type == 'super_pro_plan' ? 'UNLIMITED' : $wellnessBalance,
 					'e_claim_amount_pending_wellness'	=> number_format($e_claim_amount_pending_wellness, 2)
 				);
 			}
@@ -11730,14 +11731,26 @@ class BenefitsDashboardController extends \BaseController {
 			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
 			$plan_dates = PlanHelper::getEmployeePlanCoverageDate($users[$x]->UserID, $result->customer_buy_start_id);
 			$status = 'Active';
-			if($users[$x]->Active == 0) {
+			$get_employee_plan = DB::table('user_plan_type')->where('user_id', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
+
+			if((int)$users[$x]->Active == 0) {
 				$status = 'Removed';
-			} else if($users[$x]->member_activated == 0) {
+			}
+
+			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$users[$x]->member_activated == 0 || (int)$users[$x]->member_activated == 1 && (int)$users[$x]->Status == 0) {
 				$status = 'Pending';
-			} else if($users[$x]->member_activated == 1) {
-				$status = 'Logged In';
-			} else if($users[$x]->Active == 1) {
-				$status = 'Active';
+			}
+
+			if((int)$users[$x]->Active == 1 && (int)$users[$x]->member_activated == 1) {
+				// statuses
+				$panel = DB::table('transaction_history')->where('UserID', $users[$x]->UserID)->first();
+				$non_panel = DB::table('e_claim')->where('user_id', $users[$x]->UserID)->first();
+								
+				if($panel || $non_panel) {
+					$status = 'Active';
+				} else if((int)$users[$x]->Active == 1 && (int)$users[$x]->member_activated == 1 && (int)$users[$x]->Status == 1){
+					$status = 'Logged In';
+				}
 			}
 
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
@@ -11811,7 +11824,7 @@ class BenefitsDashboardController extends \BaseController {
 			// } 
 			$final_user[] = $temp;
 		}
-
+		
 		return $excel = Excel::create('Employee Information', function($excel) use($final_user) {
 			$excel->sheet('Sheetname', function($sheet) use($final_user) {
 				$sheet->fromArray( $final_user );
@@ -15618,7 +15631,7 @@ class BenefitsDashboardController extends \BaseController {
 					'invoice_date'        => date('d/m/Y', strtotime($data->statement_date)),
 					'type'              => 'Invoice',
 					'total'            => 'S$'.$statement['statement_total_amount'],
-					'status'            => (int)$data->statement_status,
+					'paid'            => (int)$data->statement_status,
 					'statement_id'      => $data->statement_id,
 					'currency_type'     => $statement['currency_type'],
 					'spending_type'		=> 'transaction'
