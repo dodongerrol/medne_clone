@@ -17658,7 +17658,7 @@ public function createHrLocation ()
 		$billing_info = CorporateBillingAddress::where('customer_buy_start_id', $id)->first();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
 
-		$address = explode(',', $business->company_address);
+		$address = explode(',', $billing_info->company_address);
 
 		$data = array (
 			'customer_billing_contact_id'			=> $billing_info->customer_billing_contact_id,
