@@ -326,6 +326,8 @@
 	<!-- Company Profile > Billing & Payments ( app/views/hr_dashboard/scripts/company-profile/billing-payments.blade.php ) -->
 	@include('hr_dashboard.scripts.company-profile.billing-payments')
 
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/companyOverview/function.js?_={{ $date->format('U') }}"></script>
+
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>

@@ -532,6 +532,23 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
 
 
+  hrFactory.fetchBusinessInformation = function () {
+    return $http.get( serverUrl.url + "/hr/get_business_information" );
+  }
+
+  hrFactory.fetchBusinessContact = function () {
+    return $http.get( serverUrl.url + "/hr/get_business_contact" );
+  }
+
+  hrFactory.updateBusinessContact = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_business_contact",data );
+  }
+
+  hrFactory.updateBusinessInformation = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update/business_information",data );
+  }
+
+
   return hrFactory;
 });
 
