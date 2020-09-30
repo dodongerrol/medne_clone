@@ -47,7 +47,7 @@
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_name}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$contact_name}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_address}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$postal}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$building_name}} {{$unit_number}} {{$postal}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;">

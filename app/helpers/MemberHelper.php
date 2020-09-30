@@ -1132,6 +1132,14 @@ class MemberHelper
 				}
 			}
 
+			// check for spending transaction access
+			$customer_id = \PlanHelper::getCustomerId($member_id);
+			$accessTransaction = \SpendingHelper::checkSpendingCreditsAccess($customer_id);
+
+			if(!$accessTransaction['enable']) {
+				return true;
+			}
+
 			return false;
 		}
 	}
@@ -2338,13 +2346,13 @@ class MemberHelper
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
 								->where('wallet_history.wallet_id', $e_wallet->wallet_id)
 								->where('e_wallet.UserID', $user_id)
-								->where('spending_method', $spending_method)
+								// ->where('spending_method', $spending_method)
 								->where('wallet_history.created_at',  '>=', $start)
 								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $e_wallet->wallet_id)
-									->where('spending_method', $spending_method)
+									// ->where('spending_method', $spending_method)
 									->get();
 			}
 
@@ -2477,13 +2485,13 @@ class MemberHelper
 								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
 								->where('wellness_wallet_history.wallet_id', $e_wallet->wallet_id)
 								->where('e_wallet.UserID', $user_id)
-								->where('spending_method', 'pre_paid')
+								// ->where('spending_method', 'pre_paid')
 								->where('wellness_wallet_history.created_at',  '>=', $start)
 								->get();
 			} else {
 				$wallet_history = DB::table('wellness_wallet_history')
 									->where('wallet_id', $e_wallet->wallet_id)
-									->where('spending_method', 'pre_paid')
+									// ->where('spending_method', 'pre_paid')
 									->get();
 			}
 

@@ -48,11 +48,12 @@ class DependentController extends \BaseController {
 			$file->move('excel_upload', $temp_file);
 			try {
 				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(true, 'd/m/Y')->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 			} catch(Exception $e) {
+				// return ['res' => $e->getMessage()];
 				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
 			}
-
+			// return $data_array;
 			$headerRow = $data_array->first()->keys();
 			
 			$temp_users = [];
