@@ -1030,19 +1030,27 @@ class PlanHelper
 			->orderBy('created_at', 'desc')
 			->first();
 
-		$active_plan = DB::table('customer_active_plan')
-			->where('plan_id', $plan->customer_plan_id)
-			->first();
-
-		if ((int)$active_plan->plan_extention_enable == 1) {
-			$plan_extention = DB::table('plan_extensions')
-				->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+		if($plan->account_type != "lite_plan" && $plan->account_type != "out_of_plan") {
+			$active_plan = DB::table('customer_active_plan')
+				->where('plan_id', $plan->customer_plan_id)
 				->first();
-			if ($plan_extention) {
-				if ($plan_extention->duration || $plan_extention->duration != "") {
-					$end_plan_date = date('Y-m-d', strtotime('+' . $plan_extention->duration, strtotime($plan_extention->plan_start)));
+
+			if ((int)$active_plan->plan_extention_enable == 1) {
+				$plan_extention = DB::table('plan_extensions')
+					->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
+					->first();
+				if ($plan_extention) {
+					if ($plan_extention->duration || $plan_extention->duration != "") {
+						$end_plan_date = date('Y-m-d', strtotime('+' . $plan_extention->duration, strtotime($plan_extention->plan_start)));
+					} else {
+						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan_extention->plan_start)));
+					}
 				} else {
-					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan_extention->plan_start)));
+					if ($active_plan->duration || $active_plan->duration != "") {
+						$end_plan_date = date('Y-m-d', strtotime('+' . $active_plan->duration, strtotime($plan->plan_start)));
+					} else {
+						$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
+					}
 				}
 			} else {
 				if ($active_plan->duration || $active_plan->duration != "") {
@@ -1051,17 +1059,16 @@ class PlanHelper
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				}
 			}
+			$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
+			return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
 		} else {
-			if ($active_plan->duration || $active_plan->duration != "") {
-				$end_plan_date = date('Y-m-d', strtotime('+' . $active_plan->duration, strtotime($plan->plan_start)));
-			} else {
-				$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
-			}
+			$spending_account_settings = DB::table('spending_account_settings')
+											->where('customer_id', $customer_id)
+											->orderBy('created_at', 'desc')
+											->first();
+			$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($medical_spending_end_date)));
+			return array('plan_start' => $spending_account_settings->medical_spending_start_date, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
 		}
-
-		$end_plan_date = date('Y-m-d', strtotime('-1 day', strtotime($end_plan_date)));
-
-		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date, 'customer_plan_id' => $plan->customer_plan_id);
 	}
 
 	public static function checkDuplicateNRIC($nric)
@@ -1236,6 +1243,7 @@ class PlanHelper
 				$start_date_result = false;
 			} else {
 				$plan = self::getCompanyPlanDates($customer_id);
+				return $plan;
 				$start = strtotime($plan['plan_start']);
 				$end = strtotime($plan['plan_end']);
 				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
