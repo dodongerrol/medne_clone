@@ -227,7 +227,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_department_list', 'BenefitsDashboardController@getDepartmentList');
 	Route::post('hr/create_department', 'BenefitsDashboardController@createHrDepartment');
 	Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
-	Route::get('hr/remove_department', 'BenefitsDashboardController@deleteHrDepartment');
+	Route::post('hr/remove_department', 'BenefitsDashboardController@deleteHrDepartment');
 
 	// locations
 	Route::post('hr/create_locations', 'BenefitsDashboardController@createHrLocation');
