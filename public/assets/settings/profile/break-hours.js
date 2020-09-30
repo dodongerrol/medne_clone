@@ -65,23 +65,30 @@ jQuery(document).ready( function ($) {
         // Get Parent Element
         const parentElementClass =  this.parentElement.parentElement.className.split(' ').join('.');
         
-        // Get monday Time values
-		var mondayTimeFrom = $('div#profile-breakHours-time-panel #monday-mainCollapsibleDiv .'+parentElementClass+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(),
-			mondayTimeTo   = $('div#profile-breakHours-time-panel #monday-mainCollapsibleDiv .'+parentElementClass+' input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val();
+        // Get number of time set on Monday
+        let numberOfTimeSet = 0,
+            timeArray = [];
+
+        for (let j = 0; j < 5; j++) {
+           const checked =  $('div#profile-breakHours-time-panel #monday-mainCollapsibleDiv .row.monday'+j+' .profile-breakHours-chk_activate').prop('checked');
+            if (checked) {
+                numberOfTimeSet += 1;
+                timeArray.push({
+                    'mondayTimeFrom': $('div#profile-breakHours-time-panel #monday-mainCollapsibleDiv .monday'+j+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(),
+                    'mondayTimeTo': $('div#profile-breakHours-time-panel #monday-mainCollapsibleDiv .monday'+j+' input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val()
+                });
+            }
+        }
 		
 		// Set monday Time values to other days
-	
-		var availableDays = ['monday','tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
+		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
         
         for (let i = 0; i < availableDays.length; i++) {
-            let xStartingCnt = availableDays[i] == 'monday'? 1: 0;
-            
+        
             // Trigger click event
-            if (availableDays[i] != 'monday')  {
-                $('#'+availableDays[i]+'-addBreak').click();
-            }
+            $('#'+availableDays[i]+'-addBreak').click();
 
-            for (let x = xStartingCnt; x < 5; x++) {
+            for (let x = 0; x < numberOfTimeSet; x++) {
                 // Display Block
 				$('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x).css('display', 'block');
                 
@@ -89,13 +96,13 @@ jQuery(document).ready( function ($) {
                 $('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');
                 
                 // Set time
-                $('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(mondayTimeFrom);
-                $('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+'  input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(mondayTimeTo);
+                $('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(timeArray[x]['mondayTimeFrom']);
+                $('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+'  input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(timeArray[x]['mondayTimeTo']);
             }
         }
     });	
     
-    /* Save Operating Hours */
+    /* Save Break Hours */
     $('#profile-breakHours-savebreakHours').click(function () {
 
         $('#config_alert_box').css('display', 'block');
@@ -152,7 +159,8 @@ jQuery(document).ready( function ($) {
                 day = new Date().getDate(),
                 allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
            
-		if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
+		if ( !(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
+            && (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime())) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
@@ -172,9 +180,11 @@ jQuery(document).ready( function ($) {
                 timeselected = $('div#profile-breakHours-time-panel #'+parentElement+'-div .row.'+rowIndexClass+' .timepicker.profile-breakHours-time-from').val(),
                 fullYear = new Date().getFullYear(),
                 month = ("0" + (new Date().getMonth() + 1)).slice(-2),
-                day = new Date().getDate();
+                day = new Date().getDate(),
+                allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
            
-		if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
+		if (!(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
+            && (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime())) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');

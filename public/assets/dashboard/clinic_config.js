@@ -660,7 +660,8 @@ jQuery(document).ready(function($) {
 				day = new Date().getDate(),
 				allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
            
-		if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
+		if (!(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
+			&& (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime())) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
@@ -683,7 +684,8 @@ jQuery(document).ready(function($) {
 				day = new Date().getDate(),
 				allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
            
-		if (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime()) {
+		if (!(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
+			&& (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() >= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime())) {
 			$('#config_alert_box').css('display', 'block');
 			$('#config_alert_box').css('color', 'red');
 			$('#config_alert_box').html('Invalid time selected!');
@@ -821,23 +823,29 @@ jQuery(document).ready(function($) {
         // Get Parent Element
         const parentElementClass =  this.parentElement.parentElement.className.split(' ').join('.');
         
-        // Get monday Time values
-		var mondayTimeFrom = $('div#setupBreakHours #monday-mainCollapsibleDiv .'+parentElementClass+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(),
-			mondayTimeTo   = $('div#setupBreakHours #monday-mainCollapsibleDiv .'+parentElementClass+' input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val();
+		// Get number of time set on Monday
+		let numberOfTimeSet = 0,
+			timeArray = [];
+
+        for (let j = 0; j < 5; j++) {
+			let chkValue = $('div#setupBreakHours #monday-mainCollapsibleDiv .row.monday'+j+' .profile-breakHours-chk_activate').prop('checked');
+            if (chkValue) {
+				numberOfTimeSet += 1;
+				timeArray.push({
+                    'mondayTimeFrom': $('div#setupBreakHours #monday-mainCollapsibleDiv .monday'+j+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(),
+                    'mondayTimeTo': $('div#setupBreakHours #monday-mainCollapsibleDiv .monday'+j+' input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val()
+                });
+            }
+		}
 		
 		// Set monday Time values to other days
-	
-		var availableDays = ['monday','tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
+		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
         
         for (let i = 0; i < availableDays.length; i++) {
-            let xStartingCnt = availableDays[i] == 'monday'? 1: 0;
-            
             // Trigger click event
-            if (availableDays[i] != 'monday')  {
-                $('div#setupBreakHours #'+availableDays[i]+'-addBreak').click();
-            }
+            $('div#setupBreakHours #'+availableDays[i]+'-addBreak').click();
 
-            for (let x = xStartingCnt; x < 5; x++) {
+            for (let x = 0; x < numberOfTimeSet; x++) {
 				// Display Block
 				$('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x).css('display', 'block');
 
@@ -845,8 +853,8 @@ jQuery(document).ready(function($) {
                 $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' .profile-breakHours-chk_activate').bootstrapToggle('on');
                 
                 // Set time
-                $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(mondayTimeFrom);
-                $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+'  input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(mondayTimeTo);
+                $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(timeArray[x]['mondayTimeFrom']);
+                $('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x+'  input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(timeArray[x]['mondayTimeTo']);
             }
         }
     });	
