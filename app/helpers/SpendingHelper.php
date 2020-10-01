@@ -150,7 +150,9 @@ class SpendingHelper {
             $enable = false;
 
             if($total_credits >= $total_company_entitlement && $payment_status == true) {
-             $enable = true;   
+                $enable = true;
+            } else if($total_credits < $total_company_entitlement) {
+                $enable = true;
             }
 
             return [
