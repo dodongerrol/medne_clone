@@ -207,7 +207,7 @@ app.directive('benefitsTiersDirective', [
 					}
 				}
 
-				scope.backBtn = function () {
+				scope.backBtn = async function () {
 					scope.isEditActive = false;
 					// if (scope.isTierBtn == true) {
 					// 	$state.go('enrollment-options');
@@ -254,12 +254,12 @@ app.directive('benefitsTiersDirective', [
 							closeOnConfirm: true,
 							customClass: "updateEmp"
 						},
-							function (isConfirm) {
+							async function (isConfirm) {
 								if (isConfirm) {
 									if (scope.temp_employees.length > 0) {
 										scope.showLoading();
-										angular.forEach(scope.temp_employees, function (value, key) {
-											dependentsSettings.deleteTempEmployees(value.employee.temp_enrollment_id)
+										await angular.forEach(scope.temp_employees, async function (value, key) {
+											await dependentsSettings.deleteTempEmployees(value.employee.temp_enrollment_id)
 												.then(function (response) {
 													// console.log(response);
 													if (key == scope.temp_employees.length - 1) {
@@ -441,7 +441,8 @@ app.directive('benefitsTiersDirective', [
 						$('.benefits-tier-summary-container-wrapper').fadeIn();
 					}, 1000);
 				}
-
+				scope.temp_start_date = null;
+				scope.temp_dob_date = null;
 				scope.openEditDetailsModal = function (index) {
 					scope.isEditDetailModalOpen = true;
 					scope.selected_edit_details_data = scope.temp_employees[index];
@@ -449,7 +450,10 @@ app.directive('benefitsTiersDirective', [
             scope.selected_edit_details_data.employee.start_date = moment().format('DD/MM/YYYY');
           }else{
             scope.selected_edit_details_data.employee.start_date = moment(scope.selected_edit_details_data.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY');
-          }
+						scope.temp_start_date = scope.selected_edit_details_data.employee.start_date;
+						scope.temp_dob_date = scope.selected_edit_details_data.employee.dob;
+					}
+					
 					$("#edit-employee-details").modal('show');
 					$('.edit-employee-details-form .datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.dob);
 					$('.edit-employee-details-form .start-date-datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.start_date);
@@ -1244,6 +1248,7 @@ app.directive('benefitsTiersDirective', [
 												mobile_area_code: '65',
 												mobile_area_code_country: 'sg'
 											};
+											scope.employee_arr = [];
 										} else {
 											swal('Error!', response.data.message, 'error');
 										}
@@ -1977,6 +1982,8 @@ app.directive('benefitsTiersDirective', [
 					iti2.destroy();
 					console.log(iti);
 					console.log(iti2);
+
+					scope.getEnrollTempEmployees();
 				})
 				$('#edit-employee-details').on('hidden.bs.modal', function () {
 					if(scope.selected_edit_details_data.employee.isStartDateNull){
