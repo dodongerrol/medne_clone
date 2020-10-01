@@ -820,10 +820,7 @@ jQuery(document).ready(function($) {
 	
 	 /* Copy and Paste time to all days  */
 	 $('div#setupBreakHours #profile-breakHours-copyTimetoAllBtn').click(function () {
-        // Get Parent Element
-        const parentElementClass =  this.parentElement.parentElement.className.split(' ').join('.');
-        
-		// Get number of time set on Monday
+       // Get number of time set on Monday
 		let numberOfTimeSet = 0,
 			timeArray = [];
 
@@ -842,10 +839,12 @@ jQuery(document).ready(function($) {
 		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
         
         for (let i = 0; i < availableDays.length; i++) {
-            // Trigger click event
-            $('div#setupBreakHours #'+availableDays[i]+'-addBreak').click();
+			if (!$('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+'0').is(':visible')) {
+				// Trigger click event
+				$('div#setupBreakHours #'+availableDays[i]+'-addBreak').click();
+			}
 
-            for (let x = 0; x < numberOfTimeSet; x++) {console.log(numberOfTimeSet, x)
+            for (let x = 0; x < numberOfTimeSet; x++) {
 				// Display Block
 				$('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x).css('display', 'block');
 
