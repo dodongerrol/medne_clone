@@ -152,7 +152,7 @@ class SpendingHelper {
                 'total_credits' => $total_credits, 
                 'total_company_entitlement' => $total_company_entitlement,
                 'payment_status'  => $payment_status,
-                'enable' => $total_balance > 0 && $payment_status == true ? true : false
+                'enable' => $total_balance > 0 || $payment_status == true ? true : false
             ];
         } else {
             return ['enable' => true];
