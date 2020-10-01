@@ -62,9 +62,6 @@ jQuery(document).ready( function ($) {
     });    
     /* Copy and Paste time to all days  */
 	$('#profile-breakHours-copyTimetoAllBtn').click(function () {
-        // Get Parent Element
-        const parentElementClass =  this.parentElement.parentElement.className.split(' ').join('.');
-        
         // Get number of time set on Monday
         let numberOfTimeSet = 0,
             timeArray = [];
@@ -85,8 +82,11 @@ jQuery(document).ready( function ($) {
         
         for (let i = 0; i < availableDays.length; i++) {
         
-            // Trigger click event
-            $('#'+availableDays[i]+'-addBreak').click();
+            if (!$('div#profile-breakHours-time-panel #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+'0').is(':visible')) {
+				// Trigger click event
+				$('#'+availableDays[i]+'-addBreak').click();
+			}
+            
 
             for (let x = 0; x < numberOfTimeSet; x++) {
                 // Display Block
@@ -158,7 +158,7 @@ jQuery(document).ready( function ($) {
                 month = ("0" + (new Date().getMonth() + 1)).slice(-2),
                 day = new Date().getDate(),
                 allowedSameTime = new Date(month+'-'+day+'-'+fullYear+' 12:00 AM').getTime();
-           
+                
 		if ( !(allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() && allowedSameTime == new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime())
             && (new Date(month+'-'+day+'-'+fullYear+' '+timeselected).getTime() <= new Date(month+'-'+day+'-'+fullYear+' '+fromTime).getTime())) {
 			$('#config_alert_box').css('display', 'block');
@@ -168,7 +168,7 @@ jQuery(document).ready( function ($) {
 			setTimeout(function () {
 				$('#config_alert_box').css('display', 'none');
 				$('#config_alert_box').css('color', 'black');
-			}, 1000);
+			}, 500);
 		}
 		
     });
