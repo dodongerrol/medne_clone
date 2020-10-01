@@ -1,5 +1,5 @@
 <div class="mednefits-basic-plan-wrapper" mednefits-basic-plan-directive>
-  <div class="show-details-on-container">
+  <div ng-if="benefitsCoverageData.status && benefitsCoverageData.account_type != 'out_of_pocket'" class="show-details-on-container">
     <div class="flex-1">
       <span class="member-bold-text">Show details on</span> 
       <div class="current-term-wrapper"> 

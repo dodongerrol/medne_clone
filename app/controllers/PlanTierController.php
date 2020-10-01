@@ -479,7 +479,7 @@ class PlanTierController extends \BaseController {
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
 			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
-
+			
 			$temp_enrollment_data = array(
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,
@@ -756,7 +756,9 @@ class PlanTierController extends \BaseController {
 		}
 
 		$dependent_enrollment = new DependentTempEnrollment();
-		$input['plan_start'] = date('Y-m-d', strtotime($input['plan_start']));
+		$plan_start = $input['plan_start'];
+		$input['plan_start'] = date('d/m/Y', strtotime($input['plan_start']));
+		
 		$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($input);
 		$temp_enrollment_dependent = array(
 			'dependent_temp_id'		=> $input['dependent_temp_id'],
@@ -764,11 +766,11 @@ class PlanTierController extends \BaseController {
 			// 'last_name'				=> $input['last_name'],
 			// 'nric'					=> $input['nric'],
 			'dob'					=> $input['dob'],
-			'plan_start'			=> $input['plan_start'],
+			'plan_start'			=> $plan_start,
 			'relationship'			=> $input['relationship'],
 			'error_logs'			=> serialize($error_dependent_logs)
 		);
-
+		
 		$result = $dependent_enrollment->updateEnrollement($temp_enrollment_dependent);
 
 		if($result) {

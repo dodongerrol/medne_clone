@@ -1493,4 +1493,15 @@ if($input['type'] == 1) {
 DB::table('user')->where('UserID', $input['user_id'])->update(['Active' => $active]);
 return array('status' => true);
 }
+
+public function testUserCheckSpendingAccess( )
+{
+  $input = Input::all();
+
+  if(empty($input['customer_id']) || $input['customer_id'] == null) {
+    return ['status' => false, 'message' => 'customer_id is required'];
+  }
+
+  return \SpendingHelper::checkSpendingCreditsAccess($input['customer_id']);
+}
 }

@@ -10,6 +10,8 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+// test spending transaction access
+Route::get('test_spending_transaction_access', 'HomeController@testUserCheckSpendingAccess');
 
 // test paginate new
 Route::get('ge_test_paginate', 'testcontroller@paginateMembers');

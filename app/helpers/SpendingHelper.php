@@ -96,6 +96,126 @@ class SpendingHelper {
             'wellness_credits' => $total_wellness_balance
         ];
     }
+
+    public static function checkSpendingCreditsAccess($customer_id)
+    {
+        // get lists of users
+        $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
+        $spending_account_settings = DB::table('spending_account_settings')
+                                  ->where('customer_id', $customer_id)
+                                  ->orderBy('created_at', 'desc')
+                                  ->first();
+
+        if($spending_account_settings->medical_payment_method_panel == 'mednefits_credits') {
+            $total_credits = 0;
+            $total_company_entitlement = 0;
+            $total_medical_entitlment = 0;
+            $total_wellness_entitlment = 0;
+            $purchased_credits = 0;
+            $bonus_credits = 0;
+            $payment_status = false;
+            // get total credits
+            // $creditAccount = DB::table('mednefits_credits')
+            //                 ->where('customer_id', $customer_id)
+            //                 ->where('start_term', $spending_account_settings->medical_spending_start_date)
+            //                 ->first();
+            $account_credits = DB::table('mednefits_credits')
+                            ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+                            ->where('mednefits_credits.customer_id', $customer_id)
+                            ->get();
+            
+            foreach($account_credits as $key => $credits) {
+                if((int)$credits->payment_status == 1) {
+                    $payment_status = true;
+                } else {
+                    $payment_status = false;
+                }
+            
+                $purchased_credits += $credits->credits;
+                $bonus_credits += $credits->bonus_credits;
+            }
+
+            $total_credits = $purchased_credits + $bonus_credits;
+            $start = $spending_account_settings->medical_spending_start_date;
+            $end = $spending_account_settings->medical_spending_end_date;
+            foreach($user_allocated as $key => $user) {
+                $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
+                $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                $total_medical_entitlment += $medical_credit['allocation'];
+                $total_wellness_entitlment += $wellness_credit['allocation'];
+            }
+
+            $total_company_entitlement = $total_medical_entitlment + $total_wellness_entitlment;
+            $total_balance = $total_credits - $total_company_entitlement;
+
+            return [
+                'total_credits' => $total_credits, 
+                'total_company_entitlement' => $total_company_entitlement,
+                'payment_status'  => $payment_status,
+                'enable' => $total_balance > 0 && $payment_status == true ? true : false
+            ];
+        } else {
+            return ['enable' => true];
+        }
+    }
+
+    public static function checkSpendingCreditsAccessNonPanel($customer_id)
+    {
+        // get lists of users
+        $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
+        $spending_account_settings = DB::table('spending_account_settings')
+                                  ->where('customer_id', $customer_id)
+                                  ->orderBy('created_at', 'desc')
+                                  ->first();
+
+        if($spending_account_settings->medical_payment_method_panel == 'mednefits_credits') {
+            $total_credits = 0;
+            $total_company_entitlement = 0;
+            $total_medical_entitlment = 0;
+            $total_wellness_entitlment = 0;
+            $purchased_credits = 0;
+            $bonus_credits = 0;
+            $payment_status = false;
+            // get total credits
+            $account_credits = DB::table('mednefits_credits')
+                            ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+                            ->where('mednefits_credits.customer_id', $customer_id)
+                            ->get();
+            
+            foreach($account_credits as $key => $credits) {
+                if((int)$credits->payment_status == 1) {
+                    $payment_status = true;
+                } else {
+                    $payment_status = false;
+                }
+            
+                $purchased_credits += $credits->credits;
+                $bonus_credits += $credits->bonus_credits;
+            }
+
+            $total_credits = $purchased_credits + $bonus_credits;
+            $start = $spending_account_settings->medical_spending_start_date;
+            $end = $spending_account_settings->medical_spending_end_date;
+            foreach($user_allocated as $key => $user) {
+                $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
+                $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                $total_medical_entitlment += $medical_credit['allocation'];
+                $total_wellness_entitlment += $wellness_credit['allocation'];
+            }
+
+            $total_company_entitlement = $total_medical_entitlment + $total_wellness_entitlment;
+            $total_balance = $total_credits - $total_company_entitlement;
+
+            return [
+                'total_credits' => $total_credits, 
+                'total_company_entitlement' => $total_company_entitlement,
+                'payment_status'  => $payment_status,
+                'enable' => $total_balance > 0 ? true : false
+            ];
+        } else {
+            return ['enable' => true];
+        }
+    }
 }
 
 ?>

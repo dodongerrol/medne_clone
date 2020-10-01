@@ -30,6 +30,7 @@ app.directive('memberWellnessWalletDirective', [
 				scope.getDateTerms = async function () {
           await hrSettings.fetchDateTerms()
           .then(async function(response){
+						scope.account_details = response.data;
             scope.dateTerm = response.data.data;
 						let termLength = scope.dateTerm.length;
             await scope.dateTerm.map(function(value,index) {
@@ -72,7 +73,7 @@ app.directive('memberWellnessWalletDirective', [
 							scope.wellnessActivated = response.data.data.status;
 							scope.wellnessWalletData = response.data.data;
 							scope.wellnessWalletData.roll_over = scope.wellnessWalletData.roll_over.toString();
-							if(scope.wellnessWalletData.benefits_coverage == 'out_of_pocket'){
+							if(scope.account_details.account_type == 'out_of_pocket'){
 								scope.wellnessWalletData.benefits_start = '';
 								scope.wellnessWalletData.benefits_end = '';
 							}else{
