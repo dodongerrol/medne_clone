@@ -2628,7 +2628,7 @@ class MemberHelper
 		if($start <= $today && $end >= $today) {
 			return true;
 		}
-
+		
 		return false;
 	}
 
@@ -2680,6 +2680,10 @@ class MemberHelper
 		}
 
 		if((int)$member->Active == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		if((int)$spending->medical_enable == 0) {
 			$emp_status = 'deactivated';
 		}
 
