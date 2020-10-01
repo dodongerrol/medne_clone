@@ -845,7 +845,7 @@ jQuery(document).ready(function($) {
             // Trigger click event
             $('div#setupBreakHours #'+availableDays[i]+'-addBreak').click();
 
-            for (let x = 0; x < numberOfTimeSet; x++) {
+            for (let x = 0; x < numberOfTimeSet; x++) {console.log(numberOfTimeSet, x)
 				// Display Block
 				$('div#setupBreakHours #'+availableDays[i]+'-mainCollapsibleDiv .row.'+availableDays[i]+x).css('display', 'block');
 

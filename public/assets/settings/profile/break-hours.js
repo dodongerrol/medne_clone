@@ -84,7 +84,7 @@ jQuery(document).ready( function ($) {
 		var availableDays = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'];
         
         for (let i = 0; i < availableDays.length; i++) {
-        
+        console.log(numberOfTimeSet)
             // Trigger click event
             $('#'+availableDays[i]+'-addBreak').click();
 
