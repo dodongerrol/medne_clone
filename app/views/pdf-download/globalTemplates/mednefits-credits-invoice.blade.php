@@ -64,6 +64,7 @@
                   @if($currency_type == "SGD")
                    <!-- IF SINGAPORE -->
                     <span>
+                    Medicloud Pte Ltd<br>
                     7 Temasek Boulevard<br>
                     #18-02 Suntec Tower One<br>
                     038987<br>

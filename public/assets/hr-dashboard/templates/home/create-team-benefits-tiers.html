@@ -795,12 +795,12 @@
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_area_code_message"></span>
 										</div>
-										<div class="form-group">
+										<div ng-if="showCurrencyType == 'myr'" class="form-group">
 											<label>NRIC</label>
 											<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.nric_error == true}" ng-model="selected_edit_details_data.employee.nric">
 											<span class="error-message" ng-bind="selected_edit_details_data.error_logs.nric_message"></span>
 										</div>
-										<div class="form-group">
+										<div ng-if="showCurrencyType == 'myr'" class="form-group">
 											<label>Passport Number</label>
 											<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.passport_error == true}" ng-model="selected_edit_details_data.employee.passport">
 											<span class="error-message" ng-bind="selected_edit_details_data.error_logs.passport_message"></span>

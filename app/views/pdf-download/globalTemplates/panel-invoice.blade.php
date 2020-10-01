@@ -48,7 +48,7 @@
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$contact_name}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_address}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$postal}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;text-transform: uppercase;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;">
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">
@@ -64,6 +64,7 @@
                   @if($currency_type == "SGD")
                    <!-- IF SINGAPORE -->
                     <span>
+                    Medicloud Pte Ltd<br>
                     7 Temasek Boulevard<br>
                     #18-02 Suntec Tower One<br>
                     038987<br>

@@ -422,7 +422,7 @@
 .credits-tooltip-container.utilised-panel-visits,
 .credits-tooltip-container.utilised-non-panel-visits, 
 .credits-tooltip-container.visits-per-member {
-  display: none;
+  /* display: none; */
 }
 
 /* out of pocket */
