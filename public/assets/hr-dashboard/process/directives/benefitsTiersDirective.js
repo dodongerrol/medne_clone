@@ -1082,12 +1082,13 @@ app.directive('benefitsTiersDirective', [
 								return false;
 							}
 						}
-						// if ( scope.employee_data.passport ) {
-						// 	if (!scope.checkPassport(scope.employee_data.passport)) {
-						// 		sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
-						// 			return false;
-						// 	}
-						// }
+						if ( scope.employee_data.passport ) {
+							if (!scope.checkPassport(scope.employee_data.passport)) {
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
+								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+									return false;
+							}
+						}
 					}
 					
 					// if( !scope.employee_data.postal_code ){
@@ -1847,7 +1848,8 @@ app.directive('benefitsTiersDirective', [
 				scope.checkPassport = function (value) {
           let passport_pattern = null;
           if (value) {
-            passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
+						passport_pattern = new RegExp("^[a-zA-Z0-9]+$");
+            // passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
           } else {
             return false;
           }
