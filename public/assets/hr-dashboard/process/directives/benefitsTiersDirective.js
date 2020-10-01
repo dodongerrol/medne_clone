@@ -1082,12 +1082,12 @@ app.directive('benefitsTiersDirective', [
 								return false;
 							}
 						}
-						if ( scope.employee_data.passport ) {
-							if (!scope.checkPassport(scope.employee_data.passport)) {
-								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
-									return false;
-							}
-						}
+						// if ( scope.employee_data.passport ) {
+						// 	if (!scope.checkPassport(scope.employee_data.passport)) {
+						// 		sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+						// 			return false;
+						// 	}
+						// }
 					}
 					
 					// if( !scope.employee_data.postal_code ){
