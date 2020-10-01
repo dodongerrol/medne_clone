@@ -684,7 +684,7 @@ class PlanTierController extends \BaseController {
 		$input['mobile_country_code'] = $input['mobile_area_code'];
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
-
+		
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
 			'first_name'				=> $input['fullname'],
