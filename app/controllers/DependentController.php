@@ -356,6 +356,7 @@ class DependentController extends \BaseController {
 		->first();
 
 		if($plan) {
+			$dependentAccount = DB::table('dependent_plans')->where('customer_plan_id', $plan->customer_plan_id)->first();
 			$dependents = DB::table('dependent_plan_status')
 			->where('customer_plan_id', $plan->customer_plan_id)
 			->orderBy('created_at', 'desc')
@@ -434,11 +435,13 @@ class DependentController extends \BaseController {
 		->orderBy('created_at', 'desc')
 		->first();
 
-		if($planned->account_type != "lite_plan") {
-			$dependent_plan_status = DB::table('dependent_plan_status')
+		$dependentAccount = DB::table('dependent_plans')->where('customer_plan_id', $planned->customer_plan_id)->first();
+		$dependent_plan_status = DB::table('dependent_plan_status')
 			->where('customer_plan_id', $planned->customer_plan_id)
 			->orderBy('created_at', 'desc')
 			->first();
+		if($dependent_plan_status && $dependentAccount->account_type != "lite_plan") {
+			
 			$total_dependents = 0;
 			if($dependent_plan_status) {
 				$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;

@@ -1308,6 +1308,7 @@ return Response::json($returnObject);
             $current_spending = $credit_data ? $credit_data['get_allocation_spent'] : 0;
             $e_claim_spent = $credit_data ? $credit_data['e_claim_spent'] : 0;
             $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
+            
             $balance = $credit_data ? $credit_data['balance'] : 0;
 
             // if($customer_active_plan->account_type != "enterprise_plan")  {
@@ -1359,7 +1360,7 @@ return Response::json($returnObject);
             $customer_id = PlanHelper::getCustomerId($user_id);
             $wallet_data = array(
               'spending_type'             => $spending_type,
-              'balance'                   => $balance,
+              'balance'                   => $customer_active_plan->account_type == "out_of_network" ? number_format($in_network_spent, 2) : $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
