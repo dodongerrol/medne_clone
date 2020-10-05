@@ -1055,7 +1055,7 @@ return Response::json($returnObject);
           $authSession = new OauthSessions();
           $getRequestHeader = StringHelper::requestHeader();
           $input = Input::all();
-
+          
           if(!empty($getRequestHeader['Authorization'])){
             $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
             if($getAccessToken){
@@ -1064,6 +1064,7 @@ return Response::json($returnObject);
                 $e_claim = [];
                 $transaction_details = [];
                 $in_network_spent = 0;
+                $out_of_pocket_spent = 0;
                 $ids = StringHelper::getSubAccountsID($findUserID);
                 $user_id = StringHelper::getUserId($findUserID);
                 $user_plan_history = DB::table('user_plan_history')
@@ -1283,7 +1284,7 @@ return Response::json($returnObject);
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
-
+                $out_of_pocket_spent += $converted_amount;
                 $format = array(
                   'clinic_name'       => $clinic->Name,
                   'clinic_image'      => $clinic->image,
@@ -1360,7 +1361,7 @@ return Response::json($returnObject);
             $customer_id = PlanHelper::getCustomerId($user_id);
             $wallet_data = array(
               'spending_type'             => $spending_type,
-              'balance'                   => $customer_active_plan->account_type == "out_of_network" ? number_format($in_network_spent, 2) : $balance,
+              'balance'                   => $customer_active_plan->account_type == "out_of_network" ? number_format($out_of_pocket_spent, 2) : $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
@@ -1370,7 +1371,7 @@ return Response::json($returnObject);
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_visit_created,
               'total_visit_balance'       => $total_visit_balance,
-              'user_type'                 => $user_type
+              'user_type'                 => $user_type,
             );
 
             $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
