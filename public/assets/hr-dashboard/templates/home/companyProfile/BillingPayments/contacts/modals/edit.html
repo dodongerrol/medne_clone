@@ -16,7 +16,7 @@
                     <input
                       class="form-input"
                       required
-                      ng-model="contactFields.full_name"
+                      ng-model="$ctrl.states.form.first_name"
                       type="text"
                     >
                   </div>
@@ -27,8 +27,8 @@
                       <input
                         class="form-input"
                         required
-                        ng-model="contactFields.email_address"
-                        type="text"
+                        ng-model="$ctrl.states.form.email_address"
+                        type="email"
                       >
                   </div>
                 </div>
@@ -38,7 +38,7 @@
                       <input
                         class="form-input"
                         required
-                        ng-model="contactFields.phone_number"
+                        ng-model="$ctrl.states.form.phone"
                         type="text"
                       >
                   </div>
@@ -58,7 +58,7 @@
                   type="button"
                   ng-disabled="!contactModal.$dirty && contactModal.$invalid"
                   class="ui-btn {{ contactModal.$dirty && contactModal.$valid ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-40"
-                  ng-click="submit()">
+                  ng-click="$ctrl.submit()">
                   Update
                 </button>
               </div>

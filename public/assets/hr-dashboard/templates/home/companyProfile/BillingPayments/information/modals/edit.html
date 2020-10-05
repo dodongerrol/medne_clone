@@ -1,5 +1,5 @@
-<div class="modal fade" id="{{ $ctrl.element }}" tabindex="-1" role="dialog"
-    aria-labelledby="information-modal" aria-hidden="true">
+<div class="modal fade" id="edit-information-modal" tabindex="-1" role="dialog"
+    aria-labelledby="edit-information-modal" aria-hidden="true">
     <div class="modal-dialog max-w-2xl bg-transparent mt-32" role="document">
     <div class="modal-content">
         <div class="modal-body py-0">
@@ -107,7 +107,7 @@
             <div class="grid grid-cols-1 w-full">
                 <div class="flex items-center justify-end space-x-4 w-full pb-8">
                 <button
-                    ng-click="presentModal(modals.info, false)"
+                    ng-click="presentModal('edit-information-modal', false)"
                     type="button"
                     class="ui-btn ui-btn-primary-outline"
                     >
