@@ -83,16 +83,16 @@
 // // Route::post('test/get_file', 'BenefitsDashboardController@testGetExcel');
 
 
-// // EMPLOYEE UPDATE EXERCISES
-// Route::group(array('prefix' => 'exercise'), function()
-// {
-// 	Route::post('validate_member', 'EmployeeController@validateMember');
-// 	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
-// 	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
-// 	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
-// 	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
-// 	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
-// });
+// EMPLOYEE UPDATE EXERCISES
+Route::group(array('prefix' => 'exercise'), function()
+{
+	Route::post('validate_member', 'EmployeeController@validateMember');
+	Route::get('get_member_details', 'EmployeeController@getEmployeeDetails');
+	Route::post('update_member_details', 'EmployeeController@updateEmployeeDetails');
+	Route::post('validate_mobile_number', 'EmployeeController@checkMobileExistence');
+	Route::post('send_sms_otp', 'EmployeeController@sendMemberSmsOtp');
+	Route::post('validate_otp_code', 'EmployeeController@validateOpt');
+});
 
 
 // Route::get('app/e_claim', 'HomeController@oldeClaim');
@@ -682,7 +682,7 @@ Route::get('member/first_time_login', 'HomeController@firstTimeLogin');
 // Route::post('app/calendar/loadAppointmentCount','CalendarController@loadAppointmentCount');
 
 // // Mobile Exercise
-// Route::get('app/update_user_id_web','HomeController@getMobileExercise');
+Route::get('app/update_user_id_web','HomeController@getMobileExercise');
 
 // // ----------------------------------- Settings pages ----------------------------------- //
 
