@@ -1341,7 +1341,7 @@ app.directive('benefitsTiersDirective', [
 				scope.updateEnrolleEmp = function (emp) {
 					console.log(emp);
 
-					// if ( scope.showCurrencyType == 'myr' ) {
+					if ( scope.showCurrencyType == 'myr' ) {
 					// 	if ( emp.employee.nric == '' && emp.employee.mobile == '' && emp.employee.passport == '' ) {
 					// 		sweetAlert("Error!", "Please key in Mobile No., NRIC, or Passport Number.", "error");
 					// 		return false;
@@ -1351,7 +1351,14 @@ app.directive('benefitsTiersDirective', [
 					// 		swal("Error!", "Email Address or Mobile Number is required.", 'error');
 					// 		return false;
 					// 	}
-					// }
+						if ( emp.employee.passport ) {
+							if (!scope.checkPassport(emp.employee.passport)) {
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
+								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+									return false;
+							}
+						}
+					}
 
 					// if( !emp.employee.mobile_area_code ) {
 					// 	swal("Error!", "Please prvoide a Mobile Area Code is required.", 'error');
