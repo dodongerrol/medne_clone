@@ -207,7 +207,7 @@ app.directive('benefitsTiersDirective', [
 					}
 				}
 
-				scope.backBtn = function () {
+				scope.backBtn = async function () {
 					scope.isEditActive = false;
 					// if (scope.isTierBtn == true) {
 					// 	$state.go('enrollment-options');
@@ -254,12 +254,12 @@ app.directive('benefitsTiersDirective', [
 							closeOnConfirm: true,
 							customClass: "updateEmp"
 						},
-							function (isConfirm) {
+							async function (isConfirm) {
 								if (isConfirm) {
 									if (scope.temp_employees.length > 0) {
 										scope.showLoading();
-										angular.forEach(scope.temp_employees, function (value, key) {
-											dependentsSettings.deleteTempEmployees(value.employee.temp_enrollment_id)
+										await angular.forEach(scope.temp_employees, async function (value, key) {
+											await dependentsSettings.deleteTempEmployees(value.employee.temp_enrollment_id)
 												.then(function (response) {
 													// console.log(response);
 													if (key == scope.temp_employees.length - 1) {
@@ -441,7 +441,8 @@ app.directive('benefitsTiersDirective', [
 						$('.benefits-tier-summary-container-wrapper').fadeIn();
 					}, 1000);
 				}
-
+				scope.temp_start_date = null;
+				scope.temp_dob_date = null;
 				scope.openEditDetailsModal = function (index) {
 					scope.isEditDetailModalOpen = true;
 					scope.selected_edit_details_data = scope.temp_employees[index];
@@ -449,7 +450,10 @@ app.directive('benefitsTiersDirective', [
             scope.selected_edit_details_data.employee.start_date = moment().format('DD/MM/YYYY');
           }else{
             scope.selected_edit_details_data.employee.start_date = moment(scope.selected_edit_details_data.employee.start_date, 'DD/MM/YYYY').format('DD/MM/YYYY');
-          }
+						scope.temp_start_date = scope.selected_edit_details_data.employee.start_date;
+						scope.temp_dob_date = scope.selected_edit_details_data.employee.dob;
+					}
+					
 					$("#edit-employee-details").modal('show');
 					$('.edit-employee-details-form .datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.dob);
 					$('.edit-employee-details-form .start-date-datepicker').datepicker('setDate', scope.selected_edit_details_data.employee.start_date);
@@ -1084,7 +1088,8 @@ app.directive('benefitsTiersDirective', [
 						}
 						if ( scope.employee_data.passport ) {
 							if (!scope.checkPassport(scope.employee_data.passport)) {
-								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
+								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
 									return false;
 							}
 						}
@@ -1244,6 +1249,7 @@ app.directive('benefitsTiersDirective', [
 												mobile_area_code: '65',
 												mobile_area_code_country: 'sg'
 											};
+											scope.employee_arr = [];
 										} else {
 											swal('Error!', response.data.message, 'error');
 										}
@@ -1340,7 +1346,7 @@ app.directive('benefitsTiersDirective', [
 				scope.updateEnrolleEmp = function (emp) {
 					console.log(emp);
 
-					// if ( scope.showCurrencyType == 'myr' ) {
+					if ( scope.showCurrencyType == 'myr' ) {
 					// 	if ( emp.employee.nric == '' && emp.employee.mobile == '' && emp.employee.passport == '' ) {
 					// 		sweetAlert("Error!", "Please key in Mobile No., NRIC, or Passport Number.", "error");
 					// 		return false;
@@ -1350,7 +1356,14 @@ app.directive('benefitsTiersDirective', [
 					// 		swal("Error!", "Email Address or Mobile Number is required.", 'error');
 					// 		return false;
 					// 	}
-					// }
+						if ( emp.employee.passport ) {
+							if (!scope.checkPassport(emp.employee.passport)) {
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
+								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+									return false;
+							}
+						}
+					}
 
 					// if( !emp.employee.mobile_area_code ) {
 					// 	swal("Error!", "Please prvoide a Mobile Area Code is required.", 'error');
@@ -1847,7 +1860,8 @@ app.directive('benefitsTiersDirective', [
 				scope.checkPassport = function (value) {
           let passport_pattern = null;
           if (value) {
-            passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
+						passport_pattern = new RegExp("^[a-zA-Z0-9]+$");
+            // passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
           } else {
             return false;
           }
@@ -1977,6 +1991,8 @@ app.directive('benefitsTiersDirective', [
 					iti2.destroy();
 					console.log(iti);
 					console.log(iti2);
+
+					scope.getEnrollTempEmployees();
 				})
 				$('#edit-employee-details').on('hidden.bs.modal', function () {
 					if(scope.selected_edit_details_data.employee.isStartDateNull){

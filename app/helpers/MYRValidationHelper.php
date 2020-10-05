@@ -38,11 +38,11 @@ class MYRValidationHelper
             $messages['nric_message'] = 'Invalid NRIC format. Please enter NRIC in the format of 12 digit number only.';
         }
 
-        if (!in_array('passport', $validated) && $this->invalidPassport($input['passport'])) {
-            $messages['error'] = true;
-            $messages['passport_error'] = true;
-            $messages['passport_message'] = 'Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.';
-        }
+        // if (!in_array('passport', $validated) && $this->invalidPassport($input['passport'])) {
+        //     $messages['error'] = true;
+        //     $messages['passport_error'] = true;
+        //     $messages['passport_message'] = 'Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.';
+        // }
 
         if (!in_array('mobile', $validated) && $this->checkDuplicates('PhoneNo', $input['mobile'])) {
             $messages['error'] = true;

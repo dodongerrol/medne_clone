@@ -147,12 +147,20 @@ class SpendingHelper {
 
             $total_company_entitlement = $total_medical_entitlment + $total_wellness_entitlment;
             $total_balance = $total_credits - $total_company_entitlement;
+            $enable = false;
+
+            if($total_credits >= $total_company_entitlement && $payment_status == true) {
+                $enable = true;
+            } else if($total_credits < $total_company_entitlement) {
+                $enable = true;
+            }
 
             return [
                 'total_credits' => $total_credits, 
                 'total_company_entitlement' => $total_company_entitlement,
                 'payment_status'  => $payment_status,
-                'enable' => $total_balance > 0 || $payment_status == true ? true : false
+                'enable' => $enable,
+                'test'  => $total_credits >= $total_company_entitlement
             ];
         } else {
             return ['enable' => true];

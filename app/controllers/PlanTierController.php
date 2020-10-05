@@ -681,10 +681,12 @@ class PlanTierController extends \BaseController {
 		);
 
 		$temp_enroll->updateEnrollee($data);
+		$temp = \DateTime::createFromFormat('d/m/Y', $input['plan_start']);
+		$input['plan_start'] = $temp->format('Y-m-d');
 		$input['mobile_country_code'] = $input['mobile_area_code'];
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
-
+		
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
 			'first_name'				=> $input['fullname'],
