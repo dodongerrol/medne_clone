@@ -1229,19 +1229,22 @@ class PlanHelper
 			$start_date_result = false;
 		} else {
 			$plan_start = strftime("%Y-%m-%d",strtotime($user['plan_start']));
+			
 			if($plan_start == "1970-01-01") {
 				$temp = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
-				$user['plan_start'] = $temp->format('d/m/Y');
+				$user['plan_start'] = $temp->format('d-m-Y');
 			} else {
-				$user['plan_start'] = date('d/m/Y', strtotime($plan_start));
+				$user['plan_start'] = date('d-m-Y', strtotime($plan_start));
 			}
-
+			$user['plan_start'] = date('d/m/Y', strtotime($user['plan_start']));
 			$validate = self::isDate($user['plan_start']);
 			if (!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
 				$start_date_result = false;
 			} else {
+				$user['plan_start'] = $plan_start;
+				// return date('Y-m-d', strtotime($user['plan_start']));
 				$plan = self::getCompanyPlanDates($customer_id);
 				$start = strtotime($plan['plan_start']);
 				$end = strtotime($plan['plan_end']);
