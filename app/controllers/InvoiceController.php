@@ -438,25 +438,25 @@ class InvoiceController extends \BaseController {
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					$temp = array(
-						'transaction_id'    		=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
+						'transaction_id'    				=> strtoupper(substr($clinic->Name, 0, 3)).$transaction_id,
 						'ClinicID'							=> $trans->ClinicID,
-						'NRIC'									=> $trans->NRIC,
+						'NRIC'								=> $trans->NRIC,
 					// 'ProcedureID'						=> $procedure_id,
-						'UserID'								=> $trans->UserID,
-						'date_of_transaction'		=> date('d F Y', strtotime($trans->date_of_transaction)),
-						'paid'									=> $trans->paid,
-						'procedure_cost'				=> $trans->procedure_cost,
+						'UserID'							=> $trans->UserID,
+						'date_of_transaction'		 		=> date('d F Y', strtotime($trans->date_of_transaction)),
+						'paid'								=> $trans->paid,
+						'procedure_cost'					=> $trans->procedure_cost,
 						'services'							=> $procedure,
 						'customer'							=> ucwords($trans->user_name),
-						'mednefits_fee'					=> number_format($fee, 2),
+						'mednefits_fee'						=> $trans->currency_type.toUpperCase() + ' ' + number_format($fee, 2),
 						'discount'							=> $trans->clinic_discount,
-						'multiple_procedures' 	=> $trans->multiple_service_selection,
-						'health_provider'				=> $trans->health_provider_done,
-						'mednefits_credits'			=> number_format($mednefits_credits, 2),
-						'cash'									=> number_format($cash, 2),
-						'procedure_ids'					=> $procedure_ids,
-						'total'									=> number_format($fee + $mednefits_credits, 2),
-						'currency_type'					=> "SGD"
+						'multiple_procedures' 				=> $trans->multiple_service_selection,
+						'health_provider'					=> $trans->health_provider_done,
+						'mednefits_credits'					=> $trans->currency_type.toUpperCase() + ' ' + number_format($mednefits_credits, 2),
+						'cash'								=> $trans->currency_type.toUpperCase() + ' ' +  number_format($cash, 2),
+						'procedure_ids'						=> $procedure_ids,
+						'total'								=> number_format($fee + $mednefits_credits, 2),
+						'currency_type'						=> strtoupper($trans->currency_type),
 					);
 					array_push($transaction_data, $temp);
 
