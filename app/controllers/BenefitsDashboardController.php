@@ -12381,7 +12381,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$session = self::checkSession();
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-
+		
 		$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
         // return $active_plans;
 
@@ -12400,25 +12400,25 @@ class BenefitsDashboardController extends \BaseController {
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				}
 				$calculated_prices_end_date = $end_plan_date;
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = $invoice->individual_price;
+					$calculated_prices = $invoice ? $invoice->individual_price : 0;
 				}
 			} else {
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($active->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
 				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
 
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice ? $invoice->individual_price : 0, $active->plan_start, $calculated_prices_end_date);
 				}
 			}
 
-			$active->plan_amount = number_format($calculated_prices * $invoice->employees, 2);
-			$active->employees = $invoice->employees;
+			$active->plan_amount = $invoice ? number_format($calculated_prices * $invoice->employees, 2) : 0;
+			$active->employees = $invoice ? $invoice->employees : $active->employees;
 
             // get depost
 			$deposits = DB::table("spending_deposit_credits")
@@ -12457,49 +12457,6 @@ class BenefitsDashboardController extends \BaseController {
 
 			$active->total_allocated_amount_medical = number_format($total_allocated_amount_medical, 2);
 			$active->total_allocated_amount_wellness = number_format($total_allocated_amount_wellness, 2);
-
-            // get users by customer active plan
-            // $users_id[] = DB::table('user_plan_history')->where('customer_active_plan_id', $active->customer_active_plan_id)->pluck('user_id');
-
-            // if(sizeof($users_id) > 0) {
-            //     $active->users_id = $users_id;
-                // medical
-                // $temp_medical_allocation = DB::table('e_wallet')
-                //                         ->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wallet_history.logs', 'added_by_hr')
-                //                         ->where('wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wallet_history.credit');
-
-                // $temp_medical_deduct_allocation = DB::table('e_wallet')
-                //                         ->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wallet_history.logs', 'deducted_by_hr')
-                //                         ->where('wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wallet_history.credit');
-                // $total_medical_allocation += $temp_medical_allocation - $temp_medical_deduct_allocation;
-
-                // // wellness
-                // $temp_wellness_allocation = DB::table('e_wallet')
-                //                         ->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wellness_wallet_history.logs', 'added_by_hr')
-                //                         ->where('wellness_wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wellness_wallet_history.credit');
-
-                // $temp_wellness_deduct_allocation = DB::table('e_wallet')
-                //                         ->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wellness_wallet_history.logs', 'deducted_by_hr')
-                //                         ->where('wellness_wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wellness_wallet_history.credit');
-
-                // $total_wellness_allocation += $temp_wellness_allocation - $temp_wellness_deduct_allocation;
-            // } else {
-            //     $active->total_unallocated_medical = "0.00";
-            //     $active->total_unallocated_wellness = "0.00";
-            // }
-
 			$active->total_allocated_amount_medical = number_format($total_allocated_amount_medical, 2);
 			$active->total_allocated_amount_wellness = number_format($total_allocated_amount_wellness, 2);
 
@@ -15992,32 +15949,39 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				}
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = $invoice->individual_price;
+					$calculated_prices = $invoice ? $invoice->individual_price : 0;
 				}
-				$plan_amount = $calculated_prices * $invoice->employees;
+				$plan_amount = $invoice ? $calculated_prices * $invoice->employees : 0;
 				$new_head_count = false;
 			} else {
 				// $calculated_prices_end_date = CustomerHelper::getCompanyPlanDates($active->customer_start_buy_id);
 				$calculated_prices_end_date = $plan->plan_end;
 				$duration = CustomerHelper::getPlanDuration($active->customer_start_buy_id, $active->plan_start);
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice ? $invoice->individual_price : 0, $active->plan_start, $calculated_prices_end_date);
 					$calculated_prices = $calculated_prices;
 				}
-				$plan_amount = $calculated_prices * $invoice->employees;
+				$plan_amount = $invoice ? $calculated_prices * $invoice->employees : 0;
 				$new_head_count = true;
 			}
 
 			$total += $plan_amount;
-			// get dependent if any
-			$dependents = DB::table('dependent_plans')
-			->where('customer_active_plan_id', $invoice->customer_active_plan_id)
-			->get();
+			if($invoice) {
+				// get dependent if any
+				$dependents = DB::table('dependent_plans')
+				->where('customer_active_plan_id', $invoice->customer_active_plan_id)
+				->get();
+				$payment_data = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
+			} else {
+				$dependents = [];
+				$payment_data = null;
+			}
+			
 	  
 			foreach ($dependents as $key => $dependent) {
 			  $invoice_dependent = DB::table('dependent_invoice')
@@ -16034,19 +15998,17 @@ class BenefitsDashboardController extends \BaseController {
 			  }
 			}
 			
-			$payment_data = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
-			
 			$pagination['data'][] = [
-				'invoice_id'      => $invoice->corporate_invoice_id,
-				'invoice_date'    => date('Y-m-d', strtotime($invoice->invoice_date)),
-				'invoice_due'    => date('Y-m-d', strtotime($invoice->invoice_due)),
-				'invoice_number'  => $invoice->invoice_number,
+				'invoice_id'      => $invoice ? $invoice->corporate_invoice_id : null,
+				'invoice_date'    => $invoice ? date('Y-m-d', strtotime($invoice->invoice_date)) : null,
+				'invoice_due'    => $invoice ? date('Y-m-d', strtotime($invoice->invoice_due)) : null,
+				'invoice_number'  => $invoice ? $invoice->invoice_number : null,
 				'total'           => DecimalHelper::formatDecimal($total),
         		'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($total - $payment_data->paid_amount) : $total,
 				'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
 				'payment_date'    => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
 				'payment_remarks' => $payment_data ? $payment_data->remarks : null,
-				'currency_type'   => $invoice->currency_type,
+				'currency_type'   => $invoice ? $invoice->currency_type : null,
 				'payment_status'  => $active->paid == "true" ? true : false
 			];
 		}
