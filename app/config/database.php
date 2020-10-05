@@ -58,18 +58,16 @@ return array(
 		'read' => array(
             // Return a random host
             // 'host' => 'root',
-            'host' => 'localhost',
-            // 'host' => '127.0.0.1',
+            'host' => '127.0.0.1',
     ),
     'write' => array(
             // 'host' => 'root'
-            'host' => 'localhost'
-            // 'host' => '127.0.0.1'
+            'host' => '127.0.0.1'
     ),
     // 'database'  => 'root',
     'database'  => 'medicloud_v3',
     'username'  => 'root',
-    'password'  => '',
+    'password'  => 'medicloud',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => 'medi_',
