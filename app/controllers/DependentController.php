@@ -48,7 +48,7 @@ class DependentController extends \BaseController {
 			$file->move('excel_upload', $temp_file);
 			try {
 				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(true, 'd/m/Y')->get();
 			} catch(Exception $e) {
 				// return ['res' => $e->getMessage()];
 				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
@@ -259,7 +259,7 @@ class DependentController extends \BaseController {
 				$user['fullname'] = isset($user['full_name']) ? $user['full_name'] : $user['fullname'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
-
+				$plan_start = $user['plan_start'];
 				$temp_enrollment_data = array(
 					'customer_buy_start_id'	=> $customer_id,
 					'active_plan_id'		=> $customer_active_plan_id,
@@ -286,14 +286,15 @@ class DependentController extends \BaseController {
 					'group_number'			=> $group_number,
 					'error_logs'			=> serialize($error_member_logs)
 				);
-				
 				try {
 					$enroll_result = $temp_enroll->insertTempEnrollment($temp_enrollment_data);
 					if($enroll_result) {
 						if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
 							foreach ($user['dependents'] as $key => $dependent) {
-								$dependent['plan_start'] = isset($user['start_date']) ? $user['start_date'] : $user['start_date_ddmmyyyy'];
-								$plan_start = $dependent['plan_start'] && $dependent['plan_start'] != null ? strtotime(date_format(date_create_from_format('d/m/Y', $dependent['plan_start']), 'Y-m-d')) : null; 
+								$dependent['plan_start'] = $plan_start;
+								$plan_start = $dependent['plan_start'] ? strtotime(date_format(date_create_from_format('Y-m-d', $dependent['plan_start']), 'd-m-Y')) : null; 
+								$plan_start = $plan_start ? date('Y-m-d', $plan_start) : null;
+								
 								$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
 								$dependent['relationship'] = strtolower($dependent['relationship']);
 								$dependent['fullname'] = $dependent['full_name'];
@@ -319,7 +320,7 @@ class DependentController extends \BaseController {
 									'first_name'			=> trim($dependent['fullname']),
 									'dob'					=> $dependent['dob'],
 									'nric'					=> null,
-									'plan_start'			=> $plan_start ? date('Y-m-d', $plan_start) : null,
+									'plan_start'			=> $plan_start ? $plan_start : null,
 									'relationship'			=> trim($dependent['relationship']),
 									'error_logs'			=> serialize($error_dependent_logs)
 								);
