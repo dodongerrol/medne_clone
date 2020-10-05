@@ -17458,17 +17458,24 @@ public function createHrLocation ()
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
+		$data = null;
 
+		if(empty($input['business_contacts']) || sizeof($input['business_contacts']) == 0) {
+			return array('satus' => false, 'message' => 'Contact/s is required.');
+		}
+
+		foreach ($input['business_contacts'] as $key => $user) {
 		if($id) {
 			$data = array (
 				'customer_id'					=> $id,
-				'first_name'					=> $input['first_name'],
-				'email' 						=> $input['email'],
-				'phone_code'					=> $input['phone_code'],
-				'phone'							=> $input['phone']
+				'first_name'					=> $user['first_name'],
+				'email' 						=> $user['email'],
+				'phone_code'					=> $user['phone_code'],
+				'phone'							=> $user['phone']
 			);
 			\CorporateCompanyContacts::create($data);
-		} 
+		}
+	}
 		return array('status' => TRUE, 'message' => 'Successfully added business contact.', 'id'	=> $id);			
 	}
 
