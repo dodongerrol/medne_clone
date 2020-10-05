@@ -1,22 +1,31 @@
 <div cap-per-visit-directive class="cap-per-visit-wrapper">
 	<div class="health-provider-header-container">
-		<h3>GP - Cap per Visit</h3>
-		<div>
-			<img ng-click="downloadGpCapExcelTemplate()" src="../assets/hr-dashboard/img/Group.png">
-			<img ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload" src="../assets/hr-dashboard/img/Import icon.svg">
-			<button ng-click="saveBtn()" id="hideMe" class="replace-employee-update-button update-replace save-continue-disabled">SAVE & CONTINUE</button>
+		<h3>Group Cap Per Visit</h3>
+		<div class="flex items-center space-x-3">
+			<!-- <img ng-click="downloadGpCapExcelTemplate()" src="../assets/hr-dashboard/img/Group.png">
+			<img ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload"
+				src="../assets/hr-dashboard/img/Import icon.svg"> -->
+			<button class="btn-export-member medi-border-primary medi-text-primary bg-white w-40"
+				ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload" data-toggle="modal">
+				<img src="../assets/hr-dashboard/img/new-assets/Download.png">
+				Excel Import
+			</button>
+			<button ng-click="saveBtn()" id="hideMe"
+				class="replace-employee-update-button update-replace save-continue-disabled">
+				Update
+			</button>
 		</div>
-	</div>	
+	</div>
 
 	<div class="gp-cap-table-wrapper">
 		<div class="gp-cap-table-info-wrapper">
 			<div class="gp-cap-table-info-container">
-				<table>
+				<table class="w-full">
 					<thead>
 						<tr>
-							<th>Member ID</th>
-							<th>Name</th>
-							<th>Cap per Visit</th>
+							<th>ID</th>
+							<th>Full Name</th>
+							<th>Cap Per Visit</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -24,20 +33,23 @@
 							<td ng-bind="list.user_id">4</td>
 							<td ng-bind="list.name">Filbert Tan</td>
 							<td ng-click="editTableCell( $index, list )">
-								<span ng-if="showDataText[ $index ]" >
-									<span ng-bind="list.currency_type" class="currency-type">S$</span> 
-									<span ng-bind="list.cap_amount" style="margin: 0 5px;" class="show-data-text">{{$index}}</span>
+								<span ng-if="showDataText[ $index ]">
+									<span ng-bind="list.currency_type" class="currency-type">S$</span>
+									<span ng-bind="list.cap_amount" style="margin: 0 5px;"
+										class="show-data-text">{{$index}}</span>
 								</span>
 								<span ng-if="showInputText[ $index ]" style="display: flex;">
 									<span ng-bind="list.currency_type" class="currency-type">S$</span> <span>
-									<input id="hideMe{{$index}}" class="edit-input show-input-text" type="text" pattern="^\d*(\.\d{0,2})?$" ng-change="inputActiveSaveBtn()" ng-model="list.cap_amount"></span>
+										<input id="hideMe{{$index}}" class="edit-input show-input-text" type="text"
+											pattern="^\d*(\.\d{0,2})?$" ng-change="inputActiveSaveBtn()"
+											ng-model="list.cap_amount"></span>
 								</span>
 								<span ng-if="capPerVisitNoValue[ $index ]">
 									<span class="not-applicable-text" id="hideMe{{$index}}">Not applicable</span>
-								</span>	
+								</span>
 							</td>
 						</tr>
-						
+
 					</tbody>
 				</table>
 			</div>
@@ -46,73 +58,81 @@
 		<div class="health-pagination">
 			<div class="page-wrapper">
 				<div class="page-scroll-container page-opened">
-					<span>	
-						<i class="fa fa-angle-left" style="font-size: 14px;"></i> 
+					<span>
+						<i class="fa fa-angle-left" style="font-size: 14px;"></i>
 						<span ng-click="prevPageGpCap()">Prev</span>
 					</span>
 					<div>
-						<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1" ng-click="goToGpCap(list + 1)" class="health-page-num" ng-class="{'active' : list + 1 == selectCapPage}"></span>
+						<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1"
+							ng-click="goToGpCap(list + 1)" class="health-page-num"
+							ng-class="{'active' : list + 1 == selectCapPage}"></span>
 					</div>
-					<span>	
+					<span>
 						<span ng-click="nextPageGpCap()">Next</span>
-						<i class="fa fa-angle-right" style="font-size: 14px;"></i> 
+						<i class="fa fa-angle-right" style="font-size: 14px;"></i>
 					</span>
 				</div>
 			</div>
 			<div class="rows-page-wrapper">
 				<span><span ng-bind="gpCapPerVisitInfo_pagination.count"></span> per page</span>
-				<span>	
+				<span>
 					<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
 				</span>
 				<div class="opened-per-page-scroll page-scroll" style="display: none">
 					<span ng-click="changeGpPerPage(10)">10</span>
-          <span ng-click="changeGpPerPage(20)">20</span>
-          <span ng-click="changeGpPerPage(30)">30</span>
-          <span ng-click="changeGpPerPage(40)">40</span>
-          <span ng-click="changeGpPerPage(50)">50</span>
-          <span ng-click="changeGpPerPage(100)">100</span>
+					<span ng-click="changeGpPerPage(20)">20</span>
+					<span ng-click="changeGpPerPage(30)">30</span>
+					<span ng-click="changeGpPerPage(40)">40</span>
+					<span ng-click="changeGpPerPage(50)">50</span>
+					<span ng-click="changeGpPerPage(100)">100</span>
 				</div>
 			</div>
 		</div>
 	</div>
 
 
-	<div class="modal fade" id="file_upload" tabindex="-1" role= "dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
-	  <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
-	    <div class="modal-content">
-	    	<form>
-		      <div class="modal-header">
-		        <h4>File Uploader</h4>
-		        <img ng-click="closePass()" src="../assets/hr-dashboard/img/icons/cancel.png">
-		      </div>
-		      <div class="modal-body">
-		        <div class="drop-box" ngf-drop="uploadGpCapChanged( gpCapFile )" ngf-select="uploadGpCapChanged( gpCapFile )" ng-model="gpCapFile" ngf-drag-over-class="'dragover'">
-		        	<div>
-		        		<div class="drop-file-upload">
-			            <img src="../assets/hr-da	shboard/img/fileupload.png">
-			            <p>Drop a file to upload, or </p>
-		              <div class="file-btn" style="height: auto; padding: 10px 0px; text-align: center;">Browse</div>
-		              <!-- <input class="choose-file" type="file"> -->
-	              </div>
+	<div class="modal fade" id="file_upload" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
+		<div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">
+						<h4>File Uploader</h4>
+						<img ng-click="closePass()" src="../assets/hr-dashboard/img/icons/cancel.png">
+					</div>
+					<div class="modal-body">
+						<div class="drop-box" ngf-drop="uploadGpCapChanged( gpCapFile )"
+							ngf-select="uploadGpCapChanged( gpCapFile )" ng-model="gpCapFile"
+							ngf-drag-over-class="'dragover'">
+							<div>
+								<div class="drop-file-upload">
+									<img src="../assets/hr-da	shboard/img/fileupload.png">
+									<p>Drop a file to upload, or </p>
+									<div class="file-btn" style="height: auto; padding: 10px 0px; text-align: center;">
+										Browse</div>
+									<!-- <input class="choose-file" type="file"> -->
+								</div>
 
-	              <div ng-if="gpCapFile.name">
-	              	<div class="progress-wrapper">
-	              		<span>
-		              		<i class="fa fa-file-o"></i>
+								<div ng-if="gpCapFile.name">
+									<div class="progress-wrapper">
+										<span>
+											<i class="fa fa-file-o"></i>
 											<span ng-bind="gpCapFile.name">Employee list.csv</span>
 										</span>
-										<div class="progress-bar" ng-class="{ 'error' : gpCapFile.error }" style="width: {{ gpCapFile.uploading }}%;" style="font-size: 11px;"></div>
+										<div class="progress-bar" ng-class="{ 'error' : gpCapFile.error }"
+											style="width: {{ gpCapFile.uploading }}%;" style="font-size: 11px;"></div>
 									</div>
-									<span ng-if="gpCapFile.error" ng-bind="gpCapFile.error_text" style="font-size: 11px;"></span>
-	              </div>
-              </div>
-            </div>
-		      </div>
-		      <div class="modal-footer">
-		        <button class="file-btn" ng-click="uploadGpCapPerVisit( gpCapFile )">Upload</button>
-		      </div>
-	      </form>
-	    </div>
-	  </div>
+									<span ng-if="gpCapFile.error" ng-bind="gpCapFile.error_text"
+										style="font-size: 11px;"></span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="file-btn" ng-click="uploadGpCapPerVisit( gpCapFile )">Upload</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 </div>

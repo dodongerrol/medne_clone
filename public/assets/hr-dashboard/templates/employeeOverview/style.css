@@ -9,3 +9,7 @@
 .medi-border-primary {
   border-color: var(--primary);
 }
+
+.disabled-input {
+  background-color: var(--bg-gray-contrast)
+}

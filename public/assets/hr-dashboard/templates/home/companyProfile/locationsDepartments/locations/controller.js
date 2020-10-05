@@ -26,6 +26,7 @@
         }
         get() {
             this.locationAPI.get().then(response => {
+                console.log(response)
                 this.locations = response;
             });
         }
