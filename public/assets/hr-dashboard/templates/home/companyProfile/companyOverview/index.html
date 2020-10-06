@@ -53,9 +53,24 @@
             <span ng-bind="list.phone">(+65) 8856 4736</span>
           </div>
         </div>
+        <div ng-repeat="list in get_company_contact_data" class="business-contact-details-container">
+          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Full Name</div>
+            <span ng-bind="list.first_name">Filbert Tan</span>
+          </div>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Email Address</div>
+            <span ng-bind="list.email">filbert@mednefits.com</span>
+          </div>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Mobile Number</div>
+            <span ng-bind="list.phone">(+65) 8856 4736</span>
+          </div>
+        </div>
       </div>
       <div class="footer-btn">
-        <button ng-click="addBusinessContact()" data-toggle="modal" data-target="#business-add-contact-modal" class="add-contact-btn">Add more contact</button>
+        <button ng-disabled="addMoreContactDisabled" ng-click="addBusinessContact()" data-toggle="modal" data-target="#business-add-contact-modal" class="add-contact-btn">Add more contact</button>
       </div>
     </div>
   </div>
@@ -151,7 +166,7 @@
         <div class="modal-body">
           <div class="business-input-wrapper">
             <label>Full Name</label>
-            <input ng-model="business_data.full_name" type="text" placeholder="Enter new business contact’s full name">
+            <input ng-model="business_data.first_name" type="text" placeholder="Enter new business contact’s full name">
           </div>
           <div class="business-input-wrapper">
             <label>Email Address</label>
@@ -164,12 +179,12 @@
                 <input ng-model="business_data.phone_code" type="text" id="phone_number_add_contact">
               </div>
               <div>
-                <input ng-model="business_data.phone_number" type="text" placeholder="Enter new business contact’s phone number">
+                <input ng-model="business_data.phone" type="number" placeholder="Enter new business contact’s phone number">
               </div>
             </div>
           </div>
           <div ng-if="business_ctr != 2">
-            <button ng-disabled="business_data.full_name == null || business_data.email == null || business_data.phone_number == null " ng-click="addMoreContact( business_data )" class="add-contact-btn">Add more contact</button>
+            <button ng-disabled="business_data.first_name == null || business_data.email == null || business_data.phone == null " ng-click="addMoreContact( business_data )" class="add-contact-btn">Add more contact</button>
           </div>
           <div class="angle-left-container">
             <i ng-if="business_ctr != 0" ng-click="prevAddContact()" style="cursor: pointer;" class="fa fa-angle-left" aria-hidden="true"></i>
@@ -180,7 +195,7 @@
         </div>
         <div class="modal-footer">
           <button data-dismiss="modal" class="btn-cancel">Cancel</button>
-          <button class="btn-update">Update</button>
+          <button ng-click="updateAddBusinessContact()" class="btn-update">Update</button>
         </div>
       </div>
     </div>

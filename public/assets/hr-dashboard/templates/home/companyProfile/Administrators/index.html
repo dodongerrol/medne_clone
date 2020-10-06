@@ -1,0 +1,80 @@
+<div class="administrators-wrapper">
+  <div class="page-title">Administrators</div>
+  <div class="primary-admin">
+    <h5 class="bold-text">Primary Administrator</h5>
+    <div class="admin-card-container">
+      <div class="dp-flex-ai">
+        <div>
+          <div class="display-flex primary-admin-details">
+            <span class="bold-text">Full Name: </span> 
+            <span> Christ Teo</span>
+          </div>
+          <div class="display-flex primary-admin-details">
+            <span class="bold-text">Email Address: </span>
+            <span> chris.teo@mednefits.com</span>
+          </div>
+        </div>
+        <div>
+          <button class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
+        </div>
+      </div>
+      <div class="display-flex admin-information">
+        <div>
+          <div class="bold-text">This admin's permissions applied to:</div>
+          <span>All Employees & Dependents</span>
+        </div>
+        <div class="admin-can-container">
+          <div class="bold-text">This admin can:</div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>View employee + dependent profile information</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="additional-admin">
+    <h5 class="bold-text">Additional Administrators</h5>
+    <div class="admin-card-container">
+      <div class="no-administrator">
+        <button data-toggle="modal" data-target="#add-administrator-modal" class="bold-text"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade business-modal-container" id="add-administrator-modal" tabindex="-1" role= "dialog">
+  <div ng-if="true" class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Add Administrator</h5>
+      </div>
+      <div class="modal-body">
+        <div>
+          <label>Is this name a Mednefits employee?</label>
+          <div class="custom-checkbox-container active">
+            <label class="checkbox-input">
+              <span class="checkbox-text">Yes</span >
+              <input type="checkbox"/>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+          <div class="custom-checkbox-container active">
+            <label class="checkbox-input">
+              <span class="checkbox-text">No</span >
+              <input type="checkbox"/>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+        <button ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
+      </div>
+    </div>
+  </div>
+</div> 

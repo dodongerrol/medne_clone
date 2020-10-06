@@ -67,7 +67,7 @@ return array(
     // 'database'  => 'root',
     'database'  => 'medicloud_v3',
     'username'  => 'root',
-    'password'  => 'medicloud',
+    'password'  => '',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => 'medi_',

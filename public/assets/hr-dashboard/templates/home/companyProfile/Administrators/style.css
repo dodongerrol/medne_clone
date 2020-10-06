@@ -1,0 +1,96 @@
+.administrators-wrapper {
+  color: #2E4057;
+  font-size: 14px;
+  max-width: 950px;
+}
+.administrators-wrapper .page-title {
+  text-align: center;
+  font-size: 22px;
+}
+.admin-card-container {
+  border: 2px solid #E0E0E0;
+  background-color: #fff;
+}
+.admin-card-container >div {
+  padding: 15px;
+  border-bottom: 1px solid #E0E0E0;
+}
+.admin-card-container >div:last-child {
+  border-bottom: 0;
+}
+.primary-admin-details >span:first-child {
+  margin: 0 5px 0 0;
+}
+/* .administrators-wrapper .admin-information >div {
+  width: 50%;
+} */
+.administrators-wrapper .change-primary-btn {
+  display: flex;
+  align-items: center;
+  border: 1px solid #037CB0;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #037CB0;
+  margin: 0 auto 0 0;
+  padding: 0 10px;
+}
+.administrators-wrapper .change-primary-btn img {
+  width: 14px;
+  margin: 0 5px 0 0;
+}
+.primary-admin .admin-card-container >div >div {
+  width: 50%;
+}
+
+/* ------------ CUSTOM CHECBOX ------------ */
+.custom-checkbox-container .checkbox-input {
+  display: block;
+  position: relative;
+  margin-bottom: 0px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-top: 0px;
+  padding: 0 0 0 40px;
+}
+.custom-checkbox-container .checkbox-input input {
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.custom-checkbox-container .checkbox-input input:checked ~ .checkbox-mark { 
+  background-color: transparent;
+}
+
+.custom-checkbox-container .checkbox-input input:checked ~ .checkbox-mark:after {
+  display: block;
+}
+
+.custom-checkbox-container .checkbox-input .checkbox-mark {
+  position: absolute;
+  top: 4px;
+  left: 2px;
+  height: 18px;
+  width: 18px;
+  border: 1px solid #BFBFBF;
+  border-radius: 2px;
+}
+
+.custom-checkbox-container .checkbox-input .checkbox-mark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  bottom: 4px;
+  width: 9px;
+  height: 17px;
+  border: solid #02597E;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+/* ---------------------------------------- */

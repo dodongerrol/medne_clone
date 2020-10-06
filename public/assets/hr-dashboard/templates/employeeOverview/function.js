@@ -27,7 +27,15 @@ app.directive("employeeOverviewDirective", [
           active: false,
           removed: false,
         }
+        scope.empNumber = 5;
+        scope.locNumber = 10;
 
+        scope.empGetNumber = function (num) {
+          return new Array(num);
+        }
+        scope.locGetNumber = function (num) {
+          return new Array(num);
+        }
         scope.getEmployeeList = function (page) {
           $(".employee-overview-pagination").show();
           scope.showLoading();

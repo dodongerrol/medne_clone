@@ -10755,3 +10755,6 @@ span.dropdown-entitlement.disabled {
 .welcome-container .nav-drop-wrapper.account-drop-wrapper {
   width: 250px;
 }
+.bold-text {
+  font-family: 'Helvetica Medium';
+}

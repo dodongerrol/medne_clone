@@ -1,27 +1,30 @@
 <div employee-overview-directive class="employee-overview-container">
-  <div class="employee-overview-header">
+  <div class="employee-overview-header emp-overview-new-header">
     <div class="overview-title">
       <h1>Employee Overview</h1>
-      <h4><span ng-bind="member_count"></span> total members</h4>
+      <!-- <h4><span ng-bind="member_count"></span> total members</h4> -->
     </div>
     <div class="overview-menu flex items-center">
-      <span ng-click="_showAddFilterModal_()" class="add-filter-container">
+      <!-- <span ng-click="_showAddFilterModal_()" class="add-filter-container">
         <img src="../assets/hr-dashboard/img/plus-gray.png"> <span>Add filter</span>
-      </span>
+      </span> -->
       <form ng-submit="searchEmployee(inputSearch)" style="display: inline-block;">
         <label class="overview-input-wrapper">
-          <input type="text" placeholder="Search for a member" ng-model="inputSearch">
-          <i class="fa fa-search" aria-hidden="true" ng-if="!inputSearch"></i>
-          <img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
+          <!-- <i class="fa fa-search" aria-hidden="true" ng-if="!inputSearch"></i> -->
+          <i class="fa fa-search" aria-hidden="true"></i>
+          <input type="text" placeholder="Search" ng-model="inputSearch">
+          <!-- <img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()"> -->
         </label>
       </form>
+      <button class="btn-settings btn-export-member medi-border-primary medi-text-primary bg-white"><img src="../assets/hr-dashboard/img/benefits-icon.png">Benefits Settings<i class="fa fa-angle-down"></i></button>
       <button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ui-sref="cred-allocation">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
       <!-- <button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button> -->
-      <exportmembers></exportmembers>
       <bulkupdate></bulkupdate>
+      <exportmembers></exportmembers>
       <button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
     </div>
   </div>
+  <!-- <div class="employee-overview-table">
   <transferemployee employee="{
     employee_id: 1
   }"></transferemployee>
@@ -169,8 +172,8 @@
         <a href="/sa-landing" target="_blank">Learn more >></a>
       </div>
     </div>
-  </div>
-  <div class="employee-pagination-wrapper employee-overview-pagination">
+  </div> -->
+  <!-- <div class="employee-pagination-wrapper employee-overview-pagination">
     <div class="employee-pagination">
       <div class="prev-pagination" ng-click="prevPage()"
         ng-class="{'active' : page_active > 1, 'disabled' : page_active < 2}">
@@ -199,9 +202,233 @@
         </div>
       </div>
     </div>
+  </div> -->
+
+  <div class="emp-filter-tbl-wrapper">
+    <div class="add-filter-wrapper">
+
+      <div ng-if="false" class="emp-filter-details-container">
+        <div>
+          <div class="total-member-data">
+            <div>Total members</div>
+            <span class="total-number">70</span>
+          </div>
+          <div>
+            <div>Administrators <img class="admin-blue-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png"></div>
+            <span class="total-number">04</span>
+          </div>
+        </div>
+        <div class="filtered-text">
+          <div>Status is filtered by Pending & Activated.</div>
+          <i class="fa fa-times"></i>
+        </div>
+        <button class="add-filter-btn"><img class="add-filter-icon" src="../assets/hr-dashboard/img/plus-gray.png"><span>Add filter</span></button>
+      </div>
+      <div ng-if="false">
+        <h5 class="back-btn-filter"><i class="fa fa-angle-left"></i><span>Back</span></h5>
+        <h5 class="add-filter-text">Add filter</h5>
+        <div class="emp-filter-selector-container">
+          <div class="active">Status</div>
+          <div>Location</div>
+          <div>Department</div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div ng-if="false" class="emp-filter emp-status-filter">
+        <h5>Status</h5>
+        <div class="custom-checkbox-container">
+          <label class="checkbox-input">
+            <span class="checkbox-text">Pending</span>
+            <input type="checkbox"/>
+            <span class="checkbox-mark"></span>
+          </label>
+        </div>
+        <div class="custom-checkbox-container">
+          <label class="checkbox-input">
+            <span class="checkbox-text">Activated</span >
+            <input type="checkbox"/>
+            <span class="checkbox-mark"></span>
+          </label>
+        </div>
+        <div class="custom-checkbox-container">
+          <label class="checkbox-input">
+            <span class="checkbox-text">Active</span>
+            <input type="checkbox"/>
+            <span class="checkbox-mark"></span>
+          </label>
+        </div>
+        <div>
+          <button class="apply-filter-btn">Apply Filter</button>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div ng-if="false" class="emp-filter emp-location-filter">
+        <h5>Location</h5>
+        <div class="filter-data-selector-wrapper">
+          <div class="filter-data-selector-container"><div>Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+          <div class="filter-data-selector-container"><div>Location 2</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+          <div class="filter-data-selector-container"><div>Location 2</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+          <div class="filter-data-selector-container"><div>Location Sample</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+        </div>
+        <div class="location-selector">
+          <div ng-repeat="list in locGetNumber(locNumber) track by $index" class="custom-checkbox-container active">
+            <label class="checkbox-input">
+              <span class="checkbox-text">Location 1</span >
+              <input type="checkbox"/>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <button class="apply-filter-btn">Apply Filter</button>
+        </div>
+      </div>
+
+      <!-- Department -->
+      <div class="emp-filter emp-location-filter">
+        <h5>Departmet</h5>
+        <div class="filter-data-selector-wrapper">
+          <div class="filter-data-selector-container"><div>Departmet 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+          <div class="filter-data-selector-container"><div>Departmet 2</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+          <div class="filter-data-selector-container"><div>Departmet 2</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+          <div class="filter-data-selector-container"><div>Departmet Sample</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+        </div>
+        <div class="location-selector">
+          <div ng-repeat="list in locGetNumber(locNumber) track by $index" class="custom-checkbox-container active">
+            <label class="checkbox-input">
+              <span class="checkbox-text">Departmet 1</span >
+              <input type="checkbox"/>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <button class="apply-filter-btn">Apply Filter</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="emp-overview-tbl-wrapper">
+        <div class="emp-overview-tbl-container">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <div class="custom-checkbox-container">
+                    <label class="checkbox-input">
+                      <span></span>
+                      <input ng-click="_selectMemberList_(list, $index, 'select-member-block')" ng-model="list.selected" type="checkbox"/>
+                      <span class="checkbox-mark"></span>
+                    </label>
+                  </div>
+                </th>
+                <th>Action</th>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Status</th>
+                <th>Mobile Number</th>
+                <th>Benefits Start Date</th>
+                <th>Family Coverage</th>
+                <th>Medical Wallet</th>
+                <th>Wellness Wallet</th>
+                <th>Locations</th>
+                <th>Departments</th>
+              </tr>
+            </thead>
+            <tbody ng-repeat="list in empGetNumber( empNumber ) track by $index">
+              <tr>
+                <td>
+                  <div class="custom-checkbox-container">
+                    <label class="checkbox-input">
+                      <span></span>
+                      <input type="checkbox"/>
+                      <span class="checkbox-mark"></span>
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  <img class="three-dot-icon" src="../assets/hr-dashboard/img/three-dot.png">
+                </td>
+                <td>001</td>
+                <td>Employee 1</td>
+                <td>Active</td>
+                <td>+6583515261</td>
+                <td>01/01/2020</td>
+                <td>
+                  <span>Dependent:</span>
+                  <span>0</span>
+                </td>
+                <td>
+                  <div>
+                    <span class="bold-text">Entitlement:</span>
+                    <span><span>SGD </span><span>500.00</span></span>
+                  </div>
+                  <div>
+                    <span class="bold-text">Balance:</span>
+                    <span><span>SGD </span><span>500.00</span></span>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <span class="bold-text">Entitlement:</span>
+                    <span><span>SGD </span><span>500.00</span></span>
+                  </div>
+                  <div>
+                    <span class="bold-text">Balance:</span>
+                    <span><span>SGD </span><span>500.00</span></span>
+                  </div>
+                </td>
+                <td>Location 1</td>
+                <td>Department 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="custom-pagination-container flex-1">
+        <div class="custom-pagination">
+          <div class="page-wrapper">
+            <div class="page-scroll-container">
+              <span ng-click="_prevPageList_('invoice-history')"
+                ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">
+                <i class="fa fa-angle-left"></i>
+                <span>Prev</span>
+              </span>
+              <div class="pages-list">
+
+                <!-- <span class="page-num active">1</span>	 -->
+                <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num"
+                  ng-click="_selectNumList_('invoice-history',list + 1)"
+                  ng-class="{'active' : list + 1 == page_active}">1</span>
+
+                <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+
+              </div>
+              <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">
+                <span>Next</span>
+                <i class="fa fa-angle-right"></i>
+              </span>
+            </div>
+          </div>
+          <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
+            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+            <span><span>10</span> per page</span>
+            <span>
+              <i class="fa fa-caret-down"></i>
+            </span>
+            <div class="opened-per-page-scroll invoice-per-page-container">
+              <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
+              <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
+              <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
+              <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-
 
   <div class="modal fade" id="add-filter-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
 		aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">

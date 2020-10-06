@@ -547,6 +547,14 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.updateBusinessInformation = function ( data ) {
     return $http.post( serverUrl.url + "/hr/update/business_information",data );
   }
+  
+  hrFactory.fetchCompanyContacts = function () {
+    return $http.get( serverUrl.url + "/hr/get_company_contacts" );
+  }
+
+  hrFactory.updateMoreBusinessContact = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/add_more_business_contact",data );
+  }
 
 
   return hrFactory;

@@ -15,6 +15,7 @@ app.directive("companyProfileDirective", [
         scope.business_ctr = 0; 
         scope.isUpdateContact = false;
         scope.activeBusinessUpdate = false;
+        scope.addMoreContactDisabled = false;
 
         scope.addMoreContact = function () {
           if ( scope.isUpdateContact ) {
@@ -38,10 +39,10 @@ app.directive("companyProfileDirective", [
           scope.employee_enroll_count += 1;
           scope.business_ctr += 1;
           scope.business_data = {
-            full_name: '',
+            first_name: '',
             email: '',
             phone_code: '65',
-            phone_number: '',
+            phone: '',
           };
 
           await scope.initializeAddContactCountryCode();
@@ -222,6 +223,42 @@ app.directive("companyProfileDirective", [
           });
         }
 
+        scope.getCompanyContacts = async function () {
+          await hrSettings.fetchCompanyContacts()
+          .then( function (response) {
+            console.log(response);
+
+            scope.get_company_contact_data = response.data;
+
+            angular.forEach(scope.get_company_contact_data, function (value, key) {
+							console.log(key);
+							if ( key == 2 ) {
+                console.log('true and disabled');
+                scope.addMoreContactDisabled = true;
+              }
+						});
+          });
+        }
+
+        scope.updateAddBusinessContact = async function () {
+          console.log(scope.business_arr);
+          let data = {
+            business_contacts: scope.business_arr,
+          }
+          scope.showLoading();
+          await hrSettings.updateMoreBusinessContact( data )
+          .then(async function (response) {
+            console.log(response);
+
+            scope.hideLoading();
+            await scope.getCompanyContacts();
+            
+            $("#business-add-contact-modal").modal('hide');
+
+            swal('Success', response.data.message, 'success');
+          });
+        }
+
         scope.removeDisable = function () {
           scope.activeBusinessUpdate = true;
         }
@@ -241,6 +278,7 @@ app.directive("companyProfileDirective", [
         scope.onLoad = async function () {
           await scope.getBusinessInformation();
           await scope.getBusinessContacts();
+          await scope.getCompanyContacts();
         }
 
         scope.onLoad();
