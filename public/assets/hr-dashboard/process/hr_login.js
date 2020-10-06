@@ -131,6 +131,7 @@ login.directive('loginSection', [
 							scope.linkedAccounts = response.data;
 							scope.showAccounts = true;
 						}else{
+							console.log(response.total_data);
 							if(response.total_data > 0){
 								scope.linkedAccountsPagi	=	response;
 								scope.linkedAccounts = response.data;
