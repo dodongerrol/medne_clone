@@ -136,9 +136,9 @@ login.directive('loginSection', [
 								scope.linkedAccounts = response.data;
 								scope.showAccounts = true;
 							}else{
-								// scope.showAccounts = false;
-								// window.localStorage.setItem('token', response.token)
-								// window.location.href = window.location.origin + "/company-benefits-dashboard/";
+								scope.showAccounts = false;
+								window.localStorage.setItem('token', response.token)
+								window.location.href = window.location.origin + "/company-benefits-dashboard/";
 							}
 						}
 
