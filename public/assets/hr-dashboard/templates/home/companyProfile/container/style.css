@@ -47,7 +47,8 @@
   padding: 60px;
   text-align: center;
 }
-.additional-admin .no-administrator button {
+.additional-admin .no-administrator button,
+.additional-admin .with-administrator .btn-add-admin {
   background-color: transparent;
   border: 0;
   color: #037CB0;
@@ -55,7 +56,8 @@
   align-items: center;
   margin: 0 auto;
 }
-.additional-admin .no-administrator img {
+.additional-admin .no-administrator img,
+.additional-admin .with-administrator .btn-add-admin img {
   margin: 0 5px 0 0;
   width: 16px;
 }

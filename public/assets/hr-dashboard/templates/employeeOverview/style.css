@@ -89,6 +89,9 @@
   border: 1px solid #BFBFBF;
   border-top: none;
 }
+.emp-overview-tbl-container tbody tr {
+  border-bottom: 1px solid #BFBFBF;
+}
 .emp-overview-tbl-container thead th:nth-child(1),
 .emp-overview-tbl-container tbody td:nth-child(1) {
   width: 40px;
@@ -124,6 +127,7 @@
 .emp-filter-tbl-wrapper >div:last-child {
   width: 100%;
   display: grid;
+  height: max-content;
 }
 .back-btn-filter {
   color: #0392CF;

@@ -337,8 +337,8 @@
                 <th>Departments</th>
               </tr>
             </thead>
-            <tbody ng-repeat="list in empGetNumber( empNumber ) track by $index">
-              <tr>
+            <tbody>
+              <tr ng-repeat="emp in employees.data" ng-click="goToMemberInfo(emp, $index)">
                 <td>
                   <div class="custom-checkbox-container">
                     <label class="checkbox-input">
