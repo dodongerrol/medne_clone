@@ -17453,6 +17453,40 @@ public function createHrLocation ()
 		);
 	}
 
+	public function allocateEmployeeLocationList()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		$per_page = !empty($input['limit']) ? $input['limit'] : 5;
+		$search = !empty($input['search']) ? $input['search'] : null;
+		$paginate = [];
+		
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		if($search) {
+			$users = DB::table('user')
+			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+			->where('corporate_members.corporate_id', $account_link->corporate_id)
+			->where('user.Name', 'like', '%'.$search.'%')
+			->where('user.member_activated', 1)
+			->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'member_activated', 'Status')
+			->paginate($per_page);
+			
+			return $users;
+		}
+
+		
+		$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('user.member_activated', 1)
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->paginate($per_page);
+	
+
+			return ($users);
+		}
+
 	public function addMoreBusinessContact ()
 	{
 		$input = Input::all();

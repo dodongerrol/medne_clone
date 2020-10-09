@@ -234,6 +234,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_location_list', 'BenefitsDashboardController@getLocationList');
 	Route::post('hr/update_location', 'BenefitsDashboardController@updateHrLocation');
 	Route::get('hr/remove_location', 'BenefitsDashboardController@deleteHrLocation');
+	Route::get('hr/get_allocate_employee_list', 'BenefitsDashboardController@allocateEmployeeLocationList');
 
 	// business contact
 	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
