@@ -1436,7 +1436,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.removeManyEmp = function () {
 					swal({
-						title: "Cornfirm",
+						title: "Confirm",
 						text: "are you sure you want to delete these employees?",
 						type: "warning",
 						showCancelButton: true,
@@ -1469,7 +1469,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.removeTempEmp = function (data) {
 					swal({
-						title: "Cornfirm",
+						title: "Confirm",
 						text: "are you sure you want to delete this employee?",
 						type: "warning",
 						showCancelButton: true,
