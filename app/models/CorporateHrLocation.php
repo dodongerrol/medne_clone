@@ -20,5 +20,8 @@ class CorporateHrLocation extends Eloquent
     {
         return CorporateHrLocation::where('LocationID', $id)->update($data);
     }
-    
+    // public function members()
+    // {
+    //     return $this->belongsToMany(\User::class, 'company_location_members', 'company_location_members.member_id', 'user.UserID');
+    // }    
 }
