@@ -69,6 +69,7 @@ login.directive('loginSection', [
 						}else{
 							scope.ng_fail = false;
 							scope.token = response.token;
+							window.localStorage.setItem('token', response.token);
 							$http.defaults.headers.common.Authorization = scope.token;
 							await scope.checkLinkedAccounts();
 						}
