@@ -68,8 +68,8 @@ login.directive('loginSection', [
 							scope.showAccounts = false;
 						}else{
 							scope.ng_fail = false;
-							// scope.token = response.token;
-							// $http.defaults.headers.common.Authorization = scope.token;
+							scope.token = response.token;
+							$http.defaults.headers.common.Authorization = scope.token;
 							await scope.checkLinkedAccounts();
 						}
 					});
