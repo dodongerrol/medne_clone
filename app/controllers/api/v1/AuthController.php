@@ -1055,7 +1055,7 @@ return Response::json($returnObject);
           $authSession = new OauthSessions();
           $getRequestHeader = StringHelper::requestHeader();
           $input = Input::all();
-
+          
           if(!empty($getRequestHeader['Authorization'])){
             $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
             if($getAccessToken){
@@ -1064,6 +1064,7 @@ return Response::json($returnObject);
                 $e_claim = [];
                 $transaction_details = [];
                 $in_network_spent = 0;
+                $out_of_pocket_spent = 0;
                 $ids = StringHelper::getSubAccountsID($findUserID);
                 $user_id = StringHelper::getUserId($findUserID);
                 $user_plan_history = DB::table('user_plan_history')
@@ -1283,7 +1284,7 @@ return Response::json($returnObject);
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
-
+                $out_of_pocket_spent += $converted_amount;
                 $format = array(
                   'clinic_name'       => $clinic->Name,
                   'clinic_image'      => $clinic->image,
@@ -1308,6 +1309,7 @@ return Response::json($returnObject);
             $current_spending = $credit_data ? $credit_data['get_allocation_spent'] : 0;
             $e_claim_spent = $credit_data ? $credit_data['e_claim_spent'] : 0;
             $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
+            
             $balance = $credit_data ? $credit_data['balance'] : 0;
 
             // if($customer_active_plan->account_type != "enterprise_plan")  {
@@ -1359,7 +1361,7 @@ return Response::json($returnObject);
             $customer_id = PlanHelper::getCustomerId($user_id);
             $wallet_data = array(
               'spending_type'             => $spending_type,
-              'balance'                   => $balance,
+              'balance'                   => $customer_active_plan->account_type == "out_of_network" ? number_format($out_of_pocket_spent, 2) : $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
@@ -1369,7 +1371,7 @@ return Response::json($returnObject);
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_visit_created,
               'total_visit_balance'       => $total_visit_balance,
-              'user_type'                 => $user_type
+              'user_type'                 => $user_type,
             );
 
             $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
@@ -1991,14 +1993,14 @@ public function getNewClinicDetails($id)
           $returnObject->status = FALSE;
           $returnObject->status_type = 'access_block';
           $returnObject->head_message = 'Registration Unavailable';
-          $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+          $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
           return Response::json($returnObject);
         }
       } else {
         $returnObject->status = FALSE;
         $returnObject->status_type = 'access_block';
         $returnObject->head_message = 'Registration Unavailable';
-        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+        $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
         return Response::json($returnObject);
       }
      }
@@ -2010,7 +2012,7 @@ public function getNewClinicDetails($id)
         $returnObject->status = FALSE;
         $returnObject->status_type = 'access_block';
         $returnObject->head_message = 'Registration Unavailable';
-        $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+        $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
         return Response::json($returnObject);
       }
 
@@ -5491,29 +5493,41 @@ public function createEclaim( )
   $ids = StringHelper::getSubAccountsID($findUserID);
   $user_id = StringHelper::getUserId($findUserID);
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-  
-  // check member wallet spending validity
-  $validity = MemberHelper::getMemberWalletValidity($user_id, $input['spending_type']);
 
-  if(!$validity) {
+  // check if enable to access feature
+  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+
+  if($transaction_access)	{
     $returnObject->status = FALSE;
-    $returnObject->status_type = 'zero_balance';
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
-    $returnObject->sub_message = '';
+    $returnObject->status_type = 'access_block';
+    $returnObject->head_message = 'E-Claim Unavailable';
+    $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
     return Response::json($returnObject);
   }
 
   $customer_id = PlanHelper::getCustomerId($user_id);
-  // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
-  $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-  if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
+  $checkSpendingAccessTransaction = \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
+
+  if($checkSpendingAccessTransaction['enable'] == false) {
     $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Member not eligible for Non-Panel transactions';
+    $returnObject->status_type = 'zero_balance';
+    $returnObject->head_message = 'E-Claim Unavailable';
+    $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+    $returnObject->sub_message = '';
     return Response::json($returnObject);
   }
+  $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+
+  if($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == false || $input['spending_type'] == "wellness" && $spending['wellness_non_panel_submission'] == false) {
+    $returnObject->status = FALSE;
+    $returnObject->status_type = 'zero_balance';
+    $returnObject->head_message = 'E-Claim Unavailable';
+    $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+    $returnObject->sub_message = '';
+    return Response::json($returnObject);
+  }
+  
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
   if($user_type == "employee") {
@@ -6865,89 +6879,42 @@ public function payCreditsNew( )
     }
   }
   
-  public function sendOtpMobile( )
-  {
+  public function sendOtpMobile( ) {
       $input = Input::all();
-      $returnObject = new stdClass();
-
-      if(empty($input['mobile']) || $input['mobile'] == null) {
-          $returnObject->status = false;
-          $returnObject->message = 'Mobile Number is required.';
-          return Response::json($returnObject);
+      
+      if (isset($input['country']) && strtoupper($input['country']) == 'MYR') {
+        return self::sendMYROtpMobile($input);
+      } else {
+        return self::sendSGDOtpMobile($input);
       }
-
-      if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
-          $returnObject->status = false;
-          $returnObject->message = 'Mobile Country Code is required.';
-          return Response::json($returnObject);
-      }
-
-      $checker = DB::table('user')
-      ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
-      ->where('PhoneNo', $input['mobile'])->first();
-
-      if(!$checker) {
-        $returnObject->status = false;
-        $returnObject->message = 'User not found!';
-        return Response::json($returnObject);
-      }
-
-      $member_id = $checker->user_id;
-      $mobile_number = (int)$input['mobile'];
-      $code = $input['mobile_country_code'];
-      $phone = $code.$mobile_number;
-
-      $otp_code = StringHelper::OTPChallenge();
-      // StringHelper::TestSendOTPSMS($phone, $otp_code);
-      $data = array();
-      $data['phone'] = $phone;
-      $data['message'] = 'Your Mednefits OTP is '.$otp_code;
-      $data['sms_type'] = "LA";
-      SmsHelper::sendSms($data);
-      DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
-      $returnObject->status = true;
-      $returnObject->message = 'OTP SMS sent';
-      $returnObject->data = $checker;
-      return Response::json($returnObject);
-      // return $otp_code;
   }
 
-  public function checkMemberExist( )
-  {
+  public function checkMemberExist( ) {
       $input = Input::all();
-      $returnObject = new stdClass();
+      /*
+          Developer: Stephen
+          Date: Sept 16. 2020
+          Description:
+            Refactor code. Added verification for MY new process
 
-      if(empty($input['mobile']) || $input['mobile'] == null) {
-          $returnObject->status = false;
-          $returnObject->message = 'Mobile Number is required.';
-          return Response::json($returnObject);
+          Key Legend:
+            - country (either SGD or MYR)
+            - mobile  (if This key is empty or not exist but NRIC is not empty it Means that login process will follow the new MY login process.)
+            - nric (This key will be the identifier that new login process will MY login process)
+            - passport (This key will be the identifier that new login process will MY login process)
+      */ 
+      
+      // Check county
+      if (isset($input['country']) && strtoupper($input['country']) == 'MYR') {
+        // Follow the new MY login process.
+        return self::MYRMemberVerification($input);
+      } else {
+        // Follow the SGD login process.
+        return self::SGDMemberVerification($input);
       }
-
-      $checker = DB::table('user')
-      ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code')
-      ->where('PhoneNo', $input['mobile'])->first();
-
-      if(!$checker) {
-          $returnObject->status = false;
-          $returnObject->message = 'Sorry, your phone number has not been signed up with Mednefits.';
-          return Response::json($returnObject);
-      }
-
-      if($checker->postal_code == null || $checker->postal_code === null) {
-          $checker->postal_code = 0;
-      }
-      else {
-          $checker->postal_code = 1;
-      }
-
-      $returnObject->status = true;
-      $returnObject->message = 'Member is already registered';
-      $returnObject->data = $checker;
-      return Response::json($returnObject);
   }
 
-  public function validateOtpMobile( )
-  {
+  public function validateOtpMobile( ) {
     $input = Input::all();
     $returnObject = new stdClass();
     $returnObject->administrator = false;
@@ -6974,12 +6941,10 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     }
 
-    $member_id = $checker->user_id;
-    $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
-    if(!$result) {
-        $returnObject->status = false;
-        $returnObject->message = 'Sorry, your OTP is incorrect.';
-        return Response::json($returnObject);
+    if (isset($input['country']) && strtoupper($input['country']) == 'MYR') {
+      return self::validateMYROTPCode($input);
+    } else {
+      return self::validateSGDOTPCode($input);
     }
 
     $check_if_administrator = DB::table('customer_hr_dashboard')
@@ -7001,8 +6966,7 @@ public function payCreditsNew( )
     return Response::json($returnObject);
   }
 
-  public function addPostalCodeMember( )
-  {
+  public function addPostalCodeMember( ) {
       $input = Input::all();
       $returnObject = new stdClass();
 
@@ -7036,8 +7000,7 @@ public function payCreditsNew( )
       return Response::json($returnObject);
   }
 
-  public function createNewPasswordByMember()
-  {
+  public function createNewPasswordByMember() {
     $input = Input::all();
     $returnObject = new stdClass();
 
@@ -7077,7 +7040,7 @@ public function payCreditsNew( )
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Sorry, your password and confirmation password do not match';
+        $returnObject->message = 'Password Mismatched.';
         return Response::json($returnObject);
       }
 
@@ -7189,8 +7152,7 @@ public function payCreditsNew( )
     return Response::json($returnObject);
   }
 
-  public function updateReadyOnBoarding( )
-  {
+  public function updateReadyOnBoarding( ) {
     $AccessToken = new Api_V1_AccessTokenController();
     $returnObject = new stdClass();
     $authSession = new OauthSessions();
@@ -7222,6 +7184,348 @@ public function payCreditsNew( )
       $returnObject->status = FALSE;
       $returnObject->message = StringHelper::errorMessage("Token");
       return Response::json($returnObject);
+    }
+  }
+
+  function SGDMemberVerification($keys) {
+    $returnObject = new stdClass();
+
+    if(empty($keys['mobile']) || $keys['mobile'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'Mobile Number is required.';
+      return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp')
+    ->where('PhoneNo', $keys['mobile'])->first();
+
+    if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'Unregistered Member.';
+        return Response::json($returnObject);
+    }
+
+    if($checker->postal_code == null || $checker->postal_code === null) {
+        $checker->postal_code = 0;
+    }
+    else {
+        $checker->postal_code = 1;
+    }
+
+    $returnObject->status = true;
+    $returnObject->message = 'Member is already registered';
+    $returnObject->data = $checker;
+    return Response::json($returnObject);
+  }
+
+  function MYRMemberVerification($keys) {
+    $returnObject = new stdClass();
+    $userModel = new User();
+    
+    // Login using Mobile number
+    if (isset($keys['mobile'])) {
+        // Check Member mobile number if already registered
+        $userDetails = $userModel->checkMemberExistence(array( 
+                                      array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $keys['mobile']),
+                                      array( 'paramKey' => 'PhoneCode', 'paramKeyValue'=> $keys['PhoneCode'])
+                                  ));
+
+        if (!$userDetails || $keys['PhoneCode'] != '+60') {
+          $returnObject->status = false;
+          $returnObject->message = 'Unregistered Member.';
+
+          return Response::json($returnObject);
+        } else  {
+          $returnObject->status = true;
+          $returnObject->data = $userDetails;
+
+          return Response::json($returnObject);
+        }
+    }
+    
+    // Login using NRIC
+    if (!empty($keys['nric']) && isset($keys['nric'])) {
+      // Check if NRIC already exist
+      $userDetails = $userModel->checkMemberExistence(array( 
+                                    array( 'paramKey' => 'NRIC', 'paramKeyValue'=> $keys['nric'])
+                                ));
+        
+      if (!$userDetails) {
+          $returnObject->status = false;
+          $returnObject->message = 'Unregistered Member.';
+
+          return Response::json($returnObject);
+      } else {
+        $returnObject->status = true;
+        $returnObject->data = $userDetails;
+
+        return Response::json($returnObject);
+      }
+    }
+    
+    // Login using Passport
+    if (!empty($keys['passport']) && isset($keys['passport'])) {
+      // Check if passport already exist
+      $userDetails = $userModel->checkMemberExistence(array( 
+                                    array( 'paramKey' => 'passport', 'paramKeyValue'=> $keys['passport'])
+                                ));
+
+      if (!$userDetails) {
+          $returnObject->status = false;
+          $returnObject->message = 'Unregistered Member.';
+
+          return Response::json($returnObject);
+      } else {
+        $returnObject->status = true;
+        $returnObject->data = $userDetails;
+
+        return Response::json($returnObject);
+      }
+    }
+
+    // If condition on this part it mean either mobile, passport or nric key are empty
+    $returnObject->status = false;
+    $returnObject->message = 'mobile, passport, or nric key params are all empty. Please provide data either one the three key params.';
+
+    return Response::json($returnObject);
+
+  }
+
+  function validateMYROTPCode ($input) {
+    $userDetails = new User();
+    $returnObject = new stdClass();
+
+    if(empty($input['otp_code']) || $input['otp_code'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'OTP Code is required.';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'User ID is required.';
+      return Response::json($returnObject);
+    }
+
+    // Check if user id exist.
+    $userRecord = $userDetails->checkMemberExistence(array( 
+                                  array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['user_id'])
+                              ));
+
+    if(!$userRecord) {
+      $returnObject->status = false;
+      $returnObject->message = 'User not exist.';
+      return Response::json($returnObject);
+    } 
+    
+    // Verify OTP shit
+    $OTPVerified = $userDetails->checkMemberExistence(array( 
+                                      array( 'paramKey' => 'OTPCode', 'paramKeyValue'=> $input['otp_code'])
+                                  ));
+
+    if ($OTPVerified) {
+
+      if(strtoupper($input['country']) == "SGD") {
+        // remove otp data record.
+        $userDetails->updateMemberRecord($input['user_id'], array( 'OTPCode' => NULL ));
+      } else {
+        // update user mobile number and remove otp data record.
+        $userDetails->updateMemberRecord($input['user_id'], array( 'PhoneNo'=> $input['mobile'], 'OTPCode' => NULL, 'PhoneCode' => $input['phoneCode']));
+      }
+
+      // Get new set of member records.
+      $userNewRecord = $userDetails->checkMemberExistence(array( 
+                                        array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['user_id'])
+                                    ));
+
+      $returnObject->status = true;
+      $returnObject->message = 'OTP verified.';
+      $returnObject->data = $userNewRecord;
+      return Response::json($returnObject);
+    } else {
+      $returnObject->status = false;
+      $returnObject->message = 'Invalid OTP';
+      return Response::json($returnObject);
+    }
+  }
+
+  function validateSGDOTPCode ($input) {
+    $returnObject = new stdClass();
+
+    if(empty($input['otp_code']) || $input['otp_code'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'OTP Code is required.';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'User ID is required.';
+      return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+                ->select('UserID as user_id', 'Name as name', 'member_activated')
+                ->where('UserID', $input['user_id'])->first();
+
+    if(!$checker) {
+      $returnObject->status = false;
+      $returnObject->message = 'User not found!';
+      return Response::json($returnObject);
+    }
+
+    $member_id = $checker->user_id;
+    $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
+    if(!$result) {
+        $returnObject->status = false;
+        $returnObject->message = 'Invalid OTP.';
+        return Response::json($returnObject);
+    }
+
+    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+    $returnObject->status = true;
+    $returnObject->message = 'OTP Code is valid';
+    $returnObject->data = $checker;
+    return Response::json($returnObject); 
+  }
+
+  function sendMYROtpMobile ($input) {
+    $returnObject = new stdClass();
+    $userDetails = new User();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Country Code is required.';
+          return Response::json($returnObject);
+      }
+
+      if(empty($input['userId']) || !isset($input['userId'])) {
+        $returnObject->status = false;
+        $returnObject->message = 'User ID is required.';
+        return Response::json($returnObject);
+      }
+
+      // Check if mobile number already
+      $mobileExist = $userDetails->checkMemberExistence(array( 
+          array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile']),
+          // array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
+      ));
+      
+      if ($mobileExist) {
+        $returnObject->status = false;
+        $returnObject->message = 'Mobile number already been used.';
+        return Response::json($returnObject); 
+      }
+
+      $mobile_number = (int)$input['mobile'];
+      $code = $input['mobile_country_code'];
+      $phone = $code.$mobile_number;
+
+      // Send OTP message
+      $otp_code = StringHelper::OTPChallenge();
+      $data = array();
+      $data['phone'] = $phone;
+      $data['message'] = 'Your Mednefits OTP is '.$otp_code;
+      $data['sms_type'] = "LA";
+      SmsHelper::sendSms($data);
+
+      // Update User OTP record
+      $userDetails->updateMemberRecord($input['userId'], array('OTPCode' => $otp_code));
+      // Get User record.
+      $userRecord = $userDetails->checkMemberExistence(array(
+        array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
+    ));
+
+      $returnObject->status = true;
+      $returnObject->message = 'OTP SMS sent';
+      $returnObject->data = $userRecord;
+      return Response::json($returnObject);  
+  }
+  
+  function sendSGDOtpMobile ($input) {
+    $returnObject = new stdClass();
+
+      if(empty($input['mobile']) || $input['mobile'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Number is required.';
+          return Response::json($returnObject);
+      }
+
+      if(empty($input['mobile_country_code']) || $input['mobile_country_code'] == null) {
+          $returnObject->status = false;
+          $returnObject->message = 'Mobile Country Code is required.';
+          return Response::json($returnObject);
+      }
+
+      $checker = DB::table('user')
+      ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
+      ->where('PhoneNo', $input['mobile'])->first();
+
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      $member_id = $checker->user_id;
+      $mobile_number = (int)$input['mobile'];
+      $code = $input['mobile_country_code'];
+      $phone = $code.$mobile_number;
+
+      $otp_code = StringHelper::OTPChallenge();
+      // StringHelper::TestSendOTPSMS($phone, $otp_code);
+      $data = array();
+      $data['phone'] = $phone;
+      $data['message'] = 'Your Mednefits OTP is '.$otp_code;
+      $data['sms_type'] = "LA";
+      SmsHelper::sendSms($data);
+      DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+      $returnObject->status = true;
+      $returnObject->message = 'OTP SMS sent';
+      $returnObject->data = $checker;
+      return Response::json($returnObject);
+  }
+
+  function registerMobileNumber() {
+    $input = Input::all();
+    $returnObject = new stdClass();
+    $userDetails = new User();
+
+    if (empty($input['mobile_number']) || empty($input['phoneCode'])) {
+      $returnObject->status = false;
+      $returnObject->message = 'Mobile number and Phone code are required.';
+      return Response::json($returnObject);
+    } else if (empty($input['userId'])) {
+      $returnObject->status = false;
+      $returnObject->message = 'user ID is required.';
+      return Response::json($returnObject);
+    } else {
+      // Check if mobile number already
+      $mobileExist = $userDetails->checkMemberExistence(array( 
+                                  array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile_number']),
+                                  // array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId']),
+                                  array( 'paramKey' => 'Active', 'paramKeyValue'=> 1),
+                              ));
+      
+      if ($mobileExist) {
+        $returnObject->status = false;
+        $returnObject->message = 'Mobile number already been used.';
+        return Response::json($returnObject); 
+      } else {
+        // Update User OTP record
+        $userDetails->updateMemberRecord($input['userId'], array('PhoneNo' => $input['mobile_number'], 'PhoneCode' => $input['phoneCode']));
+        $returnObject->status = true;
+        $returnObject->message = 'Mobile number successfully registered.';
+        return Response::json($returnObject); 
+      }
+
     }
   }
 }

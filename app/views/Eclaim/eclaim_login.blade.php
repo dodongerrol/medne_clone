@@ -116,7 +116,7 @@
 					</div>
 				</div>
 			</div> -->
-			<form class="med-form">
+			<form ng-if="false" class="med-form">
 				<div ng-if="!showPasswordInput" class="form-group">
 					<!-- valid-number pattern="[0-9]*" type="tel" -->
 					<label for="mobile">Mobile</label>
@@ -138,6 +138,150 @@
 				<span ng-if="invalid_credentials">*Please check your login credentials</span>
 				<a ng-if="true" href="javascript:void(0)" class="forgot-password pull-right" ng-click="showForgotPassword()">Forgot password?</a>
 			</form>
+			
+			<div class="new-login-container med-form">
+				<div ng-if="true">
+					<div ng-if="!showContinueInput" class="form-group mobile-country-code-wrapper">
+						<label for="mobile">Mobile</label>
+						<div class="mobile-input-wrapper display-flex">
+							<div ng-click="selectCountry()" class="form-control med-input">
+								<img ng-if="country_code_value == 65" src="../assets/images/flag/singapore-flag.png">
+								<img ng-if="country_code_value == 60" src="../assets/images/flag/malaysia-flag.png">
+								<span class="dp-flex-ai">
+									<!-- <span>+</span> -->
+									+<input ng-model="country_code_value">
+								</span>
+							</div>
+							<input type="number" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : mobileValidation == true }" placeholder="Enter Mobile Number" ng-model="mobile_number" ng-model-options="{debounce: 1000}" ng-change="checkMobileNum(mobile_number)" />
+							
+
+							<div ng-if="toggleSelectCountry" class="country-code-wrapper">
+								<span>Select Country</span>
+								<div ng-click="countrySelector(65)" class="country-row-details display-flex">
+									<span class="country-info display-flex">
+										<img src="../assets/images/flag/singapore-flag.png">
+										<span class="country-name">Singapore</span>
+										<span class="country-code">+65</span>
+									</span>
+									<span ng-if="country_code_value == 65" class="blue-check-active">
+										<img src="../assets/images/blue-check.svg">
+									</span>	
+								</div>
+								<div ng-click="countrySelector(60)" class="country-row-details display-flex">
+									<span class="country-info display-flex">
+										<img src="../assets/images/flag/malaysia-flag.png">
+										<span class="country-name">Malaysia</span>
+										<span class="country-code">+60</span>
+									</span>
+									<span ng-if="country_code_value == 60" class="blue-check-active">
+										<img src="../assets/images/blue-check.svg">
+									</span>
+								</div>
+								<!-- for future flag ui -->
+								<!-- <div ng-repeat="list in countryData">
+									<img src="../assets/images/flag/@{{list.image}}" style="height: 20px; width: 30px;">
+									<div ng-bind="list.name"></div>
+								</div> -->
+							</div>
+						</div>
+					</div>
+					<div ng-if="showContinueInput && !showPostalCodeInput">
+						<div ng-if="checkMemberData.member_activated == 0 && !showPasswordInputInOtp" class="otp-container form-group">
+							<label for="otp">Please enter the OTP we’ve sent to your phone number.</label>
+							<div>
+								<input type="number" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : otpValidation == true }" placeholder="Enter Your OTP" ng-model="otp_number" ng-model-options="{debounce: 1000}" ng-change="checkOTP(otp_number)" />
+							</div>
+						</div>
+						<div ng-if="checkMemberData.member_activated == 0 && showPasswordInputInOtp == true" class="form-group">
+							<label for="password">Please create your password</label>
+							<div>
+								<input type="password" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : passwordNotMatch }" placeholder="Enter Your Password" ng-model="new_password" ng-model-options="{debounce: 1000}" ng-change="removeDisable('new_password',new_password)" />
+							</div>
+							<div>
+								<input type="password" name="text" class="form-control med-input mobile-num-input" ng-class="{'error' : passwordNotMatch }" placeholder="Confirm Your Password" ng-model="confirm_new_password" ng-model-options="{debounce: 1000}" ng-change="removeDisable('confirm_new_password',confirm_new_password)" />
+							</div>
+						</div>
+						<div ng-if="checkMemberData.member_activated == 1 && showContinueInput">
+							<div class="form-group">
+								<label for="mobile">Password</label>
+								<input type="password" class="form-control med-input mobile-num-input" placeholder="Enter password" ng-class="{'error' : passwordSignInNotMatch }" ng-model="new_password" ng-model-options="{debounce: 1000}" ng-change="checkPassword(new_password)"  style="margin-bottom: 15px">
+							</div>
+							<div ng-if="true" class="checkbox stay-signed-container">
+								<label>
+									<input type="checkbox"> Stay signed in
+								</label>
+							</div>
+						</div>
+					</div>
+					<div ng-if="showPostalCodeInput" class="form-group">
+						<label class="pass-created-text" for="password">Your password has been created.</label>
+						<label for="password">Next, register your Postal Code.</label>
+						<p class="postal-code-text">*Postal Code is required to determine health providers in your proximity.</p>
+						<div>
+							<input type="number" name="text" class="form-control med-input mobile-num-input" placeholder="Enter your Postal Code" ng-model="postal_code" ng-model-options="{debounce: 1000}" ng-change="postalCode(postal_code)" />
+						</div>
+					</div>
+				</div>
+
+				<div ng-if="false">
+					<div ng-if="false" class="form-group">
+						<label for="mobile">Mobile</label>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter Mobile Number" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+					<div ng-if="false">
+						<div class="form-group">
+							<label for="mobile">Password</label>
+							<input type="password" class="form-control med-input" placeholder="Enter password" ng-model="password" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)"  style="margin-bottom: 15px">
+						</div>
+						<div ng-if="true" class="checkbox stay-signed-container">
+							<label>
+								<input type="checkbox"> Stay signed in
+							</label>
+						</div>
+					</div>
+					<div ng-if="true" class="form-group">
+						<label for="postal-code">Before accessing your account, please register your Postal Code.	</label>
+						<p class="postal-code-text">*Postal Code is required to determine health providers in your proximity.</p>
+						<div>
+							<input type="text" name="text" class="form-control med-input mobile-num-input" placeholder="Enter your Postal Code" ng-model="email" ng-model-options="{debounce: 1000}" ng-change="removeDisabledBtn(email,password)" />
+						</div>
+					</div>
+				</div>
+				<div  class="footer-btn form-group">
+					<button ng-if="!showContinueInput" ng-click="continueButton(mobile_number)" ng-class="{'disabled': disabledContinue}" type="none" class="btn btn-info btn-block med-button">Continue</button>
+					<button ng-if="checkMemberData.member_activated == 0 && showContinueInput == true && !showPasswordInputInOtp" ng-class="{'disabled': disabledVerify}" ng-click="verifyOTP(otp_number)" type="submit" class="btn btn-info btn-block med-button">Verify</button>
+					<button ng-if="checkMemberData.member_activated == 0 && showPasswordInputInOtp == true && !showPostalCodeInput" ng-class="{'disabled': disableCreate }" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button>
+					<!-- <button ng-if="showPasswordInputInOtp && !showPostalCodeInput" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button> -->
+					<!-- <button ng-if="otpStatus == 0 && showContinueInput == true && !showPostalCodeInput" ng-click="createPassword()" type="none" class="btn btn-info btn-block med-button">Create</button> -->
+					<!-- <button ng-if="otpStatus == 1 || showContinueInput == true && !showPostalCodeInput && showPasswordInputInOtp && !showPostalCodeInput && checkMemberData.Password == 1" ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button> -->
+					<div ng-if="checkMemberData.member_activated == 1 && showContinueInput && !showPostalCodeInput">
+						<button ng-class="{'disabled': disabledSignIn }" ng-click="signInPassword()" type="submit" class="btn btn-info btn-block med-button">Sign in</button>
+						<a href="javascript:void(0)" class="forgot-password pull-right" ng-click="showForgotPassword()">Forgot password?</a>
+					</div>
+					<button ng-if="checkMemberData.member_activated == 0 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Complete and Sign in</button>
+					<button ng-if="checkMemberData.member_activated == 1 && showPostalCodeInput" type="submit" ng-click="completeSignIn('postal')" ng-class="{'disabled' : disabledDone}" class="btn btn-info btn-block med-button">Done</button>
+					<div ng-if="checkMemberData.member_activated == 0 && showContinueInput == true && !showPasswordInputInOtp" class="resend-otp-container">
+						<span>Don't receive OPT? <a ng-click="resendOtp()" class="resend-otp-text">Resend OTP</a>.</span>
+					</div>
+					<div class="mobile-message-container" ng-if="checkMobileData.status == false">
+						<span ng-bind="checkMobileData.message"></span>
+					</div>
+					<div class="mobile-message-container" ng-if="otpData.status == false">
+						<span ng-bind="otpData.message"></span>
+					</div>
+					<div class="mobile-message-container" ng-if="passwordNotMatch">
+						<span>Sorry, your password and confirmation password do not match.</span>
+					</div>
+					<div class="mobile-message-container" ng-if="disableCreateText">
+						<span ng-bind="createNewPasswordData.message"></span>
+					</div>
+					<div class="mobile-message-container" ng-if="checkMemberPassword.status == false">
+						<span ng-bind="checkMemberPassword.message"></span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!-- end new account login -->
 

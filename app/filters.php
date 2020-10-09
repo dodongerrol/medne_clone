@@ -318,7 +318,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
         }
 
         $result = StringHelper::getJwtHrSession();
-        if($result && $result->hr_activated == false) {
+        if($result && (int)$result->hr_activated == 0 || $result && $result->hr_activated == false) {
             return Response::json(['type' => 'hr_not_activated', 'message' => 'This account has not been activated yet. Please activate through the activation email before accessing.'], 401, $headers);
         } else  if(!$result) {
             return Response::json('You account was deactivated. Please contact Mednefits Team.', 401, $headers);

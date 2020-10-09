@@ -44,7 +44,9 @@ login.directive('eclaimLogin', [
         scope.showPasswordInput = false;
         scope.disabledContinue = true;
         scope.disabledSignIn = true;
-
+        scope.disabledVerify = true;
+        scope.disableCreate = true;
+        scope.passwordNotMatch = false;
 
         scope.deviceOs = null;
         scope.getOs = function(){
@@ -210,6 +212,279 @@ login.directive('eclaimLogin', [
           });
         };
 
+        scope.country_code_value = 65;
+        scope.country_active = false;
+        scope.toggleSelectCountry = false;
+        scope.showContinueInput = false;
+        scope.showPasswordInputInOtp = false;
+        scope.showPostalCodeInput = false;
+        scope.mobileValidation = false;
+        scope.otpValidation = false;
+        scope.disableCreateText = false;
+        scope.disabledSignIn = true;
+        scope.disabledDone = true;
+        // testing for flag 
+        // scope.countryData = [
+        //   {
+        //     name: 'Singapore',
+        //     image: 'singapore-flag.png',
+        //   },
+        //   {
+        //     name: 'Malaysia',
+        //     image: 'singapore-flag.png',
+        //   },
+        // ];
+
+        scope.countrySelector = function ( code ) {
+          scope.country_code_value = code;
+          scope.country_active = false;
+          scope.toggleSelectCountry = false;
+          if ( code == 65 ) {
+            console.log('singapore');
+            scope.country_active = true;
+          } else {
+            scope.country_active = false;
+          }
+        }
+
+        scope.selectCountry = function () {
+          scope.toggleSelectCountry = scope.toggleSelectCountry ? false : true;
+        }
+
+        scope.getOtpStatus = function () {
+          console.log(scope.checkMemberData.user_id);
+          $http.get(serverUrl.url + 'employee/check_user_otp_status?user_id=' + scope.checkMemberData.user_id)
+	          .then(function(response) {
+              console.log(response);
+              scope.otpStatus = response.data.status;
+            })
+        }
+        
+        scope.continueButton = function (num) {
+          scope.showContinueInput = true;
+        }
+
+        scope.checkMobileNum = async function (num) {
+          scope.mobile_number = num
+          // scope.showContinueInput = true;
+          scope.showLoading();
+          await $http.get(serverUrl.url + 'employee/check_member?mobile=' + scope.mobile_number)
+	          .then(async function(response) {
+              console.log(response);
+              scope.checkMobileData = response.data;
+              scope.checkMemberData = response.data.data;
+              console.log(scope.checkMemberData);
+              // scope.checkMemberData.Password = 0;
+              if (response.data.status == true ) {
+                scope.disabledContinue = false;
+                scope.mobileValidation = false;
+                scope.hideLoading();
+                if ( scope.checkMemberData.member_activated == 0 ) {
+                  await scope.getOtpStatus();
+                }
+              } else {
+                scope.disabledContinue = true;
+                scope.mobileValidation = true;
+                scope.hideLoading();
+              }
+            })
+        }
+
+        scope.verifyOTP = function (  ) {
+          scope.showPasswordInputInOtp = true;
+        }
+
+        scope.checkOTP = function ( opt_num ) {
+          let data = {
+            otp_code: opt_num,
+            user_id: scope.checkMemberData.user_id,
+          }
+          scope.showLoading();
+          // $http.post(serverUrl.url + 'employee/validate_otp_web', data)
+          $http.post(serverUrl.url + 'v2/auth/validate-otp-mobile', data)
+	          .then(function(response) {
+              console.log(response);
+              scope.otpData = response.data;
+              if (response.data.status == true) {
+                scope.hideLoading();
+                scope.disabledVerify = false;
+                scope.otpValidation = false;
+              } else {
+                scope.hideLoading();
+                scope.disabledVerify = true; 
+                scope.otpValidation = true;
+              }
+            })
+        }
+
+        scope.resendOtp = function () {
+          let data = {
+            mobile: scope.mobile_number,
+            mobile_country_code: scope.country_code_value,
+          }
+          console.log(data);
+          scope.showLoading();
+          $http.post(serverUrl.url + 'v2/auth/send-otp-mobile',data)
+	          .then(function(response) {
+              console.log(response);
+              scope.hideLoading();
+              swal('Success!', response.data.message, 'success');
+            })
+        }
+
+        scope.createPassword = function () {
+          // scope.showPostalCodeInput = true;
+          console.log(scope.new_password);
+          console.log(scope.confirm_new_password);
+
+          let data = {
+            password: scope.new_password,
+            password_confirm: scope.confirm_new_password,
+            user_id: scope.checkMemberData.user_id,
+          }
+
+          console.log(data);
+          scope.showLoading();
+          $http.post(serverUrl.url + 'employee/create_new_password_member', data)
+	          .then(function(response) {
+              console.log(response);
+              scope.createNewPasswordData = response.data;              
+              if (response.data.status) {
+                scope.showPostalCodeInput = true;
+                scope.hideLoading();
+                
+              } else {
+                // scope.showPostalCodeInput = true;
+                scope.disableCreateText = true;
+                scope.hideLoading();
+              }
+            })
+        }
+
+        scope.removeDisable = function ( type,data ) {
+          // console.log(data);
+          
+          if ( type == 'new_password' ) {
+            scope.new_password = data;
+            console.log(scope.new_password);
+            console.log(scope.confirm_new_password);
+          }
+          if ( type == 'confirm_new_password' ) {
+            scope.confirm_new_password = data;
+            console.log(scope.new_password);
+            console.log(scope.confirm_new_password);
+          }
+          
+          if ( (scope.new_password != undefined && scope.confirm_new_password != undefined) && (scope.new_password != "" && scope.confirm_new_password != "") ) {
+           
+            // if ( scope.new_password == scope.confirm_new_password ) {
+            //   // console.log('naa pa ang disale ug mugawas ang trigger');
+            //   scope.disableCreate = false;
+            //   scope.passwordNotMatch = false;
+            // } else {
+            //   // console.log('wala ang trigger tas wala ang disable sa button')
+              
+            //   scope.disableCreate = true;
+            //   scope.passwordNotMatch = true;
+            //   scope.disableCreateText = false;
+            // }
+
+            if ( scope.new_password != scope.confirm_new_password ) {
+            // console.log('naa pa ang disale ug mugawas ang trigger');
+              scope.disableCreate = true;
+              scope.passwordNotMatch = true;
+              scope.disableCreateText = false;
+            } else if (scope.new_password == null && scope.confirm_new_password == null ) {
+              scope.disableCreate = true;
+              scope.passwordNotMatch = false;
+              scope.disableCreateText = false;
+            } else {
+              // console.log('wala ang trigger tas wala ang disable sa button')
+              scope.disableCreate = false;
+              scope.passwordNotMatch = false;
+            }
+          }
+        }
+        scope.postal_code_value = "";
+
+        scope.postalCode = function ( postal_code ) {
+          if ( postal_code != undefined ) {
+            scope.postal_code_value = postal_code;
+            scope.disabledDone = false;
+            console.log(scope.postal_code_value);
+          } else {
+            scope.disabledDone = true;
+          }
+        }
+
+        scope.completeSignIn = async function ( type ) {
+          
+            if ( type == 'postal' ) {
+              console.log(scope.postal_code_value);
+              let data = {
+                user_id: scope.checkMemberData.user_id,
+                postal_code: scope.postal_code_value,
+              }
+              scope.showLoading();
+              await $http.post(serverUrl.url + 'employee/add_postal_code_member', data)
+              .then(async function(response) {
+                console.log(response);
+                if (response.data.status) {
+
+                  scope.hideLoading();
+                  await scope.signIn();
+                }
+            })
+          }
+        }
+
+        scope.signIn = function () {
+          let data = {
+            email: scope.mobile_number,
+            password: scope.new_password,
+          }
+          $http.post(serverUrl.url + 'app/e_claim/login', data)
+	          .then(function(response) {
+              console.log(response);
+              if ( response.data.status ) {
+                
+                console.log('trueeeeeeee');
+                window.location.href = window.location.origin + '/member-portal#/home';
+                window.localStorage.setItem('token_member', response.data.token);
+              } else {
+                swal('Ooops!', response.data.message, 'error');
+              }
+            })
+        }
+
+        scope.checkPassword = function ( new_password ) {
+          scope.disabledSignIn = false;
+          scope.new_password = new_password;
+          console.log(scope.new_password);
+        }
+        scope.passwordSignInNotMatch = false;
+        scope.signInPassword = function () {
+          // scope.showPostalCodeInput = true;
+          let data = {
+            user_id: scope.checkMemberData.user_id,
+            password: scope.new_password,
+          }
+          console.log(data);
+          scope.showLoading();
+          $http.post(serverUrl.url + 'employee/check_member_password', data)
+	          .then(function(response) {
+              console.log(response);
+              scope.checkMemberPassword = response.data;
+              if ( response.data.status ) {
+                scope.hideLoading();
+                scope.showPostalCodeInput = true;
+              } else {
+                scope.hideLoading();
+                scope.passwordSignInNotMatch = true;
+              }
+            })
+        }
+
         scope.showLoading = function(){
           $(".circle-loader").fadeIn();
           loading_trap = true;
@@ -234,6 +509,7 @@ login.directive('eclaimLogin', [
           scope.hideLoading();
           // localStorage.setItem('isFromWeb', false);
           // console.log( window.location );
+          // scope.getOtpStatus();
         };
 
         scope.onLoad();
