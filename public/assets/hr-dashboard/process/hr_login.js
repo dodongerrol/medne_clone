@@ -140,9 +140,9 @@ login.directive('loginSection', [
 								scope.showAccounts = true;
 							}else{
 								scope.showAccounts = false;
-								window.localStorage.setItem('token', response.token)
-								scope.token = response.token;
-								$http.defaults.headers.common.Authorization = scope.token;
+								// window.localStorage.setItem('token', response.token)
+								// scope.token = response.token;
+								// $http.defaults.headers.common.Authorization = scope.token;
 								// window.location.href = window.location.origin + "/company-benefits-dashboard/";
 							}
 						}
