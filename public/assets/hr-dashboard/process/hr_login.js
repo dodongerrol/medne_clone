@@ -143,6 +143,7 @@ login.directive('loginSection', [
 								// window.localStorage.setItem('token', response.token)
 								// scope.token = response.token;
 								// $http.defaults.headers.common.Authorization = scope.token;
+								console.log('Im in');
 								window.location.href = window.location.origin + "/company-benefits-dashboard/";
 							}
 						}
