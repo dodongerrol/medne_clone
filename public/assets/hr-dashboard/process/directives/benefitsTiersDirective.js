@@ -1424,7 +1424,8 @@ app.directive('benefitsTiersDirective', [
 													// last_name : value.enrollee.last_name,
 													// nric : value.enrollee.nric,
 													dob: moment(value.enrollee.dob, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-													plan_start: moment(value.enrollee.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+													// plan_start: moment(value.enrollee.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+													plan_start: moment(data.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 													relationship: value.enrollee.relationship,
 												}
 												dependentsSettings.updateTempDependent(dep_data)
@@ -1449,7 +1450,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.removeManyEmp = function () {
 					swal({
-						title: "Cornfirm",
+						title: "Confirm",
 						text: "are you sure you want to delete these employees?",
 						type: "warning",
 						showCancelButton: true,
@@ -1482,7 +1483,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.removeTempEmp = function (data) {
 					swal({
-						title: "Cornfirm",
+						title: "Confirm",
 						text: "are you sure you want to delete this employee?",
 						type: "warning",
 						showCancelButton: true,
