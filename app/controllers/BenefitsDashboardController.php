@@ -13452,10 +13452,11 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $customer_id)->first();
 
 		$data = [];
 		$data['company_name'] = ucwords($company->company_name);
-		$data['contact_name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+		$data['contact_name'] = ucwords($hr->fullname);
 
 		$plan = DB::table('customer_plan')
 		->where('customer_buy_start_id', $customer_id)
