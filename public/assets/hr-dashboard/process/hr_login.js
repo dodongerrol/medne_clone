@@ -60,7 +60,7 @@ login.directive('loginSection', [
 					$('#login-btn').text('Logging in...');
 					await $http.post(serverUrl.url + '/company-benefits-dashboard-login', scope.login_details)
 					.success(async function(response){
-						// console.log(response);
+						console.log(response);
 						$('#login-btn').attr('disabled', false);
 						$('#login-btn').text('Log in');
 						if (!response.status) {
