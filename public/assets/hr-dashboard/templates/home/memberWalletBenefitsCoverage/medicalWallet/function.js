@@ -28,6 +28,7 @@ app.directive('memberMedicalWalletDirective', [
 				scope.getDateTerms = async function () {
           await hrSettings.fetchDateTerms()
           .then(async function(response){
+						scope.account_details = response.data;
 						scope.dateTerm = response.data.data;
             // console.log(scope.dateTerm);
 						let termLength = scope.dateTerm.length;
