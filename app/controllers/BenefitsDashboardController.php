@@ -17536,6 +17536,60 @@ public function createHrLocation ()
 
 		return $data;
 
+	}
+	
+	public function allocateEmployeeDepartment()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+		
+		$department = \CorporateHrDepartment::where('id', $input['department_id'] ?? null)->first();
+
+		$data = [
+			'message'	=> null,
+			'status'	=> true 
+		];
+		if(!$department){
+			$data['message'] = 'Department does not exist'; 
+			$data['status']  = false;
+		
+		return $data;
+		}
+		
+		$employee_ids = $input['employee_ids'] ?? [];
+		
+		if(count($employee_ids) <= 0)
+		{
+			$data['message'] = 'Input is empty.'; 
+			$data['status']  = false;
+
+		return $data;
+		}
+		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->get();
+		
+		if(count($employees) <= 0)
+		{
+			$data['message'] = 'Member/s does not exist'; 
+			$data['status']  = false;
+
+		return $data;
+		}
+
+		foreach ($employees as $employee)
+		{
+			DB::table('company_department_members')->insert([
+				'company_department_id'		=> $department['id'],
+				'member_id'					=> $employee->UserID,
+				'status'					=> 1,
+				'created_at'				=> $employee->created_at,
+				'updated_at'				=> $employee->updated_at
+			]);
+		}
+		$data['message'] = 'Successfully allocated member.'; 
+
+		return $data;
+
 	}	
 
 	public function addMoreBusinessContact ()
