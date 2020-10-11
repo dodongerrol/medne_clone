@@ -479,7 +479,7 @@ class PlanTierController extends \BaseController {
 			$user['medical_credits'] = !empty($user['medical_entitlement']) ? $user['medical_entitlement'] : 0;
 			$user['wellness_credits'] = !empty($user['wellness_entitlement']) ? $user['wellness_entitlement'] : 0;
 			$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
-			
+
 			$temp_enrollment_data = array(
 				'customer_buy_start_id'	=> $customer_id,
 				'active_plan_id'		=> $customer_active_plan_id,
@@ -681,12 +681,12 @@ class PlanTierController extends \BaseController {
 		);
 
 		$temp_enroll->updateEnrollee($data);
-		$temp = \DateTime::createFromFormat('d/m/Y', $input['plan_start']);
-		$input['plan_start'] = $temp->format('Y-m-d');
+		// $temp = \DateTime::createFromFormat('d/m/Y', $input['plan_start']);
+		// $input['plan_start'] = $temp->format('Y-m-d');
 		$input['mobile_country_code'] = $input['mobile_area_code'];
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
-		
+
 		$data = array(
 			'temp_enrollment_id'		=> $input['temp_enrollment_id'],
 			'first_name'				=> $input['fullname'],
@@ -703,7 +703,6 @@ class PlanTierController extends \BaseController {
 			'start_date'				=> $input['plan_start'],
 			'error_logs'				=> serialize($error_logs)
 		);
-
 
 		$result = $temp_enroll->updateEnrollee($data);
 
@@ -760,7 +759,7 @@ class PlanTierController extends \BaseController {
 		$dependent_enrollment = new DependentTempEnrollment();
 		$plan_start = $input['plan_start'];
 		$input['plan_start'] = date('d/m/Y', strtotime($input['plan_start']));
-		
+
 		$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($input);
 		$temp_enrollment_dependent = array(
 			'dependent_temp_id'		=> $input['dependent_temp_id'],
@@ -772,7 +771,7 @@ class PlanTierController extends \BaseController {
 			'relationship'			=> $input['relationship'],
 			'error_logs'			=> serialize($error_dependent_logs)
 		);
-		
+
 		$result = $dependent_enrollment->updateEnrollement($temp_enrollment_dependent);
 
 		if($result) {
