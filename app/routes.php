@@ -265,6 +265,9 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update/billing_information', 'BenefitsDashboardController@updateBillingInformation');
 	Route::get('hr/get_billing_information', 'BenefitsDashboardController@getBillingInformation');
 
+	// Administrator
+	Route::post('hr/add_employee_admin', 'BenefitsDashboardController@addAdministrator');
+
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
 	Route::get('hr/get_plan_status', 'BenefitsDashboardController@getPlanStatus');

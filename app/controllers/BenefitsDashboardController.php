@@ -17818,4 +17818,67 @@ public function createHrLocation ()
 
 		return array('data' => $data);
 	}
+
+	public function addAdministrator ()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+		$data = null;
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+
+		$data = [
+			'message'	=> null,
+			'status'	=> true 
+		];
+
+		$employee_id = $input['employee_id'] ?? null;
+		
+		$employee = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->where('UserID', $employee_id)
+				->first();
+		
+		if(!$employee)
+		{
+			$data['message'] = 'Member/s does not exist'; 
+			$data['status']  = false;
+
+		return $data;
+		}
+
+		if($employee->member_activated = 0)
+		{
+			$data['message'] = 'Please have this account activated before assigning Administrator.'; 
+			$data['status']  = false;
+
+		return $data;
+		}
+
+		if($employee->Active = 0)
+		{
+			$data['message'] = 'Please go to Employee Information to register an email address for this account before assigning Secondary Admin.'; 
+			$data['status']  = false;
+		
+		return $data;
+		}
+
+		
+		$permission = DB::table('employee_and_dependent_permissions')->insert([
+			'customer_admin_role_id'							=> $employee->UserID,
+			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ,
+			'view_employee_dependent'							=> $input['view_employee_dependent'] ,
+			'enroll_terminate_employee'							=> $input['enroll_terminate_employee'] ,
+			'approve_reject_edit_non_panel_claims'				=> $input['approve_reject_edit_non_panel_claims'] ,
+			'create_remove_edit_admin_unlink_account'			=> $input['create_remove_edit_admin_unlink_account'] ,
+			'manage_billing_and_payments'						=> $input['manage_billing_and_payments'] ,
+			'add_location_departments'							=> $input['add_location_departments'] ,
+			'status'											=> 1 
+		]);
+			$data['message'] = 'Successfully Add Administrator.';
+
+			return $data;
+	}
 }
