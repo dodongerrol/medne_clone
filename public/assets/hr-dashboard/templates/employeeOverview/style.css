@@ -98,6 +98,9 @@
   border: 1px solid #BFBFBF;
   border-top: none;
 }
+.emp-overview-tbl-container tbody tr {
+  border-bottom: 1px solid #BFBFBF;
+}
 .emp-overview-tbl-container thead th:nth-child(1),
 .emp-overview-tbl-container tbody td:nth-child(1) {
   width: 40px;
@@ -167,6 +170,7 @@
 .emp-filter-tbl-wrapper >div:last-child {
   width: 100%;
   display: grid;
+  height: max-content;
 }
 .back-btn-filter {
   color: #0392CF;
@@ -349,4 +353,31 @@
 }
 .emp-overview-new-header .overview-title h1 {
   font-weight: 400;
+}
+.emp-overview-tbl-container .export-selected-member-container tr th {
+  font-family: 'Helvetica Light';
+}
+.emp-overview-tbl-container .export-selected-member-container tr th:nth-child(2) {
+  text-align: center;
+}
+.emp-overview-tbl-container .export-selected-member-container tr th:nth-child(3) {
+  color: #0392cf;
+  cursor: pointer;
+}
+.export-selected-member-container tr th:nth-child(3) span {
+  display: flex;
+  align-items: center;
+}
+.export-selected-member-container tr th:nth-child(3) img {
+  margin: 0 10px 0 0;
+}
+.emp-overview-tbl-container .select-all-wrapper {
+  background-color: #E6F7FF;
+}
+.emp-overview-tbl-container .select-all-container {
+  color: #0392cf;
+  cursor: pointer;
+}
+.emp-overview-tbl-container tbody .select-all-wrapper td:nth-child(1) {
+  padding: 22px 22px 22px 550px;
 }
