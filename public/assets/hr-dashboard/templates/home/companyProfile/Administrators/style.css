@@ -190,7 +190,7 @@
   border: 1px solid #BFBFBF;
   border-radius: 3px;
   width: 100%;
-  padding: 2px 10px;
+  padding: 5px 10px;
   outline: none;
 }
 .admin-input-wrapper input::placeholder {
@@ -203,6 +203,28 @@
 .permission-input-wrapper {
   width: 210px;
   font-size: 14px;
+  position: relative;
+}
+.permission-selector-dp-wrapper {
+  position: absolute;
+  background-color: #fff;
+  width: 100%;
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  left: 0;
+  top: 35px;
+  z-index: 1;
+  padding: 5px 0;
+}
+.permission-selector-dp-wrapper >div {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.permission-input-wrapper i {
+  margin: 0 0 0 5px;
+  position: absolute;
+  top: 7px;
+  right: 7px;
 }
 .administrator-modal-container .administrator-success {
   text-align: center;
@@ -210,4 +232,40 @@
 .administrator-modal-container .administrator-success img {
   width: 40px;
   margin: 0 0 10px;
+}
+.choose-selector-container {
+  margin: 10px 0 0;
+}
+.choose-selector-container {
+  position: relative;
+}
+.choose-selector-container .permission-selector-dp-wrapper {
+  position: absolute;
+  height: 150px;
+  overflow: auto;
+}
+#change-primary-admin-modal .modal-body.first-step p {
+  width: 420px;
+  text-align: center;
+  margin: 0 auto;
+}
+#change-primary-admin-modal label {
+  font-family: 'Helvetica Medium';
+}
+#change-primary-admin-modal .admin-input-wrapper.mobile-number >div >div {
+  width: 20%;
+  margin: 0 10px 0 0;
+}
+#change-primary-admin-modal .modal-dialog {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  box-shadow: 0 0 transparent;
+  background-color: transparent;
+}
+#remove-administrator-modal .modal-body.first-step >div:first-child {
+  margin: 0 0 20px;
+}
+#remove-administrator-modal .btn-update {
+  padding: 0 70px;
 }
