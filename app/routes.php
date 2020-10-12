@@ -10,6 +10,8 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+// test spending transaction access
+Route::get('test_spending_transaction_access', 'HomeController@testUserCheckSpendingAccess');
 
 // test paginate new
 Route::get('ge_test_paginate', 'testcontroller@paginateMembers');
@@ -163,7 +165,13 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	// get date terms
 	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
 });
-
+	Route::post('employee/add_postal_code_member', 'EmployeeController@addPostalCodeEmployee');
+	Route::post('employee/create_new_password_member', 'EmployeeController@createNewPasswordEmployee');
+	Route::get('employee/check_user_otp_status', 'EmployeeController@checkUserOtp');
+	Route::post('employee/send_otp_web', 'EmployeeController@sendOtpWeb');
+	Route::get('employee/check_member', 'EmployeeController@checkMember');
+	Route::post('employee/validate_otp_web', 'EmployeeController@validateOtpWeb');
+	Route::post('employee/check_member_password', 'EmployeeController@confirmMemberPassword');
 
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');
@@ -228,12 +236,15 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/create_department', 'BenefitsDashboardController@createHrDepartment');
 	Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
 	Route::post('hr/remove_department', 'BenefitsDashboardController@deleteHrDepartment');
+	Route::post('hr/allocate_employee_department', 'BenefitsDashboardController@allocateEmployeeDepartment');
 
 	// locations
 	Route::post('hr/create_locations', 'BenefitsDashboardController@createHrLocation');
 	Route::get('hr/get_location_list', 'BenefitsDashboardController@getLocationList');
 	Route::post('hr/update_location', 'BenefitsDashboardController@updateHrLocation');
 	Route::get('hr/remove_location', 'BenefitsDashboardController@deleteHrLocation');
+	Route::get('hr/get_allocate_employee_list', 'BenefitsDashboardController@allocateEmployeeLocationList');
+	Route::post('hr/allocate_employee_location', 'BenefitsDashboardController@allocateEmployeeLocation');
 
 	// business contact
 	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
@@ -253,6 +264,10 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// billing information
 	Route::post('hr/update/billing_information', 'BenefitsDashboardController@updateBillingInformation');
 	Route::get('hr/get_billing_information', 'BenefitsDashboardController@getBillingInformation');
+
+	// Administrator
+	Route::post('hr/add_employee_admin', 'BenefitsDashboardController@addAdministrator');
+	Route::get('hr/get_primary_admin_details', 'BenefitsDashboardController@getPrimaryAdminDetails');
 
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
@@ -1081,6 +1096,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
 		Route::post('auth/send-otp-mobile', 'Api_V1_AuthController@sendOtpMobile');
 		Route::post('auth/validate-otp-mobile', 'Api_V1_AuthController@validateOtpMobile');
+		Route::put('auth/registerMobileNumber', 'Api_V1_AuthController@registerMobileNumber');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 		Route::post('auth/activated-administrator-user', 'Api_V1_AuthController@createNewPasswordByAdministrator');

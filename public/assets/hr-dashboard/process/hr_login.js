@@ -8,6 +8,7 @@ login.factory('serverUrl',[
     function factory(){
       return {
         url: window.location.origin,
+        // url: 'https://hrapi.medicloud.sg',
       }
     }
 ]);
@@ -59,7 +60,7 @@ login.directive('loginSection', [
 					$('#login-btn').text('Logging in...');
 					await $http.post(serverUrl.url + '/company-benefits-dashboard-login', scope.login_details)
 					.success(async function(response){
-						// console.log(response);
+						console.log(response);
 						$('#login-btn').attr('disabled', false);
 						$('#login-btn').text('Log in');
 						if (!response.status) {
@@ -68,6 +69,7 @@ login.directive('loginSection', [
 						}else{
 							scope.ng_fail = false;
 							scope.token = response.token;
+							window.localStorage.setItem('token', response.token);
 							$http.defaults.headers.common.Authorization = scope.token;
 							await scope.checkLinkedAccounts();
 						}
@@ -138,7 +140,10 @@ login.directive('loginSection', [
 								scope.showAccounts = true;
 							}else{
 								scope.showAccounts = false;
-								window.localStorage.setItem('token', response.token)
+								// window.localStorage.setItem('token', response.token)
+								// scope.token = response.token;
+								// $http.defaults.headers.common.Authorization = scope.token;
+								console.log('Im in');
 								window.location.href = window.location.origin + "/company-benefits-dashboard/";
 							}
 						}

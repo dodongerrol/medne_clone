@@ -48,7 +48,7 @@
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$billing_info['first_name']}} {{$billing_info['last_name']}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['address']}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$billing_info['postal']}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;text-transform: uppercase;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;">
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">

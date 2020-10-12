@@ -134,7 +134,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->DOB = $data['DOB'];
                 $this->Lat = '';
                 $this->Lng = '';
-                $this->NRIC = null;
+                $this->NRIC = $data['NRIC'];
+                $this->passport = $data['passport'];
                 $this->Zip_Code = $data['Zip_Code'];
                 $this->FIN = '';
                 $this->Image = 'https://res.cloudinary.com/www-medicloud-sg/image/upload/v1427972951/ls7ipl3y7mmhlukbuz6r.png';
@@ -354,8 +355,6 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
             $findEmail = DB::table('user')
                         ->where('Email', '=', $email)
-                        // ->where('Active', '=', 1)
-                        // ->where('UserType', '=', 1)
                         ->where('UserType', '=', 5)
                         ->first();
 
@@ -917,5 +916,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
         } else {
             return 1;
         }
+    }
+
+    function checkMemberExistence ($params) {
+        $query = User::query();
+
+        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo', 'Active');
+       
+        // Append where clause
+        foreach ($params as $key => $value) {
+            $query->where($value['paramKey'], $value['paramKeyValue']);    
+        }
+        
+        $user = $query->first();
+        return count((array)$user) > 0? $user: 0;
+    }
+
+    function updateMemberRecord ($userId, $data) {
+        return User::where('UserID', $userId)
+                    ->update($data);
     }
 }

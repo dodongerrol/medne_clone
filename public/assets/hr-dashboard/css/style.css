@@ -10758,3 +10758,6 @@ span.dropdown-entitlement.disabled {
 .bold-text {
   font-family: 'Helvetica Medium';
 }
+.employee-details.tier-feature-item .iti__country-list {
+  z-index: 1000;
+}

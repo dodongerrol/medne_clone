@@ -137,9 +137,9 @@ function getTransactions( data ){
 	      		'NAME' : list[i].user_name,
 	      		// 'NRIC' : list[i].NRIC,
 	      		'SERVICES' : list[i].procedure_name,
-	      		'MEDNEFITS FEE' : (list[i].mednefits_fee).replace(',',''),
-	      		'MEDNEFITS CREDIT' : (list[i].mednefits_credits).replace(',',''),
-	      		'CASH' : (list[i].cash).replace(',',''),
+	      		'MEDNEFITS FEE' : list[i].currency_type.toUpperCase() + ' ' + (list[i].mednefits_fee).replace(',',''),
+	      		'MEDNEFITS CREDIT' : list[i].currency_type.toUpperCase() + ' ' + (list[i].mednefits_credits).replace(',',''),
+	      		'CASH' : list[i].currency_type.toUpperCase() + ' ' + (list[i].cash).replace(',',''),
 	      		'STATUS' : list[i].transaction_status,
 	      	});
 

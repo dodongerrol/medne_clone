@@ -85,7 +85,7 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/companyOverview/style.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/Administrators/style.css?_={{ $date->format('U') }}">
 
-	<link rel="stylesheet" href="{{ $server . '/assets/hr-dashboard/templates/employeeOverview/style.css?_=' . $date->format('U')  }}">
+	<!-- <link rel="stylesheet" href="{{ $server . '/assets/hr-dashboard/templates/employeeOverview/style.css?_=' . $date->format('U')  }}"> -->
 
 	<link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.5/dist/utilities.min.css">
 

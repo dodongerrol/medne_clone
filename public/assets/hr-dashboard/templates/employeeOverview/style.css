@@ -10,6 +10,13 @@
   border-color: var(--primary);
 }
 
+.color-medni-blue{
+  color: #037CB0;
+}
+.bg-l-blue{
+  background-color: #E6F7FF;
+}
+
 /* ------------ CUSTOM CHECBOX ------------ */
 .custom-checkbox-container .checkbox-input {
   display: block;
@@ -63,7 +70,9 @@
 
 /* ---------------------------------------- */
 .employee-overview-container {
-  padding: 0 40px;
+  padding: 0 65px 50px 65px;
+  position: relative;
+  height: calc(100vh - 60px);
 }
 .emp-overview-tbl-wrapper {
   overflow-x: auto;
@@ -96,6 +105,7 @@
 .emp-overview-tbl-container tbody td:nth-child(1) {
   width: 40px;
   padding: 10px;
+  text-align: center;
 }
 .emp-overview-tbl-container tr th {
   font-family: "Helvetica Medium";
@@ -104,11 +114,44 @@
 .emp-overview-tbl-container tr td {
   padding: 10px 15px;
 }
+.emp-overview-tbl-container tr th.admin,
+.emp-overview-tbl-container tr td.admin{
+  padding: 0;
+}
+.emp-overview-tbl-container tr td.admin img{
+  width: 14px;
+}
+.emp-overview-tbl-container tr td{
+  border-bottom: 1px solid #BFBFBF;
+}
 .emp-overview-tbl-container tr td:nth-child(2) {
   text-align: center;
 }
 .emp-overview-tbl-container img {
   width: 17px;
+}
+.emp-overview-tbl-container tr td .emp-opt-drop-container {
+  position: relative;
+}
+.emp-overview-tbl-container tr td .emp-opt-drop-wrapper {
+  background: #FFFFFF;
+  border: 1px solid #BFBFBF;
+  border-radius: 2px;
+  width: 160px;
+  text-align: left;
+  padding: 3px 0;
+  position: absolute;
+  left: 0;
+  z-index: 50;
+}
+.emp-opt-drop-wrapper .opt-item{
+  display: block;
+  padding: 7px 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+.emp-opt-drop-wrapper .opt-item:hover{
+  background-color: rgba(230, 247, 255, 0.7);
 }
 .emp-overview-tbl-container .custom-checkbox-container .checkbox-input {
   padding: 0;
@@ -145,7 +188,8 @@
   padding: 5px;
   cursor: pointer;
 }
-.emp-filter-selector-container >div.active {
+/* .emp-filter-selector-container >div.active , */
+.emp-filter-selector-container >div:hover {
   background: rgba(3, 124, 176, 0.3);
 }
 .add-filter-wrapper {
@@ -223,6 +267,7 @@
 }
 .filtered-text div {
   width: 120px;
+  font-size: 14px;
 }
 .emp-filter-details-container .add-filter-btn {
   border: 0;
@@ -245,7 +290,8 @@
 .emp-filter .location-selector >div {
   padding: 4px 10px;
 }
-.emp-filter .location-selector >div.active {
+/* .emp-filter .location-selector >div.active { */
+.emp-filter .location-selector >div:hover {
   background: rgba(230, 247, 255, 0.7);
 }
 .disabled-input {
