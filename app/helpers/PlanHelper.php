@@ -2534,12 +2534,12 @@ class PlanHelper
 								->where('wallet_history.wallet_id', $wallet_id)
 								->where('e_wallet.UserID', $user_id)
 								->where('wallet_history.created_at',  '>=', $start)
-								->where('wallet_history.spending_method', $spending_method)
+								// ->where('wallet_history.spending_method', $spending_method)
 								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $wallet_id)
-									->where('spending_method', $spending_method)
+									// ->where('spending_method', $spending_method)
 									->get();
 			}
 
