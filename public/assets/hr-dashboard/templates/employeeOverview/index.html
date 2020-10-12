@@ -139,7 +139,7 @@
       <div class="emp-overview-tbl-wrapper">
         <div class="emp-overview-tbl-container">
           <table>
-            <thead>
+            <thead ng-if="false">
               <tr>
                 <th>
                   <div class="custom-checkbox-container">
@@ -151,6 +151,7 @@
                   </div>
                 </th>
                 <th>Action</th>
+                <th></th>
                 <th class="admin"></th>
                 <th>ID</th>
                 <th>Full Name</th>
@@ -164,10 +165,32 @@
                 <th>Departments</th>
               </tr>
             </thead>
-            <tbody >
-              <tr ng-if="isAllEmpCheckboxSelected">
-                <td colspan="13" class="text-center bg-l-blue py-6">
-                  All 20 employees on this page are selected. <span class="color-medni-blue select-text cursor-pointer" ng-click="">Select all 70 employees.</span>
+            <thead class="export-selected-member-container">
+              <tr>
+                <th>
+                  <div class="custom-checkbox-container">
+                    <label class="checkbox-input">
+                      <span></span>
+                      <input ng-click="_selectMemberList_(list, $index, 'select-member-block')" ng-model="list.selected" type="checkbox"/>
+                      <span class="checkbox-mark"></span>
+                    </label>
+                  </div>
+                </th>
+                <th>
+                  <span><span>20 </span> selected.</span>
+                </th>
+                <th colspan="11">
+                  <span>
+                    <img src="../assets/hr-dashboard/img/new-download-icon.png">
+                    <span>Export Selected Member Details</span>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-if="isAllEmpCheckboxSelected" class="select-all-wrapper">
+                <td colspan="13">
+                  <span>All <span>20 </span> employees on this page are selected. <span class="select-all-container">Select all <span>70 </span> employees.</span> </span>
                 </td>
               </tr>
               <tr ng-repeat="list in employees.data">

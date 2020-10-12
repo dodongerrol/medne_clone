@@ -240,3 +240,14 @@
   border: 1px solid #BFBFBF;
   color: #BFBFBF;
 }
+#business-contact-modal .primary-admin-text {
+  position: absolute;
+  top: 22px;
+  right: 30px;
+  color: #40A5A3;
+  font-family: 'Helvetica Medium';
+  font-size: 12px;
+}
+#business-contact-modal .modal-header {
+  position: relative;
+}

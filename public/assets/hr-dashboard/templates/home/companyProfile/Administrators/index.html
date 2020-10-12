@@ -1,4 +1,4 @@
-<div class="administrators-wrapper">
+<div class="administrators-wrapper" administrators-directive>
   <div class="page-title">Administrators</div>
   <div class="primary-admin">
     <h5 class="bold-text">Primary Administrator</h5>
@@ -15,7 +15,7 @@
           </div>
         </div>
         <div>
-          <button class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
+          <button data-toggle="modal" data-target="#change-primary-admin-modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
         </div>
       </div>
       <div class="display-flex admin-information">
@@ -39,42 +39,399 @@
   <div class="additional-admin">
     <h5 class="bold-text">Additional Administrators</h5>
     <div class="admin-card-container">
-      <div class="no-administrator">
+      <div ng-if="false" class="no-administrator">
         <button data-toggle="modal" data-target="#add-administrator-modal" class="bold-text"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
+      </div>
+      <div class="with-administrator">
+        <button data-toggle="modal" data-target="#add-administrator-modal" class="bold-text btn-add-admin"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
+        <div class="additional-admin-details">
+          <div class="display-flex edit-remove-wrapper">
+            <div>
+              <div class="display-flex primary-admin-details">
+                <span class="bold-text">Full Name: </span> 
+                <span> Christ Teo</span>
+              </div>
+              <div class="display-flex primary-admin-details">
+                <span class="bold-text">Email Address: </span>
+                <span> chris.teo@mednefits.com</span>
+              </div>
+            </div>
+            <div class="display-flex edit-remove-btn-container">
+              <button data-toggle="modal" data-target="#edit-administrator-modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Edit</button>
+              <button data-toggle="modal" data-target="#remove-administrator-modal" class="btn-remove"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+            </div>
+          </div>
+          <div class="display-flex admin-information">
+            <div>
+              <div class="bold-text">This admin's permissions applied to:</div>
+              <span>All Employees & Dependents</span>
+            </div>
+            <div class="admin-can-container">
+              <div class="bold-text">This admin can:</div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>View employee + dependent profile information</span></div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
+              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade administrator-modal-container" id="change-primary-admin-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Change HR Administrator (Primary Admin)</h5>
+        </div>
+        <div ng-if="false" class="modal-body first-step">
+          <p>Please note that the change of HR Administrator will make this account unlinked.</p>
+        </div>
+        <div ng-if="false" class="modal-body">
+          <div class="admin-input-wrapper">
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter new Primary Admin's full name">
+          </div>
+          <div class="admin-input-wrapper">
+            <label>Email</label>
+            <input type="text" placeholder="Enter new Primary Admin's work email address">
+          </div>
+          <div class="admin-input-wrapper mobile-number">
+            <label>Mobile Number</label>
+            <div class="display-flex">
+              <div>
+                <input type="number">
+              </div>
+              <input type="number" placeholder="Enter new Primary Admin's mobile number">
+            </div>
+          </div>
+        </div>
+        <div ng-if="true" class="modal-body administrator-success">
+          <img src="../assets/images/success-circle.png">
+          <div>
+            <div>HR Administrator has successfully been change.</div>
+            <div>Mednefits is unlinked from Linked Accounts under Chris Teo.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="false" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm Change</button>
+          <button ng-if="true" class="btn-update confirm">Continue</button>
+          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade administrator-modal-container" id="remove-administrator-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Remove Administrator</h5>
+        </div>
+        <div ng-if="false" class="modal-body first-step">
+          <div>Are you sure you want to remove this administrator?</div>
+          <div>Please confirm to proceed.</div>
+        </div>
+        <div ng-if="true" class="modal-body administrator-success">
+          <img src="../assets/images/success-circle.png">
+          <div>
+            <div>The administrator has succesfully been removed.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="true" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
+          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+  <div class="modal fade administrator-modal-container" id="add-administrator-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Add Administrator</h5>
+        </div>
+        <div ng-if="true" class="modal-body">
+          <div>
+            <label class="bold-text">Is this name a Mednefits employee?</label>
+            <div class="display-flex">
+              <div class="custom-checkbox-container active">
+                <label class="checkbox-input">
+                  <span class="checkbox-text">Yes</span >
+                  <input type="checkbox"/>
+                  <span class="checkbox-mark"></span>
+                </label>
+              </div>
+              <div class="custom-checkbox-container active">
+                <label class="checkbox-input">
+                  <span class="checkbox-text">No</span >
+                  <input type="checkbox"/>
+                  <span class="checkbox-mark"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="admin-input-wrapper">
+            <label class="bold-text">Full Name</label>
+            <input type="text" placeholder="Enter Admin's full name">
+          </div>
+          <div class="admin-input-wrapper">
+            <label class="bold-text">Email Address</label>
+            <input type="text" placeholder="Enter Admin's full name">
+          </div>
+          <div class="admin-input-wrapper">
+            <label class="bold-text">Mobile Number</label>
+            <div class="display-flex mobile-number-input">
+              <div>
+                <input type="number">
+              </div>
+              <input type="number" placeholder="Enter Admin's Mobile Number">
+            </div>
+          </div>
+          <div class="permission-wrapper">
+            <label class="bold-text">Permissions will be applied to</label>
+            <div class="display-flex">
+              <div>
+                <div class="permission-input-wrapper">
+                  <div ng-click="adminPermission()">
+                    <span ng-bind="permission_data">All Employee & Dependents</span>
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                  <div ng-if="permissionSelector" class="permission-selector-dp-wrapper">
+                    <div ng-click="permissionSelectorData('locations')">Locations</div>
+                    <div ng-click="permissionSelectorData('departments')">Department</div>
+                  </div>
+                </div>
+                <div ng-if="permission_data == 'Locations' " class="choose-selector-container">
+                  <div class="permission-input-wrapper" ng-click="chooseSelector('locations')">
+                    <span>Choose locations</span>
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                  <div ng-if="chooseSelectorLocation" class="permission-selector-dp-wrapper">
+                    <div ng-repeat="list in locations_data" class="custom-checkbox-container">
+                      <label class="checkbox-input">
+                        <span ng-bind="list.location" class="checkbox-text"></span >
+                        <input type="checkbox"/>
+                        <span class="checkbox-mark"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div ng-if="permission_data == 'Departments' " class="choose-selector-container">
+                  <div class="permission-input-wrapper" ng-click="chooseSelector('departments')">
+                    <span>Choose Departments</span>
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                  <div class="permission-selector-dp-wrapper">
+                    <div ng-if="false" class="permission-selector-dp-wrapper">
+                      <div>Department</div>
+                      <div>Department 1</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div ng-if="false">
+                <div class="filter-data-selector-container"><div>Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+              </div>
+            </div>
+          </div>
+          <div class="administrator-info-container">
+            <label class="bold-text">This admin will able to</label>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">View employee + dependent profile information</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Edit employee + dependent profiles</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Enroll & terminate employee + dependent</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Approve, reject & edit non-panel claims</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Create, remove admins, edit admins permission & unlink company account</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Managing billing & payments</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Add locations & Depeartments</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div ng-if="false" class="modal-body">
+          <div>Are you sure you want to add this administrator?</div>
+          <div>Please confirm to proceed.</div>
+        </div>
+        <div ng-if="false" class="modal-body administrator-success">
+          <img src="../assets/images/success-circle.png">
+          <div>Administrator has been successfully added.</div>
+        </div>
+        <div class="modal-footer">
+          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="true" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
+          <button ng-if="false" class="btn-update confirm">Confirm</button>
+          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+  
+  <div class="modal fade administrator-modal-container" id="edit-administrator-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Administrator</h5>
+        </div>
+        <div ng-if="true" class="modal-body">
+          <div class="admin-input-wrapper">
+            <label class="bold-text">Employee name</label>
+            <input type="text" placeholder="">
+          </div>
+          <div class="permission-wrapper">
+            <label class="bold-text">Permissions will be applied to</label>
+            <div class="display-flex">
+              <div>
+                <div class="permission-input-wrapper">
+                  <div>
+                    <span>All Employee & Dependents</span>
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                  <div ng-if="false">
+                    <div>Location</div>
+                    <div>Department</div>
+                  </div>
+                </div>
+                <div ng-if="false">
+                  <div>
+                    <span>Choose locations</span>
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                  <div>
+                    <div>Location</div>
+                    <div>Location 1</div>
+                  </div>
+                </div>
+                <div ng-if="false">
+                  <div>
+                    <span>Choose Departments</span>
+                    <i class="fa fa-angle-down"></i>
+                  </div>
+                  <div>
+                    <div>Department</div>
+                    <div>Department 1</div>
+                  </div>
+                </div>
+              </div>
+              <div ng-if="false">
+                <div class="filter-data-selector-container"><div>Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+              </div>
+            </div>
+          </div>
+          <div class="administrator-info-container">
+            <label class="bold-text">This admin will able to</label>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">View employee + dependent profile information</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Edit employee + dependent profiles</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Enroll & terminate employee + dependent</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Approve, reject & edit non-panel claims</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Create, remove admins, edit admins permission & unlink company account</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Managing billing & payments</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+            <div class="custom-checkbox-container active">
+              <label class="checkbox-input">
+                <span class="checkbox-text">Add locations & Depeartments</span >
+                <input type="checkbox"/>
+                <span class="checkbox-mark"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div ng-if="false" class="modal-body">
+          <div>Are you sure you want to update the details of this administrator?</div>
+          <div>Please confirm to proceed.</div>
+        </div>
+        <div ng-if="false" class="modal-body administrator-success">
+          <img src="../assets/images/success-circle.png">
+          <div>The detail(s) has successfully been updated.</div>
+        </div>
+        <div class="modal-footer">
+          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="true" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Update</button>
+          <button ng-if="false" class="btn-update confirm">Confirm</button>
+          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-<div class="modal fade business-modal-container" id="add-administrator-modal" tabindex="-1" role= "dialog">
-  <div ng-if="true" class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Add Administrator</h5>
-      </div>
-      <div class="modal-body">
-        <div>
-          <label>Is this name a Mednefits employee?</label>
-          <div class="custom-checkbox-container active">
-            <label class="checkbox-input">
-              <span class="checkbox-text">Yes</span >
-              <input type="checkbox"/>
-              <span class="checkbox-mark"></span>
-            </label>
-          </div>
-          <div class="custom-checkbox-container active">
-            <label class="checkbox-input">
-              <span class="checkbox-text">No</span >
-              <input type="checkbox"/>
-              <span class="checkbox-mark"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button data-dismiss="modal" class="btn-cancel">Cancel</button>
-        <button ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
-      </div>
-    </div>
-  </div>
-</div> 
