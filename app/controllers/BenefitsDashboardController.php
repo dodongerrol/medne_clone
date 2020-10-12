@@ -17959,25 +17959,25 @@ public function createHrLocation ()
 
 		// $employee_id = $input['member_id'];
 
-		$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+		$details = CustomerAdminRole::where('customer_id', $id)->get();
 		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
 
 		
-		foreach ($permissions as $permission) {
-			
+		foreach ($details as $detail) {
+			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
 			$container [] = array(
-				'id'											=> $permission->id,
-				'fullname'										=> $permission->fullname,
-				'email'											=> $permission->email,
-				'edit_employee_dependent'						=> $permission->edit_employee_dependent,
-				'enroll_terminate_employee'						=> $permission->enroll_terminate_employee,
-				'approve_reject_edit_non_panel_claims'			=> $permission->approve_reject_edit_non_panel_claims,
-				'create_remove_edit_admin_unlink_account'		=> $permission->create_remove_edit_admin_unlink_account,
-				'manage_billing_and_payments'					=> $permission->manage_billing_and_payments,
-				'add_location_departments'						=> $permission->add_location_departments
+				'id'											=> $detail->id,
+				'fullname'										=> $detail->fullname,
+				'email'											=> $detail->email,
+				'edit_employee_dependent'						=> $permissions->edit_employee_dependent,
+				'enroll_terminate_employee'						=> $permissions->enroll_terminate_employee,
+				'approve_reject_edit_non_panel_claims'			=> $permissions->approve_reject_edit_non_panel_claims,
+				'create_remove_edit_admin_unlink_account'		=> $permissions->create_remove_edit_admin_unlink_account,
+				'manage_billing_and_payments'					=> $permissions->manage_billing_and_payments,
+				'add_location_departments'						=> $permissions->add_location_departments
 			);
-			return $container;
+			
 		}
-
+		return $container;
 	}
 }
