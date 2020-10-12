@@ -17874,6 +17874,8 @@ public function createHrLocation ()
 		$role = array (
 			'customer_id'						=> $result->customer_buy_start_id,
 			'member_id'							=> $employee->UserID,
+			'fullname'							=> $input['fullname'],
+			'email'								=> $input['email'],
 			'is_mednefits_employee'				=> $input['is_mednefits_employee'] ,
 			'status'							=> 1
 		);
@@ -17947,5 +17949,35 @@ public function createHrLocation ()
 			'add_location_departments'						=> $permission->add_location_departments
 		);
 		return array ('admin_details' => $data);
+	}
+
+	public function getAdditionalAdminDetails()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		// $employee_id = $input['member_id'];
+
+		$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
+
+		
+		foreach ($permissions as $permission) {
+			
+			$container [] = array(
+				'id'											=> $permission->id,
+				'fullname'										=> $permission->fullname,
+				'email'											=> $permission->email,
+				'edit_employee_dependent'						=> $permission->edit_employee_dependent,
+				'enroll_terminate_employee'						=> $permission->enroll_terminate_employee,
+				'approve_reject_edit_non_panel_claims'			=> $permission->approve_reject_edit_non_panel_claims,
+				'create_remove_edit_admin_unlink_account'		=> $permission->create_remove_edit_admin_unlink_account,
+				'manage_billing_and_payments'					=> $permission->manage_billing_and_payments,
+				'add_location_departments'						=> $permission->add_location_departments
+			);
+			return $container;
+		}
+
 	}
 }
