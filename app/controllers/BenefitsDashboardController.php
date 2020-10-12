@@ -17826,6 +17826,7 @@ public function createHrLocation ()
 		$id = $result->customer_buy_start_id;
 		$data = null;
 
+		$search = !empty($input['search']) ? $input['search'] : null;
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 
 		$data = [
@@ -17834,12 +17835,16 @@ public function createHrLocation ()
 		];
 
 		$employee_id = $input['employee_id'] ?? null;
+		$location_id = $input['location_id'] ?? null;
+
+
 		
 		$employee = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->where('UserID', $employee_id)
 				->first();
+
 		
 		if(!$employee)
 		{
@@ -17848,6 +17853,7 @@ public function createHrLocation ()
 
 		return $data;
 		}
+		
 
 		if($employee->member_activated = 0)
 		{
@@ -17864,12 +17870,20 @@ public function createHrLocation ()
 		
 		return $data;
 		}
+		
+		$role = array (
+			'customer_id'						=> $result->customer_buy_start_id,
+			'member_id'							=> $employee->UserID,
+			'is_mednefits_employee'				=> $input['is_mednefits_employee'] ,
+			'status'							=> 1
+		);
+			$admin_role = \CustomerAdminRole::create($role);		
 
 		
 		$permission = DB::table('employee_and_dependent_permissions')->insert([
-			'customer_admin_role_id'							=> $employee->UserID,
+			'customer_admin_role_id'							=> $admin_role->id,
 			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ,
-			'view_employee_dependent'							=> $input['view_employee_dependent'] ,
+			'view_employee_dependent'							=> 1 ,
 			'enroll_terminate_employee'							=> $input['enroll_terminate_employee'] ,
 			'approve_reject_edit_non_panel_claims'				=> $input['approve_reject_edit_non_panel_claims'] ,
 			'create_remove_edit_admin_unlink_account'			=> $input['create_remove_edit_admin_unlink_account'] ,
@@ -17877,8 +17891,38 @@ public function createHrLocation ()
 			'add_location_departments'							=> $input['add_location_departments'] ,
 			'status'											=> 1 
 		]);
-			$data['message'] = 'Successfully Add Administrator.';
+		
 
-			return $data;
+		$locations = $input['locations'] ?? [];
+
+		if(count($locations) > 0)
+		{
+			foreach ($locations as $location){
+				 DB::table('location_admin_permission')->insert([
+					'customer_admin_role_id'							=> $admin_role->id,
+					'location_id'										=> $location ,
+					'status'											=> 1 
+				]);
+			}
+		}
+
+		$departments = $input['departments'] ?? [];
+		if(count($departments) > 0)
+		{
+			foreach ($departments as $department){
+				 DB::table('department_admin_permission')->insert([
+					'customer_admin_role_id'							=> $admin_role->id,
+					'department_id'										=> $department ,
+					'status'											=> 1 
+				]);
+			}
+		}
+
+		
+		
+		$data['message'] = 'Successfully Add Administrator.';
+
+		return $data;
+
 	}
 }
