@@ -17980,4 +17980,23 @@ public function createHrLocation ()
 		}
 		return $container;
 	}
+
+	public function removeAdministratorAccount()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		if(empty($input['admin_id']) || $input['admin_id'] == null) {
+            return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$remove = DB::table('customer_admin_roles')
+		->where('id', $input['admin_id'])->delete();
+
+		return array(
+			'status'		=> TRUE,
+			'message'		=> 'The administrator has successfully been removed.'
+		);
+	}
 }
