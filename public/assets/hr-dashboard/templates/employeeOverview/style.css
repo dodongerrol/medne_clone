@@ -379,5 +379,5 @@
   cursor: pointer;
 }
 .emp-overview-tbl-container tbody .select-all-wrapper td:nth-child(1) {
-  padding: 22px 22px 22px 550px;
+  /* padding: 22px 22px 22px 550px; */
 }

@@ -139,7 +139,7 @@
       <div class="emp-overview-tbl-wrapper">
         <div class="emp-overview-tbl-container">
           <table>
-            <thead ng-if="false">
+            <thead ng-if="true">
               <tr>
                 <th>
                   <div class="custom-checkbox-container">
@@ -151,7 +151,6 @@
                   </div>
                 </th>
                 <th>Action</th>
-                <th></th>
                 <th class="admin"></th>
                 <th>ID</th>
                 <th>Full Name</th>
@@ -165,13 +164,13 @@
                 <th>Departments</th>
               </tr>
             </thead>
-            <thead class="export-selected-member-container">
+            <thead ng-if="false" class="export-selected-member-container">
               <tr>
                 <th>
                   <div class="custom-checkbox-container">
                     <label class="checkbox-input">
                       <span></span>
-                      <input ng-click="_selectMemberList_(list, $index, 'select-member-block')" ng-model="list.selected" type="checkbox"/>
+                      <input ng-click="_selectAllEmpCheckbox_(isAllEmpCheckboxSelected)" ng-model="isAllEmpCheckboxSelected" type="checkbox"/>
                       <span class="checkbox-mark"></span>
                     </label>
                   </div>
