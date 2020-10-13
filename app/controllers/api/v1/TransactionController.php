@@ -875,7 +875,7 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check if enable to access feature
-					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
 					if($transaction_access)	{
 						$returnObject->status = FALSE;
