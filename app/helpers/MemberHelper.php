@@ -2640,6 +2640,7 @@ class MemberHelper
 			return false;
 		}
 
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
 		$member = DB::table('user')->where('UserID', $member_id)->first();
 		$customer_id = PlanHelper::getCustomerId($member_id);
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -2683,6 +2684,10 @@ class MemberHelper
 
 		if((int)$spending->medical_enable == 0) {
 			$emp_status = 'deactivated';
+		}
+
+		if($customer_active_plan->account_type == "out_of_pocket") {
+			$emp_status = "active";
 		}
 
 		return $emp_status;
