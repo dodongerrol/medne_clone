@@ -2006,7 +2006,7 @@ public function getNewClinicDetails($id)
      }
 
      // check if enable to access feature
-      $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($owner_id);
+      $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($owner_id, 'panel');
 
       if($transaction_access)	{
         $returnObject->status = FALSE;
@@ -5495,7 +5495,7 @@ public function createEclaim( )
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
   // check if enable to access feature
-  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
 
   if($transaction_access)	{
     $returnObject->status = FALSE;
@@ -5507,21 +5507,21 @@ public function createEclaim( )
 
   $customer_id = PlanHelper::getCustomerId($user_id);
 
-  $checkSpendingAccessTransaction = \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
+  // $checkSpendingAccessTransaction = \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
 
-  if($checkSpendingAccessTransaction['enable'] == false) {
-    $returnObject->status = FALSE;
-    $returnObject->status_type = 'zero_balance';
-    $returnObject->head_message = 'E-Claim Unavailable';
-    $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
-    $returnObject->sub_message = '';
-    return Response::json($returnObject);
-  }
+  // if($checkSpendingAccessTransaction['enable'] == false) {
+  //   $returnObject->status = FALSE;
+  //   $returnObject->status_type = 'zero_balance';
+  //   $returnObject->head_message = 'E-Claim Unavailable';
+  //   $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+  //   $returnObject->sub_message = '';
+  //   return Response::json($returnObject);
+  // }
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
   if($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == false || $input['spending_type'] == "wellness" && $spending['wellness_non_panel_submission'] == false) {
     $returnObject->status = FALSE;
-    $returnObject->status_type = 'zero_balance';
+    $returnObject->status_type = 'access_block';
     $returnObject->head_message = 'E-Claim Unavailable';
     $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
     $returnObject->sub_message = '';
@@ -5577,15 +5577,15 @@ public function createEclaim( )
     }
   }
 
-  // check if enable to access feature
-  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+  // // check if enable to access feature
+  // $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
 
-  if($transaction_access)	{
-    $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Non-Panel function is disabled for your company.';
-    return Response::json($returnObject);
-  }
+  // if($transaction_access)	{
+  //   $returnObject->status = FALSE;
+  //   $returnObject->head_message = 'Non-Panel Error';
+  //   $returnObject->message = 'Non-Panel function is disabled for your company.';
+  //   return Response::json($returnObject);
+  // }
 
   $input_amount = 0;
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
@@ -6695,8 +6695,7 @@ public function payCreditsNew( )
             // }
 
              // check for member transaction
-             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
-
+             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
              if($transaction_access)	{
                $returnObject->status = FALSE;
                $returnObject->status_type = 'registration_hold';
@@ -6794,7 +6793,7 @@ public function payCreditsNew( )
             }
 
             // check for member transaction
-            $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+            $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
 
             if($transaction_access)	{
               $returnObject->status = FALSE;

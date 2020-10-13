@@ -1101,7 +1101,7 @@ class MemberHelper
 		return $total_days->format('%a') + 1;
 	}
 
-	public static function checkMemberAccessTransactionStatus($member_id)
+	public static function checkMemberAccessTransactionStatus($member_id, $type)
 	{
 		$status = DB::table('member_block_transaction')->where('member_id', $member_id)->where('status', 1)->first();
 
@@ -1109,15 +1109,14 @@ class MemberHelper
 			return true;
 		} else {
 			// check of from top up and pending
-			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
+			// $top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
 
-			if($top_up_user) {
-				return true;
-			}
+			// if($top_up_user) {
+			// 	return true;
+			// }
 
 			// check if account is active
 			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
-
 			if(($accountStatus != "active") && ($accountStatus != "login")) {
 				return true;
 			}
@@ -1134,8 +1133,7 @@ class MemberHelper
 
 			// check for spending transaction access
 			$customer_id = \PlanHelper::getCustomerId($member_id);
-			$accessTransaction = \SpendingHelper::checkSpendingCreditsAccess($customer_id);
-
+			$accessTransaction = $type == "panel" ? \SpendingHelper::checkSpendingCreditsAccess($customer_id) : \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
 			if(!$accessTransaction['enable']) {
 				return true;
 			}
