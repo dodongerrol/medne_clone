@@ -54,7 +54,8 @@
                   <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                   <div x-show="open" @click.away="open = false"  class="credits-tooltip-container wellness-budget">
                     <div class="tooltip-title">Total Wellness Entitlement</div>
-                    <p>The total budgeted amount of wellness benefits allocated to the employees.
+                    <p>
+                      The total amount of Wellness benefits allocated to the employees.
                     </p>
                     <div class="tooltip-btn-footer">
                       <button @click="open = false">Got it</button>
@@ -75,7 +76,8 @@
                 <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div x-show="open" @click.away="open = false" class="credits-tooltip-container company-budget">
                   <div class="tooltip-title">Total Company Entitlement</div>
-                  <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
+                  <p>
+                    The total amount of medical and wellness benefits allocated to the employees.
                   </p>
                   <div class="tooltip-btn-footer">
                     <button @click="open = false">Got it</button>
@@ -126,16 +128,16 @@
     <div class="mwbc-box-container" ng-class="{'border-bottom-enterprise' : account_details.account_type != 'lite_plan'}">
       <h5 class="member-bold-text">Benefits Coverage (Reimbursement)</h5>
       <div class="dp-flex-ai">
-        <div ng-if="wellnessWalletData.benefits_coverage == 'basic_plan'">Mednefits Basic Plan</div>
+        <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'">Mednefits Basic Plan</div>
         <div ng-if="wellnessWalletData.benefits_coverage == 'enterprise_plan' ">Mednefits Enterprise Plan</div>
         <div ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'">Out of pocket</div>
         <div>
           <span x-data="{ open: false }" class="credits-tooltip-wrapper">
             <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
             <div x-show="open" @click.away="open = false" class="credits-tooltip-container mednefits-basic-plan">
-              <div ng-if="wellnessWalletData.benefits_coverage == 'basic_plan'" class="tooltip-title">Mednefits Basic Plan (Reimbursement)</div>
+              <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="tooltip-title">Mednefits Basic Plan (Reimbursement)</div>
               <div ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'" class="tooltip-title">Out of pocket (Reimbursement)</div>
-              <p ng-if="wellnessWalletData.benefits_coverage == 'basic_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
+              <p ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
               </p>
               <p ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'">All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
               </p>
@@ -260,9 +262,9 @@
               <span ng-if="wellnessWalletData.non_panel_payment_method == 'mednefits_credits'" x-data="{ open: false }" class="credits-tooltip-wrapper">
                 <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div x-show="open" @click.away="open = false" class="credits-tooltip-container mednefits-basic-plan">
-                  <div ng-if="account_details.account_type == 'lite_plan' || wellnessWalletData.benefits_coverage == 'basic_plan'" class="tooltip-title">Mednefits Basic Plan</div>
+                  <div ng-if="account_details.account_type == 'lite_plan'" class="tooltip-title">Mednefits Basic Plan</div>
                   <div ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'" class="tooltip-title">Out of pocket (Reimbursement)</div>
-                  <p ng-if="account_details.account_type == 'lite_plan' || wellnessWalletData.benefits_coverage == 'basic_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
+                  <p ng-if="account_details.account_type == 'lite_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
                   </p>
                   <p ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'">All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
                   <div class="tooltip-btn-footer">
@@ -329,35 +331,29 @@
             <div class="custom-pagination">
               <div class="page-wrapper">
                 <div class="page-scroll-container">
-                  <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                  <span ng-click="_prevPageList_()" ng-disabled="page == 1" class="prev-next-container">  
                     <i class="fa fa-angle-left"></i> 
                     <span>Prev</span>
                   </span>
                   <div class="pages-list">
-                      
-                    <!-- <span class="page-num active">1</span>	 -->
-                    <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
-
-                    <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
-                    
+                    <span ng-repeat="list in range( activity_pagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_(list + 1)" ng-class="{'active' : list + 1 == page}">1</span>
                   </div>
-                  <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
+                  <span ng-click="_nextPageList_()" class="prev-next-container">  
                     <span>Next</span>
                     <i class="fa fa-angle-right"></i> 
                   </span>
                 </div>
               </div>
-              <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
-              <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
-                <span><span>10</span> per page</span>
+              <div x-data="{open: false}" class="custom-list-per-page">
+                <span @click="open = true"><span ng-bind="per_page">10</span> per page</span>
                 <span>  
                   <i class="fa fa-caret-down"></i>
                 </span>
-                <div class="opened-per-page-scroll invoice-per-page-container">
-                  <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
-                  <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
-                  <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
-                  <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+                <div x-show="open" @click.away="open = false" @click="open = false" class="opened-per-page-scroll">
+                  <span ng-click="_setPageLimit_( 10 )">10 per page</span>
+                  <span ng-click="_setPageLimit_( 25 )">20 per page</span>
+                  <span ng-click="_setPageLimit_( 50 )">50 per page</span>
+                  <span ng-click="_setPageLimit_( 100 )">100 per page</span>
                 </div>
               </div>
             </div>

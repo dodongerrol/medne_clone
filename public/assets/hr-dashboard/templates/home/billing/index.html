@@ -74,7 +74,10 @@
                 <td ng-click="invoiceAccordion( list,$index )" ng-bind="list.invoice_date">01 Feb 2010</td>
                 <td ng-click="invoiceAccordion( list,$index )" ng-bind="list.number">000056634</td>
                 <td ng-click="invoiceAccordion( list,$index )"><span class="currency-type" ng-bind="list.currency_type"></span> <span ng-bind="list.amount_due"></span></td>
-                <td ng-click="invoiceAccordion( list,$index )">Mednefits Panel</td>
+                <td ng-click="invoiceAccordion( list,$index )">
+                  <span ng-if="list.type == 'panel'">Mednefits Panel</span> 
+                  <span ng-if="list.type == 'non_panel'">Mednefits Non-Panel</span> 
+                </td>
                 <td class="download-dot-container">
                   <img ng-click="downloadAction( list,$index )" class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png">
                   <div ng-if="list.isActionShow" class="download-dp-container">

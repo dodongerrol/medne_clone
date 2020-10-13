@@ -378,35 +378,29 @@
           <div class="custom-pagination">
             <div class="page-wrapper">
               <div class="page-scroll-container">
-                <span ng-click="_prevPageList_('invoice-history')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                <span ng-click="_prevPageList_()" class="prev-next-container">  
                   <i class="fa fa-angle-left"></i> 
                   <span>Prev</span>
                 </span>
                 <div class="pages-list">
-                    
-                  <!-- <span class="page-num active">1</span>	 -->
-                  <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('invoice-history',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
-
-                   <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
-                  
+                  <span ng-repeat="list in range( activity_pagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_(list + 1)" ng-class="{'active' : list + 1 == page}">1</span>
                 </div>
-                <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">  
+                <span ng-click="_nextPageList_()" class="prev-next-container">  
                   <span>Next</span>
                   <i class="fa fa-angle-right"></i> 
                 </span>
               </div>
             </div>
-            <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
-            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
-              <span><span>10</span> per page</span>
+            <div x-data="{open: false}" class="custom-list-per-page">
+              <span @click="open = true"><span ng-bind="per_page">10</span> per page</span>
               <span>  
                 <i class="fa fa-caret-down"></i>
               </span>
-              <div class="opened-per-page-scroll invoice-per-page-container">
-                <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
-                <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+              <div x-show="open" @click.away="open = false" @click="open = false" class="opened-per-page-scroll">
+                <span ng-click="_setPageLimit_( 10 )">10 per page</span>
+                <span ng-click="_setPageLimit_( 25 )">20 per page</span>
+                <span ng-click="_setPageLimit_( 50 )">50 per page</span>
+                <span ng-click="_setPageLimit_( 100 )">100 per page</span>
               </div>
             </div>
           </div>
