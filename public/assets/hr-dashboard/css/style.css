@@ -8914,8 +8914,8 @@ span.dropdown-entitlement.disabled {
 .new-activity-header-calendar .eclaim-spending-type-container {
   display: inline-block;
   padding: 10px 0;
-  /*margin-left: -15px;*/
-  margin: 0;
+  margin-left: -15px;
+  /* margin: 0; */
   width: 100%;
   padding-bottom: 10px;
 }
