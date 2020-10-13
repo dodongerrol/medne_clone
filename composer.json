@@ -22,6 +22,9 @@
     "predis/predis": "^2.0@dev"
   },
   "autoload": {
+    "files": [
+      "app/helpers.php"
+    ],
     "classmap": [
       "app/commands",
       "app/controllers",

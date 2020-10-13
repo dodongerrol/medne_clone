@@ -130,12 +130,13 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check if enable to access feature
-					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
-
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 					if($transaction_access)	{
 						$returnObject->status = FALSE;
-						$returnObject->head_message = 'Panel Submission Error';
-						$returnObject->message = 'Panel function is disabled for your company.';
+						$returnObject->status = FALSE;
+						$returnObject->status_type = 'access_block';
+						$returnObject->head_message = 'Registration Unavailable';
+						$returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
 						return Response::json($returnObject);
 					}
 
