@@ -1320,8 +1320,8 @@ return Response::json($returnObject);
             $total_visit_created = 0;
             $total_visit_balance = 0;
 
+            $currency_symbol = strtoupper($wallet->currency_type);
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-              $currency_symbol = "";
               $balance = number_format($balance, 2);
               if($filter == "current_term") {
                 if($user_type == "employee") {
@@ -1354,7 +1354,6 @@ return Response::json($returnObject);
               }
 
             } else {
-              $currency_symbol = strtoupper($wallet->currency_type);
               $balance = number_format($balance, 2);
             }
 
