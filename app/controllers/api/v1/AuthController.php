@@ -1105,6 +1105,7 @@ return Response::json($returnObject);
                     ->where('spending_type', $spending_type)
                     ->where('date', '>=', $dates['start'])
                     ->where('date', '<=', $dates['end'])
+                    ->where('status', 1)
                     ->orderBy('date', 'desc')
                     ->take(3)
                     ->get();
@@ -1124,6 +1125,7 @@ return Response::json($returnObject);
                     ->where('spending_type', $spending_type)
                     ->where('date', '>=', $dates['start'])
                     ->where('date', '<=', $dates['end'])
+                    ->where('status', 1)
                     ->orderBy('date', 'desc')
                     ->take(3)
                     ->get();
