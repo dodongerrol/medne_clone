@@ -48,6 +48,41 @@ app.directive("administratorsDirective", [
             location: 'Location 9'
           },
         ];
+        scope.departments_data = [
+          {
+            department: 'Department '
+          },
+          {
+            department: 'Department 1'
+          },
+          {
+            department: 'Department 2'
+          },
+          {
+            department: 'Department 3'
+          },
+          {
+            department: 'Department 4'
+          },
+          {
+            department: 'Department 5'
+          },
+          {
+            department: 'Department 6'
+          },
+          {
+            department: 'Department 7'
+          },
+          {
+            department: 'Department 8'
+          },
+          {
+            department: 'Department 9'
+          },
+        ];
+        scope.selected_location_data = [];
+        scope.selected_deparment_data = [];
+        scope.showLocationSelector = false;
 
         scope.adminPermission = function () {
           console.log('test');
@@ -60,12 +95,19 @@ app.directive("administratorsDirective", [
 
           if ( type == 'locations' ) {
             scope.permission_data = 'Locations';
+            scope.showLocationSelector = true;
+
+            scope.showDepartmentSelector = false;
           }
           if ( type == 'departments' ) {
             scope.permission_data = 'Departments';
+            scope.showDepartmentSelector = true;
+            
+            scope.showLocationSelector = false;
           }
           console.log(type);
         }
+
 
         scope.chooseSelector = function ( type ) {
           if ( type == 'locations' ) {
@@ -74,6 +116,107 @@ app.directive("administratorsDirective", [
           if ( type == 'departments' ) {
             scope.chooseSelectorDepartment = scope.chooseSelectorDepartment == true ? false : true;
           }
+        }
+
+        scope.selectedPermission = function ( type, data, opt ) {
+          if ( type == 'locations' ) {
+            // scope.showLocationSelector = false;
+            scope.chooseSelectorLocation = false;
+            if ( opt ) {
+              scope.selected_location_data.push(data);
+            } else {
+              console.log('close pud siyaaa sulod');
+              let index = $.inArray(data, scope.selected_location_data);
+              scope.selected_location_data.splice(index, 1);
+              data.status = false;             
+            }
+          }
+          if ( type == 'departments' ) {
+            // scope.showDepartmentSelector = false;
+            scope.chooseSelectorDepartment = false;
+            if ( opt ) {
+              scope.selected_deparment_data.push(data);
+            } else {
+              console.log('close pud siyaaa sulod');
+              let index = $.inArray(data, scope.selected_deparment_data);
+              scope.selected_deparment_data.splice(index, 1);
+              data.status = false;             
+            }
+          }
+        }
+
+        scope.isShowNoteAdmin = false;
+        
+        
+
+        scope.initializeChangePrimaryAdminCountryCode = function(){
+          var settings = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: false,
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg", "my"],
+          };
+
+          var input = document.querySelector("#phone_number_primary_admin");
+          primaryAdminCountry = intlTelInput(input, settings);
+          primaryAdminCountry.setCountry("SG");
+          input.addEventListener("countrychange", function () {
+            scope.changePrimaryData.phone_code = primaryAdminCountry.getSelectedCountryData().dialCode;
+          });
+        }
+
+        scope.initializeAddAdminCountryCode = function(){
+          var settings = {
+            preferredCountries: [],
+            separateDialCode: true,
+            initialCountry: false,
+            autoPlaceholder: "off",
+            utilsScript: "../assets/hr-dashboard/js/utils.js",
+            onlyCountries: ["sg", "my"],
+          };
+
+          var input = document.querySelector("#phone_number_add_admin");
+          primaryAdminCountry = intlTelInput(input, settings);
+          primaryAdminCountry.setCountry("SG");
+          input.addEventListener("countrychange", function () {
+            scope.addAdminData.phone_code = primaryAdminCountry.getSelectedCountryData().dialCode;
+          });
+        }
+
+        scope.continuePrimAdmin = async function () {
+          scope.isShowNoteAdmin = true;
+
+          scope.changePrimaryData = {
+            phone_code: '65'
+          }
+          $timeout(function(){
+            scope.initializeChangePrimaryAdminCountryCode();
+          },400);
+        }
+
+        scope.addAdministrator = async function () {
+          scope.resetData();
+          scope.is_mednefits_emp = 1;
+
+          scope.addAdminData = {
+            phone_code: '65'
+          }
+          $timeout(function(){
+            scope.initializeAddAdminCountryCode();
+          },400);
+        }
+
+        scope.editAdministrator = function () {
+          scope.resetData();
+        }
+
+        scope.resetData = function () {
+          scope.permission_data = 'All Employees & Dependents';
+          scope.showDepartmentSelector = false;
+          scope.showLocationSelector =  false;
+          scope.permissionSelector = false;
         }
 
         scope.formatMomentDate  = function(date, from, to){
@@ -92,7 +235,7 @@ app.directive("administratorsDirective", [
         };
 
         scope.onLoad  = async function(){
-          
+          // await scope.initializeChangePrimaryAdminCountryCode();
         }
         scope.onLoad();
       }
