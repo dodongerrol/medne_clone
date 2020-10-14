@@ -2656,7 +2656,7 @@ class MemberHelper
 
 
 		if($start < $today) {
-			$status = "active";
+			$status = "login";
 		}
 
 		if($start <= $today && $end >= $today) {
@@ -2668,7 +2668,7 @@ class MemberHelper
 			$non_panel = DB::table('e_claim')->where('user_id', $member_id)->first();
 							
 			if($panel || $non_panel) {
-				$emp_status = 'active';
+				$emp_status = 'login';
 			} else if((int)$member->member_activated == 1){
 				$emp_status = 'login';
 			}
@@ -2687,7 +2687,7 @@ class MemberHelper
 		}
 
 		if($customer_active_plan->account_type == "out_of_pocket") {
-			$emp_status = "active";
+			$emp_status = "login";
 		}
 
 		return $emp_status;
