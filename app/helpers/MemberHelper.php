@@ -1109,11 +1109,7 @@ class MemberHelper
 			return true;
 		} else {
 			// check of from top up and pending
-			// $top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
-
-			// if($top_up_user) {
-			// 	return true;
-			// }
+			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
 
 			// check if account is active
 			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
@@ -1134,10 +1130,21 @@ class MemberHelper
 			// check for spending transaction access
 			$customer_id = \PlanHelper::getCustomerId($member_id);
 			$accessTransaction = $type == "panel" ? \SpendingHelper::checkSpendingCreditsAccess($customer_id) : \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
+			
+			if(!$top_up_user) {
+				// check if first purchase is already paid
+				$account_credits = DB::table('spending_purchase_invoice')
+										->where('customer_id', $customer_id)
+										->first();
+				if($account_credits && (int)$account_credits->payment_status == 1) {
+					return false;
+				}
+			}
+			 
 			if(!$accessTransaction['enable']) {
 				return true;
 			}
-
+			
 			return false;
 		}
 	}
