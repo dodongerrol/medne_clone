@@ -137,7 +137,7 @@
             {{$total_spent}}
           </td>
         </tr>
-
+        @if ($statement_status == 1)
         <tr>
           <td></td>
           <td colspan="3" style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
@@ -156,6 +156,7 @@
             {{$statement_amount_due}}
           </td>
         </tr>
+        @endif
       </table>
 
       <table border="0" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0 40px;" width="100%">
