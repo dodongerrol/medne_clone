@@ -176,7 +176,7 @@ class CustomerHelper
 		}
 	}
 
-	public static function getCustomerLastTerm($customer_id)	
+	public static function getCustomerLastTerm($customer_id)
 	{
 		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->get();
 
@@ -294,8 +294,8 @@ class CustomerHelper
 			return ['status' => false, 'message' => 'key does not exist.'];
 		}
 	}
-	
-	public static function getAccountSpendingStatus($customer_id)	
+
+	public static function getAccountSpendingStatus($customer_id)
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
@@ -391,7 +391,6 @@ class CustomerHelper
 
 	public static function getExcelLink($status)
 	{
-
 		if($status['currency_type'] == "myr") {
 			if($status['account_type'] == "lite_plan" &&  $status['medical_method'] == "pre_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == true)	{
 				if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
@@ -439,28 +438,29 @@ class CustomerHelper
 				if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
 					return array(
 						'status' => true,
-						'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+NO+-+R.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-NO-R.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				} else {
 					return array(
 						'status' => true,
-						'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+NO+SA.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+NO-SA.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				}
 			} else if($status['account_type'] == "lite_plan" &&  $status['medical_method'] == "pre_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == false)	{
+				dd("I'm hereeeee!");
 				if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
 					return array(
 						'status' => true,
-						'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R+-+Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-R-Wellness.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				} else {
 					return array(
 						'status' => true,
-						'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-Wellness.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				}
 			} else if($status['account_type'] == "lite_plan" && $status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
@@ -473,8 +473,8 @@ class CustomerHelper
 				} else {
 					return array(
 						'status' => true,
-						'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+Medical.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-Medical.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				}
 			} else if($status['account_type'] == "lite_plan" && $status['medical_method'] == "post_paid" && $status['wellness_method'] == "post_paid" && $status['paid_status'] == true) {
@@ -635,14 +635,14 @@ class CustomerHelper
 				if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
 					return array(
 						'status' => true,
-						'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/employee/Employee+SA+-+All+-+R+-+Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-R-Wellness.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				} else {
 					return array(
 						'status' => true,
-						'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/employee/Employee+SA+-+Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-Wellness.xlsx'
+						'employee'    =>  'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx',
+						'dependent' => 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/basic/dependent/Employees-and-Dependents+SA-All.xlsx'
 					);
 				}
 			} else if($status['account_type'] == "lite_plan" && $status['medical_method'] == "post_paid" && $status['wellness_method'] == "pre_paid" && $status['paid_status'] == false) {
@@ -759,7 +759,7 @@ class CustomerHelper
 		}
 	}
 
-	public static function getAccountSpendingBasicPlanStatus($customer_id)	
+	public static function getAccountSpendingBasicPlanStatus($customer_id)
 	{
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -781,7 +781,7 @@ class CustomerHelper
 
 	public static function getCustomerMedicalTotalCredits($customer_id, $user_spending_dates)
   {
-	
+
 	$total_bonus = 0;
 	$temp_total_allocation = 0;
 	$temp_total_deduction = 0;
@@ -840,7 +840,7 @@ class CustomerHelper
 
   public static function getCustomerWellnessTotalCredits($customer_id, $user_spending_dates)
   {
-	
+
 	$total_bonus = 0;
 	$temp_total_allocation = 0;
 	$temp_total_deduction = 0;
@@ -917,7 +917,7 @@ class CustomerHelper
 	}
 	return 1;
   }
-  
+
 	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -965,7 +965,7 @@ class CustomerHelper
 		return $cost_plan_and_days * $default_price;
 	}
 
-	public static function getCompanyPlanDates($customer_id) 
+	public static function getCompanyPlanDates($customer_id)
 	{
 		$plan = DB::table('customer_plan')
 		->where('customer_buy_start_id', $customer_id)
@@ -1005,7 +1005,7 @@ class CustomerHelper
 
 		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
 	}
-	
+
 	public static function getActiveMembers($customer_id)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
@@ -1016,7 +1016,7 @@ class CustomerHelper
 						->get();
 		return $members;
 	}
-	
+
 	public static function checkCustomerEnterprisePayment($customer_id)
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -1033,7 +1033,7 @@ class CustomerHelper
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$active_plan_ids = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
-		
+
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
 					->whereIn('customer_active_plan_id', $active_plan_ids)
@@ -1050,7 +1050,7 @@ class CustomerHelper
 		$account_credits = DB::table('mednefits_credits')
 							->where('customer_id', $customer_id)
 							->get();
-		
+
 		foreach($account_credits as $key => $credits) {
 			$total_credits += $credits->credits + $credits->bonus_credits;
 
@@ -1065,7 +1065,7 @@ class CustomerHelper
 									->where('credit_type', 'added_employee_credits')
 									->sum('credits');
 		}
-		
+
 		$total_allocated = $medical_credits + $wellness_credits;
 		$total_balance = $total_credits - $total_allocated;
 		return ['total_credits' => $total_credits, 'total_allocated' => $total_allocated, 'total_balance' => $total_balance];
