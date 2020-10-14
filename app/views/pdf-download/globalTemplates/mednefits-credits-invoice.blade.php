@@ -54,7 +54,7 @@
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">
               <div class="one" style="width: 46%;display: inline-block;vertical-align: top;">
                 <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Date</p>
-                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$payment_date}}</p>
+                <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_date}}</p>
     
                 <p style="font-weight: 700;font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Invoice Number</p>
                 <p style="font-size: 14px;line-height: 14px;margin: 0 0 20px 0;">{{$invoice_number}}</p>
@@ -179,6 +179,7 @@
           </td>
         </tr>
 
+        @if($paid == true)
         <tr>
           <td></td>
           <td colspan="3" style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
@@ -197,6 +198,7 @@
             {{$amount_due}}
           </td>
         </tr>
+        @endif
       </table>
 
       <table border="0" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0 40px;" width="100%">
