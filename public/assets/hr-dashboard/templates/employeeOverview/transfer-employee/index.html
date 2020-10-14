@@ -1,5 +1,5 @@
 <div>
-    <button type="button" class="ui-btn medi-border-primary medi-text-primary bg-white" ng-click="$ctrl.open()">
+    <button id="transfer-employee-btn" type="button" class="ui-btn medi-border-primary medi-text-primary bg-white" style="display: none;" ng-click="$ctrl.open()">
         Test Transfer
     </button>
     <div
@@ -93,7 +93,7 @@
                         </div>
                             <div class="flex items-center justify-end space-x-4 w-full pb-8">
                                 <button
-                                ng-click="$ctrl.presentModal('create-department-modal', false)"
+                                ng-click="$ctrl.dismiss()"
                                 type="button"
                                 class="ui-btn ui-btn-primary-outline">
                                     Cancel

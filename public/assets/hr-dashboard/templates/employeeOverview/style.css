@@ -75,7 +75,7 @@
   height: calc(100vh - 60px);
 }
 .emp-overview-tbl-wrapper {
-  overflow-x: auto;
+  /* overflow-x: auto; */
 }
 .emp-overview-tbl-container {
   min-width: 1500px;
@@ -166,6 +166,7 @@
 .emp-filter-tbl-wrapper >div:first-child {
   width: 200px;
   margin: 0 20px 0 0;
+  padding-bottom: 100px;
 }
 .emp-filter-tbl-wrapper >div:last-child {
   width: 100%;

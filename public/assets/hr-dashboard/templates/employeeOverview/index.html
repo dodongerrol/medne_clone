@@ -1,4 +1,7 @@
 <div employee-overview-directive class="employee-overview-container">
+  <transferemployee employee="{
+    employee: selected_employee
+  }"></transferemployee>
   <div class="employee-overview-header emp-overview-new-header">
     <div class="overview-title">
       <h1>Employee Overview</h1>
@@ -138,8 +141,9 @@
     <div>
       <div class="emp-overview-tbl-wrapper">
         <div class="emp-overview-tbl-container">
+          
           <table>
-            <thead ng-if="true">
+            <thead ng-if="selectedEmpArr.length == 0">
               <tr>
                 <th>
                   <div class="custom-checkbox-container">
@@ -164,7 +168,7 @@
                 <th>Departments</th>
               </tr>
             </thead>
-            <thead ng-if="false" class="export-selected-member-container">
+            <thead ng-if="selectedEmpArr.length > 0" class="export-selected-member-container">
               <tr>
                 <th>
                   <div class="custom-checkbox-container">
@@ -176,7 +180,7 @@
                   </div>
                 </th>
                 <th>
-                  <span><span>20 </span> selected.</span>
+                  <span><span>{{ isSelectOverallEmployees ? employees.total_data : selectedEmpArr.length }}</span> selected.</span>
                 </th>
                 <th colspan="11">
                   <span>
@@ -189,7 +193,12 @@
             <tbody>
               <tr ng-if="isAllEmpCheckboxSelected" class="select-all-wrapper">
                 <td colspan="13">
-                  <span>All <span>20 </span> employees on this page are selected. <span class="select-all-container">Select all <span>70 </span> employees.</span> </span>
+                  <span>All 
+                    <span>{{ isSelectOverallEmployees ? employees.total_data : selectedEmpArr.length }}</span> 
+                    employees on this page are selected. 
+                    <span ng-if="!isSelectOverallEmployees" class="select-all-container" ng-click="selectOverallEmployees(true)">Select all <span ng-bind="employees.total_data">70</span> employees.</span> 
+                  </span>
+                  <span ng-if="isSelectOverallEmployees" class="select-all-container" ng-click="selectOverallEmployees(false)">Clear selection</span>
                 </td>
               </tr>
               <tr ng-repeat="list in employees.data">
@@ -207,11 +216,7 @@
                     <img  class="three-dot-icon" src="../assets/hr-dashboard/img/three-dot.png">
                     <div x-show="open" @click.away="open = false" @click="open = false" class="emp-opt-drop-wrapper">
                       <div class="opt-item">Assign Administrator</div>
-                      <div class="opt-item">
-                        <transferemployee employee="{
-                          employee_id: 1
-                        }"></transferemployee>
-                      </div>
+                      <div class="opt-item" ng-click="selectTransferBtn(list)">Transfer</div>
                       <div class="opt-item">Terminate</div>
                     </div>
                   </div>

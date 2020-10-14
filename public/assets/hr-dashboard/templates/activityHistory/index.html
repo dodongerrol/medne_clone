@@ -151,7 +151,7 @@
             <button class="btn btn-custom-start">
               <i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
               <span id="rangePicker_start">01/01/2018</span>
-              <i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i>
+              <!-- <i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i> -->
             </button>
 
             <span style="margin: 0 10px;"><i class="fa fa-long-arrow-right"></i></span>
@@ -159,7 +159,7 @@
             <button class="btn btn-custom-end">
               <i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
               <span id="rangePicker_end">04/01/2018</span>
-              <i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i>
+              <!-- <i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i> -->
             </button>
 
             <button class="btn btn-apply" ng-click="applyDates('custom')">
@@ -222,8 +222,8 @@
           </div>
         </div>
 
-        <div class="col-md-12 disable-cursor-off">
-          <div class="body-container">
+        <div class="col-md-12 disable-cursor-off no-padding">
+          <div class="body-container no-padding">
             <div class="team-benefits-wrapper">
               <div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
                 <div class=" benefit-box">
@@ -337,46 +337,14 @@
             </div>
           </div>
 
-          <div class="col-md-12">
-            <div class="body-container transactions-header">
-              <div class="col-md-3">
-              </div>
+          <div class="col-md-12 transactions-header text-center">
+            <button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+              Panel Transactions
+            </button>
 
-              <div class="col-md-6 no-padding text-center">
-                <button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
-                  PANEL<br>
-                  TRANSACTIONS
-                </button>
-
-                <button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
-                  E-CLAIM TRANSACTIONS<br>
-                  (NON-PANEL)
-                </button>
-              </div>
-
-              <div class="col-md-3 no-padding text-right disable-cursor-off">
-                <div class="white-space-10"></div>
-
-                <p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
-                  report-fields="{employee_id: 'EMPLOYEE ID', employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
-                  filename="'Panel Transactions'" separator=","
-                  class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
-                  DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
-                    style="width: 20px;display: inline-block;margin-left: 5px;"></p>
-                
-                <div class="right-download-block">
-                  <p ng-click="toggleDownloadDrop()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD
-                    <img src="../assets/e-claim/img/new-assets/Download.png"
-                      style="width: 20px;display: inline-block;margin-left: 5px;"></p>
-
-                  <div ng-if="isDownloadDropShow" class="download-drop-container">
-                    <div class="item" ng-click="selectDownloadOpt(0)">Panel</div>
-                    <div class="item" ng-click="selectDownloadOpt(1)">Non-Panel</div>
-                    <div class="item" ng-click="selectDownloadOpt(2)">Both</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+              Eclaim (Non-Panel)
+            </button>
           </div>
 
         </div>

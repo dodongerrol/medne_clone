@@ -215,6 +215,15 @@ app.directive("employeeOverviewDirective", [
           }
           console.log(scope.selectedEmpArr);
         }
+        scope.selectOverallEmployees  = function(opt){
+          if(opt){
+            scope.isSelectOverallEmployees  = true;
+          }else{
+            scope.isSelectOverallEmployees  = false;
+            scope.isAllEmpCheckboxSelected = false;
+            scope._selectAllEmpCheckbox_(false);
+          }
+        }
 
         scope.isTotalMembersShow = true;
         scope.isFiltersShow = false;
@@ -336,6 +345,14 @@ app.directive("employeeOverviewDirective", [
           }
         }
 
+        scope.selectTransferBtn = function(data){
+          console.log(data);
+          scope.selected_employee = data;
+
+          $timeout(function(){
+            $("#transfer-employee-btn").trigger('click');
+          },200);
+        }
 
 
 
