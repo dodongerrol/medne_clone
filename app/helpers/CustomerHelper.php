@@ -295,41 +295,43 @@ class CustomerHelper
 		}
 	}
 
-	public static function getAccountSpendingStatus($customer_id)	
+	public static function getAccountSpendingStatus($customer_id)
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
-		$planData = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-		if(!$planData) {
-			$spendingPurchase = 0;
-		} else {
-			$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
-		}
-		
+		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
 		// check if there is an mendnefit
 		$mednefits_credits = DB::table('mednefits_credits')
-								->where('customer_plan_id', $spending->customer_plan_id)
-								->orderBy('created_at', 'desc')
-								->first();
+							->where('customer_plan_id', $spending->customer_plan_id)
+							->orderBy('created_at', 'desc')
+							->first();
+
 		return array(
-			'currency_type'		=> $customer_wallet->currency_type,
 			'customer_id'		=> $customer_id,
+			'currency_type'		=> $customer_wallet->currency_type,
 			'account_type'		=> $planData->account_type,
 			'medical_method'	=> $spending->medical_plan_method,
-			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
 			'medical_reimbursement'	=> $spending->medical_reimbursement == 1 ? true : false,
+			'medical_enabled'	=> $spending->medical_enable == 1 ? true : false,
+			'medical_non_panel_submission'	=> $spending->medical_active_non_panel_claim == 1 ? true : false,
 			'wellness_method'	=> $spending->wellness_plan_method,
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
 			'wellness_reimbursement'	=> $spending->wellness_reimbursement == 1 ? true : false,
+			'wellness_non_panel_submission'	=> $spending->wellness_active_non_panel_claim == 1 ? true : false,
 			// 'paid_status'		=> $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
-			'paid_status'		=> true,
 			'with_mednefits_credits' => $mednefits_credits ? true : false,
 			'mednefits_credits_id' => $mednefits_credits ? $mednefits_credits->id : null,
 			'medical_benefits_coverage'			=> $spending->medical_benefits_coverage,
 			'medical_payment_method_panel'		=> $spending->medical_payment_method_panel,
 			'wellness_benefits_coverage'		=> $spending->wellness_benefits_coverage,
+			'medical_payment_method_panel'		=> $spending->medical_payment_method_panel,
+			'medical_payment_method_non_panel'		=> $spending->medical_payment_method_non_panel,
 			'wellness_payment_method_panel'		=> $spending->wellness_payment_method_panel,
-			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel
+			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel,
+			'medical_start'		=> $spending->medical_spending_start_date,
+			'medical_end'		=> $spending->medical_spending_end_date,
+			'paid_status'		=> true
 		);
 	}
 
@@ -942,7 +944,7 @@ class CustomerHelper
 			}
 		}
 	}
-
+	
 	public static function getPlanDuration($customer_id, $plan_start)
 	{
 		$plan_coverage = \CustomerHelper::getCompanyPlanDates($customer_id);
