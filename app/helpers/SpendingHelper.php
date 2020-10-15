@@ -100,7 +100,7 @@ class SpendingHelper {
     public static function checkSpendingCreditsAccess($customer_id)
     {
         // get primary plan
-        $plan = DB::table('plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
         if($plan->account_type == "out_of_pocket") {
             return ['enable' => true];
@@ -177,7 +177,7 @@ class SpendingHelper {
     public static function checkSpendingCreditsAccessNonPanel($customer_id)
     {
         // get primary plan
-        $plan = DB::table('plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 
         if($plan->account_type == "out_of_pocket") {
             return ['enable' => true];
