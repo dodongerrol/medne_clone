@@ -556,6 +556,9 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/add_more_business_contact",data );
   }
 
+  hrFactory.fetchPrimaryAdministrator = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_primary_admin_details" );
+  }
 
   return hrFactory;
 });

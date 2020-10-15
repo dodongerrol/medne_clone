@@ -251,6 +251,13 @@ app.directive("administratorsDirective", [
           scope.showEmployeeList = scope.showEmployeeList == true ? false : true;
         }
 
+        scope.getPrimaryAdmin = async function () {
+          await hrSettings.fetchPrimaryAdministrator()
+          .then( function (response) {
+            console.log(response);
+          });
+        }
+
         scope.formatMomentDate  = function(date, from, to){
           return moment(date, from).format(to);
         }
@@ -267,7 +274,7 @@ app.directive("administratorsDirective", [
         };
 
         scope.onLoad  = async function(){
-          // await scope.initializeChangePrimaryAdminCountryCode();
+          await scope.getPrimaryAdmin();
         }
         scope.onLoad();
       }
