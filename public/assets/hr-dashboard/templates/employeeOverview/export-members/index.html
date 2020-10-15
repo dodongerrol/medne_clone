@@ -1,4 +1,4 @@
-<button class="btn-export-member medi-border-primary medi-text-primary bg-white" ng-click="$ctrl.open()">
+<button id="export-member-btn-modal" class="btn-export-member medi-border-primary medi-text-primary bg-white" ng-click="$ctrl.open()">
     <img src="../assets/hr-dashboard/img/new-assets/Download.png">
     Export members details
 </button>
@@ -59,7 +59,7 @@
                                         class="flex items-center justify-between w-full border border-solid border-color-1 bg-gray-contrast text-sm rounded text-gray-900 py-1 px-3 w-full mb-2">
                                         {{ selectedProps.name }}
                                         <a class="ui-btn ui-btn-link-dark px-0"
-                                            ng-click="$ctrl.removeselectedProps(selectedProps)">
+                                            ng-click="$ctrl.selectProperty(selectedProps, false)">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 class="w-4 h-4" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round"

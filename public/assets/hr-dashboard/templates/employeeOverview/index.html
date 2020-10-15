@@ -22,8 +22,15 @@
       <button class="btn-settings btn-export-member medi-border-primary medi-text-primary bg-white"><img src="../assets/hr-dashboard/img/benefits-icon.png">Benefits Settings<i class="fa fa-angle-down"></i></button>
       <button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ui-sref="cred-allocation">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
       <!-- <button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button> -->
-      <bulkupdate></bulkupdate>
-      <exportmembers></exportmembers>
+      <button class="btn-export-member medi-border-primary medi-text-primary bg-white" ui-sref="bulk-update-member-details">
+        <img src="../assets/hr-dashboard/img/Bulk.png">
+        Bulk Update Member Details
+      </button>
+      <exportmembers selected_employee_data="{
+        isExportAll: isClickExportAll,
+        empFiltersObj: empFiltersObj,
+        selectedEmpArr: selectedEmpArr,
+      }"></exportmembers>
       <button class="btn-enroll-employees" ng-disabled="progress.in_progress == 0" ng-click="enrollMoreEmployees()">Enroll employees</button>
     </div>
   </div>
@@ -184,8 +191,8 @@
                 </th>
                 <th colspan="11">
                   <span>
-                    <img src="../assets/hr-dashboard/img/new-download-icon.png">
-                    <span>Export Selected Member Details</span>
+                    <img ng-click="exportSelectedMember()" src="../assets/hr-dashboard/img/new-download-icon.png">
+                    <span ng-click="exportSelectedMember()">Export Selected Member Details</span>
                   </span>
                 </th>
               </tr>

@@ -7,19 +7,19 @@
                 properties: [
                     {
                         name: 'ID',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Full Name',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Status',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Mobile Number',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Email',
@@ -31,7 +31,7 @@
                     },
                     {
                         name: 'Benefits Start Date',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Benefits End Date',
@@ -39,31 +39,31 @@
                     },
                     {
                         name: 'Family Coverage',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Medical Entitlement',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Medical Usage',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Medical Balance',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Wellness Entitlement',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Wellness Usage',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Wellness Balance',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Medical Entitlement Last Term',
@@ -91,11 +91,11 @@
                     },
                     {
                         name: 'Locations',
-                        selected: false,
+                        selected: true,
                     },
                     {
                         name: 'Departments',
-                        selected: false,
+                        selected: true,
                     },
                 ],
                 selectedPropertiesArr: [],
@@ -105,28 +105,36 @@
         $onInit() {
         }
         open() {
-            presentModal('export-members-modal')
+            this.state.selectedPropertiesArr = [];
+            angular.forEach(this.state.properties, (value, key) => {
+                if(value.selected){
+                    this.state.selectedPropertiesArr.push(value);
+                }
+            });
+            presentModal('export-members-modal');
+            console.log(this.selectedEmployeeData);
         }
         dismiss() {
             presentModal('export-members-modal', 'hide')
         }
-        removeselectedProps(prop){
-            console.log(prop);
-        }
         selectProperty(prop, opt){
+            console.log(scope.selectedEmpArr);
+            prop.selected = opt;
             if(opt){
                 this.state.selectedPropertiesArr.push(prop);
             }else{
                 var index = $.inArray(prop, this.state.selectedPropertiesArr);
                 this.state.selectedPropertiesArr.splice(index, 1);
             }
-            console.log(this.state.selectedPropertiesArr);
         }
     }
 
     angular.module('app')
         .component('exportmembers', {
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeOverview/export-members/index.html',
+            bindings: {
+                selectedEmployeeData: '<',
+            },
             controller: ExportMembersController
         });
 }(angular));

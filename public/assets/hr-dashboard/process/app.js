@@ -308,6 +308,17 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         // }
     //   },
     // })
+    .state('bulk-update-member-details', {
+      url: '/bulk-update-member-details',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/bulkUpdateMemberDetails/index.html'
+        },
+      },
+    })
     .state('employee-overview', {
       url: '/employee-overview',
       views: {
