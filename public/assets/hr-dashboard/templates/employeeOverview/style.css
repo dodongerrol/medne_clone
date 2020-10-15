@@ -382,3 +382,31 @@
 .emp-overview-tbl-container tbody .select-all-wrapper td:nth-child(1) {
   /* padding: 22px 22px 22px 550px; */
 }
+
+#export-members-modal .custom-checkbox-container .checkbox-input{
+  text-align: left;
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+#export-members-modal .btn-cancel{
+  background: #FFFFFF;
+  border: 1px solid #0392CF;
+  border-radius: 3px;
+  width: 110px;
+  height: 33px;
+  font-size: 14px;
+  color: #0392CF;
+  text-align: center;
+  padding: 0;
+}
+#export-members-modal .btn-submit{
+  width: 179px;
+  height: 33px;
+  text-align: center;
+  border: 1px solid #0392CF;
+  background: #0392CF;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #FFFFFF;
+  margin-left: 20px;
+}

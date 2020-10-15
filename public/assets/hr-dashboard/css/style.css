@@ -7125,6 +7125,7 @@ span.dropdown-entitlement.disabled {
   font-size: 14px;
   text-align: center;
   vertical-align: top;
+  line-height: 20px;
 }
 
 /* ADD A DEPENDENT */
