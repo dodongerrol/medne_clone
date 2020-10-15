@@ -332,6 +332,9 @@
   display: flex;
   align-items: center;
 }
+.mednefits-employee-name .emp-name-input-wrapper.validation {
+  border: 2px solid #EB635D;
+}
 .mednefits-employee-name input {
   border: 0;
   padding: 0;
@@ -347,4 +350,12 @@
 }
 .emp-name-input-wrapper .permission-selector-dp-wrapper {
   color: #000;
+}
+.employee-name-validation {
+  color: #EB635D;
+  font-size: 10px;
+  line-height: normal;
+  width: 170px;
+  font-family: 'Helvetica Medium';
+  margin: 0 0 0 10px;
 }

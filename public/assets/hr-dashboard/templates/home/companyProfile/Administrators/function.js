@@ -83,6 +83,7 @@ app.directive("administratorsDirective", [
         scope.selected_location_data = [];
         scope.selected_deparment_data = [];
         scope.showLocationSelector = false;
+        scope.showEmployeeList = false;
 
         scope.adminPermission = function () {
           console.log('test');
@@ -119,6 +120,33 @@ app.directive("administratorsDirective", [
         }
 
         scope.selectedPermission = function ( type, data, opt ) {
+          if ( type == 'locations' ) {
+            // scope.showLocationSelector = false;
+            scope.chooseSelectorLocation = false;
+            if ( opt ) {
+              scope.selected_location_data.push(data);
+            } else {
+              console.log('close pud siyaaa sulod');
+              let index = $.inArray(data, scope.selected_location_data);
+              scope.selected_location_data.splice(index, 1);
+              data.status = false;             
+            }
+          }
+          if ( type == 'departments' ) {
+            // scope.showDepartmentSelector = false;
+            scope.chooseSelectorDepartment = false;
+            if ( opt ) {
+              scope.selected_deparment_data.push(data);
+            } else {
+              console.log('close pud siyaaa sulod');
+              let index = $.inArray(data, scope.selected_deparment_data);
+              scope.selected_deparment_data.splice(index, 1);
+              data.status = false;             
+            }
+          }
+        }
+
+        scope.editSelectedPermission = function ( type, data, opt ) {
           if ( type == 'locations' ) {
             // scope.showLocationSelector = false;
             scope.chooseSelectorLocation = false;
@@ -217,6 +245,10 @@ app.directive("administratorsDirective", [
           scope.showDepartmentSelector = false;
           scope.showLocationSelector =  false;
           scope.permissionSelector = false;
+        }
+
+        scope.seachEmployeeName = function () {
+          scope.showEmployeeList = scope.showEmployeeList == true ? false : true;
         }
 
         scope.formatMomentDate  = function(date, from, to){

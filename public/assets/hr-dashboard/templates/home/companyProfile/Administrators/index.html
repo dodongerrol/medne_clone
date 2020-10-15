@@ -182,18 +182,23 @@
             <div class="permission-wrapper employee-name">
               <label class="bold-text">Employee name</label>
               <div class="activated-text">(Activated account and email address are required to be an Administrator)</div>
-              <div class="emp-name-input-wrapper">
-                <i class="fa fa-search"></i>
-                <input type="type" placeholder="Search by name">
-                <i class="fa fa-angle-down"></i>
+              <div class="display-flex">
+                <div class="emp-name-input-wrapper">
+                  <i class="fa fa-search"></i>
+                  <input type="type" placeholder="Search by name" ng-click="seachEmployeeName()">
+                  <i class="fa fa-angle-down"></i>
 
-                <div  ng-if="false" class="permission-selector-dp-wrapper">
-                  <div>Employee 1</div>
-                  <div>Employee 1</div>
-                  <div>Employee 1</div>
-                  <div>Employee 1</div>
-                  <div>Employee 1</div>
-                  <div>Employee 1</div> 
+                  <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper">
+                    <div>Employee 1</div>
+                    <div>Employee 1</div>
+                    <div>Employee 1</div>
+                    <div>Employee 1</div>
+                    <div>Employee 1</div>
+                    <div>Employee 1</div> 
+                  </div>
+                </div>
+                <div ng-if="false" class="employee-name-validation">
+                  <span>*Please have this account activated before assigning Administrator</span>
                 </div>
               </div>
             </div>
@@ -374,29 +379,50 @@
                     <div ng-click="permissionSelectorData('departments')">Department</div>
                   </div>
                 </div>
-                <div ng-if="false">
-                  <div>
+                <div ng-if="showLocationSelector" class="choose-selector-container">
+                  <div class="permission-input-wrapper" ng-click="chooseSelector('locations')">
                     <span>Choose locations</span>
                     <i class="fa fa-angle-down"></i>
                   </div>
-                  <div>
-                    <div>Location</div>
-                    <div>Location 1</div>
+                  <div ng-if="chooseSelectorLocation" class="permission-selector-dp-wrapper">
+                    <div ng-repeat="list in locations_data track by $index" class="custom-checkbox-container">
+                      <label class="checkbox-input">
+                        <span ng-bind="list.location" class="checkbox-text"></span>
+                        <input ng-click="editSelectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <span class="checkbox-mark"></span>
+                      </label>
+                    </div>
                   </div>
                 </div>
-                <div ng-if="false">
-                  <div>
+                <div ng-if="showDepartmentSelector" class="choose-selector-container">
+                  <div class="permission-input-wrapper" ng-click="chooseSelector('departments')">
                     <span>Choose Departments</span>
                     <i class="fa fa-angle-down"></i>
                   </div>
-                  <div>
-                    <div>Department</div>
-                    <div>Department 1</div>
+                  <div ng-if="chooseSelectorDepartment" class="permission-selector-dp-wrapper">
+                    <div ng-repeat="list in departments_data track by $index" class="custom-checkbox-container">
+                      <label class="checkbox-input">
+                        <span ng-bind="list.department" class="checkbox-text"></span>
+                        <input ng-click="editSelectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <span class="checkbox-mark"></span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div ng-if="false">
-                <div class="filter-data-selector-container"><div>Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png"></div>
+              <div class="location-department-data-wrapper">
+                <div ng-if="permission_data == 'Locations' " class="filter-data-selector-wrapper">
+                  <div ng-repeat="list in selected_location_data" class="filter-data-selector-container">
+                    <div ng-bind="list.location">Location 1</div>
+                    <img ng-click="selectedPermission('locations',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
+                  </div>
+                </div>
+                <div ng-if="permission_data == 'Departments' " class="filter-data-selector-wrapper">
+                  <div ng-repeat="list in selected_deparment_data" class="filter-data-selector-container">
+                    <div ng-bind="list.department">Location 1</div>
+                    <img ng-click="selectedPermission('departments',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
