@@ -491,7 +491,8 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/activity.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/activityHistory/index.html'
+          // templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/activity.html'
         },
       },
     })

@@ -1767,7 +1767,12 @@ app.directive("employeeOverviewDirective", [
             scope.hideLoading();
             scope.selectedEmployee_index--;
             scope.selectedEmployee = scope.employees.data[scope.selectedEmployee_index];
+            scope.fetchRefundStatus(scope.selectedEmployee.user_id);
             scope.getEmpDependents(scope.selectedEmployee.user_id);
+            scope.getEmpPlans(scope.selectedEmployee.user_id);
+            scope.getMemberEntitlement(scope.selectedEmployee.user_id);
+            scope.getMemberNewEntitlementStatus(scope.selectedEmployee.user_id);
+            scope.entitlementCalc(scope.selectedEmployee.user_id);
             scope.blockHealthPatnerLoad();
           }
         };
@@ -1779,8 +1784,12 @@ app.directive("employeeOverviewDirective", [
             scope.hideLoading();
             scope.selectedEmployee_index++;
             scope.selectedEmployee = scope.employees.data[scope.selectedEmployee_index];
+            scope.fetchRefundStatus(scope.selectedEmployee.user_id);
             scope.getEmpDependents(scope.selectedEmployee.user_id);
             scope.getEmpPlans(scope.selectedEmployee.user_id);
+            scope.getMemberEntitlement(scope.selectedEmployee.user_id);
+            scope.getMemberNewEntitlementStatus(scope.selectedEmployee.user_id);
+            scope.entitlementCalc(scope.selectedEmployee.user_id);
             scope.blockHealthPatnerLoad();
           }
         };

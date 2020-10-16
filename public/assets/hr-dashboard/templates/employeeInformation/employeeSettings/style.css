@@ -1,3 +1,11 @@
 .employee-settings-container{
   position: relative;
 }
+.employee-settings-container .btn-admin{
+  display: flex;
+  align-items: center;
+}
+.employee-settings-container .btn-admin img{
+  margin-right: 10px;
+  width: 18px;
+}

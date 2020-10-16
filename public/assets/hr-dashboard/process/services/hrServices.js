@@ -482,8 +482,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
 
   // Medical and Wellness Wallent Activity Table
-  hrFactory.fetchMemberWalletActivitiesData = function ( id,type ) {
-    return $http.get( serverUrl.url + "/hr/get_member_allocation_activity/?customer_id=" + id + "&spending_type=" + type );
+  hrFactory.fetchMemberWalletActivitiesData = function ( id,type, page, per_page ) {
+    return $http.get( serverUrl.url + "/hr/get_member_allocation_activity/?customer_id=" + id + "&spending_type=" + type + "&page=" + page + "&per_page=" + per_page );
   }
 
   // Member save wallet
@@ -558,6 +558,22 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   hrFactory.fetchPrimaryAdministrator = function ( ) {
     return $http.get( serverUrl.url + "/hr/get_primary_admin_details" );
+  }
+
+  hrFactory.fetchLocationData = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_location_list" );
+  }
+
+  hrFactory.fetchDepartmentData = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_department_list" );
+  }
+
+  hrFactory.fetchDepartmentData = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_department_list" );
+  }
+
+  hrFactory.fecthAdditionalAdminDetails = function () {
+    return $http.get( serverUrl.url + "/hr/get_additional_admin_details" );
   }
 
   return hrFactory;

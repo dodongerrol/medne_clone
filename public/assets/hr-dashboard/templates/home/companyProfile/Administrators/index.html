@@ -94,11 +94,11 @@
         <div ng-if="isShowNoteAdmin" class="modal-body">
           <div class="admin-input-wrapper">
             <label>Full Name</label>
-            <input type="text" placeholder="Enter new Primary Admin's full name">
+            <input ng-model="changePrimaryData.fullname" type="text" placeholder="Enter new Primary Admin's full name">
           </div>
           <div class="admin-input-wrapper">
             <label>Email</label>
-            <input type="text" placeholder="Enter new Primary Admin's work email address">
+            <input ng-model="changePrimaryData.email" type="text" placeholder="Enter new Primary Admin's work email address">
           </div>
           <div class="admin-input-wrapper mobile-number">
             <label>Mobile Number</label>
@@ -106,7 +106,7 @@
               <div>
                 <input ng-model="changePrimaryData.phone_code" id="phone_number_primary_admin" type="tel">
               </div>
-              <input type="number" placeholder="Enter new Primary Admin's mobile number">
+              <input ng-model="changePrimaryData.phone_no" type="number" placeholder="Enter new Primary Admin's mobile number">
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@
         </div>
         <div class="modal-footer">
           <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="isShowNoteAdmin" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm Change</button>
+          <button ng-if="isShowNoteAdmin" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }" ng-click="updateHrAdmin()">Confirm Change</button>
           <button ng-if="!isShowNoteAdmin" ng-click="continuePrimAdmin()" class="btn-update confirm">Continue</button>
           <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
@@ -172,7 +172,7 @@
               <div class="custom-checkbox-container active">
                 <label class="checkbox-input">
                   <span class="checkbox-text">No</span >
-                  <input ng-model="is_mednefits_emp" value="0" type="radio"/>
+                  <input ng-click="mednefitsEmployee( is_mednefits_emp )" ng-model="is_mednefits_emp" value="0" type="radio"/>
                   <span class="checkbox-mark"></span>
                 </label>
               </div>
@@ -197,7 +197,7 @@
                     <div>Employee 1</div> 
                   </div>
                 </div>
-                <div ng-if="fals" class="employee-name-validation">
+                <div ng-if="false" class="employee-name-validation">
                   <span>*Please have this account activated before assigning Administrator</span>
                 </div>
               </div>

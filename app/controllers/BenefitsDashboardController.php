@@ -17874,6 +17874,8 @@ public function createHrLocation ()
 		$role = array (
 			'customer_id'						=> $result->customer_buy_start_id,
 			'member_id'							=> $employee->UserID,
+			'fullname'							=> $input['fullname'],
+			'email'								=> $input['email'],
 			'is_mednefits_employee'				=> $input['is_mednefits_employee'] ,
 			'status'							=> 1
 		);
@@ -17947,5 +17949,54 @@ public function createHrLocation ()
 			'add_location_departments'						=> $permission->add_location_departments
 		);
 		return array ('admin_details' => $data);
+	}
+
+	public function getAdditionalAdminDetails()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		// $employee_id = $input['member_id'];
+
+		$details = CustomerAdminRole::where('customer_id', $id)->get();
+		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
+
+		
+		foreach ($details as $detail) {
+			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+			$container [] = array(
+				'id'											=> $detail->id,
+				'fullname'										=> $detail->fullname,
+				'email'											=> $detail->email,
+				'edit_employee_dependent'						=> $permissions->edit_employee_dependent,
+				'enroll_terminate_employee'						=> $permissions->enroll_terminate_employee,
+				'approve_reject_edit_non_panel_claims'			=> $permissions->approve_reject_edit_non_panel_claims,
+				'create_remove_edit_admin_unlink_account'		=> $permissions->create_remove_edit_admin_unlink_account,
+				'manage_billing_and_payments'					=> $permissions->manage_billing_and_payments,
+				'add_location_departments'						=> $permissions->add_location_departments
+			);
+			
+		}
+		return $container;
+	}
+
+	public function removeAdministratorAccount()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		if(empty($input['admin_id']) || $input['admin_id'] == null) {
+            return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$remove = DB::table('customer_admin_roles')
+		->where('id', $input['admin_id'])->delete();
+
+		return array(
+			'status'		=> TRUE,
+			'message'		=> 'The administrator has successfully been removed.'
+		);
 	}
 }

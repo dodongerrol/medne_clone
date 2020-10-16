@@ -196,7 +196,11 @@ app.directive("employeeOverviewDirective", [
 						});
         }
         scope._selectAllEmpCheckbox_  = async function(opt){
+          scope.isAllEmpCheckboxSelected = opt;
           scope.selectedEmpArr  = [];
+          if(opt == false){
+            scope.isSelectOverallEmployees  = false;
+          }
           await angular.forEach(scope.employees.data, async function(value, key){
             value.selected = opt;
             if(opt){
@@ -213,6 +217,15 @@ app.directive("employeeOverviewDirective", [
             scope.selectedEmpArr.splice(index, 1);
           }
           console.log(scope.selectedEmpArr);
+        }
+        scope.selectOverallEmployees  = function(opt){
+          if(opt){
+            scope.isSelectOverallEmployees  = true;
+          }else{
+            scope.isSelectOverallEmployees  = false;
+            scope.isAllEmpCheckboxSelected = false;
+            scope._selectAllEmpCheckbox_(false);
+          }
         }
 
         scope.isTotalMembersShow = true;
@@ -335,6 +348,14 @@ app.directive("employeeOverviewDirective", [
           }
         }
 
+        scope.selectTransferBtn = function(data){
+          console.log(data);
+          scope.selected_employee = data;
+
+          $timeout(function(){
+            $("#transfer-employee-btn").trigger('click');
+          },200);
+        }
 
 
 

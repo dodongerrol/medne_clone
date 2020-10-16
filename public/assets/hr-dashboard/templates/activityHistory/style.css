@@ -1,0 +1,375 @@
+.page-header-title{
+  font-size: 25px;
+  color: #000000;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 0px 65px;
+}
+.activity-flex-container{
+  background-color: #f5f5f5;
+  padding: 0px 65px;
+  display: flex;
+}
+.activity-flex-container .add-filter-wrapper{
+  width: 170px;
+  margin-right: 30px;
+}
+.activity-flex-container .activity-history-content-wrapper{
+  flex: 1;
+}
+
+.back-btn-filter {
+  color: #0392CF;
+  cursor: pointer;
+  margin: 0 0 20px;
+}
+.back-btn-filter .fa {
+  margin: 0 10px 0 0;
+}
+.emp-filter-selector-container {
+  width: 110px;
+}
+.emp-filter-selector-container >div {
+  font-size: 13px;
+  padding: 5px;
+  cursor: pointer;
+}
+/* .emp-filter-selector-container >div.active , */
+.emp-filter-selector-container >div:hover {
+  background: rgba(3, 124, 176, 0.3);
+}
+.add-filter-wrapper {
+  color: #000;
+}
+.add-filter-text {
+  margin: 0 0 15px;
+}
+.emp-status-filter >div {
+  margin: 0 0 10px;
+}
+.emp-filter .custom-checkbox-container .checkbox-input .checkbox-mark {
+  width: 14px;
+  height: 14px;
+  top: 5px;
+}
+.emp-filter .custom-checkbox-container .checkbox-input .checkbox-mark:after {
+  left: 5px;
+  bottom: 4px;
+  width: 8px;
+  height: 14px;
+}
+.emp-filter .checkbox-text {
+  font-size: 14px;
+}
+.emp-filter .custom-checkbox-container .checkbox-input {
+  padding: 0 0 0 25px;
+}
+.emp-filter h5 {
+  font-family: 'Helvetica Medium';
+}
+.add-filter-wrapper .apply-filter-btn {
+  width: 100%;
+  background-color: #0392CF;
+  color: #fff;
+  height: 35px;
+  border: 0;
+  border-radius: 3px;
+  font-size: 14px;
+  margin: 10px 0 0;
+}
+.emp-filter-details-container .admin-blue-icon {
+  height: 15px;
+  margin: 0 0 0 5px;
+}
+.emp-filter-details-container .add-filter-icon {
+  height: 14px;
+}
+.emp-filter-details-container >div:first-child {
+  border: 1px solid #037CB0;
+  border-radius: 4px;
+  padding: 10px;
+  color: #02597E;
+}
+.emp-filter-details-container .total-number {
+  font-family: 'Helvetica Medium';
+}
+.emp-filter-details-container .total-member-data {
+  margin: 0 0 20px;
+}
+.emp-filter-details-container .filtered-text {
+  border: 1px solid #BFBFBF;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 0 0 15px;
+}
+.filtered-text .fa {
+  color: #02597E;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.filtered-text {
+  position: relative;
+}
+.filtered-text div {
+  width: 120px;
+  font-size: 14px;
+}
+.emp-filter-details-container .add-filter-btn {
+  border: 0;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  /* margin: 20px 0 0; */
+  padding: 0;
+}
+.add-filter-btn img {
+  margin: 0 10px 0 0;
+}
+.emp-filter .location-selector {
+  max-height: 250px;
+  background-color: #fff;
+  overflow: auto;
+  padding: 10px 0;
+  margin: 20px 0;
+}
+.emp-filter .location-selector >div {
+  padding: 4px 10px;
+}
+/* .emp-filter .location-selector >div.active { */
+.emp-filter .location-selector >div:hover {
+  background: rgba(230, 247, 255, 0.7);
+}
+.disabled-input {
+  background-color: var(--bg-gray-contrast)
+}
+.filter-data-selector-wrapper {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: -5px 0 0 -5px;
+  width: calc(100% + 12px);
+}
+.filter-data-selector-container {
+  font-size: 11px;
+  border: 1px solid #BFBFBF;
+  padding: 0 6px;
+  border-radius: 3px;
+  margin: 5px 0 0 5px;
+  display: flex;
+  align-items: center;
+}
+.filter-data-selector-container img{
+  height: 8px;
+  margin: 0 0 0 3px;
+  cursor: pointer;
+}
+.filter-data-selector-container >div {
+  white-space: nowrap;
+  width: 52px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ------------ CUSTOM CHECBOX ------------ */
+.custom-checkbox-container .checkbox-input {
+  display: block;
+  position: relative;
+  margin-bottom: 0px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-top: 0px;
+  padding: 0 0 0 40px;
+}
+.custom-checkbox-container .checkbox-input input {
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.custom-checkbox-container .checkbox-input input:checked ~ .checkbox-mark { 
+  background-color: transparent;
+}
+
+.custom-checkbox-container .checkbox-input input:checked ~ .checkbox-mark:after {
+  display: block;
+}
+
+.custom-checkbox-container .checkbox-input .checkbox-mark {
+  position: absolute;
+  top: 4px;
+  left: 2px;
+  height: 18px;
+  width: 18px;
+  border: 1px solid #BFBFBF;
+  border-radius: 2px;
+}
+
+.custom-checkbox-container .checkbox-input .checkbox-mark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  bottom: 4px;
+  width: 9px;
+  height: 17px;
+  border: solid #02597E;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+/* ---------------------------------------- */
+
+
+
+/* Date filters */
+.activity-header-filters-container{
+  display: flex;
+  border-bottom: 1px solid #BDBDBD;
+    padding-bottom: 20px;
+}
+.activity-header-filters-container .left-input{
+  flex: 1;
+}
+.activity-header-filters-container .right-input{
+  width: 420px;
+  flex: none;
+}
+.date-selection-container.right-input,
+.date-selection-container.left-input {
+  margin: 0;
+}
+.activity-header-filters-container .date-selection-container.right-input {
+  text-align: right;
+}
+.activity-header-filters-container .input-label {
+  display: inline-block;
+  position: relative;
+}
+.activity-header-filters-container .custom-select select {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  -webkit-appearance: none;
+  padding: 0 0 0 10px;
+  cursor: pointer;
+  display: unset !important;
+}
+.activity-header-filters-container .custom-select .select {
+  position: relative;
+  width: 150px;
+  height: 35px;
+  cursor: pointer;
+  border-radius: 3px;
+  background: #fff;
+  color: #555;
+  font-weight: 700;
+  box-shadow: none;
+  border: 2px solid #ddd;
+  margin-right: 25px;
+  font-size: 14px;
+}
+.input-label.custom-select.withIcon i {
+  position: relative;
+  left: -70px;
+  font-size: 10px;
+  top: -2px;
+}
+.activity-header-filters-container .input-label .radio {
+  display: inline-block;
+  background: #fff;
+  color: #555;
+  font-weight: 700;
+  padding: 5px 12.5px !important;
+  box-shadow: none;
+  border-radius: 3px;
+  border: 2px solid #ddd;
+  font-size: 14px;
+  height: 35px !important;
+  margin: 0 5px;
+  width: 80px;
+  cursor: pointer;
+}
+.activity-header-filters-container [type="radio"]:checked + label,
+[type="radio"]:not(:checked) + label {
+  padding: 0;
+}
+.activity-header-filters-container [type="radio"] + label:after,
+[type="radio"] + label:before {
+  content: unset !important;
+}
+.activity-header-filters-container .input-label input[type="radio"] {
+  display: none !important;
+}
+.activity-header-filters-container .input-label input[type="radio"]:checked + .radio {
+  border: 2px solid #009ec8;
+}
+.activity-header-filters-container .custom-date-selector.btn-custom-date {
+  margin: 0;
+}
+.activity-header-filters-container .container-fluid {
+  padding: 0;
+}
+.activity-header-filters-container .row {
+  border-bottom: 1px solid #4e4d4d73;
+  margin-bottom: 0px;
+}
+.activity-header-filters-container .date-range-view {
+  top: 22px;
+  left: 0;
+  z-index: 1;
+  padding: 7px;
+  position: absolute;
+  font-size: 13px;
+}
+.no-padding{
+  padding: 0;
+}
+
+.transactions-header button.active {
+  border: 1px solid #037CB0;
+  color: #037CB0;
+}
+.transactions-header button {
+  padding: 10px;
+  width: 271px;
+  /* height: 48px; */
+  margin: 0 10px;
+  text-align: center;
+  background: #FFFFFF;
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  font-size: 16px;
+  line-height: 20px;
+  color: #BFBFBF;
+}
+
+.date-selection-container .custom-date-selector button {
+  background: #fff;
+  color: #555;
+  font-weight: 700;
+  padding: 8px 34px;
+  box-shadow: none;
+  border: 2px solid #ddd;
+  font-size: 14px;
+  height: 35px;
+  width: 135px;
+  text-align: left;
+}
+
+.date-selection-container .custom-date-selector .btn-apply {
+  background: #0392cf;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: none;
+  border: 2px solid #0392cf;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-left: 8px;
+  width: 80px;
+  text-align: center;
+}
