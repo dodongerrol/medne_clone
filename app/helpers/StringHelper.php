@@ -191,8 +191,8 @@ class StringHelper{
                     // change logic
                     if((int)$hr->is_account_linked == 1) {
                         $hr->signed_in = $result->signed_in;
-                        $hr->company_linked = $result->company_linked;
-                        $hr->under_customer_id = $result->under_customer_id;
+                        $hr->customer_buy_start_id = $result->customer_buy_start_id;
+                        $hr->customer_id = $result->customer_buy_start_id;
                         $hr->hr_activated = 1;
                         $hr->active = 1;
                         $hr->hr_activated = true;

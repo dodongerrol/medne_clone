@@ -64,17 +64,6 @@ class BenefitsDashboardController extends \BaseController {
 
 			$hr = new HRDashboard();
 			$hr->updateCorporateHrDashboard($result->hr_dashboard_id, array('login_ip' => $_SERVER['REMOTE_ADDR']));
-			// Session::put('customer-session-id', $result->customer_buy_start_id);
-			$customer_credits = new CustomerCredits( );
-			$check = $customer_credits->checkCustomerCredits($result->customer_buy_start_id);
-			if($check == 0) {
-				$data = array(
-					'customer_id'	=> $result->customer_buy_start_id,
-					'active'			=> 1
-				);
-				$customer_credits->createCustomerCredits($data);
-			}
-
 			$admin_logs = array(
 				'admin_id'  => $result->hr_dashboard_id,
 				'admin_type' => 'hr',
@@ -278,7 +267,9 @@ class BenefitsDashboardController extends \BaseController {
 		// $result = self::checkSession();
 		// return json_encode($result);
 		$customer_start = new CorporateBuyStart();
-		return $customer_start->updateAgreeStatus($result->customer_buy_start_id);
+		$linkedData = DB::table('company_link_accounts')->where('hr_id', $result->hr_dashboard_id)->where('status', 1)->first();
+		$customer_id = $linkedData->customer_id;
+		return $customer_start->updateAgreeStatus($customer_id);
 	}
 
 	public function employeeEnrollmentProgress( )
@@ -9223,7 +9214,10 @@ class BenefitsDashboardController extends \BaseController {
 		$check = DB::table('customer_hr_dashboard')->where('reset_link', $input['token'])->first();
 
 		if($check) {
-			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
+			// get first link user
+			$linkedData = DB::table('company_link_accounts')->where('hr_id', $check->hr_dashboard_id)->where('status', 1)->first();
+			$customer_id = $linkedData->customer_id;
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 			$agree_status = $customer->agree_status == "true" ? true : false;
 			if($check->active == 1)	{
 				// create token
@@ -13398,8 +13392,9 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Company has no Business Information');
 		}
 
+		$hr_id = \CustomerHelper::getHRId($customer_id);
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
-		$hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $customer_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
 
 		$data = [];
 		$data['company_name'] = ucwords($company->company_name);
@@ -17284,12 +17279,12 @@ class BenefitsDashboardController extends \BaseController {
 
 		// get token details
 		$result = self::checkToken($input['token']);
-		$customer_id = $result->customer_buy_start_id;
+		// $customer_id = $result->customer_buy_start_id;
 
 		// check company link account
 		$link_account = DB::table('company_link_accounts')
 							->where('id', $input['id'])
-							->where('under_customer_id', $customer_id)
+							// ->where('under_customer_id', $customer_id)
 							->where('status', 1)
 							->first();
 		if(!$link_account) {
@@ -17308,9 +17303,9 @@ class BenefitsDashboardController extends \BaseController {
 
 		$hr->signed_in = TRUE;
 		$hr->company_linked = TRUE;
-		$hr->under_customer_id = $customer_id;
+		$hr->customer_buy_start_id = $link_account->customer_id;
+		$hr->customer_id = $link_account->customer_id;
 		$token = $jwt->encode($hr, $secret);
-
 		// update ip address for login hr
 		$hrClass = new HRDashboard();
 		$hrClass->updateCorporateHrDashboard($hr->hr_dashboard_id, array('login_ip' => $_SERVER['REMOTE_ADDR']));
