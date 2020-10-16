@@ -308,6 +308,9 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         // }
     //   },
     // })
+    
+    
+    //--------- BULK UPDATE MEMBER DETAILS ---------------//
     .state('bulk-update-member-details', {
       url: '/bulk-update-member-details',
       views: {
@@ -315,10 +318,36 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/bulkUpdateMemberDetails/index.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/bulkUpdateMemberDetails/container/index.html'
         },
       },
     })
+    .state('bulk-update-member-details.update-options', {
+      url: '/update-options',
+      views: {
+        'child-content@bulk-update-member-details': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateOptions/index.html'
+        },
+      },
+    })
+    .state('bulk-update-member-details.excel-import', {
+      url: '/excel-import',
+      views: {
+        'child-content@bulk-update-member-details': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/bulkUpdateMemberDetails/excelExportImport/index.html'
+        },
+      },
+    })
+    .state('bulk-update-member-details.summary-preview', {
+      url: '/summary-preview',
+      views: {
+        'child-content@bulk-update-member-details': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateEmployeeSummary/index.html'
+        },
+      },
+    })
+    //------------ END OF BULK UPDATE MEMBER DETAILS ---------------//
+
     .state('employee-overview', {
       url: '/employee-overview',
       views: {

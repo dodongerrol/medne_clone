@@ -410,3 +410,30 @@
   color: #FFFFFF;
   margin-left: 20px;
 }
+.benefits-setting-drop-wrapper{
+  position: relative;
+}
+.benefits-setting-drop-wrapper .ben-settings-drop-container{
+  position: absolute;
+  top: 42px;
+  left: 5px;
+  width: 240px;
+  border: 2px solid var(--primary);
+  border-radius: 4px;
+  background-color: #fff;
+}
+.ben-settings-drop-container .setting-drop-item{
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #333;
+  line-height: 1;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.ben-settings-drop-container .setting-drop-item:hover{
+  background-color: #dbf4ff;
+}
+.ben-settings-drop-container .setting-drop-item:not(:last-child){
+  border-bottom: 1px solid #ddd;
+}

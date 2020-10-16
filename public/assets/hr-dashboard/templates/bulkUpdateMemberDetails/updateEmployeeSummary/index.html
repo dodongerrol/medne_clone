@@ -1,0 +1,68 @@
+<div class="bulk-member-summary-preview-container bg-white" update-excel-summary-directive>
+  <p class="section-tile">Please check if all employee details are correct before we update them</p>
+
+  <div class="error-detected-div">Error detected in row 2.</div>
+  <div class="tbl-scroll-container">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Fullname</th>
+          <th>Work Email</th>
+          <th>Country Code</th>
+          <th>Mobile Number</th>
+          <th>Postal Code</th>
+          <th>Bank Name</th>
+          <th>Bank Account Number</th>
+          <th>Employee ID</th>
+          <th>Date of Birth</th>
+          <th>Beneffits Start Date</th>
+          <th>For Communication</th>
+          <th>Relationship</th>
+          <th>Location</th>
+          <th>Department</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-class="{'error' : $index == 1}" ng-repeat="list in [1,2,3,4,5]">
+          <td>1</td>
+          <td x-data="{open : false}">
+            <div ng-if="true" class="input-div">
+              <input @click="open = true" type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}">
+            </div>
+            <div ng-if="false" class="text-value">Jhon Doe</div>
+            <span ng-if="$index == 1" class="error">*Error message here</span>
+
+            <div x-show="open" @click.away="open = false" class="td-drop">
+              <div class="td-drp-item">A</div>
+              <div class="td-drp-item">B</div>
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="btn-container text-right">
+    <button class="btn-cancel" ng-click="backBtn()">Back</button>
+    <button class="btn-submit" ng-click="nextBtn()">Update</button>
+  </div>
+</div>
+
+
+<style scoped>
+  @import url('../assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateEmployeeSummary/style.css');
+</style>

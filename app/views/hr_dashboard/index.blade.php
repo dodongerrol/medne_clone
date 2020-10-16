@@ -333,7 +333,13 @@
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/activityHistory/function.js?_={{ $date->format('U') }}"></script>
 
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/function.js?_={{ $date->format('U') }}"></script>
+	<!-- bulk update member details -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/container/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateOptions/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/excelExportImport/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateEmployeeSummary/function.js?_={{ $date->format('U') }}"></script>
+	<!-- end of bulk update member details -->
+
 
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>

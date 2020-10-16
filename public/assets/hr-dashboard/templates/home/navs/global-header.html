@@ -106,7 +106,19 @@
 	</div>
 	<div class="header-menu-div">
 		<div class="menu-div" ui-sref-active="active" ui-sref="benefits-dashboard">Home</div>
-		<div class="menu-div" ui-sref-active="active" ui-sref="employee-overview" ng-class="{'active' : $state.current.name == 'bulk-update-member-details'}">Employee</div>
+		<div 
+			class="menu-div" 
+			ui-sref-active="active" 
+			ui-sref="employee-overview" 
+			ng-class="{
+				'active' : 
+					$state.current.name == 'bulk-update-member-details.update-options' ||
+					$state.current.name == 'bulk-update-member-details.excel-import' ||
+					$state.current.name == 'bulk-update-member-details.summary-preview'
+			}"
+		>
+			Employee
+		</div>
 		<div class="menu-div" ui-sref-active="active" ui-sref="activity">History</div>
 		<div class="menu-div" ui-sref-active="active" ui-sref="e-claim">Non-panel Claim</div>
 		<div class="menu-div" ui-sref-active="active" ui-sref="statement">Reports</div>
