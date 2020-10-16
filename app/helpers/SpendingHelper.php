@@ -99,6 +99,12 @@ class SpendingHelper {
 
     public static function checkSpendingCreditsAccess($customer_id)
     {
+        // get primary plan
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+        if($plan->account_type == "out_of_pocket") {
+            return ['enable' => true];
+        }
         // get lists of users
         $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
         $spending_account_settings = DB::table('spending_account_settings')
@@ -170,6 +176,12 @@ class SpendingHelper {
 
     public static function checkSpendingCreditsAccessNonPanel($customer_id)
     {
+        // get primary plan
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+        if($plan->account_type == "out_of_pocket") {
+            return ['enable' => true];
+        }
         // get lists of users
         $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
         $spending_account_settings = DB::table('spending_account_settings')

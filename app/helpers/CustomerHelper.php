@@ -319,7 +319,7 @@ class CustomerHelper
 			'wellness_enabled'	=> $spending->wellness_enable == 1 ? true : false,
 			'wellness_reimbursement'	=> $spending->wellness_reimbursement == 1 ? true : false,
 			'wellness_non_panel_submission'	=> $spending->wellness_active_non_panel_claim == 1 ? true : false,
-			'paid_status'		=> $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
+			// 'paid_status'		=> $planData->plan_method == "pre_paid" && $spendingPurchase > 0 ? false : true,
 			'with_mednefits_credits' => $mednefits_credits ? true : false,
 			'mednefits_credits_id' => $mednefits_credits ? $mednefits_credits->id : null,
 			'medical_benefits_coverage'			=> $spending->medical_benefits_coverage,
@@ -330,7 +330,8 @@ class CustomerHelper
 			'wellness_payment_method_panel'		=> $spending->wellness_payment_method_panel,
 			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel,
 			'medical_start'		=> $spending->medical_spending_start_date,
-			'medical_end'		=> $spending->medical_spending_end_date
+			'medical_end'		=> $spending->medical_spending_end_date,
+			'paid_status'		=> true
 		);
 	}
 
@@ -493,7 +494,14 @@ class CustomerHelper
 						);
 					}
 				} else if($status['medical_enabled'] == true) {
-					if($status['medical_reimbursement'] == true) {
+          if($status['medical_reimbursement'] == true && $status['medical_method'] == 'post_paid' && $status['wellness_enabled'] == false && $status['wellness_method'] == 'post_paid') {
+            return array(
+							'status' => true,
+							'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R+-+Medical.xlsx',
+							'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-R-Medical.xlsx'
+						);
+          }
+					else if($status['medical_reimbursement'] == true) {
 						return array(
 							'status' => true,
 							'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R+-+Medical.xlsx',
@@ -526,20 +534,20 @@ class CustomerHelper
 					return array(
 						'status' => true,
 						'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/employee/Employee+R-Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/dependents/Employees-and-Dependents+R-Wellness+.xlsx'
+						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/dependent/Employees-and-Dependents+R-Wellness+.xlsx'
 					);
 				} else {
 					return array(
 						'status' => true,
 						'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/employee/Employee-Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/dependents/Employees-and-Dependents-Wellness.xlsx'
+						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx'
 					);
 				}
 			} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == false) {
 				return array(
 					'status' => true,
 					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/employee/Employee+NO-SA-R.xlsx',
-					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/dependents/Employees-and-Dependents+NO-SA-R.xlsx'
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/enterprise/dependent/Employees-and-Dependents+NO-SA-R.xlsx'
 				);
 			} else if($status['account_type'] != "enterprise_plan" && $status['account_type'] != "lite_plan") {
 				if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
@@ -708,20 +716,20 @@ class CustomerHelper
 					return array(
 						'status' => true,
 						'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/employee/Employee+R-Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/dependent/Employees-and-Dependents+R-Wellness+.xlsx'
+						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/dependents/Employees-and-Dependents+R-Wellness+.xlsx'
 					);
 				} else {
 					return array(
 						'status' => true,
 						'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/employee/Employee-Wellness.xlsx',
-						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx'
+						'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/dependents/Employees-and-Dependents-Wellness.xlsx'
 					);
 				}
 			} else if($status['account_type'] == "enterprise_plan" && $status['wellness_enabled'] == false) {
 				return array(
 					'status' => true,
 					'employee'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/employee/Employee+NO-SA-R.xlsx',
-					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/dependent/Employees-and-Dependents+NO-SA-R.xlsx'
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/enterprise/dependents/Employees-and-Dependents+NO-SA-R.xlsx'
 				);
 			} else if($status['account_type'] != "enterprise_plan" && $status['account_type'] != "lite_plan") {
 				if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
@@ -936,7 +944,7 @@ class CustomerHelper
 			}
 		}
 	}
-
+	
 	public static function getPlanDuration($customer_id, $plan_start)
 	{
 		$plan_coverage = \CustomerHelper::getCompanyPlanDates($customer_id);
