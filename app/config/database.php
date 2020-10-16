@@ -69,14 +69,7 @@ return array(
 		'read' => array(
             // Return a random host
             // 'host' => 'root',
-            // 'host' => '127.0.0.1',
-			'host' => '127.0.0.1',
-			'database'  => 'medicloud_v3',
-			'username'  => 'root',
-			'password'  => '',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => 'medi_',
+            'host' => '127.0.0.1',
     ),
     'write' => array(
             // 'host' => 'root'
