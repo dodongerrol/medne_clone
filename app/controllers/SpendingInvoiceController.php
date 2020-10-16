@@ -196,7 +196,7 @@ class SpendingInvoiceController extends \BaseController {
 				'period_end'		=> date('j M Y', strtotime($data->statement_end_date)),
 				'statement_id'	=> $data->statement_id,
 				'statement_number' => $data->statement_number,
-				'statement_status'	=> $data->statement_status,
+				'statement_status'	=> $amount_due > 0 ? false : true,
 				'statement_total_amount' => number_format($results['credits'] + $results['total_consultation'], 2),
 				'total_in_network_amount'		=> number_format($results['credits'], 2),
 				'statement_amount_due' => number_format($amount_due, 2),

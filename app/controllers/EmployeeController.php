@@ -3356,7 +3356,7 @@ class EmployeeController extends \BaseController {
       }
 
       $member_id = $checker->UserID;
-      DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code']]);
+      DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code'], 'Status' => 1]);
       $returnObject->status = true;
       $returnObject->message = 'Postal Code already set';
       $returnObject->data = $checker;
