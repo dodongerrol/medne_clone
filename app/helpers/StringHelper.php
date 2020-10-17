@@ -189,19 +189,21 @@ class StringHelper{
                             ->first();
                 if($hr) {
                     // change logic
-                    if((int)$hr->is_account_linked == 1) {
-                        $hr->signed_in = $result->signed_in;
-                        $hr->customer_buy_start_id = $result->customer_buy_start_id;
-                        $hr->customer_id = $result->customer_buy_start_id;
-                        $hr->hr_activated = 1;
-                        $hr->active = 1;
-                        $hr->hr_activated = true;
-                        if(isset($result->expire_in)) {
-                            $hr->expire_in = $result->expire_in;
-                        } else {
-                            $hr->expire_in = null;
-                        }
-                    } else {
+                    // if((int)$hr->is_account_linked == 1) {
+                    //     $hr->signed_in = $result->signed_in;
+                    //     $hr->customer_buy_start_id = $result->customer_buy_start_id;
+                    //     $hr->customer_id = $result->customer_buy_start_id;
+                    //     $hr->hr_activated = 1;
+                    //     $hr->active = 1;
+                    //     $hr->hr_activated = true;
+                    //     if(isset($result->expire_in)) {
+                    //         $hr->expire_in = $result->expire_in;
+                    //     } else {
+                    //         $hr->expire_in = null;
+                    //     }
+                    // } else {
+                        $hr->customer_buy_start_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
+                        $hr->customer_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
                         if((int)$hr->active == 1) {
                             $hr->signed_in = $result->signed_in;
                             if(isset($result->expire_in)) {
@@ -213,7 +215,7 @@ class StringHelper{
                             $hr->status = false;
                             $hr->hr_activated = false;
                         }
-                    }                   
+                    // }                 
                     return $hr;
                 } else {
                     return FALSE;

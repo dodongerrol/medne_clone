@@ -265,10 +265,14 @@ class CorporateController extends BaseController {
 	{
 		$data = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$customer_id = $result->customer_buy_start_id;
+		// $customer_id = $result->customer_buy_start_id;
 
-		if(empty($data['id']) || $data['id'] == null) {
-			return ['status' => false, 'message' => 'id is required'];
+		if(empty($data['customer_id']) || $data['customer_id'] == null) {
+			return ['status' => false, 'message' => 'customer_id is required'];
+		}
+	
+		if(empty($data['hr_id']) || $data['hr_id'] == null) {
+			return ['status' => false, 'message' => 'hr_id is required'];
 		}
 
 		if(empty($data['fullname']) || $data['fullname'] == null) {
@@ -287,100 +291,84 @@ class CorporateController extends BaseController {
 			return ['status' => false, 'message' => 'phone_no is required'];
 		}
 
-		// check if is exist in linked account
-		$linked = DB::table('company_link_accounts')->where('id', $data['id'])->first();
-
-		if(!$linked) {
-			return ['status' => false, 'message' => 'linked account does not exist'];
-		} else if($linked && (int)$linked->status == 0) {
-			return ['status' => false, 'message' => 'linked account already unlinked'];
-		}
-
-		$admin_id = Session::get('admin-session-id');
+		$admin_id = Session::get('admin-session-id') ? Session::get('admin-session-id') : $result->hr_dashboard_id;
+		$admin_type = Session::get('admin-session-id') ? 'mednefits': 'hr';
 		// check email address if there is a primary hr admin
 		$primary = DB::table('customer_hr_dashboard')->where('email', $data['email'])->first();
 		
+		$customer_id = $data['customer_id'];
 		if($primary) {
-			$customer_id = $linked->customer_id;
-			$hr_id = $linked->hr_id;
-			$under_customer_id = $primary->customer_buy_start_id;
-			$old_under_customer_id = $linked->under_customer_id;
-			$under_hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $old_under_customer_id)->first();
-			$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+			$hr_id = $primary->hr_dashboard_id;
+			// check if customer id exist in link account
+			$linkAccont = DB::table('company_link_accounts')->where('hr_id', $hr_id)->where('customer_id', $customer_id)->where('status', 1)->first();
 
-			// check if primary admin already link
-			$check = DB::table('company_link_accounts')
-						->where('hr_id', $linked->hr_id)
-						->where('under_customer_id', $primary->customer_buy_start_id)
-						->where('status', 1)
-						->first();
-			
-			if($check) {
+			if($linkAccont) {
 				return ['status' => false, 'message' => 'Account already linked.'];
 			}
-			// deactivate company linked account to previous company and transfer to new linked company
-			DB::table('company_link_accounts')->where('id', $data['id'])->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
-			$new_linked = array(
-				'customer_id'       => $customer_id,
-				'hr_id'             => $hr_id,
-				'under_customer_id' => $under_customer_id,
-				'status'            => 1,
-				'created_at'        => date('Y-m-d H:i:s'),
-				'updated_at'        => date('Y-m-d H:i:s')
-			);
-			DB::table('company_link_accounts')->insert($new_linked);
 
+			// update existing linking from old hr
+			DB::table('company_link_accounts')->where('hr_id', $data['hr_id'])->where('customer_id', $customer_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+			// insert to new hr link
+			DB::table('company_link_accounts')->insert(['hr_id' => $hr_id, 'customer_id' => $customer_id, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+			
 			if($admin_id) {
 				$unlinked = array(
 					'customer_id'       => $customer_id,
-					'hr_id'             => $hr_id,
-					'under_customer_id' => $linked->under_customer_id,
+					'hr_id'             => $data['hr_id'],
 					'status'            => 0
 				);
 
 				$admin_logs = array(
 					'admin_id'  => $admin_id,
+					'admin_type' => $admin_type,
 					'type'      => 'admin_unlinked_company_account',
 					'data'      => serialize($unlinked)
 				);
 				SystemLogLibrary::createAdminLog($admin_logs);
 
+				$newlinked = array(
+					'customer_id'       => $customer_id,
+					'hr_id'             => $hr_id,
+					'status'            => 1
+				);
+
 				$admin_logs = array(
 					'admin_id'  => $admin_id,
+					'admin_type' => $admin_type,
 					'type'      => 'admin_linked_company_account',
-					'data'      => serialize($new_linked)
+					'data'      => serialize($newlinked)
 				);
 				SystemLogLibrary::createAdminLog($admin_logs);
 			}
-			
-			return ['status' => true, 'message' => ucwords($info->account_name).' has been successfully unlinked from Linked Accounts under '.ucwords($under_hr->fullname)];
+
+			return ['status' => true, 'message' => 'Success'];
 		} else {
-			$customer_id = $linked->customer_id;
-			$hr_id = $linked->hr_id;
-			$old_under_customer_id = $linked->under_customer_id;
-			$under_hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $old_under_customer_id)->first();
+			// update existing linking from old hr
+			$updateUnlink = DB::table('company_link_accounts')->where('hr_id', $data['hr_id'])->where('customer_id', $customer_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+			$hr_id = $data['hr_id'];
+			$old_under_customer_id = $data['hr_id'] ;
+			$under_hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $old_under_customer_id)->first();
 			$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 			// create new activation and information for hr
-			// deactivate company linked account to previous company and transfer to new linked company
-			DB::table('company_link_accounts')->where('id', $data['id'])->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
-			$customer_id = $linked->customer_id;
+			
 			if(url('/') == 'https://admin.medicloud.sg') {
 				$url = 'https://medicloud.sg';
 			} else if(url('/') == 'http://stage.medicloud.sg') {
 				$url = 'http://staging.medicloud.sg';
+			} else if(url('/') == 'http://stage_v2.medicloud.sg') {
+				$url = 'http://staging_v2.medicloud.sg';
 			} else {
 				$url = 'http://medicloud.local';
 			}
 			
 			$password = \CustomerHelper::get_random_password(8);
 			// update hr information
-			$reset_link = \CustomerHelper::getEncryptValue();
+			$reset_link = \AdminHelper::getEncryptValue();
 			$hr = array(
-				// 'customer_buy_start_id' => $customer_id,
-				'fullname'				=> $data['fullname'],
-				'email'					=> $data['email'],
-				'phone_code'			=> "+".$data['phone_code'],
-				'phone_number'			=> $data['phone_no'],
+				'fullname'				=> $request->get('fullname'),
+				'email'					=> $request->get('email'),
+				'phone_code'			=> "+".$request->get('phone_code'),
+				'phone_number'			=> $request->get('phone_no'),
 				'password'				=> md5($password),
 				'temp_password'			=> $password,
 				'qr_payment'			=> 1,
@@ -391,37 +379,178 @@ class CorporateController extends BaseController {
 				'hr_activated'			=> 0,
 				'reset_link'			=> $reset_link,
 				'is_account_linked' => 0,
+				'created_at'		=> date('Y-m-d H:i:s'),
 				'updated_at'      => date('Y-m-d H:i:s')
 			);
-			
-			DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->update($hr);
+		
+			$newHRId = DB::table('customer_hr_dashboard')->insertGetId($hr);
+			// create link account
+			// insert to new hr link
+			DB::table('company_link_accounts')->insert(['hr_id' => $newHRId, 'customer_id' => $customer_id, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 			// send hr email activation
 			$email_data = array();
 			$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
-			$email_data['emailName'] = ucwords($data['fullname']);
-			$email_data['emailPage'] = 'email-templates.activation-email';
-			$email_data['emailTo'] = $data['email'];
-			$email_data['button'] = url().'/company-activation#/activation-link?activation_token='.$reset_link;
+			$email_data['emailName'] = ucwords($request->get('fullname'));
+			$email_data['emailPage'] = 'email.activation-email';
+			$email_data['emailTo'] = $request->get('email');
+			$email_data['button'] = $url.'/company-activation#/activation-link?activation_token='.$reset_link;
 			\EmailHelper::sendEmail($email_data);
 
 			if($admin_id) {
 				$unlinked = array(
 					'customer_id'       => $customer_id,
-					'hr_id'             => $hr_id,
-					'under_customer_id' => $linked->under_customer_id,
+					'hr_id'             => $data['hr_id'],
 					'status'            => 0
 				);
 
 				$admin_logs = array(
 					'admin_id'  => $admin_id,
+					'admin_type' => $admin_type,
 					'type'      => 'admin_unlinked_company_account',
 					'data'      => serialize($unlinked)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+
+				$newlinked = array(
+					'customer_id'       => $customer_id,
+					'hr_id'             => $newHRId,
+					'status'            => 1
+				);
+
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => $admin_type,
+					'type'      => 'admin_linked_company_account',
+					'data'      => serialize($newlinked)
 				);
 				SystemLogLibrary::createAdminLog($admin_logs);
 			}
 
 			return ['status' => true, 'message' => ucwords($info->account_name).' has been successfully unlinked from Linked Accounts under '.ucwords($under_hr->fullname)];
 		}
+
+		// if($primary) {
+		// 	$customer_id = $linked->customer_id;
+		// 	$hr_id = $linked->hr_id;
+		// 	$under_customer_id = $primary->customer_buy_start_id;
+		// 	$old_under_customer_id = $linked->under_customer_id;
+		// 	$under_hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $old_under_customer_id)->first();
+		// 	$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+
+		// 	// check if primary admin already link
+		// 	$check = DB::table('company_link_accounts')
+		// 				->where('hr_id', $linked->hr_id)
+		// 				->where('under_customer_id', $primary->customer_buy_start_id)
+		// 				->where('status', 1)
+		// 				->first();
+			
+		// 	if($check) {
+		// 		return ['status' => false, 'message' => 'Account already linked.'];
+		// 	}
+		// 	// deactivate company linked account to previous company and transfer to new linked company
+		// 	DB::table('company_link_accounts')->where('id', $data['id'])->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+		// 	$new_linked = array(
+		// 		'customer_id'       => $customer_id,
+		// 		'hr_id'             => $hr_id,
+		// 		'under_customer_id' => $under_customer_id,
+		// 		'status'            => 1,
+		// 		'created_at'        => date('Y-m-d H:i:s'),
+		// 		'updated_at'        => date('Y-m-d H:i:s')
+		// 	);
+		// 	DB::table('company_link_accounts')->insert($new_linked);
+
+		// 	if($admin_id) {
+		// 		$unlinked = array(
+		// 			'customer_id'       => $customer_id,
+		// 			'hr_id'             => $hr_id,
+		// 			'under_customer_id' => $linked->under_customer_id,
+		// 			'status'            => 0
+		// 		);
+
+		// 		$admin_logs = array(
+		// 			'admin_id'  => $admin_id,
+		// 			'type'      => 'admin_unlinked_company_account',
+		// 			'data'      => serialize($unlinked)
+		// 		);
+		// 		SystemLogLibrary::createAdminLog($admin_logs);
+
+		// 		$admin_logs = array(
+		// 			'admin_id'  => $admin_id,
+		// 			'type'      => 'admin_linked_company_account',
+		// 			'data'      => serialize($new_linked)
+		// 		);
+		// 		SystemLogLibrary::createAdminLog($admin_logs);
+		// 	}
+			
+		// 	return ['status' => true, 'message' => ucwords($info->account_name).' has been successfully unlinked from Linked Accounts under '.ucwords($under_hr->fullname)];
+		// } else {
+		// 	$customer_id = $linked->customer_id;
+		// 	$hr_id = $linked->hr_id;
+		// 	$old_under_customer_id = $linked->under_customer_id;
+		// 	$under_hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $old_under_customer_id)->first();
+		// 	$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+		// 	// create new activation and information for hr
+		// 	// deactivate company linked account to previous company and transfer to new linked company
+		// 	DB::table('company_link_accounts')->where('id', $data['id'])->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+		// 	$customer_id = $linked->customer_id;
+		// 	if(url('/') == 'https://admin.medicloud.sg') {
+		// 		$url = 'https://medicloud.sg';
+		// 	} else if(url('/') == 'http://stage.medicloud.sg') {
+		// 		$url = 'http://staging.medicloud.sg';
+		// 	} else {
+		// 		$url = 'http://medicloud.local';
+		// 	}
+			
+		// 	$password = \CustomerHelper::get_random_password(8);
+		// 	// update hr information
+		// 	$reset_link = \CustomerHelper::getEncryptValue();
+		// 	$hr = array(
+		// 		// 'customer_buy_start_id' => $customer_id,
+		// 		'fullname'				=> $data['fullname'],
+		// 		'email'					=> $data['email'],
+		// 		'phone_code'			=> "+".$data['phone_code'],
+		// 		'phone_number'			=> $data['phone_no'],
+		// 		'password'				=> md5($password),
+		// 		'temp_password'			=> $password,
+		// 		'qr_payment'			=> 1,
+		// 		'wallet'				=> 1,
+		// 		'active'				=> 0,
+		// 		'billing_status'		=> 1,
+		// 		'expiration_time'		=> date('Y-m-d H:i:s', strtotime('+7 days')),
+		// 		'hr_activated'			=> 0,
+		// 		'reset_link'			=> $reset_link,
+		// 		'is_account_linked' => 0,
+		// 		'updated_at'      => date('Y-m-d H:i:s')
+		// 	);
+			
+		// 	DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->update($hr);
+		// 	// send hr email activation
+		// 	$email_data = array();
+		// 	$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+		// 	$email_data['emailName'] = ucwords($data['fullname']);
+		// 	$email_data['emailPage'] = 'email-templates.activation-email';
+		// 	$email_data['emailTo'] = $data['email'];
+		// 	$email_data['button'] = url().'/company-activation#/activation-link?activation_token='.$reset_link;
+		// 	\EmailHelper::sendEmail($email_data);
+
+		// 	if($admin_id) {
+		// 		$unlinked = array(
+		// 			'customer_id'       => $customer_id,
+		// 			'hr_id'             => $hr_id,
+		// 			'under_customer_id' => $linked->under_customer_id,
+		// 			'status'            => 0
+		// 		);
+
+		// 		$admin_logs = array(
+		// 			'admin_id'  => $admin_id,
+		// 			'type'      => 'admin_unlinked_company_account',
+		// 			'data'      => serialize($unlinked)
+		// 		);
+		// 		SystemLogLibrary::createAdminLog($admin_logs);
+		// 	}
+
+		// 	return ['status' => true, 'message' => ucwords($info->account_name).' has been successfully unlinked from Linked Accounts under '.ucwords($under_hr->fullname)];
+		// }
 	}
 	
 	public function getCorporateLinkedAccount( ) {
@@ -432,7 +561,7 @@ class CorporateController extends BaseController {
 		$hr_id = $result->hr_dashboard_id;
 		$limit = !empty($input['limit']) ? $input['limit'] : 5;
 		$search = !empty($input['search']) ? $input['search'] : null;
-
+		$except_id = !empty($input['except_id']) ? $input['except_id'] : false;
 		if($search) {
 			$link_accounts = DB::table('company_link_accounts')
 							->join('customer_business_information', 'customer_business_information.customer_buy_start_id', '=', 'company_link_accounts.customer_id')
@@ -449,10 +578,18 @@ class CorporateController extends BaseController {
 							})
 							->get();
 		} else {
-			$link_accounts = DB::table('company_link_accounts')
+			if($except_id) {
+				$link_accounts = DB::table('company_link_accounts')
+							->where('hr_id', $hr_id)
+							->where('customer_id', '!=', $except_id)
+							->where('status', 1)
+							->paginate($limit);
+			} else {
+				$link_accounts = DB::table('company_link_accounts')
 							->where('hr_id', $hr_id)
 							->where('status', 1)
 							->paginate($limit);
+			}
 		}
 		
 
@@ -471,6 +608,7 @@ class CorporateController extends BaseController {
 		$format = [];
 		foreach($link_accounts as $key => $account) {
 			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $account->customer_id)->first();
+			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $account->customer_id)->first();
 			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $account->customer_id)->orderBy('created_at', 'desc')->first();
 			$hrAccount = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $account->hr_id)->first();
 
@@ -479,7 +617,7 @@ class CorporateController extends BaseController {
 				'hr_id'	=> $account->hr_id,
 				'email' => $hrAccount->email,
 				'company_id' => $account->customer_id,
-				'account_name' => ucwords($customer->account_name),
+				'account_name' => $customer->account_name ? ucwords($customer->account_name) : ucwords($info->company_name),
 				'link_date' => date('d/m/Y', strtotime($customer->created_at)),
 				'plan_type' => \PlanHelper::getAccountType($plan->account_type)
 			);
