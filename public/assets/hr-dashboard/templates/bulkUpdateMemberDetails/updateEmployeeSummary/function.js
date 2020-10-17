@@ -17,7 +17,7 @@ app.directive("updateExcelSummaryDirective", [
         }
 
         scope.onLoad  = function(){
-
+          
         }
         scope.onLoad()
         
