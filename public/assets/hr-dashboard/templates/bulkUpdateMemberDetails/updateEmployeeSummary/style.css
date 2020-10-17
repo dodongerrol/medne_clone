@@ -9,11 +9,13 @@
   margin-bottom: 30px;
   margin-left: 50px;
 }
-
+.tbl-wrapper{
+  position: relative;
+}
 .tbl-scroll-container{
   overflow-y: auto;
-  position: relative;
-  display: block;
+  overflow-x: auto;
+  max-height: 300px;
 }
 .tbl-scroll-container table{
   min-width: 1800px;
@@ -75,4 +77,48 @@
   display: flex;
   align-items: center;
   font-weight: 700;
+}
+
+.td-drop{
+  position: absolute;
+  top: 0;
+  background-color: #aaa;
+  width: 200px;
+  height: 200px;
+  display: block;
+}
+
+
+
+
+
+.tbl-div{
+  min-width: 1500px;
+}
+
+.tbl-div .tbl-head-row{
+  display: flex;
+}
+.tbl-div .tbl-head-row .tbl-col{
+  flex: auto;
+}
+.tbl-div .tbl-body{
+  position: relative;
+  overflow-y: auto;
+}
+.tbl-div .tbl-row{
+  display: flex;
+}
+.tbl-div .tbl-row .tbl-col{
+  flex: 1;
+}
+.tbl-col.flex-2{
+  flex: 2;
+}
+.tbl-col.flex-3{
+  flex: 2;
+}
+
+.tbl-col .td-drop{
+  position: static;
 }
