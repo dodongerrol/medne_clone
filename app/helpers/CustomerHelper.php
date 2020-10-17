@@ -1128,5 +1128,21 @@ class CustomerHelper
 			return [];
 		}
 	}
+
+	public static function getHRId($customer_id)
+	{
+		$hr_account = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $customer_id)->first();
+		if(!$hr_account) {
+			// get hr details in link account
+			$linkAccount = DB::table('company_link_accounts')->where('customer_id', $customer_id)->where('status', 1)->first();
+
+			if($linkAccount) {
+				$hr_account = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $linkAccount->hr_id)->first();
+				return $hr_account->hr_dashboard_id;
+			}
+		} else {
+			return $hr_account->hr_dashboard_id;
+		}
+	}
 }
 ?>

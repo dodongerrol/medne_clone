@@ -429,31 +429,29 @@ class CorporateController extends BaseController {
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
-
+		$hr_id = $result->hr_dashboard_id;
 		$limit = !empty($input['limit']) ? $input['limit'] : 5;
 		$search = !empty($input['search']) ? $input['search'] : null;
 
 		if($search) {
 			$link_accounts = DB::table('company_link_accounts')
-							->join('customer_hr_dashboard', 'customer_hr_dashboard.hr_dashboard_id', '=', 'company_link_accounts.hr_id')
+							->join('customer_business_information', 'customer_business_information.customer_buy_start_id', '=', 'company_link_accounts.customer_id')
 							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'company_link_accounts.customer_id')
-							->join('customer_business_information', 'customer_business_information.customer_buy_start_id', '=', 'customer_hr_dashboard.customer_buy_start_id')
-							->where(function($query) use ($search, $customer_id){
-								$query->where('company_link_accounts.under_customer_id', $customer_id)
+							->where(function($query) use ($search, $hr_id){
+								$query->where('company_link_accounts.hr_id', $hr_id)
 								->where('company_link_accounts.status', 1)
 								->where('customer_business_information.company_name', 'like', '%'.$search.'%');
 							})
-							->orWhere(function($query) use ($search, $customer_id){
-								$query->where('company_link_accounts.under_customer_id', $customer_id)
+							->orWhere(function($query) use ($search, $hr_id){
+								$query->where('company_link_accounts.hr_id', $hr_id)
 								->where('company_link_accounts.status', 1)
 								->where('customer_buy_start.account_name', 'like', '%'.$search.'%');
 							})
 							->get();
 		} else {
 			$link_accounts = DB::table('company_link_accounts')
-							->join('customer_hr_dashboard', 'customer_hr_dashboard.hr_dashboard_id', '=', 'company_link_accounts.hr_id')
-							->where('company_link_accounts.under_customer_id', $customer_id)
-							->where('company_link_accounts.status', 1)
+							->where('hr_id', $hr_id)
+							->where('status', 1)
 							->paginate($limit);
 		}
 		
@@ -472,14 +470,15 @@ class CorporateController extends BaseController {
 
 		$format = [];
 		foreach($link_accounts as $key => $account) {
-			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $account->customer_buy_start_id)->first();
-			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $account->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-			
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $account->customer_id)->first();
+			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $account->customer_id)->orderBy('created_at', 'desc')->first();
+			$hrAccount = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $account->hr_id)->first();
+
 			$temp = array(
 				'id'	=> $account->id,
-				'hr_id'	=> $account->hr_dashboard_id,
-				'email' => $account->email,
-				'company_id' => $account->customer_buy_start_id,
+				'hr_id'	=> $account->hr_id,
+				'email' => $hrAccount->email,
+				'company_id' => $account->customer_id,
 				'account_name' => ucwords($customer->account_name),
 				'link_date' => date('d/m/Y', strtotime($customer->created_at)),
 				'plan_type' => \PlanHelper::getAccountType($plan->account_type)
