@@ -430,10 +430,16 @@
   font-weight: 700;
   text-align: left;
   cursor: pointer;
+  display: block;
+  text-decoration: none;
 }
 .ben-settings-drop-container .setting-drop-item:hover{
   background-color: #dbf4ff;
+  text-decoration: none;
 }
 .ben-settings-drop-container .setting-drop-item:not(:last-child){
   border-bottom: 1px solid #ddd;
+}
+.selected-properties-scroll{
+  height: 308px;
 }
