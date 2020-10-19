@@ -420,7 +420,7 @@ class PlanTierController extends \BaseController {
 			$customer_active_plan_id = $active_plan->customer_active_plan_id;
 		}
 
-		if($checkEnrollVacantSeats) {
+		if($planned->account_type == "stand_alone_plan" || $planned->account_type == "insurance_bundle" || $planned->account_type == "enterprise_plan") {
 			$total_dependents_entry = 0;
 			$total_dependents = 0;
 			// check total depedents to be save
