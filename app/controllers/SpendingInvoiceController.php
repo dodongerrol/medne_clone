@@ -173,14 +173,14 @@ class SpendingInvoiceController extends \BaseController {
 			if((int)$data->lite_plan == 1) {
 				$lite_plan = true;
 			}
-
+			$billingContact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 			$total = round($results['total_post_paid_spent'], 2);
 			$amount_due = (float)$total - (float)$data->paid_amount;
 
 			$temp = array(
 				'company' => ucwords($data->statement_company_name),
 				'company_address' => ucwords($data->statement_company_address),
-				'postal'		=> $data->postal,
+				'postal'		=> $data->postal ? $data->postal : $billingContact->postal,
 				'contact_email' => $data->statement_contact_email,
 				'contact_name' => ucwords($data->statement_contact_name),
 				'contact_contact_number' => $data->statement_contact_number,
