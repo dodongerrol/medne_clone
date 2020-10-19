@@ -642,7 +642,7 @@ class SpendingAccountController extends \BaseController {
 			
 			return [
 				'status' => true,
-				'spent' => $credits['credits'],
+				'spent' => $credits,
 				'currency_type' => $customer->currency_type,
 				'id'			=> $spending_account_settings->spending_account_setting_id,
 				'customer_id'	=> $customer_id,
