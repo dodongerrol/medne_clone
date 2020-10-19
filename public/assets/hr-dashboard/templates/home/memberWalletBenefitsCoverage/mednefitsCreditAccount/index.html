@@ -30,7 +30,7 @@
         <span ng-if="mednefitsCreditsData.payment_status == false && !mednefitsCreditsData.disable" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
         <span ng-if="mednefitsCreditsData.disable" class="credits-on-hold-text deactivated-text">
           Credits amounts are on hold as this account has been deactivated.<br>
-          Credits amount of {{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.available_credits }} will be refunded on {{ formatMomentDate(selectedTerm.end, 'YYYY-MM-DD', 'DD/MM/YYYY') }}.
+          Credits amount of {{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.refund_amount }} will be refunded on {{ formatMomentDate(selectedTerm.end, 'YYYY-MM-DD', 'DD/MM/YYYY') }}.
         </span>
         <div class="mednefits-available-credits display-flex">
           <div class="available-credits flex-1">
