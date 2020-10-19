@@ -18086,7 +18086,7 @@ public function createHrLocation ()
 		$details = CustomerAdminRole::where('customer_id', $id)->get();
 		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
 
-		
+		$container = array();
 		foreach ($details as $detail) {
 			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
 			if(!$permissions)
