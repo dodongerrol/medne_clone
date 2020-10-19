@@ -669,33 +669,33 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         }
       }
     })
-    .state('settings', {
-      url: '/settings',
-      views: {
-        'navigation': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
-        },
-        'main': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/settings.html'
-        }
-      }
-    })
-    .state('settings.cap-per-visit', {
-      url: '/cap-per-visit',
-      views: {
-        'child-content@settings': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/cap-per-visit.html'
-        }
-      }
-    })
-    .state('settings.block-health-partners', {
-      url: '/block-health-partners',
-      views: {
-        'child-content@settings': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
-        }
-      }
-    })
+    // .state('settings', {
+    //   url: '/settings',
+    //   views: {
+    //     'navigation': {
+    //       templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+    //     },
+    //     'main': {
+    //       templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/settings.html'
+    //     }
+    //   }
+    // })
+    // .state('settings.cap-per-visit', {
+    //   url: '/cap-per-visit',
+    //   views: {
+    //     'child-content@settings': {
+    //       templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/cap-per-visit.html'
+    //     }
+    //   }
+    // })
+    // .state('settings.block-health-partners', {
+    //   url: '/block-health-partners',
+    //   views: {
+    //     'child-content@settings': {
+    //       templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/block-health-partners.html'
+    //     }
+    //   }
+    // })
     .state('expired-link', {
       url: '/expired-link',
       views: {
@@ -994,6 +994,29 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         },
         'company-profile-content@company-profile': {
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/administrators/index.html'
+        }
+      }
+    })
+
+    .state('cap-per-visit', {
+      url: '/cap-per-visit',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/capPerVisit/index.html'
+        }
+      }
+    })
+    .state('block-health-partners', {
+      url: '/block-health-partners',
+      views: {
+        'navigation': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+        },
+        'main': {
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/healthProviderAccess/index.html'
         }
       }
     })

@@ -1,0 +1,136 @@
+<div cap-per-visit-directive>
+	<div class="cap-per-visit-wrapper">
+		<div class="back-wrapper">
+			<a ui-sref="employee-overview"><i class="fa fa-angle-left"></i> Back</a>
+		</div>
+		<div class="content-wrapper-div">
+			<div class="health-provider-header-container">
+				<h3>Group Cap Per Visit</h3>
+				<div class="flex items-center space-x-3">
+					<button class="btn-export-member medi-border-primary medi-text-primary bg-white w-40"
+						ng-click="fileUploadModal(emp)" data-toggle="modal" data-target="#file_upload" data-toggle="modal">
+						<img src="../assets/hr-dashboard/img/new-assets/Download.png">
+						Excel Import
+					</button>
+					<button ng-click="saveBtn()" id="hideMe"
+						class="replace-employee-update-button update-replace save-continue-disabled">
+						Update
+					</button>
+				</div>
+			</div>
+
+			<div class="gp-cap-table-wrapper">
+				<div class="gp-cap-table-info-wrapper">
+					<div class="gp-cap-table-info-container">
+						<table class="w-full">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Full Name</th>
+									<th>Cap Per Visit</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="list in gpCapPerVisitInfo track by $index">
+									<td ng-bind="list.user_id">4</td>
+									<td ng-bind="list.name">Filbert Tan</td>
+									<td ng-click="editTableCell( $index, list )">
+										<span ng-if="showDataText[ $index ]">
+											<span ng-bind="list.currency_type" class="currency-type">S$</span>
+											<span ng-bind="list.cap_amount" style="margin: 0 5px;"
+												class="show-data-text">{{$index}}</span>
+										</span>
+										<span ng-if="showInputText[ $index ]" style="display: flex;">
+											<span ng-bind="list.currency_type" class="currency-type">S$</span> <span>
+												<input id="hideMe{{$index}}" class="edit-input show-input-text" type="text"
+													pattern="^\d*(\.\d{0,2})?$" ng-change="inputActiveSaveBtn()"
+													ng-model="list.cap_amount"></span>
+										</span>
+										<span ng-if="capPerVisitNoValue[ $index ]">
+											<span class="not-applicable-text" id="hideMe{{$index}}">Not applicable</span>
+										</span>
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="health-pagination">
+					<div class="page-wrapper">
+						<div class="page-scroll-container page-opened">
+							<span>
+								<i class="fa fa-angle-left" style="font-size: 14px;"></i>
+								<span ng-click="prevPageGpCap()">Prev</span>
+							</span>
+							<div>
+								<span ng-repeat="list in range( gpCapPerVisitInfo_pagination.last_page )" ng-bind="$index + 1"
+									ng-click="goToGpCap(list + 1)" class="health-page-num"
+									ng-class="{'active' : list + 1 == selectCapPage}"></span>
+							</div>
+							<span>
+								<span ng-click="nextPageGpCap()">Next</span>
+								<i class="fa fa-angle-right" style="font-size: 14px;"></i>
+							</span>
+						</div>
+					</div>
+					<div class="rows-page-wrapper">
+						<span><span ng-bind="gpCapPerVisitInfo_pagination.count"></span> per page</span>
+						<span>
+							<i ng-click="showPageScroll()" class="fa fa-caret-down"></i>
+						</span>
+						<div class="opened-per-page-scroll page-scroll" style="display: none">
+							<span ng-click="changeGpPerPage(10)">10</span>
+							<span ng-click="changeGpPerPage(20)">20</span>
+							<span ng-click="changeGpPerPage(30)">30</span>
+							<span ng-click="changeGpPerPage(40)">40</span>
+							<span ng-click="changeGpPerPage(50)">50</span>
+							<span ng-click="changeGpPerPage(100)">100</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="file_upload" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+		aria-hidden="true" style="background: rgba(0, 0, 0, 0.3);">
+		<div class="modal-dialog" role="document" style="width: 750px;margin-top: 100px;">
+			<div class="modal-content">
+				<h3 class="excel-import-text">Excel Import</h3>
+
+				<p class="excel-import-subtext">To prepare the import data, download the excel template file here before upload.</p>
+
+				<button class="btn-download-template" ng-click="downloadGpCapExcelTemplate()">DOWNLOAD TEMPLATE</button>
+
+				<div class="drag-upload-box-wrapper text-center" ngf-drop="uploadGpCapChanged( gpCapFile )"
+				ngf-select="uploadGpCapChanged( gpCapFile )" ng-model="gpCapFile"
+				ngf-drag-over-class="'dragover'">
+
+					<img src="../../assets/hr-dashboard/img/icons/upload.svg">
+					<div ng-if="!gpCapFile.name" class="no-upload-yet">
+						<p>Drag and drop an Excel file here to upload</p>
+						<p>or</p>
+						<p>Select file</p>
+					</div>
+			
+					<div ng-if="gpCapFile.name" class="error-success-w-file">
+						<p class="file-name" ng-bind="gpCapFile.name">file.xls</p>
+						<!-- <p class="success">Successfully uploaded.</p> -->
+						<p ng-if="gpCapFile.error" class="error" ng-bind="gpCapFile.error_text">Upload failed. Something went wrong</p>
+					</div>
+				</div>
+
+				<div class="btn-container text-center">
+					<button class="btn-cancel">Cancel</button>
+					<button class="btn-submit">Update</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style scoped>
+	@import url('../../../../assets/hr-dashboard/templates/capPerVisit/style.css');
+</style>

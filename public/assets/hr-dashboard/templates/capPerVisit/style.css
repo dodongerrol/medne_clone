@@ -1,0 +1,137 @@
+.cap-per-visit-wrapper{
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  width: 100%;
+  padding: 40px 70px;
+}
+.cap-per-visit-wrapper .content-wrapper-div{
+  min-width: 700px;
+}
+.cap-per-visit-wrapper .health-provider-header-container{
+  display: flex;
+  margin-bottom: 30px;
+}
+.health-provider-header-container h3{
+  width: 210px;
+  color: #333;
+}
+.health-provider-header-container > div{
+  flex: 1;
+  justify-content: flex-end;
+  text-align: right;
+}
+.health-pagination{
+  text-align: center;
+  justify-content: center;
+}
+
+#file_upload .modal-content{
+  padding: 30px 60px;
+  text-align: center;
+}
+#file_upload .drop-box{
+  width: 100%;
+  margin: 0;
+  border: 2px dashed #d1dce5;
+}
+
+#file_upload .excel-import-text{
+  padding: 0px 0 30px 0;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+#file_upload .excel-import-subtext{
+  text-align: center;
+    font-weight: 700;
+  margin-bottom: 20px;
+}
+#file_upload .btn-download-template{
+  width: 227.93px;
+  height: 35px;
+  background: #02597E;
+  border-radius: 5px;
+  line-height: 1;
+  text-align: center;
+  font-size: 14px;
+  line-height: 17px;
+  text-decoration-line: underline;
+  color: #FFFFFF;
+  border: none;
+  margin: 0 auto 50px auto;
+  display: block;
+  text-transform: uppercase;
+}
+
+.drag-upload-box-wrapper{
+  width: 100%;
+  height: 250px;
+  max-width: 1080px;
+  margin: 0 auto;
+  border: 2px dashed #ddd;
+  padding: 40px 30px;
+  background: #f9fdff;
+  position: relative;
+}
+.drag-upload-box-wrapper input[type='file']{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  opacity: 0;
+}
+.drag-upload-box-wrapper img{
+  width: 60px;
+  margin-bottom: 20px;
+}
+.drag-upload-box-wrapper p{
+  margin: 0 0 10px 0;
+  line-height: 1;
+  color: #666;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+p.success{
+  color: #1f6d11;
+}
+p.error{
+  color: #902533;
+}
+p.file-name{
+
+}
+
+.btn-container{
+  padding: 20px 50px;
+}
+.btn-cancel{
+  background: #FFFFFF;
+  border: 1px solid #0392CF;
+  border-radius: 3px;
+  width: 120px;
+  height: 38px;
+  font-size: 14px;
+  color: #0392CF;
+  text-align: center;
+  padding: 0;
+}
+.btn-submit{
+  width: 120px;
+  height: 38px;
+  text-align: center;
+  border: 1px solid #0392CF;
+  background: #0392CF;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #FFFFFF;
+  margin-left: 20px;
+}
+
+button:disabled,
+button.disabled{
+  opacity: .4;
+  background-color: #eee;
+}

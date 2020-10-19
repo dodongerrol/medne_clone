@@ -1,105 +1,3 @@
-<div class="top-navbar" style="display:none;">
-	<div class="container">
-		<img ui-sref="benefits-dashboard" src="../../assets/hr-dashboard/img/Mednefits Logo V1.svg" class="top-logo pull-left pointer-cursor">
-		<span class="pull-right account-dropdown">
-			<a onclick="myAccount()">
-				<img src="../../assets/hr-dashboard/img/icons/down-arrow.svg" class="arrow-down pull-right">
-				<img src="../../assets/hr-dashboard/img/user.png" class="user-icon pull-right">
-			</a>
-		</span>
-		<div class="account-list-container">
-			<ul>
-				<li>
-					<a ui-sref="company-and-contacts">Account & Billing</a>
-				</li>
-				<!-- <li>
-					<a ui-sref="settings.cap-per-visit">Settings</a>
-				</li> -->
-				<li>
-					<a ui-sref="plan-coverage">Plan Coverage</a>
-				</li>
-				<li>
-					<a href="javascript:void(0)" id="logout-btn">Log Out</a>
-				</li>
-			</ul>
-		</div>
-		<a href="javascript:void(0)" class="pull-right need-help-text tooltips">
-			<h3>Need help?</h3>
-			<div class="tooltip-container">
-				<h3 class="tooltip-title">We're here to help.</h3>
-				<h3 class="tooltip-phone-email-title">You may ring us</h3>
-				<h3 class="tooltip-phone-email-details">+65 6254 7889</h3>
-				<h3 class="tooltip-phone-email-details">+60 3789 01770</h3>
-				<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
-				<br>
-				<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
-				<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
-			</div>
-		</a>
-	</div>
-</div>
-<div class="sub-navigation-bar" style="display:none;">
-	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;" >
-		<div class="container">
-			<div class="welcome-container">
-				<h4 ui-sref-active="active" ui-sref="benefits-dashboard">Overview</h4>
-				<div class="arrow-up"></div>
-			</div>
-			<div class="welcome-container emp-nav-click-drop">
-				<div>
-					<h4 ng-click="navCtr.toggleEmployeeNavDrop()" ng-class="{'active' : $state.current.name == 'employee-overview' || $state.current.name == 'settings.cap-per-visit' || $state.current.name == 'settings.block-health-partners'}">Employee</h4>
-					<i class="fa fa-angle-down"></i>
-				</div>
-        <!-- <h4  ng-click="toggleEmployee()">Employee</h4> -->
-				<div class="arrow-up"></div>
-				<div ng-if="navCtr.isEmpDropShow" class="nav-drop-wrapper">
-					<div class="nav-drop-item" ui-sref-active="active" ui-sref="employee-overview" ng-click="navCtr.isEmpDropShow = false;">
-						Employee Overview
-					</div>
-					<div class="nav-drop-item" ui-sref-active="active" ui-sref="settings.cap-per-visit" ng-click="navCtr.isEmpDropShow = false;">
-						Employee Settings
-					</div>
-				</div>
-			</div>
-			<div class="welcome-container">
-				<h4 ui-sref-active="active" ui-sref="activity">Activity</h4>
-				<div class="arrow-up"></div>
-			</div>
-			<div class="welcome-container">
-				<h4 ui-sref-active="active" ui-sref="e-claim">Claim</h4>
-				<div class="arrow-up"></div>
-			</div>
-			<!-- <div class="welcome-container statement-hide">
-				<h4 ui-sref-active="active" ui-sref="statement">Statement</h4>
-				<div class="arrow-up"></div>
-			</div> -->
-			<div class="welcome-container">
-				<div>
-					<h4 ng-click="navCtr.toggleAccountNavDrop()">Account</h4>
-					<i class="fa fa-angle-down"></i>
-				</div>
-				<div class="arrow-up"></div>
-				<div ng-if="navCtr.isAccDropShow" class="nav-drop-wrapper account-drop-wrapper">
-					<div class="nav-drop-item" ui-sref-active="active" ui-sref="account-and-payment" ng-click="navCtr.isAccDropShow = false;">
-						Company Account
-					</div>
-					<div class="nav-drop-item" ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.medical-wallet" ng-click="navCtr.isAccDropShow = false;">
-						Member Wallet & Benefits Coverage
-					</div>
-				</div>
-      </div>
-      <!-- <div class="welcome-container">
-        <h4 ui-sref-active="active" ui-sref="member-wallet-benefits-coverage.mednefits-credits-account">Member Wallet & Benefits Coverage</h4>
-        <div class="arrow-up"></div>
-      </div> -->
-      <div class="welcome-container">
-        <h4 ui-sref-active="active" ui-sref="spending-billing">Billing</h4>
-        <div class="arrow-up"></div>
-      </div>
-		</div>
-  </div>
-</div>
-
 <div class="header-navigation-section">
 	<div class="logo-div">
 		<img ui-sref="benefits-dashboard" src="../../assets/hr-dashboard/img/Mednefits Logo V2.svg" class="top-logo pointer-cursor">
@@ -108,10 +6,10 @@
 		<div class="menu-div" ui-sref-active="active" ui-sref="benefits-dashboard">Home</div>
 		<div 
 			class="menu-div" 
-			ui-sref-active="active" 
 			ui-sref="employee-overview" 
 			ng-class="{
 				'active' : 
+					$state.current.name == 'employee-overview' ||
 					$state.current.name == 'bulk-update-member-details.update-options' ||
 					$state.current.name == 'bulk-update-member-details.excel-import' ||
 					$state.current.name == 'bulk-update-member-details.summary-preview'
@@ -121,7 +19,7 @@
 		</div>
 		<div class="menu-div" ui-sref-active="active" ui-sref="activity">History</div>
 		<div class="menu-div" ui-sref-active="active" ui-sref="e-claim">Non-panel Claim</div>
-		<div class="menu-div" ui-sref-active="active" ui-sref="statement">Reports</div>
+		<!-- <div class="menu-div" ui-sref-active="active" ui-sref="statement">Reports</div> -->
 	</div>
 	<div class="header-settings-div">
 		<div class="icon-selection-container">
@@ -143,10 +41,10 @@
 			<div class="drop-select-wrapper" @click="open = true">
 				<div class="user-img-icon">
 					<div class="circle">
-						<div class="letter">F</div>
+						<div class="letter" ng-bind="navCtr.primaryHrDetails.first_name[0]">F</div>
 					</div>
 				</div>
-				<div class="company-name">Mednefits Pte Ltd</div>
+				<div class="company-name" ng-bind="navCtr.accountDetails.account_name ? navCtr.accountDetails.account_name : 'Account Name'">Mednefits Pte Ltd</div>
 				<div class="icon">
 					<i class="fa fa-angle-down"></i>
 				</div>
@@ -156,24 +54,24 @@
 				<div class="drop-user-details">
 					<div class="user-img-icon">
 						<div class="circle">
-							<div class="letter">F</div>
+							<div class="letter" ng-bind="navCtr.primaryHrDetails.first_name[0]">F</div>
 						</div>
 					</div>
 					<div class="drop-user-info">
-						<p class="name">Filbert Tan - Mednefits</p>
-						<p class="email">filbert@mednefits.com</p>
+						<p class="name">{{ navCtr.primaryHrDetails.first_name}} - {{ navCtr.accountDetails.account_name }}</p>
+						<p class="email" ng-bind="navCtr.primaryHrDetails.email">filbert@mednefits.com</p>
 					</div>
 				</div>
 
-				<div class="linked-accounts-wrapper">
+				<div ng-if="navCtr.linkedAccountsArr.length > 0" class="linked-accounts-wrapper">
 
-					<div ng-repeat="list in [1,2,3,4,5]" class="linked-account">
+					<div ng-repeat="list in navCtr.linkedAccountsArr" class="linked-account">
 						<div class="comp-name">
-							<p class="company">Medicloud</p>
-							<p class="comp-id">Company ID: 141</p>
+							<p class="company" ng-bind="list.account_name">Medicloud</p>
+							<p class="comp-id">Company ID: {{ list.company_id }}</p>
 						</div>
 						<div class="switch-account">
-							<span>Switch Account</span>
+							<span ng-click="navCtr._switchAccount_(list)">Switch Account</span>
 						</div>
 					</div>
 
@@ -194,6 +92,7 @@
 					</div>
 				</div>
 			</div>
+
 		</div>
 	</div>
 </div>

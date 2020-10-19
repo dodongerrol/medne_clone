@@ -363,6 +363,14 @@ app.directive("employeeOverviewDirective", [
             $("#transfer-employee-btn").trigger('click');
           },200);
         }
+        scope._goToRemoveEmployee_  = function(data){
+          console.log(data.user_id);
+          localStorage.setItem('selected_member_id', data.user_id);
+          $state.go('member-remove', { member_id : data.user_id });
+        }
+
+
+
 
 
 

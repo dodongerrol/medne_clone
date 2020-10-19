@@ -23,9 +23,9 @@
         <button @click="open = true" class="btn-settings btn-export-member medi-border-primary medi-text-primary bg-white"><img src="../assets/hr-dashboard/img/benefits-icon.png">Benefits Settings<i class="fa fa-angle-down"></i></button>
         
         <div x-show="open" @click.away="open = false" class="ben-settings-drop-container">
-          <div class="setting-drop-item">Bulk Allocated Credits</div>
-          <div class="setting-drop-item">Group Cap Per Visit</div>
-          <div class="setting-drop-item">Group Health Providers Access</div>
+          <a class="setting-drop-item" ui-sref="bulk-cred-allocation">Bulk Allocated Credits</a>
+          <a class="setting-drop-item" ui-sref="cap-per-visit">Group Cap Per Visit</a>
+          <a class="setting-drop-item" ui-sref="block-health-partners">Group Health Providers Access</a>
         </div>
       </div>
       <button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ui-sref="cred-allocation">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button>
@@ -232,7 +232,7 @@
                     <div x-show="open" @click.away="open = false" @click="open = false" class="emp-opt-drop-wrapper">
                       <div class="opt-item">Assign Administrator</div>
                       <div class="opt-item" ng-click="selectTransferBtn(list)">Transfer</div>
-                      <div class="opt-item">Terminate</div>
+                      <div class="opt-item" ng-click="_goToRemoveEmployee_(list)">Terminate</div>
                     </div>
                   </div>
                 </td>
