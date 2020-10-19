@@ -17936,7 +17936,10 @@ public function createHrLocation ()
 
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
 		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
-
+		if(!$permission)
+		{
+			return array('status' =>  false, 'message'	=> 'Permissions doesnt exist.');
+		}
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
 			'fullname'										=> $hr->fullname,
