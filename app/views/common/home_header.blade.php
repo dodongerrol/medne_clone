@@ -106,7 +106,7 @@
 	            <p class="weight-700">Mon - Fri 9:30am to 6:30pm</p>
 	            <div class="white-space-20"></div>
 	            <p class="font-medium2 weight-700">Drop us a note, anytime</p>
-	            <p class="weight-700">happiness@mednefits.com</p>
+	            <p class="weight-700">support@mednefits.com</p>
 	            <div class="white-space-20"></div>
 	            <div style="border-bottom: 1px solid #aaa;"></div>
 	            <div class="white-space-20"></div>
