@@ -1913,7 +1913,10 @@ class BenefitsDashboardController extends \BaseController {
 
 		$types = !empty($input['status']) && sizeof($input['status']) > 0 ? $input['status'] : null;
 		$per_page = !empty($input['limit']) ? $input['limit'] : 5;
-		$search = !empty($input['search']) ? $input['search'] : null;
+    $search = !empty($input['search']) ? $input['search'] : null;
+    $byLocation = !empty($input['location_id']) ? json_decode($input['location_id']) : null;
+    $byDepartment = !empty($input['department_id']) ? json_decode($input['department_id']) : null;
+    
 		if($types)	{
 			foreach($types as $key => $type) {
 				if(!in_array($type, ['pending', 'activated', 'active', 'removed'])) {
@@ -2003,7 +2006,31 @@ class BenefitsDashboardController extends \BaseController {
 				->where('user.Name', 'like', '%'.$search.'%')
 				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
 				->paginate($per_page);
-			} else {
+      } elseif ($byLocation) {
+        $users = DB::table('user')
+        ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('company_locations', 'company_locations.customer_id', '=', 'corporate_members.corporate_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->where('company_locations.customer_id', $account_link->corporate_id)
+        ->whereIn('company_locations.LocationID', $byLocation)
+        ->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport',
+                'company_locations.LocationID', 'company_locations.location', 'company_locations.business_address', 'company_locations.country')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+        ->paginate($per_page);
+      } elseif ($byDepartment) {
+        $users = DB::table('user')
+        ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('company_departments', 'company_departments.customer_id', '=', 'corporate_members.corporate_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->where('company_departments.customer_id', $account_link->corporate_id)
+				->whereIn('company_departments.id', $byDepartment)
+        ->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport',
+                'company_departments.id', 'company_departments.department_name')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+        ->paginate($per_page);
+      } else {
 				$users = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
@@ -2012,7 +2039,7 @@ class BenefitsDashboardController extends \BaseController {
 				->orderBy('user.UserID', 'asc')
 				->paginate($per_page);
 			}
-		}
+    }
 		
 		if($users) {
 			$paginate['last_page'] = $users->getLastPage();
@@ -2290,7 +2317,20 @@ class BenefitsDashboardController extends \BaseController {
 			
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0 || (int)$user->member_activated == 1 && (int)$user->Status == 0) {
 				$emp_status = 'pending';
-			}
+      }
+
+      $locationsQuery = DB::table('company_locations')
+        ->join('corporate_members', 'corporate_members.corporate_id', '=', 'company_locations.customer_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->select('company_locations.LocationID', 'company_locations.location', 'company_locations.business_address', 'company_locations.country')
+        ->get();
+
+      $departmentQuery = DB::table('company_departments')
+        ->join('corporate_members', 'corporate_members.corporate_id', '=', 'company_departments.customer_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->select('company_departments.id', 'company_departments.department_name')
+        ->get();
+
 
 			$temp = array(
 				'spending_account'	=> array(
@@ -2329,7 +2369,9 @@ class BenefitsDashboardController extends \BaseController {
 				'bank_name'				=> $user->bank_name,
 				'passport'				=> $user->passport,
 				'nric'					=> $user->NRIC,
-				// 'company'				=> ucwords($user->company_name),
+        // 'company'				=> ucwords($user->company_name),
+        'location'			=> $locationsQuery ? $locationsQuery : [],
+        'department'			=> $departmentQuery ? $departmentQuery : [],
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
 				'deletion'      		=> $deleted,
