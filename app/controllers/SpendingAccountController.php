@@ -79,6 +79,8 @@ class SpendingAccountController extends \BaseController {
 		$creditAccount = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 	
 		$utilised_credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
+		$refund_amount  = ($total_credits - $utilised_credits['credits']) - $bonus_credits;
+
 		$format = array(
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
@@ -95,7 +97,8 @@ class SpendingAccountController extends \BaseController {
 			'to_top_up_status'      => $toTopUp > 0 ? true : false,
 			'to_top_value'          => $toTopUp,
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
-			'currency_type'			    => strtoupper($customer->currency_type)
+			'currency_type'			    => strtoupper($customer->currency_type),
+			'refund_amount'					=> number_format($refund_amount, 2),
 		);
 		return ['status' => true, 'data' => $format];
 	}
