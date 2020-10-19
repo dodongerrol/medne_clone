@@ -158,7 +158,7 @@ class DependentController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 
-			if($planned->account_type != "lite_plan") {
+			if($planned->account_type == "stand_alone_plan" || $planned->account_type == "insurance_bundle" || $planned->account_type == "enterprise_plan") {
 				$total = $plan_status->employees_input - $plan_status->enrolled_employees;
 
 				if($total <= 0) {
