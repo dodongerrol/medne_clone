@@ -199,8 +199,8 @@ app.directive("administratorsDirective", [
         }
 
         scope.seachEmployeeName = async function () {
-          scope.showEmployeeList = scope.showEmployeeList == true ? false : true;
           await scope.getEmployeeName();
+          scope.showEmployeeList = scope.showEmployeeList == true ? false : true;
         }
 
         scope.getPrimaryAdmin = async function () {
@@ -270,11 +270,16 @@ app.directive("administratorsDirective", [
           });
         }
         scope.getEmployeeName = function () {
+          scope.showLoading();
           hrSettings.fetchEmployeeName().then(function (response) {
             console.log(response);
+            scope.employee_data = response.data.data;
+            scope.hideLoading();
           });
         }
-
+        scope.employeeNameSelector = function ( data ) {
+          scope.employee_name = data.name;
+        }
         scope.checkEmail = function (email) {
 					var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 					return regex.test(email);

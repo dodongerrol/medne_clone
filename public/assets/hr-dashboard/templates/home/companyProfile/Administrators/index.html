@@ -185,16 +185,11 @@
               <div class="display-flex">
                 <div class="emp-name-input-wrapper">
                   <i class="fa fa-search"></i>
-                  <input type="type" placeholder="Search by name" ng-click="seachEmployeeName()">
+                  <input type="type" placeholder="Search by name" ng-model="employee_name" ng-click="seachEmployeeName()">
                   <i class="fa fa-angle-down"></i>
 
                   <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper">
-                    <div>Employee 1</div>
-                    <div>Employee 1</div>
-                    <div>Employee 1</div>
-                    <div>Employee 1</div>
-                    <div>Employee 1</div>
-                    <div>Employee 1</div> 
+                    <div ng-click="employeeNameSelector(list)" ng-repeat="list in employee_data"><span ng-bind="list.name"></span></div>
                   </div>
                 </div>
                 <div ng-if="false" class="employee-name-validation">
