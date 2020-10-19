@@ -2355,7 +2355,68 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['medical_wallet'] = $medical_wallet;
 		$paginate['wellness_wallet'] = $wellness_wallet;
 		return $paginate;
-	}
+  }
+  
+  public function getEmployeeCorporate()
+  {
+    $input = Input::all();
+    $result = self::checkSession();
+    $search = !empty($input['search']) ? $input['search'] : null;
+    $response = [];
+
+    if($search) {
+				$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $result->customer_buy_start_id)
+        ->where('user.Name', 'like', '%'.$search.'%')
+        ->where('user.member_activated', 1)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
+				->get();
+			} else {
+				$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+        ->where('corporate_members.corporate_id', $result->customer_buy_start_id)
+        ->where('user.member_activated', 1)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+        ->get();
+      }
+
+      $response['status'] = sizeof($users) > 0 ? true : false;
+      $response['message'] = sizeof($users) > 0 ? 'ok' : 'user not found!';
+      $response['data'] = $users;
+
+      return $response;
+  }
+
+  public function validateEmployeeName() 
+  {
+    $input = Input::all();
+    $result = self::checkSession();
+
+    if(empty($input['user_id'])) {
+				return ['status' => false, 'message' => 'user id required!'];
+		}
+
+    $users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $result->customer_buy_start_id)
+        ->where('user.UserID', $input['user_id'])
+        ->where('user.member_activated', 1)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
+        ->first();
+        
+    if(!$users) {
+        return array('status' => false, 'message' => 'user not found!');
+    }
+    
+    if($users->member_activated !== 1) {
+        return ['status' => false, 'message' => 'Please have this account activated before assigning Administrator.'];
+    }
+
+    return ['status' => true, 'message' => 'user are valid', 'data' => $users];
+  }
 
 	public function getCorporateUserByAllocated($corporate_id, $customer_id) 
 	{
