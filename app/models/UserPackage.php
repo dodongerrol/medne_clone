@@ -236,7 +236,7 @@ class UserPackage extends Eloquent
                         
                         $data['start_date'] = date('d F Y', strtotime($plan_user->plan_start));
                         $data['valid_date'] = date('d F Y', strtotime($spending['medical_end']));
-                        $active_plan_data = null;
+                        $active_plan_data = $plan;
                         // $validity = MemberHelper::getMemberWalletValidity($user_details->UserID, 'wellness');
                         $wallet_entitlement = DB::table('employee_wallet_entitlement')
                         ->where('member_id', $id)

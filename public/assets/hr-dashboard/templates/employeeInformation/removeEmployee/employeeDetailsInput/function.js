@@ -40,7 +40,7 @@ app.directive('employeeDetailsInputDirective', [
         }
 				
 				scope.backBtn	=	function(){
-					$state.go('member.emp-details');
+					$state.go('member.emp-details', { member_id : scope.selected_member_id });
 				}
 				scope.nextBtn	=	function(){
 					scope.emp_details = scope.selectedEmployee;

@@ -32,7 +32,8 @@ app.directive("employeeOverviewDirective", [
         scope.spending_account_status = {};
         scope.isAllEmpCheckboxSelected = false;
         scope.selectedEmpArr  = [];
-
+        scope.isSelectOverallEmployees  = false;
+        scope.isClickExportAll = false;
 
 
         scope.empGetNumber = function (num) {
@@ -227,6 +228,12 @@ app.directive("employeeOverviewDirective", [
             scope._selectAllEmpCheckbox_(false);
           }
         }
+        scope.exportSelectedMember  = function(){
+          // scope.isClickExportAll = false;
+          $timeout(function(){
+            $("#export-member-btn-modal").trigger('click');
+          },200);
+        }
 
         scope.isTotalMembersShow = true;
         scope.isFiltersShow = false;
@@ -356,6 +363,14 @@ app.directive("employeeOverviewDirective", [
             $("#transfer-employee-btn").trigger('click');
           },200);
         }
+        scope._goToRemoveEmployee_  = function(data){
+          console.log(data.user_id);
+          localStorage.setItem('selected_member_id', data.user_id);
+          $state.go('member-remove', { member_id : data.user_id });
+        }
+
+
+
 
 
 

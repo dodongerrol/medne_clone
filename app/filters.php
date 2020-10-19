@@ -100,7 +100,7 @@ Route::filter('auth.clinic', function()
                 ->where('admin_type', 'clinic')
                 ->where('created_at', $date)
                 ->first();
-                
+
     if(!$check) {
         $admin_logs = array(
             'admin_id'  => Session::get('user-session'),
@@ -125,7 +125,7 @@ Route::filter('auth.v1', function($request, $response)
     $returnObject = new stdClass();
     $returnObject->error = TRUE;
     $returnObject->message = 'You have an invalid token. Please login again';
-    
+
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: *');
     header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, authorization, X-Request-With');
@@ -171,7 +171,7 @@ Route::filter('auth.v2', function($request, $response)
     $returnObject = new stdClass();
     $returnObject->error = TRUE;
     $returnObject->message = 'You have an invalid token. Please login again';
-    
+
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: *');
     header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, authorization, X-Request-With');
@@ -183,38 +183,38 @@ Route::filter('auth.v2', function($request, $response)
     //     return Response::json($returnObject, 200);
     // } else {
         /*
-            Description: 
+            Description:
                 - Accessing API as Third Party Condition.
                 - This one line code will verify if X-Access Key found under header. If X-Access Key found
                 it will automatically check member Key in database, hence if nothing found in the database it will automatically
                 create Key for the specific member.
-                
-            Developer: 
+
+            Developer:
                 Stephen
-            Date: 
+            Date:
                 April 9 2020
         */
-        
+
         // $return_data = StringHelper::verifyXAccessKey();
-        
+
         // if (is_object($return_data)) {
         //     return Response::json($return_data, 200);
         // }
-        /*  
+        /*
             End here.
         */
 
         // return StringHelper::requestHeader();
         // check if there is a header authorization
         $token = StringHelper::getToken();
-        
+
         if(!$token) {
             $returnObject->expired = true;
           return Response::json($returnObject, 200);
         }
 
         $findUserID = AuthLibrary::validToken();
-        
+
         if(!$findUserID) {
           $returnObject->status = FALSE;
           $returnObject->expired = true;
@@ -560,3 +560,13 @@ Route::filter('strip_tags', function()
 {
     Input::merge(Utility::array_strip_tags(Input::all()));
 });
+
+if (Config::get('database.enable_logging')) {
+    Event::listen('illuminate.query', function($query, $bindings, $time, $name) {
+      $data = compact('bindings', 'time', 'name');
+
+      Log::info("Query: {$query}");
+      Log::info("Execution time: {$data['time']} ms");
+      Log::info('--------------------------------');
+    });
+}

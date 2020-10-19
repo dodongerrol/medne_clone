@@ -1101,7 +1101,7 @@ class MemberHelper
 		return $total_days->format('%a') + 1;
 	}
 
-	public static function checkMemberAccessTransactionStatus($member_id)
+	public static function checkMemberAccessTransactionStatus($member_id, $type)
 	{
 		$status = DB::table('member_block_transaction')->where('member_id', $member_id)->where('status', 1)->first();
 
@@ -1111,13 +1111,8 @@ class MemberHelper
 			// check of from top up and pending
 			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
 
-			if($top_up_user) {
-				return true;
-			}
-
 			// check if account is active
 			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
-
 			if(($accountStatus != "active") && ($accountStatus != "login")) {
 				return true;
 			}
@@ -1134,12 +1129,22 @@ class MemberHelper
 
 			// check for spending transaction access
 			$customer_id = \PlanHelper::getCustomerId($member_id);
-			$accessTransaction = \SpendingHelper::checkSpendingCreditsAccess($customer_id);
-
+			$accessTransaction = $type == "panel" ? \SpendingHelper::checkSpendingCreditsAccess($customer_id) : \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
+			
+			if(!$top_up_user) {
+				// check if first purchase is already paid
+				$account_credits = DB::table('spending_purchase_invoice')
+										->where('customer_id', $customer_id)
+										->first();
+				if($account_credits && (int)$account_credits->payment_status == 1) {
+					return false;
+				}
+			}
+			 
 			if(!$accessTransaction['enable']) {
 				return true;
 			}
-
+			
 			return false;
 		}
 	}
@@ -2642,6 +2647,7 @@ class MemberHelper
 			return false;
 		}
 
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
 		$member = DB::table('user')->where('UserID', $member_id)->first();
 		$customer_id = PlanHelper::getCustomerId($member_id);
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -2671,7 +2677,7 @@ class MemberHelper
 			if($panel || $non_panel) {
 				$emp_status = 'active';
 			} else if((int)$member->member_activated == 1){
-				$emp_status = 'login';
+				$emp_status = 'active';
 			}
 		}
 
@@ -2685,6 +2691,10 @@ class MemberHelper
 
 		if((int)$spending->medical_enable == 0) {
 			$emp_status = 'deactivated';
+		}
+
+		if($customer_active_plan->account_type == "out_of_pocket") {
+			$emp_status = "active";
 		}
 
 		return $emp_status;

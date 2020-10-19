@@ -1,0 +1,72 @@
+.excel-import-export-container{
+  color: #333;
+  padding-bottom: 100px;
+}
+.excel-import-export-container .excel-import-text{
+  padding: 60px 0 30px 0;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.excel-import-export-container .excel-import-subtext{
+  text-align: center;
+    font-weight: 700;
+  margin-bottom: 20px;
+}
+.btn-download-template{
+  width: 227.93px;
+  height: 35px;
+  background: #02597E;
+  border-radius: 5px;
+  line-height: 1;
+  text-align: center;
+  font-size: 14px;
+  line-height: 17px;
+  text-decoration-line: underline;
+  color: #FFFFFF;
+  border: none;
+  margin: 0 auto 50px auto;
+  display: block;
+  text-transform: uppercase;
+}
+
+.drag-upload-box-wrapper{
+  width: 100%;
+  height: 250px;
+  max-width: 1080px;
+  margin: 0 auto;
+  border: 2px dashed #ddd;
+  padding: 40px 30px;
+  background: #f9fdff;
+  position: relative;
+}
+.drag-upload-box-wrapper input[type='file']{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  opacity: 0;
+}
+.drag-upload-box-wrapper img{
+  width: 60px;
+  margin-bottom: 20px;
+}
+.drag-upload-box-wrapper p{
+  margin: 0 0 10px 0;
+  line-height: 1;
+  color: #666;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+p.success{
+  color: #1f6d11;
+}
+p.error{
+  color: #902533;
+}
+p.file-name{
+
+}
