@@ -183,7 +183,8 @@ class SpendingAccountController extends \BaseController {
 
 		if($input['type'] == "medical") {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'medical', true);
-			$panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_panel_previous : $spending_account_settings->medical_payment_method_panel;
+			$panel_payment_method = $this->getPanelPaymentMethod($pendingInvoice, $spending_account_settings);
+			// $panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_panel_previous : $spending_account_settings->medical_payment_method_panel;
       		$non_panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_non_panel_previous : $spending_account_settings->medical_payment_method_non_panel;
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
@@ -642,7 +643,7 @@ class SpendingAccountController extends \BaseController {
 			
 			return [
 				'status' => true,
-				'spent' => $credits['credits'],
+				'spent' => $credits,
 				'currency_type' => $customer->currency_type,
 				'id'			=> $spending_account_settings->spending_account_setting_id,
 				'customer_id'	=> $customer_id,
@@ -1348,5 +1349,17 @@ class SpendingAccountController extends \BaseController {
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream($data['invoice_number'].' - '.time().'.pdf');
+	}
+
+	private function getPanelPaymentMethod($pendingInvoice, $spending_account_settings)
+	{
+		if (
+			$pendingInvoice &&
+			$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
+		) {
+			return $spending_account_settings->medical_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+		}
+
+		return $spending_account_settings->medical_payment_method_panel;
 	}
 }

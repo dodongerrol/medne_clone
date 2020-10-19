@@ -208,7 +208,7 @@ class PlanHelper
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$first_plan = DB::table('user_plan_type')->where('user_id', $user_id)->first();
-		
+
 		$customer_id = PlanHelper::getCustomerId($user_id);
 		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$data['medical'] = $spending['medical_enabled'];
@@ -232,28 +232,28 @@ class PlanHelper
 						->orderBy('created_at', 'desc')
 						->first();
 				}
-	
+
 				$plan_user = DB::table('user_plan_type')
 					->where('user_id', $user_id)
 					->orderBy('created_at', 'desc')
 					->first();
-	
+
 				$active_plan = DB::table('customer_active_plan')
 					->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
 					->first();
-	
+
 				$plan = DB::table('customer_plan')
 					->where('customer_plan_id', $active_plan->plan_id)
 					->first();
-	
+
 				$first_active_plan = DB::table('customer_active_plan')
 					->where('plan_id', $active_plan->plan_id)
 					->first();
-	
+
 				$active_plan_extension = DB::table('plan_extensions')
 					->where('customer_active_plan_id', $first_active_plan->customer_active_plan_id)
 					->first();
-	
+
 				if ((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
 					$temp_valid_date = date('Y-m-d', strtotime('+' . $active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
 					$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
@@ -279,19 +279,19 @@ class PlanHelper
 					->where('user_id', $user_id)
 					->orderBy('created_at', 'desc')
 					->first();
-	
+
 				$active_plan = DB::table('customer_active_plan')
 					->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
 					->first();
-	
+
 				$plan = DB::table('customer_plan')
 					->where('customer_plan_id', $active_plan->plan_id)
 					->first();
-	
+
 				$first_active_plan = DB::table('customer_active_plan')
 					->where('plan_id', $active_plan->plan_id)
 					->first();
-	
+
 				if ((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
 					$temp_valid_date = date('Y-m-d', strtotime('+' . $first_active_plan->duration, strtotime($plan->plan_start)));
 					$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
@@ -300,7 +300,7 @@ class PlanHelper
 				}
 			}
 		}
-	
+
 		$data['company_name'] = ucwords($company->company_name);
 		$data['start_date'] = date('F d, Y', strtotime($first_plan->plan_start));
 		$data['fullname'] = ucwords($user_details->Name);
@@ -309,7 +309,7 @@ class PlanHelper
 		$data['user_type'] = "employee";
 		$data['currency_type'] = $wallet->currency_type;
 		$data['plan_type'] = $active_plan->account_type;
-		
+
 		if ((int)$customer->access_e_claim == 1) {
 			$data['e_claim_access'] = true;
 		} else {
@@ -1449,22 +1449,31 @@ class PlanHelper
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
-			$validate = self::isDate($user['plan_start']);
+
+			$validate = self::isDate(
+				date('d/m/Y', strtotime(medi_date_parser($user['plan_start'])))
+			);
+
 			if (!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
 				$start_date_result = false;
 			} else {
 				$plan = self::getCompanyPlanDates($customer_id);
-				$start = strtotime($plan['plan_start']);
-				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
-				if ($plan_start >= $start && $plan_start <= $end) {
+				// $start = strtotime($plan['plan_start']);
+				// $end = strtotime($plan['plan_end']);
+				// $plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
+				if (
+					is_date_between(
+						$user['plan_start'],
+						$plan['plan_start'],
+						$plan['plan_end'])
+				) {
 					$start_date_error = false;
 					$start_date_message = '';
 				} else {
 					$start_date_error = true;
-					$start_date_message = "*Start Date must be between company's plan start and plan end (" . date('d/m/Y', $start) . " - " . date('d/m/Y', $end) . ").";
+					$start_date_message = "*Start Date must be between company's plan start and plan end (" . medi_date_format($plan['plan_start']) . " - " . medi_date_format($plan['plan_end']) . ").";
 					$start_date_result = false;
 				}
 			}

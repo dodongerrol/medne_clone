@@ -1377,13 +1377,13 @@
 							</div>
 
 							<div class="col-md-6 no-padding text-center transactions-btn-container">
-								<button ng-disabled="spending_account_status.wellness_enabled == true && inNetWorkTable == false" class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
 									PANEL<br>
 									<!-- IN-NETWORK<br> -->
 									TRANSACTIONS 
 								</button>
 
-								<button ng-disabled="spending_account_status.wellness_enabled == true && outNetWorkTable == false || spending_account_status.wellness_enabled == false" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+								<button ng-disabled="spending_account_status.wellness_enabled == false && spending_account_status.account_type == 'enterprise_plan'" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
 									E-CLAIM TRANSACTIONS<br>
 									(NON-PANEL)
 								</button>

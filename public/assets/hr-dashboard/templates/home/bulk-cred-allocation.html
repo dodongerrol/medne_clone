@@ -80,7 +80,7 @@
 														<span>{{list.medical_allocation.current_allocation | number: 2}}</span>
 													</td>
 													<td>
-														<input ng-disabled="!bulk_credit_values.payment_status" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical_allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical_allocation.new_allocation, list.medical_allocation.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.medical_allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.medical_allocation.new_allocation, list.medical_allocation.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td>
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.medical_allocation.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.medical_allocation.new_allocation, list.medical_allocation.effective_date, 'medical')" ng-model-options="{debounce: 1000}" autocomplete="off">
@@ -90,7 +90,7 @@
 														<span>{{list.wellness_allocation.current_allocation | number: 2}}</span>
 													</td>
 													<td>
-														<input ng-disabled="!bulk_credit_values.payment_status" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness_allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness_allocation.new_allocation, list.wellness_allocation.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.wellness_allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.wellness_allocation.new_allocation, list.wellness_allocation.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td>
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.wellness_allocation.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.wellness_allocation.new_allocation, list.wellness_allocation.effective_date, 'wellness')" ng-model-options="{debounce: 1000}" autocomplete="off">
@@ -345,7 +345,7 @@
 														<span>{{list.allocation.current_allocation | number: 2}}</span>
 													</td>
 													<td>
-														<input ng-disabled="!bulk_credit_values.payment_status" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td>
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.allocation.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
@@ -469,7 +469,7 @@
 														<span>{{list.allocation.current_allocation | number: 2}}</span>
 													</td>
 													<td>
-														<input ng-disabled="!bulk_credit_values.payment_status" class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
+														<input class="bulk-cred-input new-allocation form-control" type="number" name="amount" placeholder="0.00" ng-model="list.allocation.new_allocation" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
 													</td>
 													<td>
 														<input class="bulk-cred-input datepicker form-control" type="text" placeholder="DD/MM/YYYY" ng-model="list.allocation.effective_date" ng-change="pushToUpdateAllocation(list.member_id, list.allocation.new_allocation, list.allocation.effective_date, spendingTypeTabSelected)" ng-model-options="{debounce: 1000}" autocomplete="off">
