@@ -5983,18 +5983,10 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
 		->first();
 
-		// check if head count or not
-		// if((int)$get_active_plan->new_head_count == 0) {
-			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
-			// return $data;
-			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		// } else {
-		// 	$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-		// 	// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-		// 	$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		// }
-
+		$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
+		// return $data;
+		// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+		$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream();
@@ -6164,10 +6156,9 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
 		$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
-
+		$data['building_name'] = $business_info->building_name;
+		$data['unit_number'] = $business_info->unit_number;
 		$data['email'] = $contact->work_email;
 		$data['phone']     = $contact->phone;
 		$data['company'] = ucwords($business_info->company_name);
