@@ -1140,24 +1140,30 @@ class PlanHelper
 			$user['passport'] = $user['passport'] ?? null;
 			$myr_messages =  $myrValidator->validateAll($user);
 		} else {
-
 			if (is_null($user['mobile'])) {
 				$mobile_error = true;
 				$mobile_message = '*Mobile Phone is empty';
 			} else {
-				// check mobile number
-				$check_mobile = DB::table('user')
+				$phoneValidation = validate_phone($user['mobile'], $user['mobile_country_code']);
+
+				if ($phoneValidation['error']) {
+					$mobile_error = true;
+					$mobile_message = $phoneValidation['message'];
+				} else {
+					// check mobile number
+					$check_mobile = DB::table('user')
 					->where('UserType', 5)
 					->where('PhoneNo', $user['mobile'])
 					->where('Active', 1)
 					->first();
 
-				if ($check_mobile) {
-					$mobile_error = true;
-					$mobile_message = '*Mobile Phone No already taken.';
-				} else {
-					$mobile_error = false;
-					$mobile_message = '';
+					if ($check_mobile) {
+						$mobile_error = true;
+						$mobile_message = '*Mobile Phone No already taken.';
+					} else {
+						$mobile_error = false;
+						$mobile_message = '';
+					}
 				}
 			}
 		}
