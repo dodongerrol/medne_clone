@@ -59,7 +59,7 @@
                     <!-- <button ng-click="editMednefitsCredits()" data-toggle="modal" data-target="#edit-payment-methods-modal" class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button> -->
                   </div>
                 </span>
-                <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro')">
+                <div ng-if="wellness_wallet_details.status && ((medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro') || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro'))">
                   <div>This method is currently used in:</div>
                   <div class="display-flex mednefits-credits-wallet-container">
                     <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || medical_wallet_details.non_panel_payment_method == 'giro')" class="member-bold-text">Medical Wallet:</div>
