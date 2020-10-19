@@ -17919,9 +17919,30 @@ public function createHrLocation ()
 				]);
 			}
 		}
+		$message = [];
+        $emailData = [];
+		
+		if(url('/') == 'https://admin.medicloud.sg') {
+            $url = 'https://medicloud.sg/company-benefits-dashboard';
+        } else if(url('/') == 'http://stage.medicloud.sg') {
+            $url = 'http://staging.medicloud.sg/company-benefits-dashboard';
+        } else {
+            $url = 'http://medicloud.local/company-benefits-dashboard';
+		}
+		
+		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+		$emailDdata['emailTo']= $employee->Email;
+		$emailDdata['emailName'] = ucwords($employee->Name);
+		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template.blade';
+		$emailDdata['url'] = $url;
+		
+		\EmailHelper::sendEmail($emailDdata);
 
-		
-		
+
+
+
+
+
 		$data['message'] = 'Successfully Add Administrator.';
 
 		return $data;
