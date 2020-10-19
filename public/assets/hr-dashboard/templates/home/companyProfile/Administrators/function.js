@@ -16,71 +16,7 @@ app.directive("administratorsDirective", [
         scope.permissionSelector = false;
         scope.chooseSelectorLocation = false;
         scope.chooseSelectorDepartment = false;
-        scope.permission_data = 'All Employees & Dependents';
-        scope.locations_data = [
-          {
-            location: 'Location '
-          },
-          {
-            location: 'Location 1'
-          },
-          {
-            location: 'Location 2'
-          },
-          {
-            location: 'Location 3'
-          },
-          {
-            location: 'Location 4'
-          },
-          {
-            location: 'Location 5'
-          },
-          {
-            location: 'Location 6'
-          },
-          {
-            location: 'Location 7'
-          },
-          {
-            location: 'Location 8'
-          },
-          {
-            location: 'Location 9'
-          },
-        ];
-        scope.departments_data = [
-          {
-            department: 'Department '
-          },
-          {
-            department: 'Department 1'
-          },
-          {
-            department: 'Department 2'
-          },
-          {
-            department: 'Department 3'
-          },
-          {
-            department: 'Department 4'
-          },
-          {
-            department: 'Department 5'
-          },
-          {
-            department: 'Department 6'
-          },
-          {
-            department: 'Department 7'
-          },
-          {
-            department: 'Department 8'
-          },
-          {
-            department: 'Department 9'
-          },
-        ];
+        scope.permission_data = 'All Employees & Dependents'
         scope.selected_location_data = [];
         scope.selected_deparment_data = [];
         scope.showLocationSelector = false;
@@ -89,7 +25,7 @@ app.directive("administratorsDirective", [
         scope.adminPermission = function () {
           console.log('test');
           scope.permissionSelector = scope.permissionSelector == true ? false : true;
-          console.log(scope.locations_data);
+          // console.log(scope.locations_data);
         }
 
         scope.permissionSelectorData = async function ( type ) {
@@ -262,29 +198,47 @@ app.directive("administratorsDirective", [
           scope.permissionSelector = false;
         }
 
-        scope.seachEmployeeName = function () {
+        scope.seachEmployeeName = async function () {
           scope.showEmployeeList = scope.showEmployeeList == true ? false : true;
+          await scope.getEmployeeName();
         }
 
         scope.getPrimaryAdmin = async function () {
           await hrSettings.fetchPrimaryAdministrator()
           .then( function (response) {
             console.log(response);
+            scope.primary_admin_status = response.data.status;   
           });
         }
 
         scope.getLocationData = async function () {
+          scope.showLoading();
           await hrSettings.fetchLocationData()
           .then( function (response) {
             console.log(response);
+            scope.locations_data = response.data;
+            scope.hideLoading();
           });
         }
 
-        scope.getDeparmentData = async function () {
+        scope.getDepartmentData = async function () {
+          scope.showLoading();
           await hrSettings.fetchDepartmentData()
           .then( function (response) {
             console.log(response);
+            scope.departments_data = response.data;
+            scope.hideLoading();
           });
+        }
+        scope.changePrimAdmin = function () {
+          if ( scope.primary_admin_status == false ) {
+            console.log('need pa i check');
+            $('#permission-modal').modal('show');
+            $('#change-primary-admin-modal').modal('hide');
+          } else {
+            console.log('sulod ditso');
+            $('#permission-modal').modal('hide');
+          }
         }
         scope.updateHrAdmin = function () {
           if( scope.checkEmail(scope.changePrimaryData.email) == false ){
@@ -312,6 +266,11 @@ app.directive("administratorsDirective", [
         };
         scope.getAdditionalAdmin = function () {
           hrSettings.fecthAdditionalAdminDetails().then(function (response) {
+            console.log(response);
+          });
+        }
+        scope.getEmployeeName = function () {
+          hrSettings.fetchEmployeeName().then(function (response) {
             console.log(response);
           });
         }

@@ -15,7 +15,7 @@
           </div>
         </div>
         <div>
-          <button ng-click="changePrimAdmin()" data-toggle="modal" data-target="#change-primary-admin-modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
+          <button ng-click="changePrimAdmin()" data-toggle="modal"  class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
         </div>
       </div>
       <div class="display-flex admin-information">
@@ -259,7 +259,7 @@
                   <div ng-if="chooseSelectorDepartment" class="permission-selector-dp-wrapper">
                     <div ng-repeat="list in departments_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
-                        <span ng-bind="list.department" class="checkbox-text"></span>
+                        <span ng-bind="list.department_name" class="checkbox-text"></span>
                         <input ng-click="selectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
@@ -276,7 +276,7 @@
                 </div>
                 <div ng-if="permission_data == 'Departments' " class="filter-data-selector-wrapper">
                   <div ng-repeat="list in selected_deparment_data" class="filter-data-selector-container">
-                    <div ng-bind="list.department">Location 1</div>
+                    <div ng-bind="list.department_name">Location 1</div>
                     <img ng-click="selectedPermission('departments',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
                   </div>
                 </div>
@@ -492,6 +492,25 @@
           <button ng-if="true" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Update</button>
           <button ng-if="false" class="btn-update confirm">Confirm</button>
           <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade administrator-modal-container" id="permission-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Permission Denied</h5>
+        </div>
+        <div class="modal-body">
+          <img src="../assets/hr-dashboard/img/close-circular-button-symbol.svg">
+          <div>
+            <div>Sorry! You have no permission to manage locations and departments.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
       </div>
     </div>

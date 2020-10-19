@@ -10762,3 +10762,29 @@ span.dropdown-entitlement.disabled {
 .employee-details.tier-feature-item .iti__country-list {
   z-index: 1000;
 }
+
+/* Permission Modal */
+#permission-modal .modal-dialog {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  box-shadow: none;
+  background-color: transparent;
+}
+#permission-modal .modal-content {
+  box-shadow: 0 0 black;
+}
+#permission-modal .modal-body {
+  text-align: center;
+  width: 440px;
+  margin: 0 auto;
+}
+#permission-modal .modal-body img {
+  width: 40px;
+  margin: 0 0 20px;
+}
+
+#permission-modal .modal-footer button {
+  height: 25px;
+  padding: 0 60px;
+}

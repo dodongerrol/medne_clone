@@ -576,6 +576,11 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get_additional_admin_details" );
   }
 
+  hrFactory.fetchEmployeeName = function () {
+    return $http.get( serverUrl.url + "/hr/employee/list?status[]=active" );
+  }
+  
+
   return hrFactory;
 });
 
