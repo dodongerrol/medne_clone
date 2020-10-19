@@ -18055,7 +18055,6 @@ public function createHrLocation ()
 
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
 		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
-
 		if(!$permission)
 		{
 			return array('status' =>  false, 'message'	=> 'Permissions doesnt exist.');
@@ -18089,6 +18088,10 @@ public function createHrLocation ()
 		
 		foreach ($details as $detail) {
 			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+			if(!$permissions)
+			{
+				return array('status' => false, 'message'	=> 'Permissions doesnt exist.'); 
+			}
 			$container [] = array(
 				'id'											=> $detail->id,
 				'fullname'										=> $detail->fullname,
