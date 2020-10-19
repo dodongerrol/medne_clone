@@ -2733,5 +2733,28 @@ class MemberHelper
 		
 		return ['visits' => $user_plan_history->total_visit_limit, 'panels' => $panels, 'non_panels' => $non_panels, 'total' => $panels + $non_panels];
 	}
+
+	public static function getMemberWalletPaymentMethod($member_id)
+	{
+		$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
+		// check for spending transaction access
+		$customer_id = \PlanHelper::getCustomerId($member_id);
+		$spending_account_settings = DB::table('spending_account_settings')
+                                  ->where('customer_id', $customer_id)
+                                  ->orderBy('created_at', 'desc')
+                                  ->first();
+		$medical_payment_method = $spending_account_settings->medical_payment_method_panel == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+		if(!$top_up_user) {
+			// check if first purchase is already paid
+			$account_credits = DB::table('spending_purchase_invoice')
+									->where('customer_id', $customer_id)
+									->first();
+			if($account_credits && (int)$account_credits->payment_status == 0) {
+				$medical_payment_method = 'post_paid';
+			}
+		}
+			
+		return $medical_payment_method;
+	}
 }
 ?>
