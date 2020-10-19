@@ -725,10 +725,12 @@ app.directive("accountSettingsDirective", [
           }
           var data  = {
             id: scope.global_hrData.id,
+            hr_id: scope.global_hrData.id,
             fullname: scope.changePrimaryData.fullname,
             email: scope.changePrimaryData.email,
             phone_code: scope.changePrimaryData.phone_code,
             phone_no: scope.changePrimaryData.phone_no,
+            customer_id: scope.spending_account_status.customer_id
           }
           scope.showLoading();
           $http.post(serverUrl.url + "/hr/unlink/company_account", data)
