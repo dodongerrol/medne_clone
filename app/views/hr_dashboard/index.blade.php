@@ -242,14 +242,14 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/localNetworkDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/creditAllocationDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/bulkCreditAllocationDirective.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/activityDirective.js?_={{ $date->format('U') }}"></script>
+	<!-- <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/activityDirective.js?_={{ $date->format('U') }}"></script> -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/eclaimDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/statementDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/teamBenefitsTierDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/firstTimeLoginDirective.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/settingsDirective.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/blockHealthPartnersDirective.js?_={{ $date->format('U') }}"></script>
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/capPerVisitDirective.js?_={{ $date->format('U') }}"></script>
+	<!-- <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/blockHealthPartnersDirective.js?_={{ $date->format('U') }}"></script> -->
+	<!-- <script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/capPerVisitDirective.js?_={{ $date->format('U') }}"></script> -->
 
 	<!-- enrollment -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/directives/enrollmentMethodDirective.js?_={{ $date->format('U') }}"></script>
@@ -328,12 +328,21 @@
 	@include('hr_dashboard.scripts.company-profile.billing-payments')
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/companyOverview/function.js?_={{ $date->format('U') }}"></script>
-
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
-
-	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
-
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/Administrators/function.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/activityHistory/function.js?_={{ $date->format('U') }}"></script>
+
+	<!-- bulk update member details -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/container/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateOptions/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/excelExportImport/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateEmployeeSummary/function.js?_={{ $date->format('U') }}"></script>
+	<!-- end of bulk update member details -->
+
+	<!-- capPerVisit and BlockHealthPartners -->
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/capPerVisit/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/healthProviderAccess/function.js?_={{ $date->format('U') }}"></script>
 
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>

@@ -12,7 +12,13 @@
         <button ng-disabled="selectedEmployee.member_activated == false " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
       </div>
       <button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
-      <button class="btn" ui-sref="member.health-partner-access"><i class="fa fa-cogs"></i> Health Providers Access</button>
+			<button class="btn" ui-sref="member.health-partner-access"><i class="fa fa-cogs"></i> Health Providers Access</button>
+			
+			<button class="btn btn-admin">
+				<img ng-if="false" class="admin-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png">
+				<img ng-if="true" class="admin-icon" src="../assets/hr-dashboard/img/edit.png">
+				{{ true ? 'Assign Administrator' : 'Edit Permission' }}
+			</button>
     </div>
   </div>
 

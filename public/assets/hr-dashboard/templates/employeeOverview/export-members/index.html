@@ -1,26 +1,27 @@
-<button class="btn-export-member medi-border-primary medi-text-primary bg-white" ng-click="$ctrl.open()">
+<button id="export-member-btn-modal" class="btn-export-member medi-border-primary medi-text-primary bg-white" ng-click="$ctrl.open()">
     <img src="../assets/hr-dashboard/img/new-assets/Download.png">
     Export members details
 </button>
-<div class="modal fade px-32" id="export-members-modal" tabindex="-1" role="dialog"
+<div class="modal fade" id="export-members-modal" tabindex="-1" role="dialog"
     aria-labelledby="export-members-modal" aria-hidden="true">
-    <div class="modal-dialog w-full bg-transparent mt-32" rolPe="document">
+    <div class="modal-dialog w-full bg-transparent mt-20" rolPe="document">
         <div class="modal-content">
             <div class="modal-body py-0">
-                <div class="py-4 px-10">
+                <div class="py-8 px-10">
                     <div
                         class="flex flex-col items-center justify-between space-y-8">
-                        <h4 class="section-title font-bold">
+                        <h4 class="section-title font-bold text-lg">
                             Member Details
                         </h4>
-                        <div class="flex items-start justify-center space-x-12 w-full">
+                        <div class="flex items-start justify-center space-x-16 w-full">
                             <div class="grid grid-cols-1 gap-4 w-1/2">
                                 <div>
                                     <div class="relative">
                                         <input
                                             type="search"
-                                            class="rounded border-solid border-b-2 border-t-2 border-gray-300 px-2 py-1 text-sm w-full pl-8"
-                                            placeholder="Search properties"
+                                            class="rounded border-solid border-b-1 border-t-1 border-gray-300 px-2 py-1 text-sm w-full pl-8"
+																						placeholder="Search properties"
+																						ng-model="$ctrl.state.filterProps"
                                         >
                                         <div class="absolute inset-y-0 left-0 mt-2 ml-2 text-gray-800">
                                           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -30,28 +31,35 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="section-title text-sm mb-1 text-left flex items-center justify-start">
+                                    <label class="section-title text-lg mb-4 text-left flex items-center justify-start">
                                         Properties
                                     </label>
-                                    <div class="flex flex-col h-56 overflow-y-scroll">
-
+                                    <div class="flex flex-col overflow-y-auto h-64">
+																			<div ng-repeat="list in $ctrl.state.properties | filter: ($ctrl.state.filterProps == '' ? undefined : $ctrl.state.filterProps)" class="custom-checkbox-container">
+																				<label class="checkbox-input">
+																					<span></span>
+																					<input type="checkbox" ng-click="$ctrl.selectProperty(list, list.selected)" ng-model="list.selected"/>
+																					<span class="checkbox-text" ng-bind="list.name"></span>
+																					<span class="checkbox-mark"></span>
+																				</label>
+																			</div>
                                     </div>
                                 </div>
                             </div>
                             <div
-                                class="h-84 w-1 border-l border-r-0 border-t-0 border-b-0 border-solid border-color">
+                                class="w-1 gap-1 h-64">
                             </div>
                             <div class="w-1/2 flex items-start flex-col">
-                                <label class="section-title text-sm mb-1">
+                                <label class="section-title text-lg mb-4">
                                     Selected Properties
                                 </label>
-                                <!-- <div class="flex flex-col h-64 pr-4 overflow-y-scroll"
-                                    ng-if="selectedEmployees.length > 0">
-                                    <div ng-repeat="selectedEmployee in selectedEmployees"
+                                <div class="flex flex-col pr-4 overflow-y-auto w-full selected-properties-scroll"
+                                    ng-if="$ctrl.state.selectedPropertiesArr.length > 0">
+                                    <div ng-if="selectedProps.selected" ng-repeat="selectedProps in $ctrl.state.properties"
                                         class="flex items-center justify-between w-full border border-solid border-color-1 bg-gray-contrast text-sm rounded text-gray-900 py-1 px-3 w-full mb-2">
-                                        {{ selectedEmployee.name }}
+                                        {{ selectedProps.name }}
                                         <a class="ui-btn ui-btn-link-dark px-0"
-                                            ng-click="removeSelectedEmployee(selectedEmployee)">
+                                            ng-click="$ctrl.selectProperty(selectedProps, false)">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 class="w-4 h-4" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -59,14 +67,19 @@
                                             </svg>
                                         </a>
                                     </div>
-                                </div> -->
-                                <div class="grid grid-cols-1 gap-2">
+                                </div>
+                                <div ng-if="$ctrl.state.selectedPropertiesArr.length == 0"  class="grid grid-cols-1 gap-2">
                                     <p class="text-gray-500 text-sm">
                                         No selected employees yet
                                     </p>
                                 </div>
                             </div>
-                        </div>
+												</div>
+												
+												<div class="btn-container flex justify-center w-full">
+													<button class="btn-cancel">Cancel</button>
+													<button class="btn-submit">Download</button>
+												</div>
                     </div>
                 </div>
             </div>

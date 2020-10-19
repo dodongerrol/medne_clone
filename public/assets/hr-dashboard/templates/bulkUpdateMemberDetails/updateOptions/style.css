@@ -1,0 +1,17 @@
+.update-checkboxes-container{
+  padding-bottom: 100px;
+}
+.update-checkboxes-container .select-deselect-div{
+  width: 170px;
+  display: flex;
+  text-align: center;
+}
+.select-deselect-div div{
+  padding: 0 10px;
+  font-size: 14px;
+  color: #0392CF;
+  cursor: pointer;
+}
+.select-deselect-div div:first-child{
+  border-right: 1px solid #ddd;
+}

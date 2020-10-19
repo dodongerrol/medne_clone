@@ -161,13 +161,54 @@ app.directive('memberWellnessWalletDirective', [
 
 				scope.getMemberActivity = async function ( data ) {
 					data.type = 'wellness';
-					await hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type )
+					await hrSettings.fetchMemberWalletActivitiesData( data.customer_id, data.type, scope.page, scope.per_page )
             .then(function(response){
 							// console.log(response);
-							scope.activity_pagination = response;
+							scope.activity_pagination = response.data;
 							scope.activity_data = response.data.data;
             })
 				}
+
+				scope.range = function (num) {
+          var arr = [];
+          for (var i = 0; i < num; i++) {
+            arr.push(i);
+          }
+          return arr;
+        };
+
+				// pagination activity table
+        scope.pagination_dropdown = false;
+        scope.pagesToDisplay = 5;
+        scope.page_active = 1;
+        scope.per_page = 10;
+        scope.page = 1;
+
+        scope._toggleInvoicePerPage_ = function () {
+          scope.pagination_dropdown = !scope.pagination_dropdown;
+        }
+
+        scope._selectNumList_ = function (num) {
+          scope.page = num;
+          scope.getMemberActivity(scope.selectedTerm);
+        }
+        scope._prevPageList_ = function () {
+					if(scope.page != 1){
+						scope.page -= 1;
+          	scope.getMemberActivity(scope.selectedTerm);
+					}
+        }
+
+        scope._nextPageList_ = function () {
+          scope.page += 1;
+          scope.getMemberActivity(scope.selectedTerm);
+        }
+
+        scope._setPageLimit_ = function (num) {
+          scope.per_page = num;
+          scope.page = 1;
+          scope.getMemberActivity(scope.selectedTerm);
+        }
 
 				scope._saveWallet_ = function () {
 

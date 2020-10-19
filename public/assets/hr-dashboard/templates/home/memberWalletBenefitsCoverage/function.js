@@ -139,6 +139,14 @@ app.directive('memberWalletBenefitsCoverageDirective', [
             })
 				}
 
+				scope.range = function (num) {
+          var arr = [];
+          for (var i = 0; i < num; i++) {
+            arr.push(i);
+          }
+          return arr;
+        };
+
 				scope.onLoad = async function () {
 					await scope.getStatus();
 					await scope.companyDateTerms();

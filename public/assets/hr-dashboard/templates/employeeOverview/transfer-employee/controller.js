@@ -17,6 +17,7 @@
             }
         }
         $onInit() {
+            
         }
         attemptCheck($event) {
             console.log($event)
@@ -25,7 +26,8 @@
             this.states.form[field] = value;
         }
         open() {
-            presentModal('transfer-employee-modal')
+            presentModal('transfer-employee-modal');
+            console.log(this.employee);
         }
         dismiss() {
             presentModal('transfer-employee-modal', 'hide')
@@ -36,7 +38,7 @@
         .component('transferemployee', {
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeOverview/transfer-employee/index.html',
             bindings: {
-                employee: '<'
+                employee: '<',
             },
             controller: TransferEmployeeController
         });

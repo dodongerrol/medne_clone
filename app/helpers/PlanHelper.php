@@ -208,90 +208,99 @@ class PlanHelper
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $purchase_status->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$first_plan = DB::table('user_plan_type')->where('user_id', $user_id)->first();
+		
+		$customer_id = PlanHelper::getCustomerId($user_id);
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+		$data['medical'] = $spending['medical_enabled'];
+		$data['wellness'] = $spending['wellness_enabled'];
 
-		if ((int)$active_plan->plan_extention_enable == 1) {
-			$plan_user_history = DB::table('user_plan_history')
-				->where('user_id', $user_id)
-				->where('type', 'started')
-				->orderBy('created_at', 'desc')
-				->first();
-			if (!$plan_user_history) {
-				// create plan user history
-				self::createUserPlanHistory($user_id, $customer_id);
-				$plan_user_history = DB::table('user_plan_history')
-					->where('user_id', $user_id)
-					->where('type', 'started')
-					->orderBy('created_at', 'desc')
-					->first();
-			}
-
-			$plan_user = DB::table('user_plan_type')
-				->where('user_id', $user_id)
-				->orderBy('created_at', 'desc')
-				->first();
-
-			$active_plan = DB::table('customer_active_plan')
-				->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
-				->first();
-
-			$plan = DB::table('customer_plan')
-				->where('customer_plan_id', $active_plan->plan_id)
-				->first();
-
-			$first_active_plan = DB::table('customer_active_plan')
-				->where('plan_id', $active_plan->plan_id)
-				->first();
-
-			$active_plan_extension = DB::table('plan_extensions')
-				->where('customer_active_plan_id', $first_active_plan->customer_active_plan_id)
-				->first();
-
-			if ((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
-				$temp_valid_date = date('Y-m-d', strtotime('+' . $active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
-				$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
-			} else if ($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-				$data['valid_date'] = date('F d, Y', strtotime('+' . $plan_user->duration, strtotime($plan_user->plan_start)));
-			}
+		if($plan->account_type == "lite_plan") {
+			$data['valid_date'] = date('F d, Y', strtotime($spending['medical_end']));
 		} else {
-			$plan_user_history = DB::table('user_plan_history')
-				->where('user_id', $user_id)
-				->where('type', 'started')
-				->orderBy('created_at', 'desc')
-				->first();
-			if (!$plan_user_history) {
-				// create plan user history
-				PlanHelper::createUserPlanHistory($user_id, $link_account->customer_buy_start_id, $customer_id);
+			if ((int)$active_plan->plan_extention_enable == 1) {
 				$plan_user_history = DB::table('user_plan_history')
 					->where('user_id', $user_id)
 					->where('type', 'started')
 					->orderBy('created_at', 'desc')
 					->first();
-			}
-			$plan_user = DB::table('user_plan_type')
-				->where('user_id', $user_id)
-				->orderBy('created_at', 'desc')
-				->first();
-
-			$active_plan = DB::table('customer_active_plan')
-				->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
-				->first();
-
-			$plan = DB::table('customer_plan')
-				->where('customer_plan_id', $active_plan->plan_id)
-				->first();
-
-			$first_active_plan = DB::table('customer_active_plan')
-				->where('plan_id', $active_plan->plan_id)
-				->first();
-
-			if ((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
-				$temp_valid_date = date('Y-m-d', strtotime('+' . $first_active_plan->duration, strtotime($plan->plan_start)));
-				$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
-			} else if ($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-				$data['valid_date'] = date('F d, Y', strtotime('+' . $plan_user->duration, strtotime($plan_user->plan_start)));
+				if (!$plan_user_history) {
+					// create plan user history
+					self::createUserPlanHistory($user_id, $customer_id);
+					$plan_user_history = DB::table('user_plan_history')
+						->where('user_id', $user_id)
+						->where('type', 'started')
+						->orderBy('created_at', 'desc')
+						->first();
+				}
+	
+				$plan_user = DB::table('user_plan_type')
+					->where('user_id', $user_id)
+					->orderBy('created_at', 'desc')
+					->first();
+	
+				$active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
+					->first();
+	
+				$plan = DB::table('customer_plan')
+					->where('customer_plan_id', $active_plan->plan_id)
+					->first();
+	
+				$first_active_plan = DB::table('customer_active_plan')
+					->where('plan_id', $active_plan->plan_id)
+					->first();
+	
+				$active_plan_extension = DB::table('plan_extensions')
+					->where('customer_active_plan_id', $first_active_plan->customer_active_plan_id)
+					->first();
+	
+				if ((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
+					$temp_valid_date = date('Y-m-d', strtotime('+' . $active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
+					$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+				} else if ($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+					$data['valid_date'] = date('F d, Y', strtotime('+' . $plan_user->duration, strtotime($plan_user->plan_start)));
+				}
+			} else {
+				$plan_user_history = DB::table('user_plan_history')
+					->where('user_id', $user_id)
+					->where('type', 'started')
+					->orderBy('created_at', 'desc')
+					->first();
+				if (!$plan_user_history) {
+					// create plan user history
+					PlanHelper::createUserPlanHistory($user_id, $link_account->customer_buy_start_id, $customer_id);
+					$plan_user_history = DB::table('user_plan_history')
+						->where('user_id', $user_id)
+						->where('type', 'started')
+						->orderBy('created_at', 'desc')
+						->first();
+				}
+				$plan_user = DB::table('user_plan_type')
+					->where('user_id', $user_id)
+					->orderBy('created_at', 'desc')
+					->first();
+	
+				$active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
+					->first();
+	
+				$plan = DB::table('customer_plan')
+					->where('customer_plan_id', $active_plan->plan_id)
+					->first();
+	
+				$first_active_plan = DB::table('customer_active_plan')
+					->where('plan_id', $active_plan->plan_id)
+					->first();
+	
+				if ((int)$plan_user->fixed == 1 || $plan_user->fixed == "1") {
+					$temp_valid_date = date('Y-m-d', strtotime('+' . $first_active_plan->duration, strtotime($plan->plan_start)));
+					$data['valid_date'] = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+				} else if ($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+					$data['valid_date'] = date('F d, Y', strtotime('+' . $plan_user->duration, strtotime($plan_user->plan_start)));
+				}
 			}
 		}
-
+	
 		$data['company_name'] = ucwords($company->company_name);
 		$data['start_date'] = date('F d, Y', strtotime($first_plan->plan_start));
 		$data['fullname'] = ucwords($user_details->Name);
@@ -300,10 +309,7 @@ class PlanHelper
 		$data['user_type'] = "employee";
 		$data['currency_type'] = $wallet->currency_type;
 		$data['plan_type'] = $active_plan->account_type;
-		$customer_id = PlanHelper::getCustomerId($user_id);
-		$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-		$data['medical'] = $spending['medical_enabled'];
-		$data['wellness'] = $spending['wellness_enabled'];
+		
 		if ((int)$customer->access_e_claim == 1) {
 			$data['e_claim_access'] = true;
 		} else {
@@ -803,7 +809,7 @@ class PlanHelper
 				->where('user_package.user_id', $user_id)
 				->get();
 		}
-		
+
 		if($active_plan->account_type == "out_of_pocket") {
 			return [];
 		}
@@ -1145,6 +1151,7 @@ class PlanHelper
 					->where('PhoneNo', $user['mobile'])
 					->where('Active', 1)
 					->first();
+
 				if ($check_mobile) {
 					$mobile_error = true;
 					$mobile_message = '*Mobile Phone No already taken.';
@@ -1228,33 +1235,40 @@ class PlanHelper
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
-			$plan_start = strftime("%Y-%m-%d",strtotime($user['plan_start']));
-			
-			if($plan_start == "1970-01-01") {
-				$temp = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
-				$user['plan_start'] = $temp->format('d-m-Y');
-			} else {
-				$user['plan_start'] = date('d-m-Y', strtotime($plan_start));
-			}
-			$user['plan_start'] = date('d/m/Y', strtotime($user['plan_start']));
-			$validate = self::isDate($user['plan_start']);
+			// TODO remove this commented code if it's already stable
+			// $plan_start = strftime("%Y-%m-%d",strtotime($user['plan_start']));
+
+			// if($plan_start == "1970-01-01") {
+			// 	$temp = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
+			// 	$user['plan_start'] = $temp->format('d-m-Y');
+			// } else {
+			// 	$user['plan_start'] = date('d-m-Y', strtotime($plan_start));
+			// }
+			// $plan_start = medi_date_parser($user['plan_start']);
+
+			// $user['plan_start'] = date('d/m/Y', strtotime($plan_start));
+
+			$validate = self::isDate(
+				date('d/m/Y', strtotime(medi_date_parser($user['plan_start'])))
+			);
+
 			if (!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
 				$start_date_result = false;
 			} else {
-				$user['plan_start'] = $plan_start;
+				// $user['plan_start'] = $plan_start;
 				// return date('Y-m-d', strtotime($user['plan_start']));
 				$plan = self::getCompanyPlanDates($customer_id);
-				$start = strtotime($plan['plan_start']);
-				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime(date('Y-m-d', strtotime($user['plan_start'])));
-				if ($plan_start >= $start && $plan_start <= $end) {
+				// $start = strtotime($plan['plan_start']);
+				// $end = strtotime($plan['plan_end']);
+				// $plan_start = strtotime(date('Y-m-d', strtotime($user['plan_start'])));
+				if (is_date_between($user['plan_start'], $plan['plan_start'], $plan['plan_end'])) {
 					$start_date_error = false;
 					$start_date_message = '';
 				} else {
 					$start_date_error = true;
-					$start_date_message = "*Start Date must be between company's plan start and plan end (" . date('d/m/Y', $start) . " - " . date('d/m/Y', $end) . ").";
+					$start_date_message = "*Start Date must be between company's plan start and plan end (" . medi_date_format($plan['plan_start']) . " - " . medi_date_format($plan['plan_end']) . ").";
 					$start_date_result = false;
 				}
 			}
@@ -1287,7 +1301,7 @@ class PlanHelper
 							$credits_medical_error = false;
 							$credits_medical_message = '';
 						}
-					}					
+					}
 				}
 			} else {
 				if(is_numeric($user['medical_credits'])) {
@@ -1351,30 +1365,29 @@ class PlanHelper
 			$error_status = false;
 		}
 
-		$response = array_merge(
-			[
-				'error'                 => $error_status,
-				"email_error"           => $email_error,
-				"email_message"         => $email_message,
-				"full_name_error"      => $full_name_error,
-				"full_name_message"    => $full_name_message,
-				"dob_error"             => $dob_error,
-				"dob_message"           => $dob_message,
-				"mobile_error"          => $mobile_error,
-				"mobile_message"        => $mobile_message,
-				"mobile_area_error"     => $mobile_area_error,
-				"mobile_area_message"   => $mobile_area_message,
-				"postal_code_error"       => $postal_code_error,
-				"postal_code_message"     => $postal_code_message,
-				"credits_medical_error" => $credits_medical_error,
-				"credits_medical_message" => $credits_medical_message,
-				"credits_wellness_error" => $credits_wellness_error,
-				"credits_wellnes_message" => $credits_wellnes_message,
-				"start_date_error"      => $start_date_error,
-				"start_date_message"    => $start_date_message
-			],
-			$myr_messages
-		);
+		$common = [
+			'error'                 => $error_status,
+			"email_error"           => $email_error,
+			"email_message"         => $email_message,
+			"full_name_error"      => $full_name_error,
+			"full_name_message"    => $full_name_message,
+			"dob_error"             => $dob_error,
+			"dob_message"           => $dob_message,
+			"mobile_error"          => $mobile_error,
+			"mobile_message"        => $mobile_message,
+			"mobile_area_error"     => $mobile_area_error,
+			"mobile_area_message"   => $mobile_area_message,
+			"postal_code_error"       => $postal_code_error,
+			"postal_code_message"     => $postal_code_message,
+			"credits_medical_error" => $credits_medical_error,
+			"credits_medical_message" => $credits_medical_message,
+			"credits_wellness_error" => $credits_wellness_error,
+			"credits_wellnes_message" => $credits_wellnes_message,
+			"start_date_error"      => $start_date_error,
+			"start_date_message"    => $start_date_message
+		];
+
+		$response = $customer_wallet->currency_type === 'myr' ? array_merge($common, $myr_messages) : $common;
 
 		return $response;
 	}
@@ -1519,7 +1532,7 @@ class PlanHelper
 
 		$medical_entitlement = $data_enrollee->credits;
 		$wellness_entitlement = $data_enrollee->wellness_credits;
-		
+
 		if((float)$medical_entitlement > 0 && $customer_spending['medical_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
 			// check medical balance
 			if($customer_spending['with_mednefits_credits'] == true) {
@@ -1530,7 +1543,7 @@ class PlanHelper
 				$pre_paid_status = true;
 			}
 		}
-		
+
 		if((float)$wellness_entitlement > 0 && $customer_spending['wellness_method'] == "pre_paid" && $customer_spending['paid_status'] == true) {
 			if($customer_spending['with_mednefits_credits'] == true) {
 				if((float)$wellness_entitlement > $total_balance_remaining) {
@@ -1804,9 +1817,9 @@ class PlanHelper
 							'created_at'			=> date('Y-m-d H:i:s'),
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
-	
+
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
-	
+
 						if($top_up_credits) {
 							// create top up data
 							$toTopUp = array(
@@ -1817,7 +1830,7 @@ class PlanHelper
 								'updated_at'	=> date('Y-m-d H:i:s'),
 								'status'		=> 0
 							);
-	
+
 							DB::table('top_up_credits')->insert($toTopUp);
 						}
 					}
@@ -1960,9 +1973,9 @@ class PlanHelper
 							'created_at'			=> date('Y-m-d H:i:s'),
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
-	
+
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
-	
+
 						if($top_up_credits) {
 							// create top up data
 							$toTopUp = array(
@@ -1973,7 +1986,7 @@ class PlanHelper
 								'updated_at'	=> date('Y-m-d H:i:s'),
 								'status'		=> 0
 							);
-	
+
 							DB::table('top_up_credits')->insert($toTopUp);
 						}
 					}
@@ -2483,7 +2496,7 @@ class PlanHelper
 
 	public static function memberMedicalAllocatedCredits($wallet_id, $user_id)
 	{
-		
+
 		$customer_id = \PlanHelper::getCustomerId($user_id);
 		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 		$spending_method = $spending['medical_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
@@ -2527,12 +2540,12 @@ class PlanHelper
 								->where('wallet_history.wallet_id', $wallet_id)
 								->where('e_wallet.UserID', $user_id)
 								->where('wallet_history.created_at',  '>=', $start)
-								->where('wallet_history.spending_method', $spending_method)
+								// ->where('wallet_history.spending_method', $spending_method)
 								->get();
 			} else {
 				$wallet_history = DB::table('wallet_history')
 									->where('wallet_id', $wallet_id)
-									->where('spending_method', $spending_method)
+									// ->where('spending_method', $spending_method)
 									->get();
 			}
 
@@ -7150,7 +7163,7 @@ class PlanHelper
 		}
 	}
 
-	public static function getCompanyInvoice($id)	
+	public static function getCompanyInvoice($id)
 	{
 		$invoice = CorporateInvoice::where('corporate_invoice_id', $id)->first();
 
@@ -7497,7 +7510,7 @@ class PlanHelper
 						$data['paid'] = false;
 						$data['amount_due']     = $amount_due;
 					}
-					
+
 				} else {
 					$first_plan = DB::table('customer_active_plan')->where('plan_id', $get_active_plan->plan_id)->first();
 					$end_plan_date = date('Y-m-d', strtotime('+'.$first_plan->duration, strtotime($plan->plan_start)));
@@ -7550,7 +7563,7 @@ class PlanHelper
 				} else {
 					$data['paid'] = false;
 				}
-				
+
 				if($get_active_plan->paid == "true") {
 					if($payment) {
 						$temp_amount_due = $amount_due - $payment->paid_amount;
@@ -7614,7 +7627,7 @@ class PlanHelper
 				$dependent_amount += $dependent->individual_price * $dependent->total_dependents;
 				$total_dependents = $dependent->total_dependents;
 			}
-			
+
 
 			if($dependent->duration || $dependent->duration != "") {
 				$end_date_temp = date('Y-m-d', strtotime('+'.$dependent->duration, strtotime($dependent->plan_start)));
@@ -7644,7 +7657,7 @@ class PlanHelper
 		$data['amount_due'] = $data['amount_due'] + $dependent_amount_due;
 		$data['total'] = $data['amount_due'];
 		// $data['total'] = \DecimalHelper::formatDecimal($data['total'] + $dependent_amount, 2);
-		
+
 		$data['customer_active_plan_id'] = $get_active_plan->customer_active_plan_id;
 		return $data;
 	}
@@ -7785,7 +7798,7 @@ class PlanHelper
 		}
 	}
 
-	public static function getSpendingDeposit($id) 
+	public static function getSpendingDeposit($id)
 	{
 		$deposit = DB::table("spending_deposit_credits")->where("deposit_id", $id)->first();
 
@@ -7816,7 +7829,7 @@ class PlanHelper
 
 		$percent = floatval($deposit->percent);
 		$wellness_percent = floatval($deposit->wellness_percent);
-		
+
 		$data['percent'] = $percent;
 		$data['medical_status'] = false;
 		$data['wellness_status'] = false;
@@ -7833,7 +7846,7 @@ class PlanHelper
 			$medical_deposit_amount = $deposit->medical_credits * $percent;
 			$data['medical_deposit_amount'] = number_format($medical_deposit_amount, 2);
 			$data['medical_status'] = true;
-		} 
+		}
 
 		if($deposit->welness_credits > 0) {
 			$data['total_wellness'] = $deposit->welness_credits;
