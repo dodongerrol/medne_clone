@@ -190,7 +190,7 @@ class EclaimController extends \BaseController {
 		}
 
 		// check if enable to access feature
-		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
@@ -480,7 +480,7 @@ class EclaimController extends \BaseController {
 		}
 
 		// check if enable to access feature
-		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');

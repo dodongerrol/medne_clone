@@ -99,14 +99,24 @@ class SpendingHelper {
 
     public static function checkSpendingCreditsAccess($customer_id)
     {
+        // get primary plan
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+        if($plan->account_type == "out_of_pocket") {
+            return ['enable' => true];
+        }
         // get lists of users
         $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
         $spending_account_settings = DB::table('spending_account_settings')
                                   ->where('customer_id', $customer_id)
                                   ->orderBy('created_at', 'desc')
                                   ->first();
-
-        if($spending_account_settings->medical_payment_method_panel == 'mednefits_credits') {
+        $account_credits = DB::table('mednefits_credits')
+                            ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+                            ->where('mednefits_credits.customer_id', $customer_id)
+                            ->get();
+        // if($spending_account_settings->medical_payment_method_panel == 'mednefits_credits') {
+        if(sizeof($account_credits) > 0) {
             $total_credits = 0;
             $total_company_entitlement = 0;
             $total_medical_entitlment = 0;
@@ -114,15 +124,6 @@ class SpendingHelper {
             $purchased_credits = 0;
             $bonus_credits = 0;
             $payment_status = false;
-            // get total credits
-            // $creditAccount = DB::table('mednefits_credits')
-            //                 ->where('customer_id', $customer_id)
-            //                 ->where('start_term', $spending_account_settings->medical_spending_start_date)
-            //                 ->first();
-            $account_credits = DB::table('mednefits_credits')
-                            ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
-                            ->where('mednefits_credits.customer_id', $customer_id)
-                            ->get();
             
             foreach($account_credits as $key => $credits) {
                 if((int)$credits->payment_status == 1) {
@@ -147,11 +148,17 @@ class SpendingHelper {
 
             $total_company_entitlement = $total_medical_entitlment + $total_wellness_entitlment;
             $total_balance = $total_credits - $total_company_entitlement;
-            $enable = false;
+            $enable = true;
 
-            if($total_credits >= $total_company_entitlement && $payment_status == true) {
+            if($total_credits >= $total_company_entitlement && $payment_status == false) {
+                $enable = false;
+            }
+
+            if($total_credits < $total_company_entitlement) {
                 $enable = true;
-            } else if($total_credits < $total_company_entitlement) {
+            }
+
+            if($total_credits >= $total_company_entitlement &&  $payment_status == true) {
                 $enable = true;
             }
 
@@ -169,14 +176,26 @@ class SpendingHelper {
 
     public static function checkSpendingCreditsAccessNonPanel($customer_id)
     {
+        // get primary plan
+        $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+
+        if($plan->account_type == "out_of_pocket") {
+            return ['enable' => true];
+        }
         // get lists of users
         $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
         $spending_account_settings = DB::table('spending_account_settings')
                                   ->where('customer_id', $customer_id)
                                   ->orderBy('created_at', 'desc')
                                   ->first();
+        // get total credits
+        $account_credits = DB::table('mednefits_credits')
+        ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+        ->where('mednefits_credits.customer_id', $customer_id)
+        ->get();
 
-        if($spending_account_settings->medical_payment_method_panel == 'mednefits_credits') {
+        // if($spending_account_settings->medical_payment_method_panel == 'mednefits_credits') {
+        if(sizeof($account_credits) > 0) {
             $total_credits = 0;
             $total_company_entitlement = 0;
             $total_medical_entitlment = 0;
@@ -184,11 +203,7 @@ class SpendingHelper {
             $purchased_credits = 0;
             $bonus_credits = 0;
             $payment_status = false;
-            // get total credits
-            $account_credits = DB::table('mednefits_credits')
-                            ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
-                            ->where('mednefits_credits.customer_id', $customer_id)
-                            ->get();
+            $enable = true;
             
             foreach($account_credits as $key => $credits) {
                 if((int)$credits->payment_status == 1) {
@@ -214,11 +229,23 @@ class SpendingHelper {
             $total_company_entitlement = $total_medical_entitlment + $total_wellness_entitlment;
             $total_balance = $total_credits - $total_company_entitlement;
 
+            if($total_credits >= $total_company_entitlement && $payment_status == false) {
+                $enable = false;
+            }
+
+            if($total_credits < $total_company_entitlement) {
+                $enable = true;
+            }
+            
+            if($total_credits >= $total_company_entitlement &&  $payment_status == true) {
+                $enable = true;
+            }
+
             return [
                 'total_credits' => $total_credits, 
                 'total_company_entitlement' => $total_company_entitlement,
                 'payment_status'  => $payment_status,
-                'enable' => $total_balance > 0 ? true : false
+                'enable' => $enable
             ];
         } else {
             return ['enable' => true];

@@ -25,18 +25,9 @@ app.directive('dashboardDirective', [
 				scope.empStatementShow = false;
 				scope.spending_account_status = {};
 				scope.employee_plan_status = {};
-				// scope.totalCompanyHeight = document.getElementById("tolal-company-container").style.height = "50px";
-				// console.log(scope.totalCompanyHeight);
-
-				// if ( scope.spending_account_status.wellness == true ) {
-				// 	scope.spendingAccountType = 1;
-				// }
-				console.log(scope.spendingAccountType);
 
 				scope.companyAccountType = function () {
 					scope.account_type = localStorage.getItem('company_account_type');
-					console.log(scope.account_type);
-
 					if (scope.account_type === 'enterprise_plan') {
 						$('.statement-hide').hide();
 						scope.statementHide = false;
@@ -83,7 +74,6 @@ app.directive('dashboardDirective', [
 						textinfo: 'none',
 						sort: false
 					}];
-					// console.log(data);
 					var layout = {
 						height: 280,
 						width: 280
@@ -127,20 +117,9 @@ app.directive('dashboardDirective', [
 				scope.getProgress = function () {
 					hrSettings.getEnrollmentProgress()
 						.then(function (response) {
-							console.log(response);
 							scope.progress = response.data.data;
-							// scope.initializeChart();
-                            if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
-								scope.spendingAccountType = 1;
-							} else {
-								scope.spendingAccountType = 0;
-							}
-							// if ( scope.progress.active_plans[0].account_type == "enterprise_plan" ) {
-							// 	scope.spendingAccountType = 1;
-							// } else {
-								scope.spendingAccountType = 0;
-								scope.companySpendingTotalDue();
-							// }
+							scope.spendingAccountType = 0;
+							scope.companySpendingTotalDue();
 						});
 				}
 
@@ -158,7 +137,6 @@ app.directive('dashboardDirective', [
 				}
 
 				scope.formatMinusDate = function (date) {
-					// console.log(date);
 					var new_date = moment(date).subtract(5, 'days');
 					return new_date.format("DD/MM/YYYY");
 				}
@@ -166,19 +144,13 @@ app.directive('dashboardDirective', [
 				scope.dashCredits = function () {
 					$('.credit-load').show();
 					$('.credit-box').hide();
-
 					hrSettings.getCheckCredits('current_term')
 						.then(function (response) {
-							console.log(response);
 							scope.credits = response.data;
 							localStorage.setItem('currency_type', scope.credits.currency);
 							$('.credit-load').hide();
 							$('.credit-box').fadeIn();
 						});
-
-					// hrSettings.getDashCredits()
-					// 	.then(function(response){
-					// 	});
 				}
 
 				scope.showLoading = function () {
@@ -236,16 +208,15 @@ app.directive('dashboardDirective', [
 					hrSettings.companyDependents()
 						.then(function (response) {
 							scope.dependents = response.data;
-							console.log(response);
+							// console.log(response);
 						});
 				}
 
 				scope.getSpendingAccountStatus = function () {
 					hrSettings.getSpendingAccountStatus()
 						.then(function (response) {
-							console.log(response);
+							// console.log(response);
 							scope.spending_account_status = response.data;
-							console.log(scope.spending_account_status);
 						});
 				}
 
@@ -287,15 +258,15 @@ app.directive('dashboardDirective', [
 				scope.getCompanyDetails = function () {
 					hrSettings.getCompanyDetails()
 						.then(function (response) {
+							console.log(response);
 							scope.options.company_name = response.data.data;
 						});
 				}
 
 				scope.getEmployeeStatus = function( ) {
-					console.log('here oh')
 					hrSettings.getEmployeeStatus( )
 					.then(function(response) {
-					  console.log(response);
+					  // console.log(response);
 					  scope.employee_plan_status = response.data.data;
 					});
 				};

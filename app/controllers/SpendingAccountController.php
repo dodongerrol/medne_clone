@@ -1306,17 +1306,19 @@ class SpendingAccountController extends \BaseController {
         $customer_wallet = DB::table('customer_credits')->where('customer_id', $spendingPurchase->customer_id)->first();
         $billing = DB::table('customer_business_information')->where('customer_buy_start_id', $spendingPurchase->customer_id)->first();
         $data = array();
-        $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
         $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
         $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
         $data['invoice_number'] = $spendingPurchase->invoice_number;
         $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+		$amount_due = $total - (float)$spendingPurchase->payment_amount;
 		$data['total']  = number_format($total, 2);
+        $data['paid'] = $amount_due > 0 ? false : true;
 		if($data['paid'] == true) {
 			$data['amount_due'] = "0.00";
 		} else {
-			$data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
-		}
+            $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
+        }
+        $data['payment_status'] = $amount_due > 0 ? 'PENDING' : 'PAID';
         $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
         $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
         $data['remarks']    = $spendingPurchase->remarks;
