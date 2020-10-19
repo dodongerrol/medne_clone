@@ -580,6 +580,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/employee/list?status[]=active" );
   }
   
+  hrFactory.fetchLinkAccount = function ( per_page, page ) {
+    return $http.get( serverUrl.url + "/hr/get/corporate_linked_account?limit="+per_page+"&page="+page+"&total_enrolled_employee_status=true&total_enrolled_dependent_status=true" );
+  }
+
 
   return hrFactory;
 });
