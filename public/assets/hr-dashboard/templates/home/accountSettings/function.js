@@ -748,7 +748,7 @@ app.directive("accountSettingsDirective", [
         scope.page_link = 1;
         
         scope.getLinkedAccount = async function () {
-          await hrSettings.fetchLinkAccount( scope.limit_link,scope.page_link ).then(function (response) {
+          await hrSettings.fetchLinkAccount( scope.limit_link,scope.page_link, 'enable' ).then(function (response) {
             console.log(response);
             scope.link_account_data = response.data;
           });

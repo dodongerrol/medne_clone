@@ -363,7 +363,7 @@ class CorporateController extends BaseController {
 			
 			$password = \CustomerHelper::get_random_password(8);
 			// update hr information
-			$reset_link = \AdminHelper::getEncryptValue();
+			$reset_link = StringHelper::getEncryptValue();
 			$hr = array(
 				'fullname'				=> $request->get('fullname'),
 				'email'					=> $request->get('email'),
@@ -561,7 +561,8 @@ class CorporateController extends BaseController {
 		$hr_id = $result->hr_dashboard_id;
 		$limit = !empty($input['limit']) ? $input['limit'] : 5;
 		$search = !empty($input['search']) ? $input['search'] : null;
-		$except_id = !empty($input['except_id']) ? $input['except_id'] : false;
+		$except_current = isset($input['except_current']) && $input['except_current'] == "enable" ? true : false;
+		
 		if($search) {
 			$link_accounts = DB::table('company_link_accounts')
 							->join('customer_business_information', 'customer_business_information.customer_buy_start_id', '=', 'company_link_accounts.customer_id')
@@ -578,10 +579,10 @@ class CorporateController extends BaseController {
 							})
 							->get();
 		} else {
-			if($except_id) {
+			if($except_current) {
 				$link_accounts = DB::table('company_link_accounts')
 							->where('hr_id', $hr_id)
-							->where('customer_id', '!=', $except_id)
+							->where('customer_id', '!=', $customer_id)
 							->where('status', 1)
 							->paginate($limit);
 			} else {
