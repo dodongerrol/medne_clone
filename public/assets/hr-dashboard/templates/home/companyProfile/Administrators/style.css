@@ -179,8 +179,14 @@
 .admin-input-wrapper {
   margin: 0 0 20px;
 }
-.permission-wrapper {
+.permission-wrapper,
+.mednefits-employee-selector-container {
   margin: 0 0 20px;
+}
+.permission-wrapper >div .location-department-data-wrapper {
+  max-height: 100px;
+  overflow-y: auto;
+  margin: 0 0 0 15px;
 }
 .admin-input-wrapper label {
   display: block;
@@ -200,10 +206,14 @@
   width: 20%;
   margin: 0 10px 0 0;
 }
-.permission-input-wrapper {
+.permission-input-wrapper,
+.employee-name-input-wrapper {
   width: 210px;
   font-size: 14px;
   position: relative;
+}
+.employee-name-input-wrapper input {
+  background-color: #F2F2F2;
 }
 .permission-selector-dp-wrapper {
   position: absolute;
@@ -216,15 +226,22 @@
   z-index: 1;
   padding: 5px 0;
 }
+.permission-selector-dp-wrapper.location-department-container {
+  z-index: 2;
+}
 .permission-selector-dp-wrapper >div {
   padding: 5px 10px;
   cursor: pointer;
 }
+.permission-selector-dp-wrapper >div:hover {
+  background-color: rgba(230, 247, 255, 0.7);
+}
 .permission-input-wrapper i {
   margin: 0 0 0 5px;
   position: absolute;
-  top: 7px;
+  top: 10px;
   right: 7px;
+  color: #979797;
 }
 .administrator-modal-container .administrator-success {
   text-align: center;
@@ -268,4 +285,77 @@
 }
 #remove-administrator-modal .btn-update {
   padding: 0 70px;
+}
+.filter-data-selector-wrapper {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: -7px 0 0 -10px;
+  width: calc(100% + 12px);
+}
+.filter-data-selector-container {
+  background-color: #f2f2f2;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  padding: 0px 8px;
+  font-size: 12px;
+  border: 1px solid #BFBFBF;
+  margin: 7px 0 0 10px;
+}
+.filter-data-selector-container >div{
+  white-space: nowrap;
+  width: 57px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.filter-data-selector-container img {
+  margin: 0 0 0 20px;
+  width: 10px;
+}
+.mednefits-employee-name .activated-text,
+.mednefits-employee-name input::placeholder {
+  font-size: 13px;
+}
+.mednefits-employee-name .activated-text {
+  margin:  0 0 5px;
+}
+.mednefits-employee-name label {
+  margin: 0;
+}
+.mednefits-employee-name .emp-name-input-wrapper {
+  border: 1px solid #BFBFBF;
+  width: 210px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  position: relative;
+  color: #979797;
+  display: flex;
+  align-items: center;
+}
+.mednefits-employee-name .emp-name-input-wrapper.validation {
+  border: 2px solid #EB635D;
+}
+.mednefits-employee-name input {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  outline: none;
+}
+.emp-name-input-wrapper .fa-search {
+  font-size: 16px;
+  margin: 0 5px 5px 0;
+}
+.emp-name-input-wrapper .fa-angle-down {
+  font-size: 15px;
+}
+.emp-name-input-wrapper .permission-selector-dp-wrapper {
+  color: #000;
+}
+.employee-name-validation {
+  color: #EB635D;
+  font-size: 10px;
+  line-height: normal;
+  width: 170px;
+  font-family: 'Helvetica Medium';
+  margin: 0 0 0 10px;
 }

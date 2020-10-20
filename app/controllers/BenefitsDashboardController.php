@@ -1996,7 +1996,6 @@ class BenefitsDashboardController extends \BaseController {
 						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated', 'Status', 'passport')
 						->paginate($per_page);
 			} else {
-        // $users = [];
         $users = DB::table('user')
 						->whereIn('UserID', $unique_ids)
 						->paginate($per_page);
@@ -2051,7 +2050,7 @@ class BenefitsDashboardController extends \BaseController {
 			$paginate['from'] = $users->getFrom();
 			$paginate['to'] = $users->getTo();
 			$paginate['count'] = $users->count();
-    }
+		}
 
 		// spending account
 		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
@@ -13700,8 +13699,8 @@ class BenefitsDashboardController extends \BaseController {
 		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account_link->corporate_id)
 		->where('user.Active', 1)
-    ->get();
-    
+		->get();
+
     $total_of_administrator = DB::table('customer_admin_roles')
 		->where('customer_admin_roles.customer_id', $account_link->corporate_id)
 		->where('customer_admin_roles.status', 1)
@@ -13717,7 +13716,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$total_members = $total_active_members + $total_active_dependents;
 
-		return array('status' => true, 'total_members' => $total_members, 'total_administrators' => sizeof($total_of_administrator));
+		return array('status' => true, 'total_members' => $total_members);
 	}
 
 	public function getEmployeeSpendingAccountSummaryNew( )
@@ -18035,7 +18034,7 @@ public function createHrLocation ()
         } else {
             $url = 'http://medicloud.local/company-benefits-dashboard';
 		}
-    
+		
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
@@ -18063,7 +18062,6 @@ public function createHrLocation ()
 
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
 		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
-
 		if(!$permission)
 		{
 			return array('status' =>  false, 'message'	=> 'Permissions doesnt exist.');
@@ -18093,7 +18091,6 @@ public function createHrLocation ()
 
 		$details = CustomerAdminRole::where('customer_id', $id)->get();
 		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
-
 		$container = array();
 		foreach ($details as $detail) {
 			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
