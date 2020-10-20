@@ -267,6 +267,7 @@ app.directive("administratorsDirective", [
         scope.getAdditionalAdmin = function () {
           hrSettings.fecthAdditionalAdminDetails().then(function (response) {
             console.log(response);
+            scope.additional_admin_data = response.data;
           });
         }
         scope.getEmployeeName = function () {
