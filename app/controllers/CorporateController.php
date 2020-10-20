@@ -416,7 +416,7 @@ class CorporateController extends BaseController {
 			$email_data = array();
 			$email_data['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 			$email_data['emailName'] = ucwords($data['fullname']);
-			$email_data['emailPage'] = 'email.activation-email';
+			$email_data['emailPage'] = 'email-templates.activation-email';
 			$email_data['emailTo'] = $data['email'];
 			$email_data['button'] = $url.'/company-activation#/activation-link?activation_token='.$reset_link;
 			\EmailHelper::sendEmail($email_data);
