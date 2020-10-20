@@ -1996,7 +1996,9 @@ class BenefitsDashboardController extends \BaseController {
 						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated', 'Status', 'passport')
 						->paginate($per_page);
 			} else {
-				$users = false;
+        $users = DB::table('user')
+						->whereIn('UserID', $unique_ids)
+						->paginate($per_page);
 			}
 		} else {
 			if($search) {
@@ -13698,6 +13700,11 @@ class BenefitsDashboardController extends \BaseController {
 		->where('corporate_members.corporate_id', $account_link->corporate_id)
 		->where('user.Active', 1)
 		->get();
+
+    $total_of_administrator = DB::table('customer_admin_roles')
+		->where('customer_admin_roles.customer_id', $account_link->corporate_id)
+		->where('customer_admin_roles.status', 1)
+    ->get();
 
 		$total_active_members = sizeof($corporate_members);
 		foreach ($corporate_members as $key => $member) {
