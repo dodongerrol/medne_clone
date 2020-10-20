@@ -305,6 +305,7 @@ class CorporateController extends BaseController {
 			}
 
 			$hr_id = $primary->hr_dashboard_id;
+			$old_under_customer_id = $data['hr_id'];
 			// check if customer id exist in link account
 			$linkAccont = DB::table('company_link_accounts')->where('hr_id', $hr_id)->where('customer_id', $customer_id)->where('status', 1)->first();
 
@@ -370,7 +371,7 @@ class CorporateController extends BaseController {
 			// update existing linking from old hr
 			$updateUnlink = DB::table('company_link_accounts')->where('hr_id', $data['hr_id'])->where('customer_id', $customer_id)->update(['status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
 			$hr_id = $data['hr_id'];
-			$old_under_customer_id = $data['hr_id'] ;
+			$old_under_customer_id = $data['hr_id'];
 			$under_hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $old_under_customer_id)->first();
 			$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 			// create new activation and information for hr
