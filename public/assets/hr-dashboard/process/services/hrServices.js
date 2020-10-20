@@ -584,6 +584,9 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get/corporate_linked_account?limit="+per_page+"&page="+page+"&total_enrolled_employee_status=true&total_enrolled_dependent_status=true" );
   }
 
+  hrFactory.updateAdditionalAdmin = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/add_employee_admin",data );
+  }
 
   return hrFactory;
 });
