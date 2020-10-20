@@ -1112,5 +1112,16 @@ class CustomerHelper
 			return [];
 		}
 	}
+
+	public static function getAllMembers($customer_id) 
+	{
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$users = DB::table('corporate_members')
+									->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+									->where('corporate_members.corporate_id', $account_link->corporate_id)
+									->lists('corporate_members.user_id');
+		return $users;
+	}
 }
 ?>
