@@ -46,7 +46,7 @@
             <p style="font-size: 35px;line-height: 35px;margin: 0 0 15px 0;">INVOICE</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$contact_name}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_address}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company_address}}, {{$building_name}}, {{$unit_number}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$postal}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;text-transform: uppercase;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
