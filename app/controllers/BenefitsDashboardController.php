@@ -1996,7 +1996,10 @@ class BenefitsDashboardController extends \BaseController {
 						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated', 'Status', 'passport')
 						->paginate($per_page);
 			} else {
-				$users = false;
+        // $users = [];
+        $users = DB::table('user')
+						->whereIn('UserID', $unique_ids)
+						->paginate($per_page);
 			}
 		} else {
 			if($search) {
@@ -2048,7 +2051,7 @@ class BenefitsDashboardController extends \BaseController {
 			$paginate['from'] = $users->getFrom();
 			$paginate['to'] = $users->getTo();
 			$paginate['count'] = $users->count();
-		}
+    }
 
 		// spending account
 		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
@@ -18027,7 +18030,7 @@ public function createHrLocation ()
         } else {
             $url = 'http://medicloud.local/company-benefits-dashboard';
 		}
-		
+    
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
