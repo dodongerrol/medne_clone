@@ -711,43 +711,80 @@ class SpendingAccountController extends \BaseController {
 			return array('status' => false, 'message' => 'end term is required.');
 		}
 		
-		$limit = !empty($data['per_page']) ? $data['per_page'] : 5;
-		// get spending account activity
-		$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->paginate($limit);
-		
-		$pagination = [];
-		$pagination['current_page'] = $activites->getCurrentPage();
-		$pagination['last_page'] = $activites->getLastPage();
-		$pagination['total'] = $activites->getTotal();
-		$pagination['per_page'] = $activites->getPerPage();
-		$pagination['count'] = $activites->count();
+		$limit = !empty($input['per_page']) ? $input['per_page'] : 5;
+		$type = !empty($input['coverage_type']) ? $input['coverage_type'] : false;
 		$format = [];
+		$pagination = [];
 
-		foreach($activites as $key => $activity) {
-			if($activity->type == "added_purchase_credits") {
-				$activity->label = 'Purchased Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "added_bonus_credits") {
-				$activity->label = 'Bonus Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "carried_forward_renewal_credits") {
-				$activity->label = 'Carried-forward Purchased Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "carried_forward_bonus_credits") {
-				$activity->label = 'Bonus Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "deduct_panel_spending") {
-				$activity->label = 'Panel Monthly Spending';
-				$activity->type_status = "deduct";
-			} else if($activity->type == "deduct_non_panel_spending") {
-				$activity->label = 'Non-Panel Spending';
-				$activity->type_status = "deduct";
-			} else if($activity->type == "deduct_non_panel_spending") {
-				$activity->label = 'Refund';
-				$activity->type_status = "deduct";
+		if($type == "out_of_pocket") {
+			$start = $input['start'];
+			$end = \PlanHelper::endDate($input['end']);
+			// get out of pocket transaction logs
+			$members = \CustomerHelper::getAllMembers($customer_id);
+			if(sizeof($members) > 0) {
+				$activites = DB::table('transaction_history')
+								  ->whereIn('UserID', $members)
+								  ->where('credit_cost', 0)
+								  ->where('created_at', '>=', $start)
+								  ->where('created_at', '<=', $end)
+								  ->select('transaction_id', 'credit_cost', 'procedure_cost', 'currency_type', 'spending_type', 'ClinicID', 'created_at', 'updated_at', 'UserID as member_id')
+								  ->paginate($limit);
+				
+				$pagination['current_page'] = $activites->getCurrentPage();
+				$pagination['last_page'] = $activites->getLastPage();
+				$pagination['total'] = $activites->getTotal();
+				$pagination['per_page'] = $activites->getPerPage();
+				$pagination['count'] = $activites->count();
+
+				foreach($activites as $transaction) {
+				  $clinic = DB::table('clinic')
+							  ->join('clinic_types', 'clinic_types.ClinicTypeID', '=', 'clinic.Clinic_Type')
+							  ->where('clinic.ClinicID', $transaction->ClinicID)
+							  ->select('clinic.ClinicID as clinic_id', 'clinic.Name as clinic_name', 'clinic_types.Name as clinic_type_name')
+							  ->first();
+				  
+				  $transaction->type_status = "deduct";
+				  $transaction->type = "created_transaction";
+				  $transaction->label = $clinic->clinic_type_name.' Transaction';
+				  $transaction->credit = number_format($transaction->procedure_cost, 2);
+				  $format[] = $transaction;
+				}
 			}
-			$activity->credit = number_format($activity->credit, 2);
-			$format[] = $activity;
+		} else {
+			// get spending account activity
+			$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->paginate($limit);
+			$pagination['current_page'] = $activites->getCurrentPage();
+			$pagination['last_page'] = $activites->getLastPage();
+			$pagination['total'] = $activites->getTotal();
+			$pagination['per_page'] = $activites->getPerPage();
+			$pagination['count'] = $activites->count();
+
+			foreach($activites as $key => $activity) {
+				if($activity->type == "added_purchase_credits") {
+					$activity->label = 'Purchased Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "added_bonus_credits") {
+					$activity->label = 'Bonus Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "carried_forward_renewal_credits") {
+					$activity->label = 'Carried-forward Purchased Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "carried_forward_bonus_credits") {
+					$activity->label = 'Bonus Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "deduct_panel_spending") {
+					$activity->label = 'Panel Monthly Spending';
+					$activity->type_status = "deduct";
+				} else if($activity->type == "deduct_non_panel_spending") {
+					$activity->label = 'Non-Panel Spending';
+					$activity->type_status = "deduct";
+				} else if($activity->type == "deduct_non_panel_spending") {
+					$activity->label = 'Refund';
+					$activity->type_status = "deduct";
+				}
+				$activity->credit = number_format($activity->credit, 2);
+				$format[] = $activity;
+			}
 		}
 
 		$pagination['data'] = $format;
