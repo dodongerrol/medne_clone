@@ -880,6 +880,9 @@ class SpendingInvoiceLibrary
 		return array(
 			'company' => ucwords($data->statement_company_name),
 			'company_address' => ucwords($data->statement_company_address),
+			'postal'		=> $company_details->postal_code,
+			'building_name'		=> $company_details->building_name,
+			'unit_number'		=> $company_details->unit_number,
 			'statement_contact_email' => $data->statement_contact_email,
 			'statement_contact_name' => ucwords($data->statement_contact_name),
 			'statement_contact_number' => $data->statement_contact_number,

@@ -50,7 +50,8 @@
             <p style="font-size: 12px;line-height: 14px;margin: 0 0 10px 10px;">
               {{ $company }}<br>
               Attention: {{ $statement_contact_name }}<br>
-              {{ $company_address }}<br>
+              {{ $company_address }}, {{$building_name}}, {{$unit_number}}<br>
+              {{ $postal }}<br>
             </p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;padding-bottom: 35px;text-align: right;">
