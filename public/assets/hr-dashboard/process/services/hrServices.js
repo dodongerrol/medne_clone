@@ -477,8 +477,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
 
   // Mednefits Credits Account Activity Table
-  hrFactory.fetchMednefitsActivitiesData = function ( start,end,page,per_page ) {
-    return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end + "&page=" + page + "&per_page=" + per_page );
+  hrFactory.fetchMednefitsActivitiesData = function ( start,end,page,per_page, account_type ) {
+    var url = serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end + "&page=" + page + "&per_page=" + per_page;
+    if(account_type){
+      url += '&coverage_type=' + account_type;
+    }
+    return $http.get(url);
   }
 
   // Medical and Wellness Wallent Activity Table
