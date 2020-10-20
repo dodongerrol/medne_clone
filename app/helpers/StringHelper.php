@@ -204,6 +204,19 @@ class StringHelper{
                     // } else {
                         $hr->customer_buy_start_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
                         $hr->customer_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
+
+                        if($hr->customer_buy_start_id == null) {
+                            // get only company
+                            $companyLinked = DB::table('company_link_accounts')->where('hr_id', $hr->hr_dashboard_id)->where('status', 1)->select('customer_id')->first();
+
+                            if($companyLinked) {
+                                $hr->customer_buy_start_id = $companyLinked->customer_id;
+                                $hr->customer_id = $companyLinked->customer_id;
+                            } else {
+                                return FALSE;
+                            }
+                        }
+
                         if((int)$hr->active == 1) {
                             $hr->signed_in = $result->signed_in;
                             if(isset($result->expire_in)) {
