@@ -18031,7 +18031,7 @@ public function createHrLocation ()
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
-		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template.blade';
+		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template';
 		$emailDdata['url'] = $url;
 		
 		\EmailHelper::sendEmail($emailDdata);
@@ -18084,10 +18084,6 @@ public function createHrLocation ()
 
 		$details = CustomerAdminRole::where('customer_id', $id)->get();
 		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
-		if(!$details)
-			{
-				return array('status' => false, 'message'	=> 'Admin doesnt exist.'); 
-			}
 		$container = array();
 		foreach ($details as $detail) {
 			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
