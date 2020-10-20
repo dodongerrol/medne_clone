@@ -110,7 +110,7 @@ app.directive('outOfPocketDirective', [
 
         scope.getActivitiesDataTable = async function ( data ) {
           // console.log(data);
-          await hrSettings.fetchMednefitsActivitiesData( data.start,data.end,scope.page,scope.per_page )
+          await hrSettings.fetchMednefitsActivitiesData( data.start,data.end,scope.page,scope.per_page, 'out_of_pocket' )
           .then(function(response){
             // console.log(response);
             scope.spending_activity = response.data.data;
