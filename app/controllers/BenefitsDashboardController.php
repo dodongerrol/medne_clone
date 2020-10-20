@@ -17488,8 +17488,23 @@ public function createHrLocation ()
 
 		$total_active_members = sizeof($corporate_members);
 
-		$locations = CorporateHrLocation::where('customer_id', $id)->get();
+		$locations = \CorporateHrLocation::where('customer_id', $id)->get();
 		
+		if(sizeof($locations) == 0) {
+			// create new work locations for empty work locations
+			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $id)->first();
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+
+			$data = array(
+				'customer_id'		=> $id,
+				'location'			=> $info->company_address,
+				'business_address'	=> $info->unit_number && $info->building_name ? $info->unit_number.' '.$info->building_name : $info->company_address,
+				'country'			=> $customer->currency_type == "myr" ? 'Malaysia' : 'Singapore',
+				'postal_code'		=> $info->postal_code,
+			);
+			\CorporateHrLocation::create($data);
+			$locations = \CorporateHrLocation::where('customer_id', $id)->get();
+		}
 
 		$container = array();
 		foreach ($locations as $key => $location) {
