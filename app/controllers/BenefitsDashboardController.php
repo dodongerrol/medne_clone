@@ -1913,7 +1913,10 @@ class BenefitsDashboardController extends \BaseController {
 
 		$types = !empty($input['status']) && sizeof($input['status']) > 0 ? $input['status'] : null;
 		$per_page = !empty($input['limit']) ? $input['limit'] : 5;
-		$search = !empty($input['search']) ? $input['search'] : null;
+    $search = !empty($input['search']) ? $input['search'] : null;
+    $byLocation = !empty($input['location_id']) ? json_decode($input['location_id']) : null;
+    $byDepartment = !empty($input['department_id']) ? json_decode($input['department_id']) : null;
+    
 		if($types)	{
 			foreach($types as $key => $type) {
 				if(!in_array($type, ['pending', 'activated', 'active', 'removed'])) {
@@ -1990,10 +1993,13 @@ class BenefitsDashboardController extends \BaseController {
 			if(sizeof($unique_ids) > 0) {
 				$users = DB::table('user')
 						->whereIn('UserID', $unique_ids)
-						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated', 'Status')
+						->select('UserID', 'Name', 'Email', 'NRIC', 'PhoneNo', 'PhoneCode', 'Job_Title', 'DOB', 'created_at', 'Zip_Code', 'bank_account', 'Active', 'bank_code', 'bank_brh', 'wallet', 'bank_name', 'emp_no', 'member_activated', 'Status', 'passport')
 						->paginate($per_page);
 			} else {
-				$users = false;
+        // $users = [];
+        $users = DB::table('user')
+						->whereIn('UserID', $unique_ids)
+						->paginate($per_page);
 			}
 		} else {
 			if($search) {
@@ -2003,7 +2009,31 @@ class BenefitsDashboardController extends \BaseController {
 				->where('user.Name', 'like', '%'.$search.'%')
 				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
 				->paginate($per_page);
-			} else {
+      } elseif ($byLocation) {
+        $users = DB::table('user')
+        ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('company_locations', 'company_locations.customer_id', '=', 'corporate_members.corporate_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->where('company_locations.customer_id', $account_link->corporate_id)
+        ->whereIn('company_locations.LocationID', $byLocation)
+        ->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport',
+                'company_locations.LocationID', 'company_locations.location', 'company_locations.business_address', 'company_locations.country')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+        ->paginate($per_page);
+      } elseif ($byDepartment) {
+        $users = DB::table('user')
+        ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('company_departments', 'company_departments.customer_id', '=', 'corporate_members.corporate_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->where('company_departments.customer_id', $account_link->corporate_id)
+				->whereIn('company_departments.id', $byDepartment)
+        ->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport',
+                'company_departments.id', 'company_departments.department_name')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+        ->paginate($per_page);
+      } else {
 				$users = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
@@ -2012,7 +2042,7 @@ class BenefitsDashboardController extends \BaseController {
 				->orderBy('user.UserID', 'asc')
 				->paginate($per_page);
 			}
-		}
+    }
 		
 		if($users) {
 			$paginate['last_page'] = $users->getLastPage();
@@ -2021,7 +2051,7 @@ class BenefitsDashboardController extends \BaseController {
 			$paginate['from'] = $users->getFrom();
 			$paginate['to'] = $users->getTo();
 			$paginate['count'] = $users->count();
-		}
+    }
 
 		// spending account
 		$spending_account = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
@@ -2290,7 +2320,20 @@ class BenefitsDashboardController extends \BaseController {
 			
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0 || (int)$user->member_activated == 1 && (int)$user->Status == 0) {
 				$emp_status = 'pending';
-			}
+      }
+
+      $locationsQuery = DB::table('company_locations')
+        ->join('corporate_members', 'corporate_members.corporate_id', '=', 'company_locations.customer_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->select('company_locations.LocationID', 'company_locations.location', 'company_locations.business_address', 'company_locations.country')
+        ->get();
+
+      $departmentQuery = DB::table('company_departments')
+        ->join('corporate_members', 'corporate_members.corporate_id', '=', 'company_departments.customer_id')
+        ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->select('company_departments.id', 'company_departments.department_name')
+        ->get();
+
 
 			$temp = array(
 				'spending_account'	=> array(
@@ -2329,7 +2372,9 @@ class BenefitsDashboardController extends \BaseController {
 				'bank_name'				=> $user->bank_name,
 				'passport'				=> $user->passport,
 				'nric'					=> $user->NRIC,
-				// 'company'				=> ucwords($user->company_name),
+        // 'company'				=> ucwords($user->company_name),
+        'location'			=> $locationsQuery ? $locationsQuery : [],
+        'department'			=> $departmentQuery ? $departmentQuery : [],
 				'employee_plan'			=> $get_employee_plan,
 				'date_deleted'  		=> $date_deleted,
 				'deletion'      		=> $deleted,
@@ -2355,7 +2400,68 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['medical_wallet'] = $medical_wallet;
 		$paginate['wellness_wallet'] = $wellness_wallet;
 		return $paginate;
-	}
+  }
+  
+  public function getEmployeeCorporate()
+  {
+    $input = Input::all();
+    $result = self::checkSession();
+    $search = !empty($input['search']) ? $input['search'] : null;
+    $response = [];
+
+    if($search) {
+				$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $result->customer_buy_start_id)
+        ->where('user.Name', 'like', '%'.$search.'%')
+        ->where('user.member_activated', 1)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
+				->get();
+			} else {
+				$users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+        ->where('corporate_members.corporate_id', $result->customer_buy_start_id)
+        ->where('user.member_activated', 1)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport')
+				->orderBy('corporate_members.removed_status', 'asc')
+				->orderBy('user.UserID', 'asc')
+        ->get();
+      }
+
+      $response['status'] = sizeof($users) > 0 ? true : false;
+      $response['message'] = sizeof($users) > 0 ? 'ok' : 'user not found!';
+      $response['data'] = $users;
+
+      return $response;
+  }
+
+  public function validateEmployeeName() 
+  {
+    $input = Input::all();
+    $result = self::checkSession();
+
+    if(empty($input['user_id'])) {
+				return ['status' => false, 'message' => 'user id required!'];
+		}
+
+    $users = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $result->customer_buy_start_id)
+        ->where('user.UserID', $input['user_id'])
+        ->where('user.member_activated', 1)
+				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
+        ->first();
+        
+    if(!$users) {
+        return array('status' => false, 'message' => 'user not found!');
+    }
+    
+    if($users->member_activated !== 1) {
+        return ['status' => false, 'message' => 'Please have this account activated before assigning Administrator.'];
+    }
+
+    return ['status' => true, 'message' => 'user are valid', 'data' => $users];
+  }
 
 	public function getCorporateUserByAllocated($corporate_id, $customer_id) 
 	{
@@ -17914,9 +18020,30 @@ public function createHrLocation ()
 				]);
 			}
 		}
+		$message = [];
+        $emailData = [];
+		
+		if(url('/') == 'https://admin.medicloud.sg') {
+            $url = 'https://medicloud.sg/company-benefits-dashboard';
+        } else if(url('/') == 'http://stage.medicloud.sg') {
+            $url = 'http://staging.medicloud.sg/company-benefits-dashboard';
+        } else {
+            $url = 'http://medicloud.local/company-benefits-dashboard';
+		}
+    
+		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+		$emailDdata['emailTo']= $employee->Email;
+		$emailDdata['emailName'] = ucwords($employee->Name);
+		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template';
+		$emailDdata['url'] = $url;
+		
+		\EmailHelper::sendEmail($emailDdata);
 
-		
-		
+
+
+
+
+
 		$data['message'] = 'Successfully Add Administrator.';
 
 		return $data;
@@ -17932,6 +18059,11 @@ public function createHrLocation ()
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
 		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
 
+		if(!$permission)
+		{
+			return array('status' =>  false, 'message'	=> 'Permissions doesnt exist.');
+		}
+		
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
 			'fullname'										=> $hr->fullname,
@@ -17957,9 +18089,13 @@ public function createHrLocation ()
 		$details = CustomerAdminRole::where('customer_id', $id)->get();
 		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
 
-		
+		$container = array();
 		foreach ($details as $detail) {
 			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+			if(!$permissions)
+			{
+				return array('status' => false, 'message'	=> 'Permissions doesnt exist.'); 
+			}
 			$container [] = array(
 				'id'											=> $detail->id,
 				'fullname'										=> $detail->fullname,
