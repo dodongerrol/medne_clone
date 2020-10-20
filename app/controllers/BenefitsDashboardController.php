@@ -18031,7 +18031,7 @@ public function createHrLocation ()
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
-		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template.blade';
+		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template';
 		$emailDdata['url'] = $url;
 		
 		\EmailHelper::sendEmail($emailDdata);
