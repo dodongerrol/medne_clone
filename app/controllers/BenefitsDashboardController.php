@@ -40,7 +40,7 @@ class BenefitsDashboardController extends \BaseController {
 	{
 		$input = Input::all();
 
-		// return $input;
+		// check hr creds
 		$result = DB::table('customer_hr_dashboard')
 		->where('email', $input['email'])
 		->where('password', md5($input['password']))
@@ -60,6 +60,7 @@ class BenefitsDashboardController extends \BaseController {
 				$result->expire_in = strtotime('+15 days', time());
 			}
 			
+			$result->user_type = "hr_admin";
 			$token = $jwt->encode($result, $secret);
 
 			$hr = new HRDashboard();
@@ -77,12 +78,72 @@ class BenefitsDashboardController extends \BaseController {
 				'message'	=> 'Success.',
 				'token' => $token
 			);
-		} else {
-			return array(
-				'status'	=> FALSE,
-				'message'	=> 'Invalid credentials.'
-			);
+		} 
+		
+		// check if creds suffice for member
+		$member = DB::table('user')->where('Email', $input['email'])->where('Password', md5($input['password']))->where('Active', 1)->select('UserID', 'PhoneNo', 'PhoneCode')->first();
+
+		if($member) {
+			// check if member is an admin type
+			$adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->where('status', 1)->select('id')->first();
+
+			if($adminRole) {
+				// check if member has dependents
+				$dependents = DB::table('employee_family_coverage_sub_accounts')->where('owner_id', $member->UserID)->where('deleted', 0)->select('sub_account_id')->first();
+
+				if($dependents) {
+					// send otp
+					$member_id = $member->UserID;
+					$mobile_number = (int)$member->PhoneNo;
+					$code = $member->PhoneCode;
+					$phone = $code.$mobile_number;
+
+					$otp_code = StringHelper::OTPChallenge();
+					$data = array();
+					$data['phone'] = $phone;
+					$data['message'] = 'Your Mednefits OTP is '.$otp_code;
+					$data['sms_type'] = "LA";
+					SmsHelper::sendSms($data);
+					DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => $otp_code]);
+
+					return [
+						'status' => true,
+						'type' => 'otp_sms',
+						'member_id' => $member_id
+					];
+				}
+				// create token
+				$jwt = new JWT();
+				$secret = Config::get('config.secret_key');
+				$member->user_type = "member_admin";
+				if(isset($input['signed_in']) && $input['signed_in'] == true) {
+					$member->signed_in = TRUE;
+				} else {
+					$member->signed_in = FALSE;
+					$member->expire_in = strtotime('+15 days', time());
+				}
+				
+				$token = $jwt->encode($member, $secret);
+				$admin_logs = array(
+					'admin_id'  => $member->UserID,
+					'admin_type' => 'member',
+					'type'      => 'admin_member_hr_login_portal',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+
+				return array(
+					'status'	=> TRUE,
+					'message'	=> 'Success.',
+					'token' => $token
+				);
+			}
 		}
+
+		return array(
+			'status'	=> FALSE,
+			'message'	=> 'Invalid credentials.'
+		);
 	}
 
 	public function logOutHr( )
@@ -116,28 +177,28 @@ class BenefitsDashboardController extends \BaseController {
 			$accessibility = 0;
 		}
 
-		$permission = DB::table('employee_and_dependent_permissions')
-			->where('id', $hr->customer_buy_start_id)
-			->first();
+		// $permission = DB::table('employee_and_dependent_permissions')
+		// 	->where('id', $hr->customer_buy_start_id)
+		// 	->first();
 
-		if($permission->edit_employee_dependent == 0) {
-			return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
-		}
+		// if($permission->edit_employee_dependent == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
+		// }
 
-		if($permission->enroll_terminate_employee == 0) {
-			return ['status' => false, 'message' => 'admin cannot enroll or terminate employee.'];
-		}
+		// if($permission->enroll_terminate_employee == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot enroll or terminate employee.'];
+		// }
 
-		if($permission->approve_reject_edit_non_panel_claims == 0) {
-			return ['status' => false, 'message' => 'admin cannot remove, reject and edit non panel claims.'];
-		}
+		// if($permission->approve_reject_edit_non_panel_claims == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot remove, reject and edit non panel claims.'];
+		// }
 
-		if($permission->create_remove_edit_admin_unlink_account == 0) {
-			return ['status' => false, 'message' => 'admin cannot create, remove admins, edit admins permission and unlink company account.'];
-		}
-		if($permission->manage_billing_and_payments == 0) {
-			return ['status' => false, 'message' => 'admin cannot manage billing and payments.'];
-		}
+		// if($permission->create_remove_edit_admin_unlink_account == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot create, remove admins, edit admins permission and unlink company account.'];
+		// }
+		// if($permission->manage_billing_and_payments == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot manage billing and payments.'];
+		// }
 
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
 
@@ -17985,12 +18046,10 @@ public function createHrLocation ()
 		$employee_id = $input['employee_id'] ?? null;
 		$location_id = $input['location_id'] ?? null;
 
-
-		
 		$employee = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
-				->where('UserID', $employee_id)
+				->where('user.UserID', $employee_id)
 				->first();
 
 		
@@ -17999,16 +18058,15 @@ public function createHrLocation ()
 			$data['message'] = 'Member/s does not exist'; 
 			$data['status']  = false;
 
-		return $data;
+			return $data;
 		}
 		
-
 		if($employee->member_activated = 0)
 		{
 			$data['message'] = 'Please have this account activated before assigning Administrator.'; 
 			$data['status']  = false;
 
-		return $data;
+			return $data;
 		}
 
 		if($employee->Active = 0)
@@ -18016,7 +18074,7 @@ public function createHrLocation ()
 			$data['message'] = 'Please go to Employee Information to register an email address for this account before assigning Secondary Admin.'; 
 			$data['status']  = false;
 		
-		return $data;
+			return $data;
 		}
 		
 		$role = array (
@@ -18027,46 +18085,54 @@ public function createHrLocation ()
 			'is_mednefits_employee'				=> $input['is_mednefits_employee'] ,
 			'status'							=> 1
 		);
-			$admin_role = \CustomerAdminRole::create($role);		
+		$admin_role = \CustomerAdminRole::create($role);		
 
 		
 		$permission = DB::table('employee_and_dependent_permissions')->insert([
 			'customer_admin_role_id'							=> $admin_role->id,
 			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ,
-			'view_employee_dependent'							=> 1 ,
+			'view_employee_dependent'							=> 1,
 			'enroll_terminate_employee'							=> $input['enroll_terminate_employee'] ,
 			'approve_reject_edit_non_panel_claims'				=> $input['approve_reject_edit_non_panel_claims'] ,
 			'create_remove_edit_admin_unlink_account'			=> $input['create_remove_edit_admin_unlink_account'] ,
 			'manage_billing_and_payments'						=> $input['manage_billing_and_payments'] ,
 			'add_location_departments'							=> $input['add_location_departments'] ,
-			'status'											=> 1 
+			'status'											=> 1,
+			'created_at'										=> date('Y-m-d H:i:s'),
+			'updated_at'										=> date('Y-m-d H:i:s')
 		]);
-		
+			
 
 		$locations = $input['locations'] ?? [];
-
-		if(count($locations) > 0)
+		if(sizeof($locations) > 0)
 		{
 			foreach ($locations as $location){
 				 DB::table('location_admin_permission')->insert([
 					'customer_admin_role_id'							=> $admin_role->id,
-					'location_id'										=> $location ,
-					'status'											=> 1 
+					'location_id'										=> $location,
+					'status'											=> 1,
+					'created_at'										=> date('Y-m-d H:i:s'),
+					'updated_at'										=> date('Y-m-d H:i:s')
 				]);
 			}
 		}
 
 		$departments = $input['departments'] ?? [];
-		if(count($departments) > 0)
+		if(sizeof($departments) > 0)
 		{
 			foreach ($departments as $department){
 				 DB::table('department_admin_permission')->insert([
 					'customer_admin_role_id'							=> $admin_role->id,
-					'department_id'										=> $department ,
-					'status'											=> 1 
+					'department_id'										=> $department,
+					'status'											=> 1,
+					'created_at'										=> date('Y-m-d H:i:s'),
+					'updated_at'										=> date('Y-m-d H:i:s')
 				]);
 			}
 		}
+
+		// update member/employee status if already an hr administrator
+		DB::table('user')->where('UserID', $employee->UserID)->update(['is_hr_admin' => 1]);
 		$message = [];
         $emailData = [];
 		
@@ -18085,12 +18151,6 @@ public function createHrLocation ()
 		$emailDdata['url'] = $url;
 		
 		\EmailHelper::sendEmail($emailDdata);
-
-
-
-
-
-
 		$data['message'] = 'Successfully Add Administrator.';
 
 		return $data;

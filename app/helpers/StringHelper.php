@@ -182,26 +182,12 @@ class StringHelper{
             } catch(Exception $e) {
                 return FALSE;
             }
-
+            
             if($result && isset($result->hr_dashboard_id)) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
                             ->first();
                 if($hr) {
-                    // change logic
-                    // if((int)$hr->is_account_linked == 1) {
-                    //     $hr->signed_in = $result->signed_in;
-                    //     $hr->customer_buy_start_id = $result->customer_buy_start_id;
-                    //     $hr->customer_id = $result->customer_buy_start_id;
-                    //     $hr->hr_activated = 1;
-                    //     $hr->active = 1;
-                    //     $hr->hr_activated = true;
-                    //     if(isset($result->expire_in)) {
-                    //         $hr->expire_in = $result->expire_in;
-                    //     } else {
-                    //         $hr->expire_in = null;
-                    //     }
-                    // } else {
                         $hr->customer_buy_start_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
                         $hr->customer_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
 
@@ -227,12 +213,40 @@ class StringHelper{
                         } else if((int)$hr->hr_activated == 0) {
                             $hr->status = false;
                             $hr->hr_activated = false;
-                        }
-                    // }                 
+                        }              
                     return $hr;
                 } else {
                     return FALSE;
                 }
+            } else if($result && $result->user_type == "member_admin") {
+                $member = DB::table('user')->where('UserID', $result->UserID)->select('UserID', 'member_activated', 'Active')->first();
+
+                if(!$member) {
+                    return false;
+                }
+
+                $customer_id = \PlanHelper::getCustomerId($member->UserID);
+                $member->customer_buy_start_id = $customer_id;
+                $member->customer_id = $customer_id;
+                $hr = DB::table('customer_hr_dashboard')
+                            ->where('customer_buy_start_id', $customer_id)
+                            ->first();
+
+                $member->hr_dashboard_id = $hr->hr_dashboard_id;
+                $member->hr_activated = $member->member_activated;
+                if((int)$member->Active == 1) {
+                    $member->signed_in = $result->signed_in;
+                    if(isset($result->expire_in)) {
+                        $member->expire_in = $result->expire_in;
+                    } else {
+                        $member->expire_in = null;
+                    }
+                } else if((int)$member->member_activated == 0) {
+                    $member->status = false;
+                    $member->hr_activated = false;
+                }
+
+                return $member;
             } else {
                 return FALSE;
             }

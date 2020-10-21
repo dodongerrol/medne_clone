@@ -190,6 +190,9 @@ Route::get('hr/validate_token', 'BenefitsDashboardController@getTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
 Route::post('hr/create-company-password', 'BenefitsDashboardController@createCompanyPassword');
 
+// hr member otp
+Route::post('hr/member_hr_vaidated_otp', 'HrController@confirmHrAdminOtp');
+
 // create resend hr activation link
 Route::post('hr/resend_hr_activation_link', 'BenefitsDashboardController@resendHrActivationLnk');
 // secure route on hr page, need authenticated to get access on this routes
