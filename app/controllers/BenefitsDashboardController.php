@@ -18108,10 +18108,6 @@ public function createHrLocation ()
 
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
 		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
-		if(!$permission)
-		{
-			return array('status' =>  false, 'message'	=> 'Permissions doesnt exist.');
-		}
 		
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
@@ -18177,5 +18173,49 @@ public function createHrLocation ()
 			'status'		=> TRUE,
 			'message'		=> 'The administrator has successfully been removed.'
 		);
+	}
+	
+	public function updateAdministrator()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$check = DB::table('customer_admin_roles')->where('id', $id)->first();
+
+		$admin = new CustomerAdminRole;
+
+		$data = array(
+			'fullname'							=> $input['fullname'],
+			'email'								=> !empty($input['email']) ? $input['email'] : $check->email,
+			'is_mednefits_employee'				=> !empty($input['is_mednefits_employee']) ? $input['is_mednefits_employee'] : $check->is_mednefits_employee
+		);
+
+		$result = $admin
+		->updateAdminRoles($input['id'], $data);
+
+		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+
+		$perm = array(
+			'customer_admin_role_id'							=> $permission->id,
+			'edit_employee_dependent'							=> !empty($input['edit_employee_dependent']) ? $input['edit_employee_dependent'] : $permission->edit_employee_dependent,
+			'view_employee_dependent'							=> 1 ,
+			'enroll_terminate_employee'							=> !empty($input['enroll_terminate_employee']) ? $input['enroll_terminate_employee'] : $permission->enroll_terminate_employee,
+			'approve_reject_edit_non_panel_claims'				=> !empty($input['approve_reject_edit_non_panel_claims']) ? $input['approve_reject_edit_non_panel_claims'] : $permission->approve_reject_edit_non_panel_claims,
+			'create_remove_edit_admin_unlink_account'			=> !empty($input['create_remove_edit_admin_unlink_account']) ? $input['create_remove_edit_admin_unlink_account'] : $permission->create_remove_edit_admin_unlink_account,
+			'manage_billing_and_payments'						=> !empty($input['manage_billing_and_payments']) ? $input['manage_billing_and_payments'] : $permission->manage_billing_and_payments,
+			'add_location_departments'							=> !empty($input['add_location_departments']) ? $input['add_location_departments'] : $permission->add_location_departments,
+			'status'											=> 1 
+		);
+
+		$account = DB::table('employee_and_dependent_permissions')
+		->where('customer_admin_role_id', $id)
+		->update($perm);
+
+		return array('status' => TRUE, 'message'	=> 'successfully updated admin.');
 	}
 }

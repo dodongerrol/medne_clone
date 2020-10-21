@@ -270,7 +270,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_primary_admin_details', 'BenefitsDashboardController@getPrimaryAdminDetails');
 	Route::get('hr/get_additional_admin_details', 'BenefitsDashboardController@getAdditionalAdminDetails');
 	Route::get('/hr/remove_additional_administrator', 'BenefitsDashboardController@removeAdministratorAccount');
-	Route::get('hr/verfiy_admin_permissions', 'BenefitsDashboardController@administratorPermission');
+	Route::post('hr/update_administrator', 'BenefitsDashboardController@updateAdministrator');
 
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
