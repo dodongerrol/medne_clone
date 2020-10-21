@@ -18178,18 +18178,18 @@ public function createHrLocation ()
 		$id = $result->customer_buy_start_id;
 
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
-		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+		// $permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
 		
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
 			'fullname'										=> $hr->fullname,
-			'email'											=> $hr->email,
-			'edit_employee_dependent'						=> $permission->edit_employee_dependent,
-			'enroll_terminate_employee'						=> $permission->enroll_terminate_employee,
-			'approve_reject_edit_non_panel_claims'			=> $permission->approve_reject_edit_non_panel_claims,
-			'create_remove_edit_admin_unlink_account'		=> $permission->create_remove_edit_admin_unlink_account,
-			'manage_billing_and_payments'					=> $permission->manage_billing_and_payments,
-			'add_location_departments'						=> $permission->add_location_departments
+			'email'											=> $hr->email
+			// 'edit_employee_dependent'						=> $permission->edit_employee_dependent,
+			// 'enroll_terminate_employee'						=> $permission->enroll_terminate_employee,
+			// 'approve_reject_edit_non_panel_claims'			=> $permission->approve_reject_edit_non_panel_claims,
+			// 'create_remove_edit_admin_unlink_account'		=> $permission->create_remove_edit_admin_unlink_account,
+			// 'manage_billing_and_payments'					=> $permission->manage_billing_and_payments,
+			// 'add_location_departments'						=> $permission->add_location_departments
 		);
 		return array ('admin_details' => $data);
 	}
