@@ -187,8 +187,9 @@ class SpendingAccountController extends \BaseController {
 		if($input['type'] == "medical") {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'medical', true);
 			$panel_payment_method = $this->getPanelPaymentMethod($pendingInvoice, $spending_account_settings);
+			$non_panel_payment_method = $this->getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings);
 			// $panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_panel_previous : $spending_account_settings->medical_payment_method_panel;
-      		$non_panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_non_panel_previous : $spending_account_settings->medical_payment_method_non_panel;
+      		// $non_panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_non_panel_previous : $spending_account_settings->medical_payment_method_non_panel;
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
@@ -1404,5 +1405,17 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		return $spending_account_settings->medical_payment_method_panel;
+	}
+
+	private function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings)
+	{
+		if (
+		$pendingInvoice &&
+		$spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits'
+		) {
+			return $spending_account_settings->medical_payment_method_non_panel_previous == 'mednefits_credits' ? 					'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel_previous;
+		}
+
+		return $spending_account_settings->medical_payment_method_non_panel;
 	}
 }
