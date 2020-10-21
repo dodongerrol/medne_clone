@@ -13758,7 +13758,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$total_members = $total_active_members + $total_active_dependents;
 
-		return array('status' => true, 'total_members' => $total_members, 'total_administrators' => sizeof($total_of_administrator));
+		return array('status' => true, 'total_members' => $total_members);
 	}
 
 	public function getEmployeeSpendingAccountSummaryNew( )

@@ -7,11 +7,11 @@
         <div>
           <div class="display-flex primary-admin-details">
             <span class="bold-text">Full Name: </span> 
-            <span> Christ Teo</span>
+            <span ng-bind="primary_admin_data.fullname"> Christ Teo</span>
           </div>
           <div class="display-flex primary-admin-details">
             <span class="bold-text">Email Address: </span>
-            <span> chris.teo@mednefits.com</span>
+            <span ng-bind="primary_admin_data.email"> chris.teo@mednefits.com</span>
           </div>
         </div>
         <div>
@@ -26,12 +26,12 @@
         <div class="admin-can-container">
           <div class="bold-text">This admin can:</div>
           <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>View employee + dependent profile information</span></div>
-          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
-          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
-          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
-          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
-          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
-          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
+          <div ng-if="primary_admin_data.edit_employee_dependent == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
+          <div ng-if="primary_admin_data.enroll_terminate_employee == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
+          <div ng-if="primary_admin_data.approve_reject_edit_non_panel_claims == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
+          <div ng-if="primary_admin_data.create_remove_edit_admin_unlink_account == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
+          <div ng-if="primary_admin_data.manage_billing_and_payments == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
+          <div ng-if="primary_admin_data.add_location_departments == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
         </div>
       </div>
     </div>
@@ -44,21 +44,21 @@
       </div>
       <div ng-if="additional_admin_data.length != 0 " class="with-administrator">
         <button ng-click="addAdministrator()" data-toggle="modal" data-target="#add-administrator-modal" class="bold-text btn-add-admin"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
-        <div class="additional-admin-details">
+        <div ng-repeat="list in additional_admin_data" class="additional-admin-details">
           <div class="display-flex edit-remove-wrapper">
             <div>
               <div class="display-flex primary-admin-details">
                 <span class="bold-text">Full Name: </span> 
-                <span> Christ Teo</span>
+                <span ng-bind="list.fullname"> Christ Teo</span>
               </div>
               <div class="display-flex primary-admin-details">
                 <span class="bold-text">Email Address: </span>
-                <span> chris.teo@mednefits.com</span>
+                <span ng-bind="list.email"> chris.teo@mednefits.com</span>
               </div>
             </div>
             <div class="display-flex edit-remove-btn-container">
               <button ng-click="editAdministrator()" data-toggle="modal" data-target="#edit-administrator-modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Edit</button>
-              <button data-toggle="modal" data-target="#remove-administrator-modal" class="btn-remove"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+              <button ng-click="removeAdmin( list )" data-toggle="modal" data-target="#remove-administrator-modal" class="btn-remove"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
             </div>
           </div>
           <div class="display-flex admin-information">
@@ -69,12 +69,12 @@
             <div class="admin-can-container">
               <div class="bold-text">This admin can:</div>
               <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>View employee + dependent profile information</span></div>
-              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
-              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
-              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
-              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
-              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
-              <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
+              <div ng-if="list.edit_employee_dependent == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
+              <div ng-if="list.enroll_terminate_employee == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
+              <div ng-if="list.approve_reject_edit_non_panel_claims == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
+              <div ng-if="list.create_remove_edit_admin_unlink_account == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
+              <div ng-if="list.manage_billing_and_payments == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
+              <div ng-if="list.add_location_departments == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
             </div>
           </div>
         </div>
@@ -133,20 +133,20 @@
         <div class="modal-header">
           <h5>Remove Administrator</h5>
         </div>
-        <div ng-if="false" class="modal-body first-step">
+        <div ng-if="!isShowSuccessfulRemoveAdmin" class="modal-body first-step">
           <div>Are you sure you want to remove this administrator?</div>
           <div>Please confirm to proceed.</div>
         </div>
-        <div ng-if="true" class="modal-body administrator-success">
+        <div ng-if="isShowSuccessfulRemoveAdmin" class="modal-body administrator-success">
           <img src="../assets/images/success-circle.png">
           <div>
             <div>The administrator has succesfully been removed.</div>
           </div>
         </div>
         <div class="modal-footer">
-          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="true" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
-          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+          <button ng-if="!isShowSuccessfulRemoveAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="!isShowSuccessfulRemoveAdmin" ng-click="confirmRemoveAdmin( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
+          <button ng-if="isShowSuccessfulRemoveAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
       </div>
     </div>
