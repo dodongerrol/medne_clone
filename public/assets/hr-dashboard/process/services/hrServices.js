@@ -118,10 +118,15 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/remove_employee/" + id);
   };
 
-  hrFactory.getEmployees = function(page,limit) {
-    return $http.get(
-      serverUrl.url + "/hr/employee/list/"+ "?page=" + page +  "&limit=" + limit
-    );
+  hrFactory.getEmployees = function(page,limit,status,location,department) {
+    var url = serverUrl.url + "/hr/employee/list"+ "?page=" + page +  "&limit=" + limit;
+    status.map((res,index) => {
+      if(res.active){
+        url += ("&status[]=" + res.name.toLowerCase());
+      }
+    });
+    console.log(url);
+    return $http.get(url);
   };
 
   hrFactory.getEmployeeCredits = function(num, page) {
@@ -566,10 +571,6 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   hrFactory.fetchLocationData = function ( ) {
     return $http.get( serverUrl.url + "/hr/get_location_list" );
-  }
-
-  hrFactory.fetchDepartmentData = function ( ) {
-    return $http.get( serverUrl.url + "/hr/get_department_list" );
   }
 
   hrFactory.fetchDepartmentData = function ( ) {

@@ -42,17 +42,17 @@ app.directive("employeeOverviewDirective", [
         scope.locGetNumber = function (num) {
           return new Array(num);
         }
-        scope.getEmployeeList = function (page) {
+        scope.getEmployeeList = async function (page) {
           $(".employee-overview-pagination").show();
           scope.showLoading();
-          hrSettings.getEmployees(page,scope.page_ctr)
-            .then(function (response) {
+          await hrSettings.getEmployees(page,scope.page_ctr,scope.empFiltersObj.status,scope.empFiltersObj.location,scope.empFiltersObj.department)
+            .then(async function (response) {
               console.log(response);
               scope.employees = response.data;
               scope.employees.total_allocation = response.data.total_allocation;
               scope.employees.allocated = response.data.allocated;
           
-              angular.forEach(scope.employees.data, function (value, key) {
+              await angular.forEach(scope.employees.data, function (value, key) {
                 value.fname = scope.employees.data[key].name.substring(0, value.name.lastIndexOf(" "));
                 value.lname = scope.employees.data[key].name.substring(value.name.lastIndexOf(" ") + 1);
                 value.start_date = moment(value.start_date).format("DD/MM/YYYY");
@@ -90,11 +90,11 @@ app.directive("employeeOverviewDirective", [
           scope.page_active = 1;
           scope.getEmployeeList(1);
         }
-        scope.searchEmployee = function (input) {
+        scope.searchEmployee = async function (input) {
           if (input) {
             scope.showLoading();
             let data = input;
-            hrSettings.searchMemberList(scope.page_active,scope.global_empLimitList,data)
+            await hrSettings.searchMemberList(scope.page_active,scope.global_empLimitList,data)
               .then(function (response) {
                 scope.employees = response.data;
                 angular.forEach(scope.employees.data, function (value, key) {
@@ -114,16 +114,16 @@ app.directive("employeeOverviewDirective", [
             scope.removeSearchEmp();
           }
         };
-        scope.getSession = function () {
-          hrSettings.getSession()
-            .then(function (response) {
+        scope.getSession = async function () {
+          await hrSettings.getSession()
+            .then(async function (response) {
               // console.log( response );
               scope.selected_customer_id = response.data.customer_buy_start_id;
               scope.options.accessibility = response.data.accessibility;
               if (scope.isSearchEmp) {
-                scope.searchEmployee(scope.inputSearch);
+                await scope.searchEmployee(scope.inputSearch);
               } else {
-                scope.getEmployeeList(scope.page_active);
+                await scope.getEmployeeList(scope.page_active);
               }
             });
         }
@@ -354,7 +354,6 @@ app.directive("employeeOverviewDirective", [
             scope.departmentList[indexDep].selected = false;
           }
         }
-
         scope.selectTransferBtn = function(data){
           console.log(data);
           scope.selected_employee = data;
@@ -368,7 +367,18 @@ app.directive("employeeOverviewDirective", [
           localStorage.setItem('selected_member_id', data.user_id);
           $state.go('member-remove', { member_id : data.user_id });
         }
-
+        scope._getLocationListing_  = async function(){
+          await hrSettings.fetchLocationData()
+            .then(function(response){
+              console.log(response);
+            });
+        }
+        scope._getDepartmentListing_  = async function(){
+          await hrSettings.fetchDepartmentData()
+            .then(function(response){
+              console.log(response);
+            });
+        }
 
 
 
@@ -411,6 +421,8 @@ app.directive("employeeOverviewDirective", [
           await scope.getSession();
           // await scope.getSpendingAcctStatus();
           await scope.getTotalMembers();
+          await scope._getLocationListing_();
+          await scope._getDepartmentListing_();
           // await scope.getProgress();
 
           localStorage.setItem('selected_member_id', null);
