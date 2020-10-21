@@ -835,7 +835,7 @@ class SpendingAccountController extends \BaseController {
 				$label = "Member Enrollment";
 				$type_status = "add";
 			} if($activity->type == "new_employee_enrollment") {
-				$label = "New Enrollment";
+				$label = "Member Enrollment";
 				$type_status = "add";
 			} else if($activity->type == "added_employee_entitlement") {
 				$label = "Entitlement Increase";
