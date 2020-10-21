@@ -341,6 +341,7 @@ app.directive("administratorsDirective", [
             if ( response.data.status ) {
               scope.isShowSuccessfulRemoveAdmin = true;
               await scope.getAdditionalAdmin();
+              
               scope.hideLoading();
             }
             
