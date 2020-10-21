@@ -190,7 +190,8 @@ class StringHelper{
                 if($hr) {
                         $hr->customer_buy_start_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
                         $hr->customer_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
-
+                        $hr->user_type = isset($result->user_type) ? $result->user_type : 'hr_admin';
+                        $hr->id = $result->hr_dashboard_id;
                         if($hr->customer_buy_start_id == null) {
                             // get only company
                             $companyLinked = DB::table('company_link_accounts')->where('hr_id', $hr->hr_dashboard_id)->where('status', 1)->select('customer_id')->first();
@@ -228,10 +229,12 @@ class StringHelper{
                 $customer_id = \PlanHelper::getCustomerId($member->UserID);
                 $member->customer_buy_start_id = $customer_id;
                 $member->customer_id = $customer_id;
+                $member->user_type = $result->user_type;
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('customer_buy_start_id', $customer_id)
                             ->first();
 
+                $member->id = $member->UserID;
                 $member->hr_dashboard_id = $hr->hr_dashboard_id;
                 $member->hr_activated = $member->member_activated;
                 if((int)$member->Active == 1) {

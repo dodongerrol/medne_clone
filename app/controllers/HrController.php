@@ -46,4 +46,12 @@ class HrController extends \BaseController {
 
 		return ['status' => 'Invalid OTP CODE'];
 	}
+
+	public function getAccountPermissions( )
+	{
+		$result = StringHelper::getJwtHrSession();
+
+		$permissions = \UserPermissionsHelper::getUserPemissions($result->id, $result->user_type);
+		return ['status' => true, 'data' => $permissions];
+	}
 }
