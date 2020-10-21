@@ -236,13 +236,25 @@ class CorporateController extends BaseController {
 			return array('status' => FALSE, 'message' => 'Member does not exist.');
 		}
 
-        if(url('/') == 'https://admin.medicloud.sg') {
-            $url = 'https://medicloud.sg/company-benefits-dashboard';
-        } else if(url('/') == 'http://stage.medicloud.sg') {
-            $url = 'http://staging.medicloud.sg/company-benefits-dashboard';
-        } else {
-            $url = 'http://medicloud.local/company-benefits-dashboard';
-        }
+        // if(url('/') == 'https://admin.medicloud.sg') {
+        //     $url = 'https://medicloud.sg/company-benefits-dashboard';
+        // } else if(url('/') == 'http://stage.medicloud.sg') {
+				// 		$url = 'http://staging.medicloud.sg/company-benefits-dashboard';
+        // } else if(url('/') == 'http://stage_v2.medicloud.sg') {
+				// 	$url = 'http://staging_v2.medicloud.sg/company-benefits-dashboard';
+				// }	else {
+        //     $url = 'http://medicloud.local/company-benefits-dashboard';
+				// }
+				
+				if(url('/') == 'https://medicloud.sg') {
+					$url = 'https://medicloud.sg/company-benefits-dashboard';
+				} else if(url('/') == 'http://staging.medicloud.sg') {
+					$url = 'http://staging.medicloud.sg/company-benefits-dashboard';
+				} else if(url('/') == 'http://staging_v2.medicloud.sg') {
+					$url = 'http://staging_v2.medicloud.sg/company-benefits-dashboard';
+				}	else {
+					$url = 'http://medicloud.local/company-benefits-dashboard';
+				}
 
         if((int)$user->member_activated == 0) {
             $emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
@@ -376,11 +388,21 @@ class CorporateController extends BaseController {
 			$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 			// create new activation and information for hr
 			
-			if(url('/') == 'https://admin.medicloud.sg') {
+			// if(url('/') == 'https://admin.medicloud.sg') {
+			// 	$url = 'https://medicloud.sg';
+			// } else if(url('/') == 'http://stage.medicloud.sg') {
+			// 	$url = 'http://staging.medicloud.sg';
+			// } else if(url('/') == 'http://stage_v2.medicloud.sg') {
+			// 	$url = 'http://staging_v2.medicloud.sg';
+			// } else {
+			// 	$url = 'http://medicloud.local';
+			// }
+
+			if(url('/') == 'https://medicloud.sg') {
 				$url = 'https://medicloud.sg';
-			} else if(url('/') == 'http://stage.medicloud.sg') {
+			} else if(url('/') == 'http://staging.medicloud.sg') {
 				$url = 'http://staging.medicloud.sg';
-			} else if(url('/') == 'http://stage_v2.medicloud.sg') {
+			} else if(url('/') == 'http://staging_v2.medicloud.sg') {
 				$url = 'http://staging_v2.medicloud.sg';
 			} else {
 				$url = 'http://medicloud.local';
