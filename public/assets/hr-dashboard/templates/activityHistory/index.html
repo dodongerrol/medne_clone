@@ -4,33 +4,17 @@
     <div class="add-filter-wrapper">
 
       <div ng-if="isTotalMembersShow" class="emp-filter-details-container">
-        <!-- <div>
-          <div class="total-member-data">
-            <div>Total members</div>
-            <span class="total-number" ng-bind="member_count">70</span>
-          </div>
-          <div>
-            <div>Administrators <img class="admin-blue-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png"></div>
-            <span class="total-number">04</span>
-          </div>
-        </div> -->
-        <div ng-if="empFiltersObj.status[0].active || empFiltersObj.status[1].active || empFiltersObj.status[2].active" class="filtered-text">
-          <div>
-            <span class="bold-text">Status</span> is filtered by <span ng-if="list.active" ng-repeat="list in empFiltersObj.status">{{ $index > 0 && empFiltersObj.status[$index - 1].active ? '&' : '' }} {{ list.name }} </span>
-          </div>
-          <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('status')"></i>
-        </div>
-        <div ng-if="empFiltersObj.location.length > 0" class="filtered-text">
+        <div ng-if="isApplyFilter && (empFiltersObj.location.length > 0)" class="filtered-text">
           <div>
             <span class="bold-text">Location</span> is filtered by 
-            <span ng-repeat="list in empFiltersObj.location">{{ list.name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
+            <span ng-repeat="list in empFiltersObj.selectedLocations">{{ list.location }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
           </div>
           <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('location')"></i>
         </div>
-        <div ng-if="empFiltersObj.department.length > 0" class="filtered-text">
+        <div ng-if="isApplyFilter && (empFiltersObj.department.length > 0)" class="filtered-text">
           <div>
             <span class="bold-text">Department</span> is filtered by 
-            <span ng-repeat="list in empFiltersObj.department">{{ list.name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
+            <span ng-repeat="list in empFiltersObj.selectedDepartments">{{ list.department_name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
           </div>
           <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('department')"></i>
         </div>
@@ -40,27 +24,8 @@
         <h5 class="back-btn-filter" ng-click="_filterBackBtn_('filterList')"><i class="fa fa-angle-left"></i><span>Back</span></h5>
         <h5 class="add-filter-text">Add filter</h5>
         <div class="emp-filter-selector-container">
-          <div ng-click="_showTypeItemsFilters_('status')">Status</div>
           <div ng-click="_showTypeItemsFilters_('location')">Location</div>
           <div ng-click="_showTypeItemsFilters_('department')">Department</div>
-        </div>
-      </div>
-
-      <!-- Status -->
-      <div ng-if="isStatusFiltersShow" class="emp-filter emp-status-filter">
-        <h5 class="back-btn-filter"  ng-click="_filterBackBtn_('status')"><i class="fa fa-angle-left"></i><span>Back</span></h5>
-        <h5 class="add-filter-text">Add filter</h5>
-        <div class="white-space-10"></div>
-        <h5>Status</h5>
-        <div ng-repeat="list in empFiltersObj.status" class="custom-checkbox-container">
-          <label class="checkbox-input">
-            <span class="checkbox-text" ng-bind="list.name">Pending</span>
-            <input type="checkbox" ng-model="list.active"/>
-            <span class="checkbox-mark"></span>
-          </label>
-        </div>
-        <div>
-          <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
         </div>
       </div>
 
@@ -70,19 +35,19 @@
         <h5 class="add-filter-text">Add filter</h5>
         <div class="white-space-10"></div>
         <h5>Location</h5>
-        <div class="filter-data-selector-wrapper">
-          <div ng-repeat="list in empFiltersObj.location" class="filter-data-selector-container"><div ng-bind="list.name">Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectLocationFilterData_(list, false)"></div>
+        <div ng-if="empFiltersObj.selectedLocations.length > 0" class="filter-data-selector-wrapper">
+          <div ng-repeat="list in empFiltersObj.selectedLocations" class="filter-data-selector-container"><div ng-bind="list.location">Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectLocationFilterData_(list, false)"></div>
         </div>
-        <div class="location-selector">
+        <div ng-if="locationList.length > 0" class="location-selector">
           <div ng-repeat="list in locationList" class="custom-checkbox-container">
             <label class="checkbox-input">
-              <span class="checkbox-text" ng-bind="list.name">Departmet 1</span >
+              <span class="checkbox-text" ng-bind="list.location">Departmet 1</span >
                 <input type="checkbox" ng-model="list.selected" ng-click="_selectLocationFilterData_(list, list.selected)"/>
               <span class="checkbox-mark"></span>
             </label>
           </div>
         </div>
-        <div>
+        <div ng-if="locationList.length > 0">
           <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
         </div>
       </div>
@@ -93,19 +58,19 @@
         <h5 class="add-filter-text">Add filter</h5>
         <div class="white-space-10"></div>
         <h5>Department</h5>
-        <div class="filter-data-selector-wrapper">
-          <div ng-repeat="list in empFiltersObj.department" class="filter-data-selector-container"><div ng-bind="list.name">Departmet 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectDepartmentFilterData_(list, false)"></div>
+        <div ng-if="empFiltersObj.selectedDepartments.length > 0" class="filter-data-selector-wrapper">
+          <div ng-repeat="list in empFiltersObj.selectedDepartments" class="filter-data-selector-container"><div ng-bind="list.department_name">Departmet 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectDepartmentFilterData_(list, false)"></div>
         </div>
-        <div class="location-selector">
+        <div ng-if="departmentList.length > 0" class="location-selector">
           <div ng-repeat="list in departmentList" class="custom-checkbox-container">
             <label class="checkbox-input">
-              <span class="checkbox-text" ng-bind="list.name">Departmet 1</span >
+              <span class="checkbox-text" ng-bind="list.department_name">Departmet 1</span >
               <input type="checkbox" ng-model="list.selected" ng-click="_selectDepartmentFilterData_(list, list.selected)"/>
               <span class="checkbox-mark"></span>
             </label>
           </div>
         </div>
-        <div>
+        <div ng-if="departmentList.length > 0">
           <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
         </div>
       </div>

@@ -582,6 +582,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/get_department_list" );
   }
 
+  hrFactory.fetchDepartmentData = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_department_list" );
+  }
+
   hrFactory.fecthAdditionalAdminDetails = function () {
     return $http.get( serverUrl.url + "/hr/get_additional_admin_details" );
   }
@@ -590,8 +594,16 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/employee/list?status[]=active" );
   }
   
+  hrFactory.fetchLinkAccount = function ( per_page, page ) {
+    return $http.get( serverUrl.url + "/hr/get/corporate_linked_account?limit="+per_page+"&page="+page+"&total_enrolled_employee_status=true&total_enrolled_dependent_status=true" );
+  }
+
   hrFactory.updateAdditionalAdmin = function ( data ) {
     return $http.post( serverUrl.url + "/hr/add_employee_admin",data );
+  }
+
+  hrFactory.removeAdditionalAdmin = function ( id ) {
+    return $http.get( serverUrl.url + "/hr/remove_additional_administrator?admin_id="+id );
   }
 
   return hrFactory;
@@ -608,21 +620,42 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/get_date_terms");
   };
 
-  hrFactory.getHrActivity = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter);
+  hrFactory.getHrActivity = function(data,location,department) {
+    var url = serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter;
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
+    }
+    return $http.get(url);
   };
 
-  hrFactory.getHrActivityInNetworkWithPagination = function(data) {
+  hrFactory.getHrActivityInNetworkWithPagination = function(data,location,department) {
     var url = serverUrl.url + "/hr/get_activity_in_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id;
     if( data.user_id ){
       url += ("&user_id=" + data.user_id);
     }
+    var url = serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter;
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
+    }
     return $http.get( url );
   };
-  hrFactory.getHrActivityOutNetworkWithPagination = function(data) {
+  hrFactory.getHrActivityOutNetworkWithPagination = function(data,location,department) {
     var url = serverUrl.url + "/hr/get_activity_out_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id;
     if( data.user_id ){
       url += ("&user_id=" + data.user_id);
+    }
+    var url = serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter;
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
     }
     return $http.get( url );
   };

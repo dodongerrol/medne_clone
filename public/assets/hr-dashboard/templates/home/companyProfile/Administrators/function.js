@@ -40,7 +40,7 @@ app.directive("administratorsDirective", [
 
             scope.showDepartmentSelector = false;
 
-            await scope.getLocationData();
+            
           }
           if ( type == 'departments' ) {
             scope.permission_data = 'Departments';
@@ -48,7 +48,7 @@ app.directive("administratorsDirective", [
             
             scope.showLocationSelector = false;
 
-            await scope.getDepartmentData();
+            
           }
           console.log(type);
         }
@@ -178,7 +178,7 @@ app.directive("administratorsDirective", [
           }
         }
 
-        scope.addAdministrator = function () {
+        scope.addAdministrator = async function () {
           scope.add_admin_data.is_mednefits_emp = '1';
           console.log(scope.add_admin_data.is_mednefits_emp);
           scope.resetData();
@@ -202,7 +202,6 @@ app.directive("administratorsDirective", [
         }
 
         scope.seachEmployeeName = async function () {
-          await scope.getEmployeeName();
           scope.showEmployeeList = scope.showEmployeeList == true ? false : true;
         }
 
@@ -210,7 +209,8 @@ app.directive("administratorsDirective", [
           await hrSettings.fetchPrimaryAdministrator()
           .then( function (response) {
             console.log(response);
-            scope.primary_admin_status = response.data.status;   
+            scope.primary_admin_status = response.data.status;
+            scope.primary_admin_data = response.data.admin_details;
           });
         }
 
@@ -282,6 +282,7 @@ app.directive("administratorsDirective", [
           });
         }
         scope.employeeNameSelector = function ( data ) {
+          scope.add_admin_data.employee_id = data.user_id;
           scope.add_admin_data.employee_name = data.name;
           scope.showEmployeeList = false;
         }
@@ -289,19 +290,21 @@ app.directive("administratorsDirective", [
         scope.get_loc_id = [];
         scope.addAdmininistrator = function ( ) {
           scope.selected_location_data.map((value, key) => {
-            scope.get_loc_id.push( value.id )
+            scope.get_loc_id.push( value.LocationID )
+            console.log(value)
           });
           scope.selected_deparment_data.map((value, key) => {
             scope.get_dept_id.push( value.id )
+            console.log(value)
           });
-          console.log( scope.get_loc_id );
-          console.log( scope.get_dept_id );
+          // console.log( scope.get_loc_id );
+          // console.log( scope.get_dept_id );
 
           let data = {
             fullname: scope.add_admin_data.fullname,
             email: scope.add_admin_data.email,
             is_mednefits_employee: scope.add_admin_data.is_mednefits_emp,
-            employee_id: scope.employee_data.user_id,
+            employee_id: scope.add_admin_data.employee_id,
             locations: scope.get_loc_id,
             departments: scope.get_dept_id,
             edit_employee_dependent: scope.add_admin_data.edit_employee_dependent == true ? 1: 0,
@@ -311,11 +314,13 @@ app.directive("administratorsDirective", [
             manage_billing_and_payments: scope.add_admin_data.manage_billing_and_payments == true ? 1: 0,
             add_location_departments: scope.add_admin_data.add_location_departments == true ? 1: 0,
           }
+
           scope.showLoading();
-          hrSettings.updateAdditionalAdmin( data ).then(function (response) {
+          hrSettings.updateAdditionalAdmin( data ).then(async function (response) {
             console.log(response);
 
             if ( response.data.status ) {
+              await scope.getAdditionalAdmin();
               scope.hideLoading();
             } else {
               swal("Error!", response.data.message, "error");
@@ -327,6 +332,28 @@ app.directive("administratorsDirective", [
           console.log(data);
         }
 
+        scope.removeAdmin = function ( data ) {
+          scope.additional_add_admin_data = data;
+          console.log(scope.additional_add_admin_data);
+        }
+
+        scope.isShowSuccessfulRemoveAdmin = false;
+        scope.confirmRemoveAdmin = function (  ) { 
+          console.log( scope.additional_add_admin_data.id );
+
+          scope.showLoading();
+          hrSettings.removeAdditionalAdmin( additional_add_admin_data.id ).then( async function (response) {
+            console.log(response);
+            if ( response.data.status ) {
+              scope.isShowSuccessfulRemoveAdmin = true;
+              await scope.getAdditionalAdmin();
+              $('#remove-administrator-modal').modal('hide');
+              scope.hideLoading();
+            }
+            
+            
+          });
+        }
 
         scope.checkEmail = function (email) {
 					var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
@@ -353,6 +380,10 @@ app.directive("administratorsDirective", [
           await scope._getHrDetails_();
           await scope.resetData();
           await scope.getAdditionalAdmin();
+
+          await scope.getEmployeeName();
+          await scope.getLocationData();
+          await scope.getDepartmentData();
         }
         scope.onLoad();
       }
