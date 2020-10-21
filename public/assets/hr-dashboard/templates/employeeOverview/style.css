@@ -22,7 +22,7 @@
   display: block;
   position: relative;
   margin-bottom: 0px;
-  cursor: pointer;
+  cursor: pointer;g301
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -286,7 +286,7 @@
   background-color: #fff;
   overflow: auto;
   padding: 10px 0;
-  margin: 20px 0;
+  margin: 0px 0 20px 0;
 }
 .emp-filter .location-selector >div {
   padding: 4px 10px;
@@ -301,7 +301,8 @@
 .filter-data-selector-wrapper {
   display: inline-flex;
   flex-wrap: wrap;
-  margin: -5px 0 0 -5px;
+  /* margin: -5px 0 10px -5px; */
+  margin: 0 0 10px 0;
   width: calc(100% + 12px);
 }
 .filter-data-selector-container {

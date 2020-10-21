@@ -125,7 +125,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
         url += ("&status[]=" + res.name.toLowerCase());
       }
     });
-    console.log(url);
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
+    }
     return $http.get(url);
   };
 
