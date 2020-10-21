@@ -2349,13 +2349,19 @@ class BenefitsDashboardController extends \BaseController {
 
       $locationsQuery = DB::table('company_locations')
         ->join('corporate_members', 'corporate_members.corporate_id', '=', 'company_locations.customer_id')
+        ->join('company_location_members', 'company_location_members.member_id', '=', 'corporate_members.user_id')
         ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->where('company_location_members.member_id', $user->UserID)
+        ->where('company_location_members.status', 1)
         ->select('company_locations.LocationID', 'company_locations.location', 'company_locations.business_address', 'company_locations.country')
         ->get();
 
       $departmentQuery = DB::table('company_departments')
         ->join('corporate_members', 'corporate_members.corporate_id', '=', 'company_departments.customer_id')
+        ->join('company_department_members', 'company_department_members.member_id', '=', 'corporate_members.user_id')
         ->where('corporate_members.corporate_id', $account_link->corporate_id)
+        ->where('company_department_members.member_id', $user->UserID)
+        ->where('company_department_members.status', 1)
         ->select('company_departments.id', 'company_departments.department_name')
         ->get();
 
@@ -13730,7 +13736,12 @@ class BenefitsDashboardController extends \BaseController {
 		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account_link->corporate_id)
 		->where('user.Active', 1)
-		->get();
+    ->get();
+    
+    $total_of_administrator = DB::table('customer_admin_roles')
+		->where('customer_admin_roles.customer_id', $account_link->corporate_id)
+		->where('customer_admin_roles.status', 1)
+    ->get();
 
     $total_of_administrator = DB::table('customer_admin_roles')
 		->where('customer_admin_roles.customer_id', $account_link->corporate_id)
