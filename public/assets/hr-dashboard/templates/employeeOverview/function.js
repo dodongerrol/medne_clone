@@ -280,10 +280,7 @@ app.directive("employeeOverviewDirective", [
             scope.isFiltersShow = false;
           }
           if(opt == 'status' || opt == 'location' || opt == 'department'){
-            console.log(opt);
-            console.log(scope.isApplyFilter);
             if(scope.isApplyFilter == false){
-              console.log('in');
               scope._removeFilterType_(opt);
             }
             scope.isStatusFiltersShow = false;
