@@ -116,6 +116,29 @@ class BenefitsDashboardController extends \BaseController {
 			$accessibility = 0;
 		}
 
+		$permission = DB::table('employee_and_dependent_permissions')
+			->where('id', $hr->customer_buy_start_id)
+			->first();
+
+		if($permission->edit_employee_dependent == 0) {
+			return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
+		}
+
+		if($permission->enroll_terminate_employee == 0) {
+			return ['status' => false, 'message' => 'admin cannot enroll or terminate employee.'];
+		}
+
+		if($permission->approve_reject_edit_non_panel_claims == 0) {
+			return ['status' => false, 'message' => 'admin cannot remove, reject and edit non panel claims.'];
+		}
+
+		if($permission->create_remove_edit_admin_unlink_account == 0) {
+			return ['status' => false, 'message' => 'admin cannot create, remove admins, edit admins permission and unlink company account.'];
+		}
+		if($permission->manage_billing_and_payments == 0) {
+			return ['status' => false, 'message' => 'admin cannot manage billing and payments.'];
+		}
+
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
 
 		$session = array(
@@ -3725,8 +3748,13 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Please key in either Mobile No, NRIC or passport number to proceed.');
 		}
 
+		$permission = DB::table('employee_and_dependent_permissions')
+			->where('id', $input['user_id'])
+			->first();
 
-
+		if($permission->edit_employee_dependent == 0) {
+			return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
+		}
 
 		// check email address
 		if(!empty($input['email'])) {
@@ -18146,5 +18174,46 @@ public function createHrLocation ()
 			'status'		=> TRUE,
 			'message'		=> 'The administrator has successfully been removed.'
 		);
+	}
+
+	public function administratorPermission()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$id = $result->customer_buy_start_id;
+
+		if(empty($input['id']) || $input['id'] == null) {
+            return ['status' => false, 'message' => 'id is required'];
+		}
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+
+		$employee = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->where('UserID', $employee_id)
+				->first();
+	
+		$permission = DB::table('employee_and_dependent_permissions')
+			->where('id', $input['id'])
+			->first();
+
+		if($permission->edit_employee_dependent == 0) {
+			return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
+		}
+
+		if($permission->enroll_terminate_employee == 0) {
+			return ['status' => false, 'message' => 'admin cannot enroll or terminate employee.'];
+		}
+
+		if($permission->approve_reject_edit_non_panel_claims == 0) {
+			return ['status' => false, 'message' => 'admin cannot remove, reject and edit non panel claims.'];
+		}
+
+		if($permission->create_remove_edit_admin_unlink_account == 0) {
+			return ['status' => false, 'message' => 'admin cannot create, remove admins, edit admins permission and unlink company account.'];
+		}
+		if($permission->manage_billing_and_payments == 0) {
+			return ['status' => false, 'message' => 'admin cannot manage billing and payments.'];
+		}
 	}
 }
