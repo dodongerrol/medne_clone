@@ -213,7 +213,7 @@ class BenefitsDashboardController extends \BaseController {
 			'expire_in'						=> $hr->expire_in,
 			'signed_in'						=> $hr->signed_in,
 			'account_type'					=> $plan->account_type,
-			'permissions'					=> $permission ? $permission : false,
+			// 'permissions'					=> $permission ? $permission : false,
 		);
 		return $session;
 	}
