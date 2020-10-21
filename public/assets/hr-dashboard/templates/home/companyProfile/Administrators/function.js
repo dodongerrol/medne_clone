@@ -234,14 +234,7 @@ app.directive("administratorsDirective", [
           });
         }
         scope.changePrimAdmin = function () {
-          if ( scope.primary_admin_status == false ) {
-            console.log('need pa i check');
-            $('#permission-modal').modal('show');
-            $('#change-primary-admin-modal').modal('hide');
-          } else {
-            console.log('sulod ditso');
-            $('#permission-modal').modal('hide');
-          }
+          
         }
         scope.updateHrAdmin = function () {
           if( scope.checkEmail(scope.changePrimaryData.email) == false ){
@@ -289,6 +282,7 @@ app.directive("administratorsDirective", [
         scope.get_dept_id = [];
         scope.get_loc_id = [];
         scope.addAdmininistrator = function ( ) {
+          console.log(scope.add_admin_data.employee_id);
           scope.selected_location_data.map((value, key) => {
             scope.get_loc_id.push( value.LocationID )
             console.log(value)
@@ -342,12 +336,11 @@ app.directive("administratorsDirective", [
           console.log( scope.additional_add_admin_data.id );
 
           scope.showLoading();
-          hrSettings.removeAdditionalAdmin( additional_add_admin_data.id ).then( async function (response) {
+          hrSettings.removeAdditionalAdmin( scope.additional_add_admin_data.id ).then( async function (response) {
             console.log(response);
             if ( response.data.status ) {
               scope.isShowSuccessfulRemoveAdmin = true;
               await scope.getAdditionalAdmin();
-              $('#remove-administrator-modal').modal('hide');
               scope.hideLoading();
             }
             
