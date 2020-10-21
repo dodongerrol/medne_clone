@@ -35,6 +35,45 @@ app.directive("employeeOverviewDirective", [
         scope.isSelectOverallEmployees  = false;
         scope.isClickExportAll = false;
 
+        scope.isTotalMembersShow = true;
+        scope.isFiltersShow = false;
+        scope.isStatusFiltersShow = false;
+        scope.isLocationFiltersShow = false;
+        scope.isDepartmentFiltersShow = false;
+
+        scope.locationList  = [];
+        scope.departmentList  = [];
+        scope.isApplyFilter = false;
+
+
+        
+        scope.empFiltersObj = {
+          status : [
+            {
+              name: 'Pending',
+              active: false,
+            },
+            {
+              name: 'Activated',
+              active: false,
+            },
+            {
+              name: 'Active',
+              active: false,
+            },
+          ],
+          location: [],
+          department: [],
+          selectedLocations: [],
+          selectedDepartments: [],
+        }
+
+
+
+
+
+
+
 
         scope.empGetNumber = function (num) {
           return new Array(num);
@@ -42,17 +81,17 @@ app.directive("employeeOverviewDirective", [
         scope.locGetNumber = function (num) {
           return new Array(num);
         }
-        scope.getEmployeeList = function (page) {
-          $(".employee-overview-pagination").show();
+        scope.getEmployeeList = async function () {
+          // $(".employee-overview-pagination").show();
           scope.showLoading();
-          hrSettings.getEmployees(page,scope.page_ctr)
-            .then(function (response) {
+          await hrSettings.getEmployees(scope.page_active,scope.page_ctr,scope.empFiltersObj.status,scope.empFiltersObj.location,scope.empFiltersObj.department)
+            .then(async function (response) {
               console.log(response);
               scope.employees = response.data;
               scope.employees.total_allocation = response.data.total_allocation;
               scope.employees.allocated = response.data.allocated;
           
-              angular.forEach(scope.employees.data, function (value, key) {
+              await angular.forEach(scope.employees.data, function (value, key) {
                 value.fname = scope.employees.data[key].name.substring(0, value.name.lastIndexOf(" "));
                 value.lname = scope.employees.data[key].name.substring(value.name.lastIndexOf(" ") + 1);
                 value.start_date = moment(value.start_date).format("DD/MM/YYYY");
@@ -90,11 +129,11 @@ app.directive("employeeOverviewDirective", [
           scope.page_active = 1;
           scope.getEmployeeList(1);
         }
-        scope.searchEmployee = function (input) {
+        scope.searchEmployee = async function (input) {
           if (input) {
             scope.showLoading();
             let data = input;
-            hrSettings.searchMemberList(scope.page_active,scope.global_empLimitList,data)
+            await hrSettings.searchMemberList(scope.page_active,scope.global_empLimitList,data)
               .then(function (response) {
                 scope.employees = response.data;
                 angular.forEach(scope.employees.data, function (value, key) {
@@ -114,23 +153,23 @@ app.directive("employeeOverviewDirective", [
             scope.removeSearchEmp();
           }
         };
-        scope.getSession = function () {
-          hrSettings.getSession()
-            .then(function (response) {
+        scope.getSession = async function () {
+          await hrSettings.getSession()
+            .then(async function (response) {
               // console.log( response );
               scope.selected_customer_id = response.data.customer_buy_start_id;
               scope.options.accessibility = response.data.accessibility;
               if (scope.isSearchEmp) {
-                scope.searchEmployee(scope.inputSearch);
+                await scope.searchEmployee(scope.inputSearch);
               } else {
-                scope.getEmployeeList(scope.page_active);
+                await scope.getEmployeeList(scope.page_active);
               }
             });
         }
         scope.getTotalMembers = function () {
           hrSettings.getCountMembers()
             .then(function (response) {
-              scope.member_count = response.data.total_members;
+              scope.companyEmployeeValues = response.data;
             });
         }
         scope.getProgress = function () {
@@ -235,52 +274,15 @@ app.directive("employeeOverviewDirective", [
           },200);
         }
 
-        scope.isTotalMembersShow = true;
-        scope.isFiltersShow = false;
-        scope.isStatusFiltersShow = false;
-        scope.isLocationFiltersShow = false;
-        scope.isDepartmentFiltersShow = false;
-
-        scope.locationList  = [
-          { name :'Location 1' }, 
-          { name :'Location 2' }, 
-          { name :'Location 3' }, 
-          { name :'Location 4' }, 
-          { name :'Location 5' }, 
-        ];
-        scope.departmentList  = [
-          { name :'Department 1' }, 
-          { name :'Department 2' }, 
-          { name :'Department 3' }, 
-          { name :'Department 4' }, 
-          { name :'Department 5' }, 
-        ];
-        
-        scope.empFiltersObj = {
-          status : [
-            {
-              name: 'Pending',
-              active: false,
-            },
-            {
-              name: 'Activated',
-              active: false,
-            },
-            {
-              name: 'Active',
-              active: false,
-            },
-          ],
-          location: [],
-          department: [],
-        }
-
         scope._filterBackBtn_ = function(opt){
           if(opt == 'filterList'){
             scope.isTotalMembersShow = true;
             scope.isFiltersShow = false;
           }
           if(opt == 'status' || opt == 'location' || opt == 'department'){
+            if(scope.isApplyFilter == false){
+              scope._removeFilterType_(opt);
+            }
             scope.isStatusFiltersShow = false;
             scope.isLocationFiltersShow = false;
             scope.isDepartmentFiltersShow = false;
@@ -309,6 +311,9 @@ app.directive("employeeOverviewDirective", [
           scope.isStatusFiltersShow = false;
           scope.isLocationFiltersShow = false;
           scope.isDepartmentFiltersShow = false;
+
+          scope.isApplyFilter = true;
+          scope.getEmployeeList();
         }
         scope._removeFilterType_  = function(opt){
           if(opt == 'status'){
@@ -329,32 +334,43 @@ app.directive("employeeOverviewDirective", [
           }
           if(opt == 'location'){
             scope.empFiltersObj.location = [];
+            scope.empFiltersObj.selectedLocations = [];
+            scope.locationList.map((res) => {
+              res.selected = false;
+            });
           }
           if(opt == 'department'){
             scope.empFiltersObj.department = [];
+            scope.empFiltersObj.selectedDepartments = [];
+            scope.departmentList.map((res) => {
+              res.selected = false;
+            });
           }
         }
         scope._selectLocationFilterData_  = function(value, opt){
           if(opt){
-            scope.empFiltersObj.location.push(value);
+            scope.empFiltersObj.location.push(value.LocationID);
+            scope.empFiltersObj.selectedLocations.push(value);
           }else{
-            var index = $.inArray(value, scope.empFiltersObj.location);
+            var index = $.inArray(value.LocationID, scope.empFiltersObj.location);
             scope.empFiltersObj.location.splice(index, 1);
+            scope.empFiltersObj.selectedLocations.splice(index, 1);
             var indexLoc = $.inArray(value, scope.locationList);
             scope.locationList[indexLoc].selected = false;
           }
         }
         scope._selectDepartmentFilterData_  = function(value, opt){
           if(opt){
-            scope.empFiltersObj.department.push(value);
+            scope.empFiltersObj.department.push(value.id);
+            scope.empFiltersObj.selectedDepartments.push(value);
           }else{
-            var index = $.inArray(value, scope.empFiltersObj.department);
+            var index = $.inArray(value.id, scope.empFiltersObj.department);
             scope.empFiltersObj.department.splice(index, 1);
+            scope.empFiltersObj.selectedDepartments.splice(index, 1);
             var indexDep = $.inArray(value, scope.departmentList);
             scope.departmentList[indexDep].selected = false;
           }
         }
-
         scope.selectTransferBtn = function(data){
           console.log(data);
           scope.selected_employee = data;
@@ -368,7 +384,20 @@ app.directive("employeeOverviewDirective", [
           localStorage.setItem('selected_member_id', data.user_id);
           $state.go('member-remove', { member_id : data.user_id });
         }
-
+        scope._getLocationListing_  = async function(){
+          await hrSettings.fetchLocationData()
+            .then(function(response){
+              console.log(response);
+              scope.locationList  = response.data;
+            });
+        }
+        scope._getDepartmentListing_  = async function(){
+          await hrSettings.fetchDepartmentData()
+            .then(function(response){
+              console.log(response);
+              scope.departmentList  = response.data;
+            });
+        }
 
 
 
@@ -411,6 +440,8 @@ app.directive("employeeOverviewDirective", [
           await scope.getSession();
           // await scope.getSpendingAcctStatus();
           await scope.getTotalMembers();
+          await scope._getLocationListing_();
+          await scope._getDepartmentListing_();
           // await scope.getProgress();
 
           localStorage.setItem('selected_member_id', null);

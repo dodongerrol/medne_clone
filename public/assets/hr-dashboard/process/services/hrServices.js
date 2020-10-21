@@ -118,10 +118,20 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/remove_employee/" + id);
   };
 
-  hrFactory.getEmployees = function(page,limit) {
-    return $http.get(
-      serverUrl.url + "/hr/employee/list/"+ "?page=" + page +  "&limit=" + limit
-    );
+  hrFactory.getEmployees = function(page,limit,status,location,department) {
+    var url = serverUrl.url + "/hr/employee/list"+ "?page=" + page +  "&limit=" + limit;
+    status.map((res,index) => {
+      if(res.active){
+        url += ("&status[]=" + res.name.toLowerCase());
+      }
+    });
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
+    }
+    return $http.get(url);
   };
 
   hrFactory.getEmployeeCredits = function(num, page) {
@@ -556,6 +566,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/add_more_business_contact",data );
   }
 
+  hrFactory.fetchLinkAccount = function ( per_page, page, exception ) {
+    return $http.get( serverUrl.url + "/hr/get/corporate_linked_account?limit="+per_page+"&page="+page+"&total_enrolled_employee_status=true&total_enrolled_dependent_status=true"+"&except_current="+exception );
+  }
+  
   hrFactory.fetchPrimaryAdministrator = function ( ) {
     return $http.get( serverUrl.url + "/hr/get_primary_admin_details" );
   }
@@ -602,21 +616,42 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
     return $http.get(serverUrl.url + "/hr/get_date_terms");
   };
 
-  hrFactory.getHrActivity = function(data) {
-    return $http.get(serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter);
+  hrFactory.getHrActivity = function(data,location,department) {
+    var url = serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter;
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
+    }
+    return $http.get(url);
   };
 
-  hrFactory.getHrActivityInNetworkWithPagination = function(data) {
+  hrFactory.getHrActivityInNetworkWithPagination = function(data,location,department) {
     var url = serverUrl.url + "/hr/get_activity_in_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id;
     if( data.user_id ){
       url += ("&user_id=" + data.user_id);
     }
+    var url = serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter;
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
+    }
     return $http.get( url );
   };
-  hrFactory.getHrActivityOutNetworkWithPagination = function(data) {
+  hrFactory.getHrActivityOutNetworkWithPagination = function(data,location,department) {
     var url = serverUrl.url + "/hr/get_activity_out_network_transactions?page=" + data.page + "&per_page=" + data.per_page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&customer_id=" + data.customer_id;
     if( data.user_id ){
       url += ("&user_id=" + data.user_id);
+    }
+    var url = serverUrl.url + "/hr/get_activity?page=" + data.page + "&start=" + data.start + "&end=" + data.end + "&spending_type=" + data.spending_type + "&filter=" + data.filter;
+    if(location.length > 0){
+      url += ("&location_id=[" + location + "]");
+    }
+    if(department.length > 0){
+      url += ("&department_id[" + department + "]");
     }
     return $http.get( url );
   };

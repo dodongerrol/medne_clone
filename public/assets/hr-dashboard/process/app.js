@@ -982,7 +982,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'company-profile-content@company-profile': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/billingPayments/index.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/index.html'
         }
       }
     })
@@ -993,7 +993,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
           templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
         },
         'company-profile-content@company-profile': {
-          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/administrators/index.html'
+          templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/Administrators/index.html'
         }
       }
     })

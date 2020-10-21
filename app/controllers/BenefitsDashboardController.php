@@ -116,6 +116,31 @@ class BenefitsDashboardController extends \BaseController {
 			$accessibility = 0;
 		}
 
+		$permission = DB::table('employee_and_dependent_permissions')
+			->where('id', $hr->customer_buy_start_id)
+			->first();
+
+		// if($permission->edit_employee_dependent == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
+		// }
+
+		// if($permission->enroll_terminate_employee == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot enroll or terminate employee.'];
+		// }
+
+		// if($permission->approve_reject_edit_non_panel_claims == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot remove, reject and edit non panel claims.'];
+		// }
+
+		// if($permission->create_remove_edit_admin_unlink_account == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot create, remove admins, edit admins permission and unlink company account.'];
+		// }
+		// if($permission->manage_billing_and_payments == 0) {
+		// 	return ['status' => false, 'message' => 'admin cannot manage billing and payments.'];
+		// }
+
+		
+
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
 
 		$session = array(
@@ -126,7 +151,8 @@ class BenefitsDashboardController extends \BaseController {
 			'accessibility'					=> $accessibility,
 			'expire_in'						=> $hr->expire_in,
 			'signed_in'						=> $hr->signed_in,
-			'account_type'					=> $plan->account_type
+			'account_type'					=> $plan->account_type,
+			'permissions'					=> $permission ? $permission : false,
 		);
 		return $session;
 	}
@@ -3725,8 +3751,13 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Please key in either Mobile No, NRIC or passport number to proceed.');
 		}
 
+		$permission = DB::table('employee_and_dependent_permissions')
+			->where('id', $input['user_id'])
+			->first();
 
-
+		if($permission->edit_employee_dependent == 0) {
+			return ['status' => false, 'message' => 'admin cannot edit employee or dependent.'];
+		}
 
 		// check email address
 		if(!empty($input['email'])) {
@@ -17488,8 +17519,23 @@ public function createHrLocation ()
 
 		$total_active_members = sizeof($corporate_members);
 
-		$locations = CorporateHrLocation::where('customer_id', $id)->get();
+		$locations = \CorporateHrLocation::where('customer_id', $id)->get();
 		
+		if(sizeof($locations) == 0) {
+			// create new work locations for empty work locations
+			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $id)->first();
+			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+
+			$data = array(
+				'customer_id'		=> $id,
+				'location'			=> $info->company_address,
+				'business_address'	=> $info->unit_number && $info->building_name ? $info->unit_number.' '.$info->building_name : $info->company_address,
+				'country'			=> $customer->currency_type == "myr" ? 'Malaysia' : 'Singapore',
+				'postal_code'		=> $info->postal_code,
+			);
+			\CorporateHrLocation::create($data);
+			$locations = \CorporateHrLocation::where('customer_id', $id)->get();
+		}
 
 		$container = array();
 		foreach ($locations as $key => $location) {

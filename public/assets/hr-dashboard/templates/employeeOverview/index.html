@@ -5,7 +5,6 @@
   <div class="employee-overview-header emp-overview-new-header">
     <div class="overview-title">
       <h1>Employee Overview</h1>
-      <!-- <h4><span ng-bind="member_count"></span> total members</h4> -->
     </div>
     <div class="overview-menu flex items-center">
       <!-- <span ng-click="_showAddFilterModal_()" class="add-filter-container">
@@ -50,30 +49,30 @@
         <div>
           <div class="total-member-data">
             <div>Total members</div>
-            <span class="total-number" ng-bind="member_count">70</span>
+            <span class="total-number" ng-bind="companyEmployeeValues.total_members">70</span>
           </div>
           <div>
             <div>Administrators <img class="admin-blue-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png"></div>
-            <span class="total-number">04</span>
+            <span class="total-number" ng-bind="companyEmployeeValues.total_administrators">04</span>
           </div>
         </div>
-        <div ng-if="empFiltersObj.status[0].active || empFiltersObj.status[1].active || empFiltersObj.status[2].active" class="filtered-text">
+        <div ng-if="isApplyFilter && (empFiltersObj.status[0].active || empFiltersObj.status[1].active || empFiltersObj.status[2].active)" class="filtered-text">
           <div>
             <span class="bold-text">Status</span> is filtered by <span ng-if="list.active" ng-repeat="list in empFiltersObj.status">{{ $index > 0 && empFiltersObj.status[$index - 1].active ? '&' : '' }} {{ list.name }} </span>
           </div>
           <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('status')"></i>
         </div>
-        <div ng-if="empFiltersObj.location.length > 0" class="filtered-text">
+        <div ng-if="isApplyFilter && (empFiltersObj.location.length > 0)" class="filtered-text">
           <div>
             <span class="bold-text">Location</span> is filtered by 
-            <span ng-repeat="list in empFiltersObj.location">{{ list.name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
+            <span ng-repeat="list in empFiltersObj.selectedLocations">{{ list.location }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
           </div>
           <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('location')"></i>
         </div>
-        <div ng-if="empFiltersObj.department.length > 0" class="filtered-text">
+        <div ng-if="isApplyFilter && (empFiltersObj.department.length > 0)" class="filtered-text">
           <div>
             <span class="bold-text">Department</span> is filtered by 
-            <span ng-repeat="list in empFiltersObj.department">{{ list.name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
+            <span ng-repeat="list in empFiltersObj.selectedDepartments">{{ list.department_name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
           </div>
           <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('department')"></i>
         </div>
@@ -113,19 +112,19 @@
         <h5 class="add-filter-text">Add filter</h5>
         <div class="white-space-10"></div>
         <h5>Location</h5>
-        <div class="filter-data-selector-wrapper">
-          <div ng-repeat="list in empFiltersObj.location" class="filter-data-selector-container"><div ng-bind="list.name">Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectLocationFilterData_(list, false)"></div>
+        <div ng-if="empFiltersObj.selectedLocations.length > 0" class="filter-data-selector-wrapper">
+          <div ng-repeat="list in empFiltersObj.selectedLocations" class="filter-data-selector-container"><div ng-bind="list.location">Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectLocationFilterData_(list, false)"></div>
         </div>
-        <div class="location-selector">
+        <div ng-if="locationList.length > 0" class="location-selector">
           <div ng-repeat="list in locationList" class="custom-checkbox-container">
             <label class="checkbox-input">
-              <span class="checkbox-text" ng-bind="list.name">Departmet 1</span >
+              <span class="checkbox-text" ng-bind="list.location">Departmet 1</span >
                 <input type="checkbox" ng-model="list.selected" ng-click="_selectLocationFilterData_(list, list.selected)"/>
               <span class="checkbox-mark"></span>
             </label>
           </div>
         </div>
-        <div>
+        <div ng-if="locationList.length > 0">
           <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
         </div>
       </div>
@@ -136,19 +135,19 @@
         <h5 class="add-filter-text">Add filter</h5>
         <div class="white-space-10"></div>
         <h5>Department</h5>
-        <div class="filter-data-selector-wrapper">
-          <div ng-repeat="list in empFiltersObj.department" class="filter-data-selector-container"><div ng-bind="list.name">Departmet 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectDepartmentFilterData_(list, false)"></div>
+        <div ng-if="empFiltersObj.selectedDepartments.length > 0" class="filter-data-selector-wrapper">
+          <div ng-repeat="list in empFiltersObj.selectedDepartments" class="filter-data-selector-container"><div ng-bind="list.department_name">Departmet 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectDepartmentFilterData_(list, false)"></div>
         </div>
-        <div class="location-selector">
+        <div ng-if="departmentList.length > 0" class="location-selector">
           <div ng-repeat="list in departmentList" class="custom-checkbox-container">
             <label class="checkbox-input">
-              <span class="checkbox-text" ng-bind="list.name">Departmet 1</span >
+              <span class="checkbox-text" ng-bind="list.department_name">Departmet 1</span >
               <input type="checkbox" ng-model="list.selected" ng-click="_selectDepartmentFilterData_(list, list.selected)"/>
               <span class="checkbox-mark"></span>
             </label>
           </div>
         </div>
-        <div>
+        <div ng-if="departmentList.length > 0">
           <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
         </div>
       </div>
@@ -198,6 +197,7 @@
                   <span><span>{{ isSelectOverallEmployees ? employees.total_data : selectedEmpArr.length }}</span> selected.</span>
                 </th>
                 <th colspan="10">
+<<<<<<< HEAD
                   <span>
                     <img src="../assets/hr-dashboard/img/new-download-icon.png">
                     <span>Export Selected Member Details</span>
@@ -225,9 +225,11 @@
                   <span><span>20 </span> selected.</span>
                 </th>
                 <th colspan="11">
+=======
+>>>>>>> 379a769ff28f91b36b53a634f2b256e3c7b9d7a9
                   <span>
-                    <img ng-click="exportSelectedMember()" src="../assets/hr-dashboard/img/new-download-icon.png">
-                    <span ng-click="exportSelectedMember()">Export Selected Member Details</span>
+                    <img src="../assets/hr-dashboard/img/new-download-icon.png">
+                    <span>Export Selected Member Details</span>
                   </span>
                 </th>
               </tr>
@@ -327,8 +329,12 @@
                     </span>
                   </div>
                 </td>
-                <td ng-click="goToMemberInfo(list, $index)" ng-bind="list.location">Location 1</td>
-                <td ng-click="goToMemberInfo(list, $index)" ng-bind="list.department">Department 1</td>
+                <td ng-click="goToMemberInfo(list, $index)">
+                  <!-- <span ng-bind="list.location">Location 1</span> -->
+                </td>
+                <td ng-click="goToMemberInfo(list, $index)">
+                  <!-- <span ng-bind="list.department">Department 1</span> -->
+                </td>
               </tr>
             </tbody>
           </table>
