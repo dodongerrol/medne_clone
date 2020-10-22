@@ -18340,8 +18340,13 @@ public function createHrLocation ()
 			
 			$container [] = array(
 				'id'											=> $detail->id,
+				'member_id'										=> $detail->member_id,
+				'hr_id'											=> $detail->hr_id,
+				'is_mednefits_employee'							=> $detail->is_mednefits_employee,
 				'fullname'										=> $detail->fullname,
 				'email'											=> $detail->email,
+				'phone_code'									=> $detail->phone_code,
+				'phone_no'										=> $detail->phone_no,
 				'edit_employee_dependent'						=> $permissions->edit_employee_dependent,
 				'enroll_terminate_employee'						=> $permissions->enroll_terminate_employee,
 				'approve_reject_edit_non_panel_claims'			=> $permissions->approve_reject_edit_non_panel_claims,
