@@ -83,7 +83,7 @@ login.directive('loginSection', [
 					// let emailFromDb = 'example@email.com';
 					let account_status;
 
-					$http.post(serverUrl.url + `/employee/check_email_validation?email=${email}`)
+					$http.get(serverUrl.url + `/employee/check_email_validation?email=${email}`)
 					.success(function(response) {
 						console.log(response);
 						scope.hr_id = response.hr_id;

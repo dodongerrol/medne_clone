@@ -30,7 +30,7 @@
         <span ng-if="mednefitsCreditsData.payment_status == false && !mednefitsCreditsData.disable" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
         <span ng-if="mednefitsCreditsData.disable" class="credits-on-hold-text deactivated-text">
           Credits amounts are on hold as this account has been deactivated.<br>
-          Credits amount of SGD 10,000.00 will be refunded on 31/12/2020.
+          Credits amount of {{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.refund_amount }} will be refunded on {{ formatMomentDate(selectedTerm.end, 'YYYY-MM-DD', 'DD/MM/YYYY') }}.
         </span>
         <div class="mednefits-available-credits display-flex">
           <div class="available-credits flex-1">
@@ -50,7 +50,7 @@
               </span>
             </span>
             <span>
-              <div class="available-credits-amount member-bold-text">SGD {{ mednefitsCreditsData.available_credits }}</div>
+              <div class="available-credits-amount member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.available_credits }}</div>
             </span>
           </div>
           <div>
@@ -76,7 +76,7 @@
                 </span>
               </span>
               <span>
-                <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_credits }}</div>
+                <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.total_credits }}</div>
               </span>
             </div>
             <div class="credits-border-container"></div>
@@ -97,7 +97,7 @@
                 </span>
               </span>
               <span>
-                <div class="member-bold-text">SGD {{ mednefitsCreditsData.purchased_credits }}</div>
+                <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.purchased_credits }}</div>
               </span>
             </div>
             <div class="credits-border-container"></div>
@@ -118,7 +118,7 @@
                 </span>
               </span>
               <span>
-                <div class="member-bold-text">SGD {{ mednefitsCreditsData.bonus_credits }}</div>
+                <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.bonus_credits }}</div>
               </span>
             </div>
             <div class="credits-border-container"></div>
@@ -138,7 +138,7 @@
               </span>
             </span>
             <span>
-              <div class="member-bold-text">SGD {{ mednefitsCreditsData.total_utilised_credits }}</div>
+              <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.total_utilised_credits }}</div>
             </span>
           </div>
         </div>
@@ -157,7 +157,7 @@
       <div ng-if="mednefitsCreditsData.payment_status">
         <div>Prepaid Credits is currently used in:</div>
         <div>
-          <div class="wallet-container medical-wallet-container display-flex">
+          <div ng-if="account_details.account_type != 'enterprise_plan'" class="wallet-container medical-wallet-container display-flex">
             <div class="member-bold-text">Medical Wallet:</div>
             <div class="display-flex wallet-panel-container">
               <div ng-if="medicalWalletData.panel_payment_method">Mednefits Panel</div>
@@ -167,7 +167,7 @@
           <div class="wallet-container wellness-wallet-container display-flex">
             <div class="member-bold-text">Wellness Wallet:</div>
             <div>
-              <div ng-if="wellnessWalletData.non_panel_payment_method">Non Panel Panel</div>
+              <div ng-if="wellnessWalletData.non_panel_payment_method">Non Panel</div>
             </div>
           </div>
         </div>
@@ -265,7 +265,7 @@
             <h5>Total Credits</h5>
             <span>*The credits amount will be added to company account</span>
             <div class="top-up-input-wrapper">
-              <div class="currency-type">SGD</div>
+              <div class="currency-type">{{ mednefitsCreditsData.currency_type }}</div>
               <input type="text" ng-model="activateCreditsData.total_credits" ng-focus="onCreditFocus('total_credits')" ng-blur="calculateActivateCredits('total_credits', activateCreditsData.total_credits)" placeholder="0.00">
             </div>
           </div>
@@ -284,7 +284,7 @@
               <div class="top-up-icon-container calc-details">
                 <i class="fa fa-minus"></i>
               </div>
-              <div class="bonus-credits-amount"><span><span class="currency-type">SGD</span> {{ activateCreditsData.bonus_credits }}</span> <span>(Bonus Credits)</span></div>
+              <div class="bonus-credits-amount"><span><span class="currency-type">{{ mednefitsCreditsData.currency_type }}</span> {{ activateCreditsData.bonus_credits }}</span> <span>(Bonus Credits)</span></div>
             </div>
           </div>
         </div>
@@ -298,7 +298,7 @@
             <h5>Purchased Credits</h5>
             <span>*The credits amount company will be paying for</span>
             <div class="top-up-input-wrapper">
-              <div class="currency-type">SGD</div>
+              <div class="currency-type">{{ mednefitsCreditsData.currency_type }}</div>
               <input type="text" ng-model="activateCreditsData.purchased_credits" ng-focus="onCreditFocus('purchased_credits')" ng-blur="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" placeholder="0.00">
             </div>
           </div>
@@ -413,7 +413,7 @@
                   <h5 class="member-bold-text">Total Credits</h5>
                   <span>*The credits amount will be added to company account</span>
                   <div class="top-up-input-wrapper">
-                    <div>SGD</div>
+                    <div>{{ mednefitsCreditsData.currency_type }}</div>
                     <input type="text" ng-model="creditsTopUpData.total_credits" ng-focus="onCreditFocus('total_credits')" ng-blur="calculateCredits('total_credits', creditsTopUpData.total_credits)" placeholder="0.00">
                   </div>
                 </div>
@@ -433,7 +433,7 @@
                     <div class="top-up-icon-container calc-details">
                       <i class="fa fa-minus"></i>
                     </div>
-                    <div class="bonus-credits-amount"><span class="member-bold-text">SGD {{ creditsTopUpData.bonus_credits }}</span> <span class="member-bold-text">(Bonus Credits)</span></div>
+                    <div class="bonus-credits-amount"><span class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ creditsTopUpData.bonus_credits }}</span> <span class="member-bold-text">(Bonus Credits)</span></div>
                   </div>
                 </div>
               </div>
@@ -447,7 +447,7 @@
                   <h5 class="member-bold-text">Purchased Credits</h5>
                   <span>*The credits amount company will be paying for</span>
                   <div class="top-up-input-wrapper">
-                    <div>SGD</div>
+                    <div>{{ mednefitsCreditsData.currency_type }}</div>
                     <input type="text" ng-model="creditsTopUpData.purchased_credits" ng-focus="onCreditFocus('purchased_credits')" ng-blur="calculateCredits('purchased_credits', creditsTopUpData.purchased_credits)" placeholder="0.00">
                   </div>
                 </div>

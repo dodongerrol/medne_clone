@@ -127,6 +127,10 @@
                 this.state.selectedPropertiesArr.splice(index, 1);
             }
         }
+        downloadMemberDetails(){
+            console.log( this.selectedEmployeeData );
+            console.log( this.state.selectedPropertiesArr );
+        }
     }
 
     angular.module('app')

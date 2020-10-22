@@ -487,8 +487,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
 
   // Mednefits Credits Account Activity Table
-  hrFactory.fetchMednefitsActivitiesData = function ( start,end,page,per_page ) {
-    return $http.get( serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end + "&page=" + page + "&per_page=" + per_page );
+  hrFactory.fetchMednefitsActivitiesData = function ( start,end,page,per_page, account_type ) {
+    var url = serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end + "&page=" + page + "&per_page=" + per_page;
+    if(account_type){
+      url += '&coverage_type=' + account_type;
+    }
+    return $http.get(url);
   }
 
   // Medical and Wellness Wallent Activity Table
@@ -592,10 +596,6 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   hrFactory.fetchEmployeeName = function () {
     return $http.get( serverUrl.url + "/hr/employee/list?status[]=active" );
-  }
-  
-  hrFactory.fetchLinkAccount = function ( per_page, page ) {
-    return $http.get( serverUrl.url + "/hr/get/corporate_linked_account?limit="+per_page+"&page="+page+"&total_enrolled_employee_status=true&total_enrolled_dependent_status=true" );
   }
 
   hrFactory.updateAdditionalAdmin = function ( data ) {

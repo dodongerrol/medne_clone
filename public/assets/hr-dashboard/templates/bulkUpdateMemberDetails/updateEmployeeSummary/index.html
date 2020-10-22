@@ -34,26 +34,143 @@
               <div ng-if="false" class="text-value">Jhon Doe</div>
               <span ng-if="$index == 1" class="error">*Error message here</span>
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
+            <td>
+              <div ng-if="true" class="input-div">
+                <input type="text" value="Jhon Doe" ng-class="{'error' : $index == 1}" class="open-custom-drop">
+              </div>
+              <div ng-if="false" class="text-value">Jhon Doe</div>
+              <span ng-if="$index == 1" class="error">*Error message here</span>
+            </td>
           </tr>
         </tbody>
       </table>
 
       <div class="custom-append-drop td-drop">
-        <div class="td-drp-item">A</div>
-        <div class="td-drp-item">B</div>
+        <div ng-repeat="list in [1,2,3,4,5,6,7,8,9]" class="td-drp-item">A</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="custom-pagination-container flex-1">
+    <div class="custom-pagination">
+      <div class="page-wrapper">
+        <div class="page-scroll-container">
+          <span ng-click="prevPage()"
+            ng-disabled="employees.prev_page_url == null" class="prev-next-container">
+            <i class="fa fa-angle-left"></i>
+            <span>Prev</span>
+          </span>
+          <div class="pages-list">
+            <span class="page-num active">1</span>
+            <!-- <span ng-repeat="list in range( employees.last_page ) | limitTo:pagesToDisplay:startIndex() track by $index" ng-bind="list + 1" class="page-num"
+              ng-click="goToPage(list + 1)"
+              ng-class="{'active' : list + 1 == page_active}">1</span>
+            <span style="flex: initial;" ng-if="employees.last_page > 10 && page_active < ( employees.last_page - 5 )" ng-click="goToPage(employees.last_page)" >
+              .. {{ employees.last_page }}
+            </span> -->
+          </div>
+          <span ng-click="nextPage()" class="prev-next-container">
+            <span>Next</span>
+            <i class="fa fa-angle-right"></i>
+          </span>
+        </div>
+      </div>
+      <div x-data="{ open: false }" class="custom-list-per-page">
+        <span @click="open = true"><span ng-bind="page_ctr">10</span> per page</span>
+        <span @click="open = true">
+          <i class="fa fa-caret-down"></i>
+        </span>
+        <div x-show="open" @click.away="open = false" @click="open = false" class="opened-per-page-scroll">
+          <span ng-click="perPage(5)">5 per page</span>
+          <span ng-click="perPage(10)">10 per page</span>
+          <span ng-click="perPage(20)">20 per page</span>
+          <span ng-click="perPage(50)">50 per page</span>
+          <span ng-click="perPage(100)">100 per page</span>
+        </div>
       </div>
     </div>
   </div>
@@ -62,33 +179,29 @@
     <button class="btn-cancel" ng-click="backBtn()">Back</button>
     <button class="btn-submit" ng-click="nextBtn()">Update</button>
   </div>
-
-
-
-
   
 </div>
 
 <script>
   $(document).ready(function(){
     $(".open-custom-drop").click(function(element){
-      console.log(element);
-      console.log($(element.currentTarget).offset());
       var coord = $(element.currentTarget).offset();
       $(".custom-append-drop").css({
-        top: coord.top + 'px',
+        top: 30 + coord.top + 'px',
         left: coord.left + 'px',
+        display: 'block',
       });
     });
 
     $("body").click(function (e) {
-      // if ($(e.target).parents(".sub-header-text span").length === 0) {
-      // }
       console.log($(e.target));
-      console.log( $(e.target)[0].className );
-      console.log( $(e.target).parents() );
-      if( $(e.target)[0].className != 'open-custom-drop' && $(e.target).parents(".custom-append-drop").length === 0 ){
-        console.log('Clicked outside.');
+      console.log($(e.target)[0].className);
+      if( $(e.target)[0].classList[0] != 'open-custom-drop' && $(e.target)[0].classList[0] != 'custom-append-drop' && $(e.target).parents(".custom-append-drop").length === 0 ){
+        $(".custom-append-drop").css({
+          top: '0px',
+          left: '0px',
+          display: 'none',
+        });
       }
     });
   });

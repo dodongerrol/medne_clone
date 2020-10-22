@@ -12,6 +12,9 @@ app.directive("updateExcelSummaryDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("updateExcelSummaryDirective Runnning !");
 
+        scope.page_active = 1;
+        scope.page_ctr = 5;
+
         scope.nextBtn = function(){
           console.log('asdfasdfa');
         }

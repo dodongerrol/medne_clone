@@ -491,3 +491,11 @@
   background-color: #0392CF;
   pointer-events: initial;
 }
+
+.prepaid-subtext {
+  font-size: 15px;
+  line-height: 12px;
+  color: #848484;
+  font-weight: 700;
+  margin: 15px 0;
+}

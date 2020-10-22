@@ -41,3 +41,48 @@ if (!function_exists('medi_date_format')) {
         return date($format, $raw);
     }
 }
+
+if (!function_exists('validate_phone')) {
+    function validate_phone($phone, $country)
+    {
+        $length = strlen($phone);
+
+        $result = [
+            'error' => false,
+            'message' => null
+        ];
+
+        switch ($country) {
+            case 65:
+                $stringify = (string) $phone;
+                if ($length < 8 || $length > 8) {
+                    $result['error'] = true;
+                    $result['message'] = 'Mobile Number for your country code should be 8 digits.';
+                } else {
+                    if ($stringify[0] !== '8' && $stringify[0] !== '9') {
+                        $result['error'] = true;
+                        $result['message'] = 'Invalid mobile format.';
+                    }
+                }
+                break;
+            case 60:
+                if ($length < 9 || $length > 10) {
+                    $result['error'] = true;
+                    $result['message'] = 'Invalid mobile format. Please enter mobile in the format of 9-10 digit number without the prefix “0”.';
+                }
+                break;
+            case 63:
+                if ($length < 9 || $length > 9) {
+                    $result['error'] = true;
+                    $result['message'] = 'Mobile Number for your country code should be 9 digits.';
+                }
+                break;
+            default:
+                $result['error'] = false;
+                $result['message'] = null;
+                break;
+        }
+
+        return $result;
+    }
+}

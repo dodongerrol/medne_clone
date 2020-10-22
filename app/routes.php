@@ -117,7 +117,7 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 Route::post('hr/create-password-activated', 'BenefitsDashboardController@createCompanyPasswordActivated');
-Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
+Route::get('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 Route::post('hr/employee_reset_password', 'EmployeeController@employeeResetPassword');
 // admin resend activation email
 Route::post('hr/resend_activation_email', 'CorporateController@resendCorporateActivationEmail');
@@ -225,6 +225,10 @@ Route::get('hr/download_dependent_invoice', 'DependentController@getDependentInv
 
 // get pending employee replacement
 Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@getPendingEmployeeDeactivate');
+// get external admin active link
+Route::get('hr/validate_external_admin_token', 'HrController@validateExernalAdminToken');
+// create password for external user
+Route::post('hr/create_external_admin_user_password', 'HrController@createExternalAdminUserPassword');
 
 // update agree status
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
@@ -1103,6 +1107,11 @@ Route::group(array('prefix' => 'v2'), function()
 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
+	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
+
+		// for getting member lists
+		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
+
 		Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
 		
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
@@ -1111,6 +1120,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::put('auth/registerMobileNumber', 'Api_V1_AuthController@registerMobileNumber');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
+		
 		Route::post('auth/activated-administrator-user', 'Api_V1_AuthController@createNewPasswordByAdministrator');
 
 		// for getting member lists
@@ -1376,7 +1386,9 @@ Route::group(array('prefix' => 'app'), function()
 		/*
 			Refactor API for gettting providers information for the first time.
 		*/
-		Route::get('clinic/getProvidersDetail', '@DashboardController@getProvidersDetail');
+		Route::get('clinic/getProviderBreakHours', 'DashboardController@getProviderBreakHours');
+		Route::get('clinic/getProviderOperatingHours', 'DashboardController@getProviderOperatingHours');
+		Route::get('clinic/getProvidersDetail', 'DashboardController@getProvidersDetail');
 		/* End Here. */
 		
 		Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
@@ -1437,7 +1449,7 @@ Route::group(array('prefix' => 'app'), function()
 		
 		/*****************Clinic : PUT*****************/
 		//Refactor API for gettting providers information for the first time.
-			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+			Route::put('clinic/updateProvidersDetail', 'DashboardController@updateProvidersDetail');
 		/* End Here. */
 	   
 		

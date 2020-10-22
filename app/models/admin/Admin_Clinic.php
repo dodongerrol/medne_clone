@@ -160,10 +160,35 @@ class Admin_Clinic extends Eloquent implements UserInterface, RemindableInterfac
 
         public function getClinicdata($clinicid)
         {
-        	$clinicData = DB::table('clinic')
-		    ->where('Active',1)
-		    ->where('ClinicID',$clinicid)
-		    ->get();
+			$clinicData = DB::table('clinic')
+							->where('Active',1)
+							->where('ClinicID',$clinicid)
+							->get();
 			return $clinicData;
-        }
+		}
+		
+		public function getClinicInfo($clinicid) {
+			return DB::table('clinic')
+					->select(DB::raw('(CASE
+							WHEN
+								currency_type = "sgd"
+							THEN
+								"+65"
+							ELSE
+								"+60"
+						END) as PhoneCode'),
+						'ClinicID', 'Name', 'Clinic_Type', 'Description', 
+						'Custom_title', 'Website', 'image', 'Address', 'City', 
+						'State', 'Country', 'Postal', 'District', 'Lat', 'Lng', 
+						'Phone_Code', 'Phone', 'MRT', 'Clinic_Price', 'Opening', 
+						'Calendar_type', 'Calendar_day', 'Calendar_duration', 'Calendar_Start_Hour', 
+						'Require_pin', 'Favourite', 'Personalized_Message', 'Created_on', 'Active', 
+						'medicloud_transaction_fees', 'discount', 'configure', 'co_paid_amount', 'co_paid_status', 
+						'position', 'gst_amount', 'gst', 'billing_name', 'billing_address', 'billing_status', 'communication_email', 
+						'test_account', 'currency_type', 'peak_hour_status', 'peak_hour_amount', 'peak_hour_start', 
+						'gst_percent', 'peak_hour_end', 'consultation_fees', 'consultation_gst_status')
+					->where('Active',1)
+					->where('ClinicID',$clinicid)
+					->get();
+		}
 }

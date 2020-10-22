@@ -137,10 +137,12 @@
           <div x-show="open" @click.away="open = false" class="credits-tooltip-container mednefits-basic-plan">
             <div ng-if="medicalWalletData.benefits_coverage == 'lite_plan' || medicalWalletData.benefits_coverage == 'basic_plan'" class="tooltip-title">Mednefits Basic Plan</div>
             <div ng-if="medicalWalletData.benefits_coverage == 'out_pocket' || medicalWalletData.benefits_coverage == 'out_of_pocket'" class="tooltip-title">Out of pocket (Reimbursement)</div>
+            <div ng-if="medicalWalletData.benefits_coverage == 'enterprise_plan'" class="tooltip-title">Mednefits Enterprise Plan</div>
             <p ng-if="medicalWalletData.benefits_coverage == 'lite_plan' || medicalWalletData.benefits_coverage == 'basic_plan'">
               This plan enables customised employee benefits by setting employee entitlement for cashless payments at panel providers and e-claim submissions at non-panel providers.
             </p>
             <p ng-if="medicalWalletData.benefits_coverage == 'out_pocket' || medicalWalletData.benefits_coverage == 'out_of_pocket'">All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
+            <p ng-if="medicalWalletData.benefits_coverage == 'enterprise_plan'">This plan covers a maximum of 14 visits and transactions at panel and non-panel GP, TCM, and A&E per annum.
             <div class="tooltip-btn-footer">
               <button @click="open = false">Got it</button>
             </div>
