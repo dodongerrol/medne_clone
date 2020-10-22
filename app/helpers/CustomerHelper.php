@@ -393,6 +393,13 @@ class CustomerHelper
 	public static function getExcelLink($status)
 	{
 		if($status['currency_type'] == "myr") {
+			if ($status['account_type'] == 'out_of_pocket') {
+				return [
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+NO+SA.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+NO-SA.xlsx'
+				];	
+			}
 			if($status['account_type'] == "lite_plan" && $status['paid_status'] == true)	{
 				if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
 					if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
@@ -612,6 +619,13 @@ class CustomerHelper
 				);
 			}
 		} else {
+			if ($status['account_type'] == 'out_of_pocket') {
+				return [
+					'status' => true,
+					'employee'	=>	'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/employee/Employee+NO+SA.xlsx',
+					'dependent'	=> 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v5/myr/basic/dependent/Employees-and-Dependents+NO-SA.xlsx'
+				];	
+			}
 			if($status['account_type'] == "lite_plan" && $status['paid_status'] == true)	{
 				if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
 					if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
