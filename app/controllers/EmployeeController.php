@@ -3028,6 +3028,27 @@ class EmployeeController extends \BaseController {
     $email = DB::table('customer_hr_dashboard')->where('email', $input['email'])->first();
     $token = StringHelper::getToken();
 
+    if(!$email) {
+      $member = DB::table('user')
+						->where('Email', $input['email'])
+						->whereIn('UserType', [5,6])
+						->whereIn('is_hr_admin', [0,1])
+						->select('UserID', 'PhoneNo', 'PhoneCode', 'member_activated', 'created_at', 'ActiveLink', 'Active')
+            ->first();
+      
+      if(!$member) {
+        return ['status' => 2, 'message' => 'Your email has not been signed up with Mednefits.'];
+      } else if($member && (int)$member->Active && $member->member_activated == 0) {
+        return ['status' => 0, 'token' => $member->ActiveLink, 'date_created' => $member->updated_at, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.', 'member_id' => $member->UserID];
+      } else if($member && (int)$member->member_activated == 1 && (int)$member->Active == 1) {
+        return ['status' => true, 'Activated'];
+      } else if($member && (int)$member->member_activated == 0) {
+        return ['status' => FALSE, 'message' => 'Sorry, your email has not yet been activated. Please check your inbox for your activation email.'];
+      } else {
+        return false;
+      }
+    }
+
     if(!$email == 2) {
       return array('status' => 2, 'message' => 'Your email has not been signed up with Mednefits.');
     }

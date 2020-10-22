@@ -81,7 +81,14 @@ class BenefitsDashboardController extends \BaseController {
 		} 
 		
 		// check if creds suffice for member
-		$member = DB::table('user')->where('Email', $input['email'])->where('Password', md5($input['password']))->where('Active', 1)->select('UserID', 'PhoneNo', 'PhoneCode')->first();
+		$member = DB::table('user')
+						->where('Email', $input['email'])
+						->where('Password', md5($input['password']))
+						->where('Active', 1)
+						->whereIn('UserType', [5,6])
+						->whereIn('is_hr_admin', [0,1])
+						->select('UserID', 'PhoneNo', 'PhoneCode')
+						->first();
 
 		if($member) {
 			// check if member is an admin type
@@ -18169,7 +18176,8 @@ public function createHrLocation ()
 				'updated_at'			=> date('Y-m-d'),
 				'account_update_status'	=> 1,
 				'account_already_update'	=> 1,
-				'account_update_date'	=> date('Y-m-d H:i:s')
+				'account_update_date'	=> date('Y-m-d H:i:s'),
+				'expiration_time'		=> date('Y-m-d H:i:s', strtotime('+7 days'))
 			]);
 
 			$role = array (
