@@ -16298,12 +16298,12 @@ class BenefitsDashboardController extends \BaseController {
 	
 
 		$phone_code = str_replace('+', '', $input['phone_code']);
-		$phone_number = str_replace('+', '', $input['phone_number']);
+		$phone_number = str_replace('+', '', $input['phone_no']);
 
         $data = array(
             'fullname'                  => $input['fullname'],
             'email'                     => $input['email'],
-			'phone_number'              => $phone_number,
+			'phone_no'             		=> $phone_number,
 			'phone_code'				=> $phone_code,
             'updated_at'                => date('Y-m-d H:i:s')
         );
