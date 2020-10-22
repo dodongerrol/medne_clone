@@ -234,6 +234,15 @@ class StringHelper{
                             ->where('customer_buy_start_id', $customer_id)
                             ->first();
 
+                if(!$hr) {
+                    $adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->select('id', 'member_id', 'customer_id')->first();
+                    $hr = DB::table('customer_hr_dashboard')
+                            ->where('customer_buy_start_id', $adminRole->customer_id)
+                            ->first();
+                    $member->customer_buy_start_id = $adminRole->customer_id;
+                    $member->customer_id = $adminRole->customer_id;
+                }
+
                 $member->id = $member->UserID;
                 $member->hr_dashboard_id = $hr->hr_dashboard_id;
                 $member->hr_activated = $member->member_activated;
