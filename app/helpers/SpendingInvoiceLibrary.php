@@ -337,6 +337,7 @@ class SpendingInvoiceLibrary
 				$service_credits = false;
 
 				if((int)$trans['deleted'] == 0) {
+					$total_transactions++;
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_transactions += (float)$trans['credit_cost'] * $trans->currency_amount;
 					} else {
@@ -613,7 +614,6 @@ class SpendingInvoiceLibrary
 
 						// check for
 						// if( strpos( strtolower($procedure), 'medicine' ) !== false ) $total_gp_medicine += $treatment;
-
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
 						$format = array(
 							'clinic_name'       => $clinic->Name,

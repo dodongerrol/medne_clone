@@ -9,6 +9,7 @@ node_modules
 public/receipts/*
 public/excel_upload/*
 public/temp_uploads/*
+tailwindcss-class-generator
 app/config/database.php
 public/plan_invoices/*
 invoices.zip

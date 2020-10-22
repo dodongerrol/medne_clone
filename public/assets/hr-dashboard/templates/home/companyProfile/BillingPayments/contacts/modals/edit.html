@@ -1,0 +1,71 @@
+<div class="modal fade" id="contact-form" tabindex="-1" role="dialog"
+  aria-labelledby="contact-form" aria-hidden="true">
+  <div class="modal-dialog max-w-2xl bg-transparent mt-32" role="document">
+    <div class="modal-content">
+      <div class="modal-body py-0">
+        <div class="py-1 px-16">
+          <form name="contactModal" class="flex flex-col items-center justify-between space-y-8 pt-6">
+            <h4 class="section-title font-bold">
+              Edit Billing Contact
+            </h4>
+            <div class="w-full">
+              <div class="grid grid-cols-1 gap-4">
+                <div>
+                  <label class="form-label"> Full Name </label>
+                  <div class="form-input-group">
+                    <input
+                      class="form-input"
+                      required
+                      ng-model="$ctrl.states.form.first_name"
+                      type="text"
+                    >
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label"> Email Address </label>
+                  <div class="form-input-group">
+                      <input
+                        class="form-input"
+                        required
+                        ng-model="$ctrl.states.form.email_address"
+                        type="email"
+                      >
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label"> Phone Number </label>
+                  <div class="form-input-group">
+                      <input
+                        class="form-input"
+                        required
+                        ng-model="$ctrl.states.form.phone"
+                        type="text"
+                      >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 w-full">
+              <div class="flex items-center justify-end space-x-4 w-full pb-8">
+                <button
+                  ng-click="$ctrl.dismiss()"
+                  type="button"
+                  class="ui-btn ui-btn-primary-outline"
+                  >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  ng-disabled="!contactModal.$dirty && contactModal.$invalid"
+                  class="ui-btn {{ contactModal.$dirty && contactModal.$valid ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-40"
+                  ng-click="$ctrl.submit()">
+                  Update
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

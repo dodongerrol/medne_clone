@@ -165,7 +165,7 @@
 }
 .enrollment-history-tbl-wrapper,
 .invoice-history-tbl-wrapper {
-	overflow: auto;
+	/* overflow: auto; */
 	/* overflow-x: auto; */
 }
 .enrollment-history-tbl-container,

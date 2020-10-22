@@ -1,0 +1,6 @@
+.employee-details-container{
+  position: relative;
+}
+.employee-details-container .add-dependent-wrapper {
+  padding-top: 50px;
+}

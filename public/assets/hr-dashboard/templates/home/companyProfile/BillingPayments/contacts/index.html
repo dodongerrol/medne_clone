@@ -1,0 +1,54 @@
+<div>
+    <p class="ui-label-lg mb-4"> Billing Contact </p>
+    <div class="ui-card border-color border-solid">
+        <div class="grid grid-cols-1">
+            <div class="flex item-center flex-wrap ui-card-inner bottom-border">
+                <div class="w-1/4">
+                    <p class="ui-label-md">
+                        Full Name
+                    </p>
+                </div>
+                <div class="w-3/4">
+                    <p class="ui-label">
+                        {{ $ctrl.states.readonly.first_name }}
+                    </p>
+                </div>
+            </div>
+            <div class="flex item-center flex-wrap ui-card-inner bottom-border">
+                <div class="w-1/4">
+                    <p class="ui-label-md">
+                        Email Address
+                    </p>
+                </div>
+                <div class="w-3/4">
+                    <p class="ui-label">
+                        {{ $ctrl.states.readonly.work_email }}
+                    </p>
+                </div>
+            </div>
+            <div class="flex item-center flex-wrap ui-card-inner pb-1">
+                <div class="w-1/4">
+                    <p class="ui-label-md">
+                        Phone Number
+                    </p>
+                </div>
+                <div class="w-3/4">
+                    <p class="ui-label">
+                        {{ $ctrl.states.readonly.phone }}
+                    </p>
+                </div>
+            </div>
+            <div class="flex item-center justify-end flex-wrap ui-card-inner pt-0 w-full">
+                <button
+                    type="button"
+                    ng-click="$ctrl.open()"
+                    class="ui-btn ui-btn-primary-outline w-24"
+                    >
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Edit
+                </button>
+                <ng-include src="$ctrl.views + '/modals/edit.html'"></ng-include>
+            </div>
+        </div>
+    </div>
+</div>

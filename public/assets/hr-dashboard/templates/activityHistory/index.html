@@ -1,0 +1,1151 @@
+<div class="activity-hr-wrapper" activity-page>
+  <h1 class="page-header-title">Member Activity History</h1>
+  <div class="hrdb-body-container activity-flex-container">
+    <div class="add-filter-wrapper">
+
+      <div ng-if="isTotalMembersShow" class="emp-filter-details-container">
+        <div ng-if="isApplyFilter && (empFiltersObj.location.length > 0)" class="filtered-text">
+          <div>
+            <span class="bold-text">Location</span> is filtered by 
+            <span ng-repeat="list in empFiltersObj.selectedLocations">{{ list.location }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
+          </div>
+          <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('location')"></i>
+        </div>
+        <div ng-if="isApplyFilter && (empFiltersObj.department.length > 0)" class="filtered-text">
+          <div>
+            <span class="bold-text">Department</span> is filtered by 
+            <span ng-repeat="list in empFiltersObj.selectedDepartments">{{ list.department_name }}{{ $index + 1 != empFiltersObj.department.length ? ',' : '' }} </span>
+          </div>
+          <i class="fa fa-times cursor-pointer" ng-click="_removeFilterType_('department')"></i>
+        </div>
+        <button class="add-filter-btn" ng-click="_showAddFilters_()"><img class="add-filter-icon" src="../assets/hr-dashboard/img/plus-gray.png"><span>Add filter</span></button>
+      </div>
+      <div ng-if="isFiltersShow" class="emp-filter">
+        <h5 class="back-btn-filter" ng-click="_filterBackBtn_('filterList')"><i class="fa fa-angle-left"></i><span>Back</span></h5>
+        <h5 class="add-filter-text">Add filter</h5>
+        <div class="emp-filter-selector-container">
+          <div ng-click="_showTypeItemsFilters_('location')">Location</div>
+          <div ng-click="_showTypeItemsFilters_('department')">Department</div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div ng-if="isLocationFiltersShow" class="emp-filter emp-location-filter">
+        <h5 class="back-btn-filter"  ng-click="_filterBackBtn_('location')"><i class="fa fa-angle-left"></i><span>Back</span></h5>
+        <h5 class="add-filter-text">Add filter</h5>
+        <div class="white-space-10"></div>
+        <h5>Location</h5>
+        <div ng-if="empFiltersObj.selectedLocations.length > 0" class="filter-data-selector-wrapper">
+          <div ng-repeat="list in empFiltersObj.selectedLocations" class="filter-data-selector-container"><div ng-bind="list.location">Location 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectLocationFilterData_(list, false)"></div>
+        </div>
+        <div ng-if="locationList.length > 0" class="location-selector">
+          <div ng-repeat="list in locationList" class="custom-checkbox-container">
+            <label class="checkbox-input">
+              <span class="checkbox-text" ng-bind="list.location">Departmet 1</span >
+                <input type="checkbox" ng-model="list.selected" ng-click="_selectLocationFilterData_(list, list.selected)"/>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+        </div>
+        <div ng-if="locationList.length > 0">
+          <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
+        </div>
+      </div>
+
+      <!-- Department -->
+      <div ng-if="isDepartmentFiltersShow" class="emp-filter emp-location-filter">
+        <h5 class="back-btn-filter"  ng-click="_filterBackBtn_('department')"><i class="fa fa-angle-left"></i><span>Back</span></h5>
+        <h5 class="add-filter-text">Add filter</h5>
+        <div class="white-space-10"></div>
+        <h5>Department</h5>
+        <div ng-if="empFiltersObj.selectedDepartments.length > 0" class="filter-data-selector-wrapper">
+          <div ng-repeat="list in empFiltersObj.selectedDepartments" class="filter-data-selector-container"><div ng-bind="list.department_name">Departmet 1</div><img src="../assets/hr-dashboard/img/times-dark-blue.png" ng-click="_selectDepartmentFilterData_(list, false)"></div>
+        </div>
+        <div ng-if="departmentList.length > 0" class="location-selector">
+          <div ng-repeat="list in departmentList" class="custom-checkbox-container">
+            <label class="checkbox-input">
+              <span class="checkbox-text" ng-bind="list.department_name">Departmet 1</span >
+              <input type="checkbox" ng-model="list.selected" ng-click="_selectDepartmentFilterData_(list, list.selected)"/>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+        </div>
+        <div ng-if="departmentList.length > 0">
+          <button class="apply-filter-btn" ng-click="_applyFilterTypes_()">Apply Filter</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-history-content-wrapper">
+      <div class="activity-header-filters-container">
+        <div class="date-selection-container left-input">
+          <div class="input-label custom-select withIcon">
+            <select class="select" ng-change="toDate('mtd')" ng-model="select_term" name="term" id="">
+              <option value="current">Current Term</option>
+              <option value="last">Last Term</option>
+            </select>
+            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </div>
+
+          <div ng-show="select_term == 'current'" style="display: inline-block">
+            <div class="input-label">
+              <input type="radio" name="td" id="wtd" ng-change="toDate('wtd')" ng-model="select_to_date"
+                value="wtd" placeholder="WTD">
+              <label class="radio" for="wtd">WTD</label>
+            </div>
+            <div class="input-label">
+              <input type="radio" name="td" id="mtd" ng-change="toDate('mtd')" ng-model="select_to_date"
+                value="mtd" placeholder="MTD">
+              <label class="radio" for="mtd">MTD</label>
+            </div>
+            <div class="input-label">
+              <input type="radio" name="td" id="qtd" ng-change="toDate('qtd')" ng-model="select_to_date"
+                value="qtd" placeholder="QTD">
+              <label class="radio" for="qtd">QTD</label>
+            </div>
+            <div class="input-label">
+              <input type="radio" name="td" id="ytd" ng-change="toDate('ytd')" ng-model="select_to_date"
+                value="ytd" placeholder="YTD">
+              <label class="radio" for="ytd">YTD</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="date-selection-container right-input">
+          <div class="custom-date-selector btn-custom-date">
+            <button class="btn btn-custom-start">
+              <i class="fa fa-calendar font-15" style="margin-right: 4px;"></i>
+              <span id="rangePicker_start">01/01/2018</span>
+              <!-- <i class="fa fa-caret-down font-15" style="margin-left: 4px;"></i> -->
+            </button>
+
+            <span style="margin: 0 10px;"><i class="fa fa-long-arrow-right"></i></span>
+
+            <button class="btn btn-custom-end">
+              <i class="fa fa-calendar font-15" style="margin-right: 8px;"></i>
+              <span id="rangePicker_end">04/01/2018</span>
+              <!-- <i class="fa fa-caret-down font-15" style="margin-left: 8px;"></i> -->
+            </button>
+
+            <button class="btn btn-apply" ng-click="applyDates('custom')">
+              Apply
+              <span class="apply-loading" style="position: relative;top: 1px;right: -5px;"><i
+                  class="fa fa-circle-o-notch fa-spin" style="font-size: 16px;"></i></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div ng-if="spending_account_status.account_type != 'enterprise_plan' ">
+        <div class="col-md-12 disable-cursor-off no-padding">
+          <div class="body-container activity-header-calendar no-padding">
+            <div class="container-fluid new-activity-header-calendar no-padding">
+              <div class="row">
+                <div class="col-md-6">
+                  <h4 class="color-black3 font-22 weight-700" style="margin: 0 -15px;" ng-bind="activity_title">
+                  </h4>
+                  <div class="preloader-container searchActivityLoader">
+                    <div class="preloader-wrapper big active">
+                      <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="eclaim-spending-type-container">
+                    <button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
+                      ng-click="setSpendType(0)">Medical</button>
+                    <button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
+                      ng-click="setSpendType(1)">Wellness</button>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="search-wrapper text-right">
+                    <form ng-submit="searchEmployeeActivity();">
+                      <div class="input-group">
+                        <input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
+                        <span class="input-group-btn">
+                          <button class="btn btn-default" type="button" ng-if="!search.close"><i
+                              class="fa fa-search font-18"></i></button>
+                          <button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
+                              class="fa fa-close font-18"></i></button>
+                        </span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 disable-cursor-off no-padding">
+          <div class="body-container no-padding">
+            <div class="team-benefits-wrapper">
+              <div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
+                <div class=" benefit-box">
+                  <h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
+                      ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                      ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
+                  <p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
+                  <p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
+                </div>
+              </div>
+
+              <div class="col-md-12 new_breakDown">
+                <div class="col-md-6">
+                  <div class="benefit-box">
+                    <div>
+                      <p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+                      <!-- <p class="color-black3 weight-300 font-14">In-Network: <span -->
+                      <p class="color-black3 weight-300 font-14">Panel: <span
+                          class="weight-300 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                          class="weight-300 color-blue-custom"
+                          ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
+                      </p>
+                      <p class="color-black3 weight-300 font-14">E-claim(Non-Panel): <span
+                          class="weight-300 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                          class="weight-300 color-blue-custom"
+                          ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="benefit-box">
+                    <div>
+                      <p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+                          class="weight-500 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span>
+                        <span class="weight-500 color-blue-custom"
+                          ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
+                        <!-- <span ng-if="activitySpendingType == 0" class="weight-500 color-blue-custom" ng-bind="credits.total_medical_employee_allocated">0.00</span>
+                          <span ng-if="activitySpendingType == 1" class="weight-500 color-blue-custom" ng-bind="credits.total_wellness_employee_allocated">0.00</span> -->
+                      </p>
+                      <p class="color-black3 weight-500 font-16">Balance:
+                        <span class="color-blue-custom2 weight-500 font-14 no-margin-top">
+                          <span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+                          <span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
+                          <!-- <span ng-bind="credits.total_medical_employee_balance">0.00</span> -->
+                        </span>
+                        <!-- <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+                          ng-if="activitySpendingType == 0">
+                          <span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+                          <span ng-bind="credits.total_medical_employee_balance">0.00</span>
+                        </span>
+                        <span class="color-blue-custom2 weight-500 font-14 no-margin-top"
+                          ng-if="activitySpendingType == 1">
+                          <span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+                          <span ng-bind="credits.total_wellness_employee_balance">0.00</span>
+                        </span> -->
+                      </p>
+                      <small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+                        as Year-to-Date.</small>
+                      <!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-blur">
+                <div class="spending-col-left col-1">
+                  <div class="box-1">
+                    <div class="one"></div>
+                    <div class="two"></div>
+                    <div class="three"></div>
+                  </div>
+                  <div class="box-2">
+                    <div class="one"></div>
+                    <div class="two"></div>
+                    <div class="three"></div>
+                  </div>
+                  <div class="box-3">
+                    <div class="one"></div>
+                    <div class="two"></div>
+                    <div class="three"></div>
+                  </div>
+                </div>
+                <div class="col-2"></div>
+                <div class="spending-col-right col-1">
+                  <div class="box-1">
+                    <div class="one"></div>
+                    <div class="two"></div>
+                    <div class="three"></div>
+                  </div>
+                  <div class="box-2">
+                    <div class="one"></div>
+                    <div class="two"></div>
+                    <div class="three"></div>
+                  </div>
+                  <div class="box-3">
+                    <div class="one"></div>
+                    <div class="two"></div>
+                  </div>
+                </div>
+              </div>
+              <div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-box">
+                <div class="spending-border-box">
+                  <p>Mednefits Basic Plan for your<br>company has not been activated.</p>
+                  <a href="/sa-landing" target="_blank">Learn more >></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12 transactions-header text-center">
+            <button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+              Panel Transactions
+            </button>
+
+            <button class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+              Eclaim (Non-Panel)
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div ng-if="spending_account_status.account_type == 'enterprise_plan' ">
+        <div class="col-md-12 disable-cursor-off">
+          <div class="body-container activity-header-calendar">
+
+            <div class="container-fluid new-activity-header-calendar" ng-class="{ 'isEnterpriseMedical' : activitySpendingType == 0 && total_allocation.currency_type == 'myr'}">
+              <div class="row">
+                <div class="col-md-6 col-first">
+                  <h4 class="team-benefits-cost-title font-22 weight-700" ng-bind="activity_title">
+                  </h4>
+                  <div ng-if="true" class="range-date">
+                    <span ng-bind="rangePicker_start">01/01/2019</span> - <span ng-bind="rangePicker_end">28/11/2019</span>
+                  </div>
+                  <div class="preloader-container searchActivityLoader">
+                    <div class="preloader-wrapper big active">
+                      <div class="spinner-layer spinner-blue-only">
+                        <div class="circle-clipper left">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                          <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                          <div class="circle"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div ng-if="spending_account_status.wellness_enabled == true" class="eclaim-spending-type-container">
+                    <button ng-class="{ 'active': activitySpendingType == 0 }" class="btn btn-default btn-medical"
+                      ng-click="setSpendType(0)">Medical</button>
+                    <button ng-class="{ 'active': activitySpendingType == 1 }" class="btn btn-default btn-wellness"
+                      ng-click="setSpendType(1)">Wellness</button>
+                  </div>								
+                </div>
+                <div class="col-md-6">
+                  <div class="search-wrapper text-right">
+                    <form ng-submit="searchEmployeeActivity();">
+                      <div class="input-group"  ng-class="{ 'isEnterpriseMedical' : activitySpendingType == 0 && total_allocation.currency_type == 'myr'}">
+                        <input class="form-control font-13 typeahead" placeholder="Search Employee Name" />
+                        <span class="input-group-btn">
+                          <button class="btn btn-default" type="button" ng-if="!search.close"><i
+                              class="fa fa-search font-18"></i></button>
+                          <button class="btn btn-default" type="button" ng-if="search.close" ng-click="closeSeach()"><i
+                              class="fa fa-close font-18"></i></button>
+                        </span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+        </div>
+
+        <div class="col-md-12 disable-cursor-off">
+          <div class="body-container" ng-class="{ 'isEnterpriseMedical' : activitySpendingType == 0 && total_allocation.currency_type == 'myr'}">
+            <div ng-if="activitySpendingType == 1" class="team-benefits-wrapper team-benefits-old-wrapper">
+
+              <div class="col-md-12  eclaim-border-bottom text-center no-padding new_spent">
+                <div class=" benefit-box">
+                  <h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
+                      ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                      ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
+                  <p class="color-gray2 font-16 weight-300 no-margin" style="padding:13px 0 18px 0;">SPENT</p>
+                  <p class="color-gray2 font-14 weight-300">{{rangePicker_start}} - {{rangePicker_end}}</p>
+                </div>
+              </div>
+
+              <div class="col-md-12 new_breakDown">
+                <div class="col-md-6">
+                  <div class="benefit-box">
+                    <div>
+                      <p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+                      <p ng-class="{'greyed-text' : spending_account_status.wellness_enabled == true }"class="color-black3 weight-300 font-14">Panel: <span
+                          class="weight-300 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                          class="weight-300 color-blue-custom"
+                          ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
+                      </p>
+                      <p class="color-black3 weight-300 font-14">E-claim(Non-Panel): <span
+                          class="weight-300 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                          class="weight-300 color-blue-custom"
+                          ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="benefit-box">
+                    <div>
+                      <p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+                          class="weight-500 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span>
+                        <span class="weight-500 color-blue-custom"
+                          ng-bind="activity.total_allocation ? (activity.total_allocation | number:2 ) : '0.00'">0.00</span>
+                      
+                      </p>
+                      <p class="color-black3 weight-500 font-16">Balance:
+                        <span class="color-blue-custom2 weight-500 font-14 no-margin-top">
+                          <span class="currency-type" ng-bind="total_allocation.currency_type">MYR/SGD</span>
+                          <span ng-bind="activity.total_balance ? (activity.total_balance | number:2 ) : '0.00'">0.00</span>
+                        </span>
+                        
+                      </p>
+                      <small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+                        as Year-to-Date.</small>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div ng-if="activitySpendingType == 0" class="team-benefits-wrapper team-benefits-new-wrapper">
+
+              <div class="eclaim-border-bottom new_spent">
+                <div class=" benefit-box">
+                  <h5 class="font-medium2 color-blue-custom2 weight-700 font-30 no-margin-top"><span class="currency-type"
+                      ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                      ng-bind="activity.total_spent_format_number ? (activity.total_spent_format_number | number:2 ) : '0.00'">0.00</span></h5>
+                  <p class="color-gray2 font-16 weight-300 no-margin">SPENT</p>
+                </div>
+              </div>
+
+              <div class="new_breakDown">
+                <div ng-if="total_allocation.currency_type != 'myr' && spending_account_status.account_type == 'enterprise_plan' ">
+                  <div class="benefit-box">
+                    <div>
+                      <p class="color-black3 weight-500 font-14">Spending Breakdown</p>
+                      <p class="color-black3 weight-400 font-14">Panel: <span
+                          class="weight-400 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                          class="weight-400 color-blue-custom"
+                          ng-bind="activity.in_network_spending_format_number ? (activity.in_network_spending_format_number | number:2 ) : '0.00'">0.00</span>
+                      </p>
+                      <p class="color-black3 weight-400 font-14">E-claim(Non-Panel): <span
+                          class="weight-400 color-blue-custom currency-type"
+                          ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                          class="weight-400 color-blue-custom"
+                          ng-bind="activity.e_claim_spending_format_number ? (activity.e_claim_spending_format_number | number:2 ) : '0.00'">0.00</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div ng-if="total_allocation.currency_type != 'myr' && spending_account_status.account_type == 'enterprise_plan' ">
+                  <div class="benefit-box">
+                    <div>
+                      
+                      <p class="color-black3 weight-500 font-14">Visit Breakdown</p>
+                      <div class="visit-breakdown-col-container">
+                        
+                        <div class="visit-breakdown-col-1">
+                          <p class="color-black3 weight-400 font-14">Total utilised visits: 
+                              <span ng-bind="activity.total_visit_created" class="weight-400 color-blue-custom">230</span>
+                          </p>
+                          <div class="visit-breakdown-panel-container">
+                            <div>
+                              <p class="color-black3 weight-400 font-14">Panel: 
+                                <span ng-bind="activity.panel" class="weight-400 color-blue-custom">230</span>
+                              </p>
+                            </div>
+                            <div>
+                              <p class="color-black3 weight-400 font-14">Non-Panel: 
+                                <span ng-bind="activity.non_panel" class="weight-400 color-blue-custom">230</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="visit-breakdown-col-2">
+                          <p class="color-black3 weight-400 font-14">Visits per member: 
+                            <span ng-bind="activity.total_average_visit" class="weight-400 color-blue-custom">230</span>
+                            <span style="display: block;font-size: 12px;color: #bbb;line-height: 18px;width: 180px;">
+                              *Average visits per member from <span style="font-size: 13px;">{{ rangePicker_start }} to {{ rangePicker_end }}</span>.
+                            </span>
+                          </p>
+                        </div>
+
+                      </div>	
+                    </div>
+                  </div>
+                </div>
+                <div ng-if="total_allocation.currency_type == 'myr' && spending_account_status.account_type == 'enterprise_plan' " class="no-wellness-visit-details">
+                  <h5 class="visit-details-title-text">Visit Details</h5>
+
+                  <div>
+                    <span>Total utilised visits: </span> <span ng-bind="activity.total_visit_created" class="visits-value">12</span>
+                  </div>
+                  <div>
+                    <div>
+                      <span>Visits per member: </span> <span ng-bind="activity.total_average_visit" class="visits-value">04</span>
+                    </div>
+                    <span class="average-text">* Average visits per member from <span ng-bind="rangePicker_start">01/01/2019</span> to <span ng-bind="rangePicker_end">26/11/2019</span> </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 no-padding costs-wrapper">
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="col-md-12 transaction-header-container">
+            <div class="body-container transactions-header">
+              <div class="col-md-3">
+              </div>
+
+              <div class="col-md-6 no-padding text-center transactions-btn-container">
+                <button ng-disabled="spending_account_status.wellness_enabled == true && inNetWorkTable == false" class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+                  PANEL<br>
+                  TRANSACTIONS 
+                </button>
+
+                <button ng-disabled="spending_account_status.wellness_enabled == true && outNetWorkTable == false || spending_account_status.wellness_enabled == false" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+                  E-CLAIM TRANSACTIONS<br>
+                  (NON-PANEL)
+                </button>
+              </div>
+
+              <div class="col-md-3 no-padding text-right disable-cursor-off">
+                <div class="white-space-10"></div>
+
+                <p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
+                  report-fields="{employee_id: 'EMPLOYEE ID', employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
+                  filename="'Panel Transactions'" separator=","
+                  class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
+                  DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
+                    style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+                <div class="right-download-block">
+                  <p ng-click="toggleDownloadDrop()" class="color-blue-custom2 font-12 weight-700 pointer-cursor">DOWNLOAD
+                    <img src="../assets/e-claim/img/new-assets/Download.png"
+                      style="width: 20px;display: inline-block;margin-left: 5px;"></p>
+
+                  <div ng-if="isDownloadDropShow" class="download-drop-container">
+                    <div class="item" ng-click="selectDownloadOpt(0)">Panel</div>
+                    <div class="item" ng-click="selectDownloadOpt(1)">Non-Panel</div>
+                    <div class="item" ng-click="selectDownloadOpt(2)">Both</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div ng-if="inNetWorkTable == true" class="transactions-container"
+        style="border-top:2px solid #777;position: relative;">
+        <div class="main-transac-container" style="position: relative;">
+
+          <div class="col-md-12">
+            <div class="total-transac-header">
+              <p class="color-black3 font-14 weight-700"><span ng-bind="in_network_transactions.length">0</span> Total
+                Transactions
+                <span class="pull-right">Total Spent
+                  <span class="font-medium2" style="margin-left: 15px"><span class="currency-type"
+                      ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                      ng-bind="activity.total_in_network_spent_format_number ? (activity.total_in_network_spent_format_number | number:2 ) : '0.00'">0.00</span></span>
+                </span>
+              </p>
+
+              <div class="preloader-container searchActivityLoader2">
+                <div class="preloader-wrapper big active">
+                  <div class="spinner-layer spinner-blue-only">
+                    <div class="circle-clipper left">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="gap-patch">
+                      <div class="circle"></div>
+                    </div>
+                    <div class="circle-clipper right">
+                      <div class="circle"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="transaction-rows">
+
+              <div class="transact" ng-repeat="month in activity_dates">
+                <div class="date-wrapper">
+                  <div class="date-box text-uppercase" ng-bind="month.month"></div>
+                </div>
+
+                <div class="transaction-tr" ng-click="showDetails($event,trans)"
+                  ng-repeat="trans in month.transactions track by $index">
+                  <div class="dot-box">
+                    <div class="dot-circle"></div>
+                  </div>
+                  <div class="month-box text-center">
+                    <span class="weight-700" ng-bind="trans.day">20</span>
+                  </div>
+                  <div class="img-wrapper">
+                    <img src="../../assets/hr-dashboard/img/GP.png" style="width: 24px;">
+                  </div>
+                  <div class="transaction-details">
+                    <p class="font-medium2 weight-700 color-black3" ng-bind="trans.member"></p>
+                    <p ng-bind="trans.clinic_type_and_service"></p>
+                    <p ng-bind="trans.clinic_name"></p>
+                    <p class="spouse-dependent-container color-blue-custom2 font-11 height-13">
+                      <span ng-if="trans.sub_account_user_type == 'spouse'">
+                        Spouse of <span ng-bind="trans.owner_account"></span>
+                      </span>
+                      <span ng-if="trans.sub_account_user_type == 'dependent'">
+                        Dependent of <span ng-bind="trans.owner_account"></span>
+                      </span>
+                    </p>
+                    <p ng-if="trans.status_text"
+                      style="background: rgb(79, 151, 98);color: white;padding: 5px;border-radius: 4px;display: inline-block;font-size: 12px;"
+                      ng-bind="trans.status_text"></p>
+                    <p ng-if="trans.transaction_type == 'cash'"
+                      style="background: #1DB100;color: white;padding: 5px;border-radius: 4px;display: block;font-size: 12px;width: 40px;text-align: center;margin-top: 4px;">
+                      Cash
+                    </p>
+                    <div class="credits-spouse-wrap">
+                      <p ng-if="trans.transaction_type == 'credits'"
+                        style="background: #219AD7;color: white;padding: 5px;border-radius: 4px;display: block;font-size: 12px;width: 50px;text-align: center;margin-top: 4px;">
+                        Credits
+                      </p>
+                      <p ng-if="trans.transaction_type == 'credit_cash'">
+                        <span
+                          style="background: #219AD7;color: white;padding: 5px;border-radius: 4px 0 0 4px;display: inline-block;font-size: 12px;width: 55px;text-align: center;margin-top: 4px;">Credits</span>
+                        <span
+                          style="background: #1DB100;color: white;padding: 5px;border-radius: 0 4px 4px 0;display: inline-block;font-size: 12px;width: 55px;text-align: center;margin-top: 4px;margin-left: -4px;">Cash</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="transaction-price">
+                    <p class="font-medium2 weight-700 color-black3"><span class="currency-type"
+                        ng-bind="trans.currency_type">MYR/SGD</span> <span ng-bind="trans.amount">0.00</span></p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div ng-if="activity_dates.length > 0" class="trans-pagination-shadow"></div>
+            <div ng-if="activity_dates.length > 0" class="pagination-box">
+              <div class="transaction-pagination-container">
+                <div class="transaction-pagination">
+
+                  <div class="arrow" ng-class="{'active': inNetwork_activePage != 1}" ng-click="innetworkPrev()">
+                    <i class="fa fa-angle-left"></i>
+                    <span>Prev</span>
+                  </div>
+
+                  <div class="pages-container">
+                    <div class="page" ng-class="{'active': list == inNetwork_activePage}"
+                      ng-repeat="list in range( inNetwork_pagination.last_page ) | limitTo:pagesToDisplay:startIndex( inNetwork_activePage, inNetwork_pagination.last_page ) track by $index"
+                      ng-click="innetworkPageTo(list)">
+                      {{list}}
+                    </div>
+                  </div>
+
+                  <div class="arrow" ng-class="{'active': inNetwork_activePage != inNetwork_pagination.last_page}"
+                    ng-click="innetworkNext()">
+                    <span>Next</span>
+                    <i class="fa fa-angle-right"></i>
+                  </div>
+
+                  <div class="per-page-container">
+                    <div class="per-page">
+                      <div class="per-page-count"><span ng-bind="inNetwork_perPage">10</span> per page</div>
+                      <div class="drop-arrow">
+                        <i class="fa fa-caret-down"></i>
+                      </div>
+                    </div>
+
+                    <div class="per-page-drop">
+                      <li ng-repeat="list in perPage_arr" ng-click="innetworkPerPage( list )" ng-bind="list">10</li>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="hidden-details-container">
+          <img ng-src="{{selected_list.clinic_image}}">
+          <div class="white-space-10"></div>
+          <p class="text-center weight-700 font-14" ng-bind="selected_list.clinic_name">Drs Chua & Partners (AV) Pte Ltd
+          </p>
+          <div class="white-space-20"></div>
+          <div class="white-space-10"></div>
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>MEMBER</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.member">Alice Ng</span></p>
+            </div>
+          </div>
+
+          <div ng-if="selected_list.owner_account" class="details-row">
+            <div class="details-left">
+              <p><label>EMPLOYEE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.owner_account">Filbert Tan</span></p>
+            </div>
+          </div>
+
+          <div ng-if="selected_list.dependent_relationship" class="details-row dependent-relationship-wrapper">
+            <div class="details-left">
+              <p><label>DEPENDENT RELATIONSHIP</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.dependent_relationship">Spouse</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>DATE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.date_of_transaction">20 October 2017, 09:30am</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>TRANSACTION #</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.transaction_id">IN74859204</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>ITEM/SERVICE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.clinic_type_and_service">General Practitioner Visit</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>TOTAL AMOUNT</label></p>
+
+              <div
+                ng-class="selected_list.service_credits && selected_list.transaction_type == 'credits' ? 'blue' : 'green'"
+                class="procedure-indicator" ng-if="selected_list.lite_plan">
+                <span
+                  ng-if="!selected_list.service_credits && selected_list.transaction_type == 'cash' || selected_list.service_credits && selected_list.transaction_type == 'cash'">Cash</span>
+                <span
+                  ng-if="selected_list.service_credits && selected_list.transaction_type == 'credits'">Credits</span>
+              </div>
+              <div ng-if="selected_list.service_credits && selected_list.transaction_type == 'credit_cash'"
+                class="procedure-indicator">
+                <span
+                  style="background: #219AD7;color: white;padding: 2px 5px;border-radius: 4px 0 0 4px;display: inline-block;font-size: 12px;text-align: center;margin-top: 4px;">Credits</span>
+                <span
+                  style="background: #1DB100;color: white;padding: 2px 5px;border-radius: 0 4px 4px 0;display: inline-block;font-size: 12px;text-align: center;margin-top: 4px;margin-left: -4px;">Cash</span>
+              </div>
+              <div ng-if="selected_list.lite_plan"
+                style="border-bottom: 1px solid #999;width: 50px;margin: 0 20px 5px auto;"></div>
+              <div class="consultation-indicator blue"
+                ng-if="selected_list.lite_plan && selected_list.consultation_credits || selected_list.service_credits ">
+                <span ng-if="selected_list.consultation_credits || selected_list.service_credits">Credits</span>
+                <!-- <span hidden>Cash</span> -->
+              </div>
+            </div>
+            <div class="details-right">
+              <p style="margin-bottom: 5px;"><span><span class="currency-type"
+                    ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                    ng-bind="selected_list.amount"></span></span></p>
+              <span ng-if="selected_list.lite_plan">
+                <p style="line-height: 1;color: #555;" ng-bind="selected_list.procedure"></p>
+                <p style="line-height: 1;margin-bottom: 10px;"><span><span class="currency-type"
+                      ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                      ng-bind="selected_list.procedure_cost"></span></span></p>
+                <p style="line-height: 1;color: #555;">Consultation</p>
+                <p style="line-height: 1;margin-bottom: 20px;">
+                  <span><span class="currency-type" ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                      ng-bind="selected_list.consultation"></span></span>
+                </p>
+              </span>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>PAYMENT TYPE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.type">Panel</span></p>
+              <!-- <p><span ng-bind="selected_list.type">In-Network</span></p> -->
+            </div>
+          </div>
+
+          <div ng-if="selected_list.cap_transaction" class="details-row">
+            <div class="details-left">
+              <p><label>Caps per visit</label></p>
+            </div>
+            <div class="details-right">
+              <p><span class="currency-type" ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                  ng-bind="selected_list.cap_per_visit"></span></p>
+            </div>
+          </div>
+          <div ng-if="selected_list.cap_transaction" class="details-row">
+            <div class="details-left">
+              <p><label>Paid by Credits</label></p>
+            </div>
+            <div class="details-right">
+              <p><span class="currency-type" ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                  ng-bind="selected_list.paid_by_credits"></span></p>
+            </div>
+          </div>
+          <div ng-if="selected_list.cap_transaction" class="details-row">
+            <div class="details-left">
+              <p><label>Paid by Cash</label></p>
+            </div>
+            <div class="details-right">
+              <p><span class="currency-type" ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                  ng-bind="selected_list.paid_by_cash"></span></p>
+            </div>
+          </div>
+
+          <div class="white-space-20"></div>
+
+          <button ng-disabled="selected_list.receipt_status == false"
+            ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download
+            Receipt</button>
+          <div class="trans-receipts-wrapper">
+            <div class="click_box_wrapper" ng-repeat="img in selected_list.files"
+              style="display: inline-block;position: relative;">
+              <a href="javascript:void(0)" ng-click="showPreview(img, $event)">
+                <div class="click_box">
+                  <i class="fa fa-plus color-white font-25"></i>
+                </div>
+
+                <img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file"
+                  ng-src="{{img.file}}">
+                <img
+                  ng-if="img.type == 'excel' || img.file_type == 'excel' || img.file_type == 'xls' || img.file_type == 'xls' || img.type == 'xlxs' || img.file_type == 'xlxs'"
+                  src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png">
+                <img ng-if="img.type == 'pdf' || img.file_type == 'pdf'"
+                  src="../assets/e-claim/img/new-assets/Receipt-pdf.png">
+              </a>
+
+              <div class="preview-box">
+                <div class="img-container">
+                  <a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+                    <i class="fa fa-times"></i>
+                  </a>
+
+                  <img img-fix-orientation="img.file" hidden>
+
+                  <iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+                  </iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="/download/transaction_receipt/{{selected_list.trans_id}}" target="_blank"
+            ng-if="selected_list.type == 'Mednefits Credits' || selected_list.type == 'Mednefits Credits + Cash'"
+            class="btn btn-download" style="background: #51BEF2 !important;">Mednefits E-Receipt</a>
+        </div>
+      </div>
+
+      <div ng-if="outNetWorkTable == true" class="transactions-container"
+        style="border-top:2px solid #777;position: relative;">
+        <div class="main-transac-container" style="position: relative;">
+
+          <div class="col-md-12">
+            <div class="total-transac-header">
+              <p class="color-black3 font-14 weight-700"><span ng-bind="e_claim_transactions.length">0</span> Total
+                Transactions
+                <span class="pull-right">Total Spent
+                  <span class="font-medium2" style="margin-left: 15px"><span class="currency-type"
+                      ng-bind="total_allocation.currency_type">MYR/SGD</span> <span
+                      ng-bind="activity.e_claim_spending_format_number | number:2"></span></span>
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <div class="transaction-rows">
+
+              <div class="transact" ng-repeat="month in eclaim_dates">
+                <div class="date-wrapper">
+                  <div class="date-box text-uppercase" ng-bind="month.month"></div>
+                </div>
+
+                <div class="transaction-tr" ng-click="showDetails($event,trans)"
+                  ng-repeat="trans in month.transactions">
+                  <div class="dot-box">
+                    <div class="dot-circle"></div>
+                  </div>
+                  <div class="month-box text-center">
+                    <span class="weight-700" ng-bind="trans.day">20</span>
+                  </div>
+                  <div class="img-wrapper">
+                    <img src="../assets/hr-dashboard/img/receipt.png" style="width: 40px;">
+                  </div>
+                  <div class="transaction-details">
+                    <p class="font-medium2 weight-700 color-black3" ng-bind="trans.member">Filbert Tan</p>
+                    <p class="" ng-bind="trans.service">General Practitioner Visit</p>
+                    <p class="" ng-bind="trans.merchant">Drs Chua & Partners (AV) Pte Ltd</p>
+                    <p class="color-blue-custom2 font-11 height-13">
+                      <span ng-if="trans.sub_account_type == 'spouse'">
+                        Spouse of <span ng-bind="trans.sub_account">Filbert Tan</span>
+                      </span>
+                      <span ng-if="trans.sub_account_type == 'dependent'">
+                        Dependent of <span ng-bind="trans.sub_account">Filbert Tan</span>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="transaction-price">
+                    <p class="font-medium2 weight-700 color-black3"><span class="currency-type"
+                        ng-bind="trans.currency_type">SGD/MYR</span> <span ng-bind="trans.amount">0.00</span></p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div ng-if="eclaim_dates.length > 0" class="trans-pagination-shadow"></div>
+            <div ng-if="eclaim_dates.length > 0" class="pagination-box">
+              <div class="transaction-pagination-container">
+                <div class="transaction-pagination">
+
+                  <div class="arrow" ng-class="{'active': outNetwork_activePage != 1}" ng-click="outnetworkPrev()">
+                    <i class="fa fa-angle-left"></i>
+                    <span>Prev</span>
+                  </div>
+
+                  <div class="pages-container">
+                    <div class="page" ng-class="{'active': list == outNetwork_activePage}"
+                      ng-repeat="list in range( outNetwork_pagination.last_page ) | limitTo:pagesToDisplay:startIndex( outNetwork_activePage, outNetwork_pagination.last_page ) track by $index"
+                      ng-click="outnetworkPageTo(list)">
+                      {{list}}
+                    </div>
+                  </div>
+
+                  <div class="arrow" ng-class="{'active': outNetwork_activePage != outNetwork_pagination.last_page}"
+                    ng-click="outnetworkNext()">
+                    <span>Next</span>
+                    <i class="fa fa-angle-right"></i>
+                  </div>
+
+                  <div class="per-page-container">
+                    <div class="per-page">
+                      <div class="per-page-count"><span ng-bind="outNetwork_perPage">10</span> per page</div>
+                      <div class="drop-arrow">
+                        <i class="fa fa-caret-down"></i>
+                      </div>
+                    </div>
+
+                    <div class="per-page-drop">
+                      <li ng-repeat="list in perPage_arr" ng-click="outnetworkPerPage( list )" ng-bind="list">10</li>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="hidden-details-container">
+          <img ng-src="../assets/hr-dashboard/img/GP.png" style="border-radius: 0 !important;border:none;">
+          <div class="white-space-20"></div>
+          <div class="white-space-10"></div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>MEMBER</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.member">Alice Ng</span></p>
+            </div>
+          </div>
+
+          <div ng-if="selected_list.owner_account" class="details-row">
+            <div class="details-left">
+              <p><label>EMPLOYEE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.owner_account">Filbert Tan</span></p>
+            </div>
+          </div>
+
+          <div ng-if="selected_list.dependent_relationship" class="details-row dependent-relationship-wrapper">
+            <div class="details-left">
+              <p><label>DEPENDENT RELATIONSHIP</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.dependent_relationship">Spouse</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>APPROVED DATE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.approved_date"></span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>CLAIM DATE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.claim_date">20 October 2017, 09:30am</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>VISIT DATE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.visit_date">20 October 2017, 09:30am</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>TRANSACTION #</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.transaction_id">IN74859204</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>CLAIM TYPE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.service">Vision</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>PROVIDER</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.merchant">Vision Hut</span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>CLAIM AMOUNT</label></p>
+            </div>
+            <div class="details-right">
+              <p><span><span class="currency-type" ng-bind="selected_list.currency_type">SGD/MYR</span> <span
+                    ng-bind="selected_list.amount"></span></span></p>
+            </div>
+          </div>
+
+          <div class="details-row">
+            <div class="details-left">
+              <p><label>PAYMENT TYPE</label></p>
+            </div>
+            <div class="details-right">
+              <p><span ng-bind="selected_list.type">Panel</span></p>
+            </div>
+          </div>
+
+          <button ng-disabled="selected_list.receipt_status == false"
+            ng-click="downloadReceipt(selected_list.files, selected_list)" class="btn btn-download">Download
+            Receipt</button>
+          <div class="trans-receipts-wrapper">
+            <div class="click_box_wrapper" ng-repeat="img in selected_list.files"
+              style="display: inline-block;position: relative;">
+              <a href="javascript:void(0)" ng-click="showPreview(img, $event)">
+                <div class="click_box">
+                  <i class="fa fa-plus color-white font-25"></i>
+                </div>
+
+                <img ng-if="img.type == 'image' || img.file_type == 'image'" img-fix-orientation="img.file"
+                  ng-src="{{img.file}}">
+                <img
+                  ng-if="img.type == 'excel' || img.file_type == 'excel' || img.file_type == 'xls' || img.file_type == 'xls' || img.type == 'xlxs' || img.file_type == 'xlxs'"
+                  src="../assets/e-claim/img/new-assets/Receipt-doc-xls.png">
+                <img ng-if="img.type == 'pdf' || img.file_type == 'pdf'"
+                  src="../assets/e-claim/img/new-assets/Receipt-pdf.png">
+              </a>
+
+              <div class="preview-box">
+                <div class="img-container">
+                  <a href="javascript:void(0)" class="hidePreview" ng-click="hidePreview()">
+                    <i class="fa fa-times"></i>
+                  </a>
+
+                  <img img-fix-orientation="img.file" hidden>
+
+                  <iframe id="src-view-data" src style="width:100%; height: 500px;border: none;" hidden>
+                  </iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+		<div id="fetching_users" class="fetching-floating-box" hidden>
+			<p id="fetching_text"><i class="fa fa-circle-o-notch fa-spin"></i> Fetching <span
+					ng-bind="fetching_data.from"></span> of <span ng-bind="fetching_data.to"></span> users... </p>
+			<p id="done_fetching_text" hidden><i class="fa fa-check"></i> Done fetching <span
+					ng-bind="fetching_data.to">1</span> users.</p>
+		</div>
+
+	</div>
+</div>
+
+
+<style scoped>
+	@import url('../../../../assets/hr-dashboard/templates/activityHistory/style.css');
+</style>

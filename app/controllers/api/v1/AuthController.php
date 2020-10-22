@@ -6916,12 +6916,54 @@ public function payCreditsNew( )
 
   public function validateOtpMobile( ) {
     $input = Input::all();
+    $returnObject = new stdClass();
+    $returnObject->administrator = false;
+
+    if(empty($input['otp_code']) || $input['otp_code'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'OTP Code is required.';
+      return Response::json($returnObject);
+    }
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+      $returnObject->status = false;
+      $returnObject->message = 'User ID is required.';
+      return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Email as email_user')
+    ->where('UserID', $input['user_id'])->first();
+
+    if(!$checker) {
+      $returnObject->status = false;
+      $returnObject->message = 'User not found!';
+      return Response::json($returnObject);
+    }
 
     if (isset($input['country']) && strtoupper($input['country']) == 'MYR') {
       return self::validateMYROTPCode($input);
     } else {
       return self::validateSGDOTPCode($input);
     }
+
+    $check_if_administrator = DB::table('customer_hr_dashboard')
+    ->join('user', 'user.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
+    ->select('UserID as user_id', 'Name as name', 'user.Email as email', 'is_hr_admin_linked', 'is_account_linked')
+    ->where('UserID', $member_id)->first();
+
+    // //check if administrator
+    if($check_if_administrator && $check_if_administrator->is_account_linked === 1) {
+      $returnObject->administrator = true;
+    }
+
+    //remove OTPCode
+    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
+
+    $returnObject->status = true;
+    $returnObject->message = 'OTP Code is valid';
+    $returnObject->data = $checker;
+    return Response::json($returnObject);
   }
 
   public function addPostalCodeMember( ) {
@@ -7020,7 +7062,64 @@ public function payCreditsNew( )
       return Response::json($returnObject);
   }
 
-  public function getCompanyMemberLists( ) {
+  public function createNewPasswordByAdministrator()
+  {
+    $input = Input::all();
+    $returnObject = new stdClass();
+
+    if(empty($input['user_id']) || $input['user_id'] == null) {
+        $returnObject->status = false;
+        $returnObject->message = 'User ID is required.';
+        return Response::json($returnObject);
+    }
+
+    $checker = DB::table('user')
+      ->select('UserID', 'Name as name', 'member_activated', 'Email as email')
+      ->where('UserID', $input['user_id'])->first();
+    
+      if(!$checker) {
+        $returnObject->status = false;
+        $returnObject->message = 'User not found!';
+        return Response::json($returnObject);
+      }
+
+      if($checker->member_activated) {
+        $returnObject->status = false;
+        $returnObject->message = 'User was active, please sign in!';
+        return Response::json($returnObject);
+      }
+
+      $check_if_administrator = DB::table('customer_hr_dashboard')
+      ->join('user', 'user.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
+      ->select('UserID as user_id', 'Name as name', 'user.Email as email', 'is_hr_admin_linked', 'is_account_linked', 'customer_hr_dashboard.password as password_administrator')
+      ->where('UserID', $checker->UserID)->first();
+
+      if(!$check_if_administrator) {
+        $returnObject->status = false;
+        $returnObject->message = 'user not an administrator';
+        return Response::json($returnObject);
+      }
+
+      $newPassword = [
+        'Password' => $check_if_administrator->password_administrator,
+        'member_activated' => 1,
+        'account_update_status' => 1,
+        'account_already_update'  => 1
+      ];
+      
+      DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
+      $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
+      if(!$token->status) {
+        return Response::json($token);
+      }
+      $returnObject->status = true;
+      $returnObject->token = $token->data['access_token'];
+      $returnObject->message = 'Your Password has been created, Account was active!';
+      return Response::json($returnObject);
+  }
+
+  public function getCompanyMemberLists( )
+  {
     $returnObject = new stdClass();
     $getRequestHeader = StringHelper::requestHeader();
 

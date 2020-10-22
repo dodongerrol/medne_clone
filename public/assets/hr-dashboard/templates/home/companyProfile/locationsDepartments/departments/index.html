@@ -1,0 +1,61 @@
+<div class="grid grid-cols-1 gap-2">
+    <ng-include src="$ctrl.views + '/modals/create.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/edit.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/confirm.html'"></ng-include>
+    <ng-include src="$ctrl.views + '/modals/success.html'"></ng-include>
+    <div>
+        <p class="ui-label-lg mb-5"> Departments </p>
+        <div class="ui-card border-color border-solid">
+            <div>
+                <div class="bottom-border">
+                    <button
+                        type="button"
+                        ng-click="$ctrl.add()"
+                        class="ui-btn ui-btn-link text-blue-500 hover:bg-blue-100 w-full {{ $ctrl.buttonState() }}"
+                    >
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Add Departments
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 gap-2">
+                    <div ng-if="$ctrl.departments.length > 0">
+                        <div ng-repeat="department in $ctrl.departments">
+                            <div class="ui-card-inner bottom-border">
+                                <div class="flex items-center justify-between">
+                                    <div class="w-32">
+                                        <p class="ui-label-md">
+                                            {{ department.department_name }}
+                                        </p>
+                                    </div>
+                                    <div class="w-64">
+                                        <p class="ui-label text-teal-600 text-center">
+                                            <span ng-bind="department.total_employees"></span>
+                                            Current Employees
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center space-x-4">
+                                        <allocation id="department.id"></allocation>
+                                        <button
+                                            type="button"
+                                            ng-click="$ctrl.edit(department)"
+                                            class="ui-btn ui-btn-primary-outline w-24">
+                                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                                </path>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

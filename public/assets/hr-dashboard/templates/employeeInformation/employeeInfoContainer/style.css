@@ -1,0 +1,38 @@
+.employee-information-container *,
+.employee-information-container{
+  box-sizing: border-box;
+}
+.employee-information-container{
+  /* padding: 15px; */
+}
+.emp-left-panel-container{
+
+}
+.emp-right-panel-container{
+  background-color: #fff;
+  border: 1px solid #cbcbcb;
+}
+.emp-right-panel-container .employee-dependent-information,
+.emp-right-panel-container .dependent-information,
+.emp-right-panel-container .claim-submission-wrapper,
+.emp-right-panel-container .emp-info-settings-wrapper{
+  background: none;
+  border: none;
+}
+.person-image-name-info h1.emp-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 30px 0 10px 0;
+  text-transform: capitalize;
+}
+.person-image-name-info .admin-text{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 40px 0;
+}
+.person-image-name-info .admin-text img{
+  margin-right: 10px;
+  width: 15px;
+  height: 15px;
+}

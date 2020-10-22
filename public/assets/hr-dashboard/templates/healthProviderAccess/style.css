@@ -1,0 +1,15 @@
+.block-health-partner-container{
+  padding: 40px 70px 150px 70px;
+}
+.health-provider-header-container{
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 40px;
+}
+.health-provider-header-container h3{
+  color: #333;
+  text-align: center;
+  margin-top: 0;
+}

@@ -542,8 +542,10 @@ app.directive('benefitsTiersDirective', [
 						}
 						scope.dependent_ctr -= 1;
 						if (scope.dependent_arr[scope.dependent_ctr]) {
+							console.log('sulod sa true');
 							scope.dependent_data = scope.dependent_arr[scope.dependent_ctr];
 						} else {
+							console.log('sulod sa false');
 							scope.dependent_data = {}
 						}
 					}
@@ -760,6 +762,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.prevActiveEmployee = function () {
 					if (scope.employee_arr[scope.employee_ctr] == undefined) {
+						console.log('sulod sa true sa prev');
 						scope.employee_arr[scope.employee_ctr] = scope.employee_data;
 						// swal({
 						//        title: "Confirm",
@@ -777,8 +780,10 @@ app.directive('benefitsTiersDirective', [
 						//      		scope.$apply(function(){
 
 						if (scope.isTiering) {
+							console.log('prev tier true');
 							scope.employee_enroll_count -= 1;
 						} else {
+							console.log('prev tier false');
 							scope.overall_emp_count -= 1;
 						}
 						scope.employee_ctr -= 1;
@@ -791,6 +796,7 @@ app.directive('benefitsTiersDirective', [
 						//      	}
 						//      });
 					} else {
+						console.log('sulod sa false sa prev');
 						if (scope.isTiering) {
 							scope.employee_enroll_count -= 1;
 						} else {
@@ -808,7 +814,9 @@ app.directive('benefitsTiersDirective', [
 
 				scope.nextActiveEmployee = function () {
 					if (scope.checkEmployeeForm() == true) {
+						console.log(scope.isTiering)
 						if (scope.isTiering) {
+							console.log('sulod sa true');
 							if (scope.employee_arr[scope.employee_ctr]) {
 								scope.employee_enroll_count++;
 								scope.employee_ctr += 1;
@@ -837,6 +845,7 @@ app.directive('benefitsTiersDirective', [
 								scope.pushActiveEmployee(scope.employee_data);
 							}
 						} else {
+							console.log('sulod sa false');
 							if (scope.employee_arr[scope.employee_ctr]) {
 								scope.overall_emp_count++;
 								scope.employee_ctr += 1;
@@ -862,6 +871,7 @@ app.directive('benefitsTiersDirective', [
 									scope.added_dependent_data = scope.employee_data.dependents[0];
 								}
 							} else {
+								console.log('push sa active?');
 								scope.pushActiveEmployee(scope.employee_data);
 							}
 						}

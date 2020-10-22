@@ -1,0 +1,57 @@
+<div class="employee-settings-container" employee-settings-directive>
+  <div class="global-loader child-body-loading" hidden>
+    <div class="loader-container">
+      <div class="loader"></div>
+    </div>
+  </div>
+  
+  <div class="settings-information">
+    <div class="employee-settings-wrapper">
+      <div class="resend-reset-container">
+        <button ng-disabled="selectedEmployee.member_activated == true" ng-click="_resetActivation_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Resend Activation Email</button>
+        <button ng-disabled="selectedEmployee.member_activated == false " ng-click="_resetPassword_()" class="btn"><img class="envelope-icon" src="../assets/images/envelope.png"></i> Reset Password</button>
+      </div>
+      <button class="btn" ng-click="manageCap()"><i class="fa fa-dollar"></i> Manage Cap Per Visit</button>
+			<button class="btn" ui-sref="member.health-partner-access"><i class="fa fa-cogs"></i> Health Providers Access</button>
+			
+			<button class="btn btn-admin">
+				<img ng-if="false" class="admin-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png">
+				<img ng-if="true" class="admin-icon" src="../assets/hr-dashboard/img/edit.png">
+				{{ true ? 'Assign Administrator' : 'Edit Permission' }}
+			</button>
+    </div>
+  </div>
+
+  <div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="manage-cap-modal" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document" style="width: 400px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">
+						<b>Manage Cap Per Visit</b>
+						<img src="../assets/hr-dashboard/img/icons/close.svg" style="width: 15px;cursor: pointer;position: absolute;right: 16px;top: 16px;" data-dismiss="modal">
+					</h5>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<label>GP cap per visit</label>
+							<div class="input-group">
+								<input type="num" class="form-control" min="0" aria-describedby="basic-addon2" ng-model="selectedEmployee.gp_cap_per_visit">
+								<span class="input-group-addon" id="basic-addon2"><span class="currency-type" ng-bind="selectedEmployee.spending_account.currency_type"></span></span>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary custom-btn"
+						ng-click="submitCapPerVisit( selectedEmployee.gp_cap_per_visit )">SAVE & CONTINUE</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style scoped>
+  @import url('../assets/hr-dashboard/templates/employeeInformation/employeeSettings/style.css');
+</style>

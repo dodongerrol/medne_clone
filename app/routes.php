@@ -190,6 +190,9 @@ Route::get('hr/validate_token', 'BenefitsDashboardController@getTokenDetails');
 Route::post('hr/reset-password-data', 'BenefitsDashboardController@resetPasswordData');
 Route::post('hr/create-company-password', 'BenefitsDashboardController@createCompanyPassword');
 
+// hr member otp
+Route::post('hr/member_hr_vaidated_otp', 'HrController@confirmHrAdminOtp');
+
 // create resend hr activation link
 Route::post('hr/resend_hr_activation_link', 'BenefitsDashboardController@resendHrActivationLnk');
 // secure route on hr page, need authenticated to get access on this routes
@@ -226,7 +229,52 @@ Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@ge
 // update agree status
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');
 Route::group(array('before' => 'auth.jwt_hr'), function( ){
+
+
 	// get token download
+
+	// gods view
+	// Departments
+	Route::get('hr/get_department_list', 'BenefitsDashboardController@getDepartmentList');
+	Route::post('hr/create_department', 'BenefitsDashboardController@createHrDepartment');
+	Route::post('hr/update_department', 'BenefitsDashboardController@updateHrDepartment');
+	Route::post('hr/remove_department', 'BenefitsDashboardController@deleteHrDepartment');
+	Route::post('hr/allocate_employee_department', 'BenefitsDashboardController@allocateEmployeeDepartment');
+
+	// locations
+	Route::post('hr/create_locations', 'BenefitsDashboardController@createHrLocation');
+	Route::get('hr/get_location_list', 'BenefitsDashboardController@getLocationList');
+	Route::post('hr/update_location', 'BenefitsDashboardController@updateHrLocation');
+	Route::get('hr/remove_location', 'BenefitsDashboardController@deleteHrLocation');
+	Route::get('hr/get_allocate_employee_list', 'BenefitsDashboardController@allocateEmployeeLocationList');
+	Route::post('hr/allocate_employee_location', 'BenefitsDashboardController@allocateEmployeeLocation');
+
+	// business contact
+	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
+	Route::get('hr/get_business_contact', 'BenefitsDashboardController@getHrBusinessContact');
+	Route::get('hr/get_company_contacts', 'BenefitsDashboardController@getHrCompanyContact');
+	Route::post('hr/update_business_contact', 'BenefitsDashboardController@updateHrBusinessContact');
+	Route::post('hr/update_company_contact', 'BenefitsDashboardController@updateHrCompanyContact');
+
+	// business information
+	Route::get('hr/get_business_information', 'BenefitsDashboardController@getHrBusinessInformation');
+	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateHrBusinessInformation');
+
+	// billing contact
+	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateHrBillingContact');
+	Route::get('hr/get_billing_contact', 'BenefitsDashboardController@getHrBillingContact');
+
+	// billing information
+	Route::post('hr/update/billing_information', 'BenefitsDashboardController@updateBillingInformation');
+	Route::get('hr/get_billing_information', 'BenefitsDashboardController@getBillingInformation');
+
+	// Administrator
+	Route::post('hr/add_employee_admin', 'BenefitsDashboardController@addAdministrator');
+	Route::get('hr/get_primary_admin_details', 'BenefitsDashboardController@getPrimaryAdminDetails');
+	Route::get('hr/get_additional_admin_details', 'BenefitsDashboardController@getAdditionalAdminDetails');
+	Route::get('/hr/remove_additional_administrator', 'BenefitsDashboardController@removeAdministratorAccount');
+	Route::post('hr/update_administrator', 'BenefitsDashboardController@updateAdministrator');
+
 	Route::get("hr/get_download_token", "BenefitsDashboardController@getDownloadToken");
 	Route::post('hr/new_purchase_active_plan/excel', 'BenefitsDashboardController@newPurchaseFromExcel');
 	Route::get('hr/get_plan_status', 'BenefitsDashboardController@getPlanStatus');
@@ -249,6 +297,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 	// employee list
 	Route::get('hr/employee/list', 'BenefitsDashboardController@employeeLists');
+	Route::get('hr/employee/{id}', 'BenefitsDashboardController@employeeByID');
 	Route::get('hr/company_allocation', 'BenefitsDashboardController@userCompanyCreditsAllocated');
 	// search employee
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
@@ -269,12 +318,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_refunds', 'BenefitsDashboardController@getWithdrawEmployees');
 	// get account and billing data
 	Route::get('hr/account_billing', 'BenefitsDashboardController@accountBilling');
-	// update business information
-	Route::post('hr/update/business_information', 'BenefitsDashboardController@updateBusinessInformation');
 	// update business contact
 	Route::post('hr/update/business_contact', 'BenefitsDashboardController@updateBusinessContact');
-	// update billing contact
-	Route::post('hr/update/billing_contact', 'BenefitsDashboardController@updateBillingContact');
 	// update billing address
 	Route::post('hr/update/billing_address', 'BenefitsDashboardController@updateBillingAddress');
 	// update payment method
@@ -535,8 +580,23 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
 	// activate company mednefits credits
 	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
+	
+	// GOD'S VIEW ROUTE
+	//get corporate linked account
+	Route::get('hr/get/corporate_linked_account', 'CorporateController@getCorporateLinkedAccount');
+	// create unlinked account
+	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
+
+	// login company link account
+	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
 	// get refund invoice
 	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
+	//empployee list for update administrator HR
+	Route::get('hr/get_employee_list', 'BenefitsDashboardController@getEmployeeCorporate');
+	Route::get('hr/validate_employee_name', 'BenefitsDashboardController@validateEmployeeName');
+
+	// get account permission lists
+	Route::get('hr/get_account_permissions', 'HrController@getAccountPermissions');
 });
 	
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
@@ -1057,6 +1117,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
 		
+		Route::post('auth/activated-administrator-user', 'Api_V1_AuthController@createNewPasswordByAdministrator');
 
 		// for getting member lists
 		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');

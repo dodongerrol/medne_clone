@@ -1,0 +1,130 @@
+<div class="modal fade" id="{{ modals.info }}" tabindex="-1" role="dialog"
+aria-labelledby="information-modal" aria-hidden="true">
+<div class="modal-dialog max-w-2xl bg-transparent mt-32" role="document">
+  <div class="modal-content">
+    <div class="modal-body py-0">
+      <div class="py-1 px-16">
+        <form name="informationModal" class="flex flex-col items-center justify-between space-y-8 pt-6">
+          <h4 class="section-title font-bold">
+            Edit Billing Information
+          </h4>
+          <div class="w-full">
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <label class="form-label">Billing Name</label>
+                <div class="form-input-group">
+                  <input
+                    class="form-input"
+                    required
+                    ng-model="workLocationFields.location_name"
+                    type="text"
+                  >
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Billing Address</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div class="form-input-group col-span-1 md:col-span-2">
+                    <input
+                      class="form-input"
+                      required
+                      placeholder="Address"
+                      ng-model="informationFields.billing_address"
+                      type="text"
+                      >
+                  </div>
+                  <div class="form-input-group">
+                    <input
+                      class="form-input"
+                      type="text"
+                      required
+                      placeholder="Unit"
+                      ng-model="informationFields.unit"
+                      >
+                  </div>
+                  <div class="form-input-group">
+                    <input
+                      class="form-input"
+                      type="text"
+                      placeholder="Building"
+                      required
+                      ng-model="informationFields.building"
+                      >
+                  </div>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="col-span-2">
+                  <label class="form-label">
+                    Country Incorporated
+                  </label>
+                  <div class="btn-group dropup w-full">
+                    <button
+                      type="button"
+                      class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false">
+                      {{ informationFields.country }}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="w-4 text-gray-600" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                    <input
+                      ng-model="informationFields.country"
+                      class="hidden"
+                      required
+                      readonly
+                    >
+                    <ul class="dropdown-menu">
+                      <li ng-repeat="country in countries">
+                        <a
+                          ng-click="setField('country', country.name)"
+                          class="flex items-center space-x-2">
+                          <img src="{{ country.flag }}" class="w-6" alt="">
+                          {{ country.name }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-span-1">
+                  <label class="form-label">
+                    Postal Code
+                  </label>
+                  <div class="form-input-group">
+                    <input
+                      class="form-input"
+                      type="text"
+                      required
+                      ng-model="workLocationFields.postal_code"
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 w-full">
+            <div class="flex items-center justify-end space-x-4 w-full pb-8">
+              <button
+                ng-click="presentModal(modals.info, false)"
+                type="button"
+                class="ui-btn ui-btn-primary-outline"
+                >
+                Cancel
+              </button>
+              <button
+                type="button"
+                ng-disabled="!informationModal.$dirty && informationModal.$invalid"
+                class="ui-btn {{ informationModal.$dirty && informationModal.$valid ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-40"
+                ng-click="saveBillingInfo()">
+                Update
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

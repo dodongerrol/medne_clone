@@ -1529,6 +1529,22 @@ class CustomerHelper
 		return ['total_credits' => $total_credits, 'total_allocated' => $total_allocated, 'total_balance' => $total_balance];
 	}
 
+	public static function get_random_password($length)
+	{
+
+		$characters = '0123456789';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
+	}
+
+	public static function getEncryptValue(){
+        $encryptValue = sha1(mt_rand(100000,999999).time());
+        return $encryptValue;
+    }
 	public static function getAccountCorporateID($customer_id)
 	{
 		$account = DB::table('customer_link_customer_buy')
@@ -1572,6 +1588,22 @@ class CustomerHelper
 									->where('corporate_members.corporate_id', $account_link->corporate_id)
 									->lists('corporate_members.user_id');
 		return $users;
+	}
+	
+	public static function getHRId($customer_id)
+	{
+		$hr_account = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $customer_id)->first();
+		if(!$hr_account) {
+			// get hr details in link account
+			$linkAccount = DB::table('company_link_accounts')->where('customer_id', $customer_id)->where('status', 1)->first();
+
+			if($linkAccount) {
+				$hr_account = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $linkAccount->hr_id)->first();
+				return $hr_account->hr_dashboard_id;
+			}
+		} else {
+			return $hr_account->hr_dashboard_id;
+		}
 	}
 }
 ?>

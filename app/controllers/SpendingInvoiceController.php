@@ -872,6 +872,8 @@ class SpendingInvoiceController extends \BaseController {
 									->where('customer_buy_start.customer_buy_start_id', $customer_id)
 									->get();
 
+			$all_deposit_data = CompanyCreditsStatement::where('statement_customer_id', $customer_id)->get();
+
 			$deposits = DB::table('spending_deposit_credits')
 							->join('customer_active_plan', 'customer_active_plan.customer_active_plan_id', "=", 'spending_deposit_credits.customer_active_plan_id')
 							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', "=", 'customer_active_plan.customer_start_buy_id')

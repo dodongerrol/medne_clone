@@ -1,0 +1,38 @@
+  <!-- Confirmation modal -->
+  <div class="modal fade" id="{{ modals.confirmation }}" tabindex="-1" role="dialog"
+    aria-labelledby="confirmation-modal" aria-hidden="true">
+    <div class="modal-dialog max-w-xl bg-transparent mt-56" role="document">
+      <div class="modal-content">
+        <div class="modal-body py-0">
+          <div class="py-1 px-16">
+            <div class="flex flex-col items-center justify-between space-y-8 pt-6">
+              <h4 class="section-title font-bold">
+                {{ confirmProperties.title }}
+              </h4>
+              <div class="flex flex-col justify-center items-center">
+                <p class="helvetica-medium text-sm font-medium text-gray-900 font-semibold">
+                  {{ confirmProperties.message }}
+                </p>
+              </div>
+              <div class="flex items-center justify-end space-x-4 w-full pb-6">
+                <button
+                  ng-click="presentModal(modals.confirmation, false)"
+                  type="button"
+                  class="ui-btn ui-btn-primary-outline"
+                  >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="ui-btn ui-btn-primary w-48"
+                  ng-click="destroy()">
+                  Yes, Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End department modal -->

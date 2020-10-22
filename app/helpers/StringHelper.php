@@ -182,30 +182,74 @@ class StringHelper{
             } catch(Exception $e) {
                 return FALSE;
             }
-
+            
             if($result && isset($result->hr_dashboard_id)) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
-                            // ->where('active', 1)
                             ->first();
                 if($hr) {
-                    if((int)$hr->active == 1) {
-                        $hr->signed_in = $result->signed_in;
-                        $hr->hr_activated = true;
-                        if(isset($result->expire_in)) {
-                            $hr->expire_in = $result->expire_in;
-                        } else {
-                            $hr->expire_in = null;
+                        $hr->customer_buy_start_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
+                        $hr->customer_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
+                        $hr->user_type = isset($result->user_type) ? $result->user_type : 'hr_admin';
+                        $hr->id = $result->hr_dashboard_id;
+                        if($hr->customer_buy_start_id == null) {
+                            // get only company
+                            $companyLinked = DB::table('company_link_accounts')->where('hr_id', $hr->hr_dashboard_id)->where('status', 1)->select('customer_id')->first();
+
+                            if($companyLinked) {
+                                $hr->customer_buy_start_id = $companyLinked->customer_id;
+                                $hr->customer_id = $companyLinked->customer_id;
+                            } else {
+                                return FALSE;
+                            }
                         }
-                    } else if((int)$hr->hr_activated == 0) {
-                        $hr->status = false;
-                        $hr->hr_activated = false;
-                    }
-                   
+
+                        if((int)$hr->active == 1) {
+                            $hr->signed_in = $result->signed_in;
+                            if(isset($result->expire_in)) {
+                                $hr->expire_in = $result->expire_in;
+                            } else {
+                                $hr->expire_in = null;
+                            }
+                        } else if((int)$hr->hr_activated == 0) {
+                            $hr->status = false;
+                            $hr->hr_activated = false;
+                        }              
                     return $hr;
                 } else {
                     return FALSE;
                 }
+            } else if($result && $result->user_type == "member_admin") {
+                $member = DB::table('user')->where('UserID', $result->UserID)->select('UserID', 'member_activated', 'Active')->first();
+
+                if(!$member) {
+                    return false;
+                }
+
+                $customer_id = \PlanHelper::getCustomerId($member->UserID);
+                $member->customer_buy_start_id = $customer_id;
+                $member->customer_id = $customer_id;
+                $member->user_type = $result->user_type;
+                $hr = DB::table('customer_hr_dashboard')
+                            ->where('customer_buy_start_id', $customer_id)
+                            ->first();
+
+                $member->id = $member->UserID;
+                $member->hr_dashboard_id = $hr->hr_dashboard_id;
+                $member->hr_activated = $member->member_activated;
+                if((int)$member->Active == 1) {
+                    $member->signed_in = $result->signed_in;
+                    if(isset($result->expire_in)) {
+                        $member->expire_in = $result->expire_in;
+                    } else {
+                        $member->expire_in = null;
+                    }
+                } else if((int)$member->member_activated == 0) {
+                    $member->status = false;
+                    $member->hr_activated = false;
+                }
+
+                return $member;
             } else {
                 return FALSE;
             }

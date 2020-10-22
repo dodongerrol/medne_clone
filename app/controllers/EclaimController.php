@@ -2927,11 +2927,14 @@ public function getActivityOutNetworkTransactions( )
 {
 	$session = self::checkSession();
 	$customer_id = $session->customer_buy_start_id;
-	$input = Input::all();
+  $input = Input::all();
+  $input['per_page'] = 5;
         // $customer_id = $input['customer_id'];
 
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = PlanHelper::endDate($input['end']);
+  $end = PlanHelper::endDate($input['end']);
+  $byLocation = !empty($input['location_id']) ? json_decode($input['location_id']) : null;
+  $byDepartment = !empty($input['department_id']) ? json_decode($input['department_id']) : null;
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 	$e_claim = [];
 	$paginate = [];
@@ -2949,7 +2952,66 @@ public function getActivityOutNetworkTransactions( )
 		->where('e_claim.date', '<=', $end)
 		->orderBy('e_claim.date', 'desc')
 		->paginate($input['per_page']);
-	} else {
+  } 
+  elseif ($byLocation) {
+    $checkerLocation = DB::table('customer_link_customer_buy')
+    ->join('company_locations', 'company_locations.customer_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
+    ->whereIn('company_locations.LocationID', $byLocation)
+    ->where('customer_buy_start_id', $customer_id)->first();
+
+    if($checkerLocation) {
+      $user_ids = PlanHelper::getCompanyMemberIds($customer_id);
+      if(sizeof($user_ids) > 0) {
+        $e_claim_result = DB::table('e_claim')
+        ->where('spending_type', $spending_type)
+        ->whereIn('user_id', $user_ids)
+        ->where('status', 1)
+        ->where('date', '>=', $start)
+        ->where('date', '<=', $end)
+        ->orderBy('date', 'desc')
+        ->paginate($input['per_page']);
+      } else {
+        $paginate['data'] = $e_claim;
+        $paginate['status'] = true;
+        return $paginate;
+      }
+    }
+    else {
+      $paginate['data'] = $e_claim;
+      $paginate['status'] = true;
+      return $paginate;
+    }
+
+} elseif ($byDepartment) {
+    $checkerDepartment = DB::table('customer_link_customer_buy')
+      ->join('company_departments', 'company_departments.customer_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
+      ->whereIn('company_departments.id', $byDepartment)
+      ->where('customer_buy_start_id', $customer_id)->first();
+
+    if($checkerDepartment) {
+      $user_ids = PlanHelper::getCompanyMemberIds($customer_id);
+      if(sizeof($user_ids) > 0) {
+        $e_claim_result = DB::table('e_claim')
+        ->where('spending_type', $spending_type)
+        ->whereIn('user_id', $user_ids)
+        ->where('status', 1)
+        ->where('date', '>=', $start)
+        ->where('date', '<=', $end)
+        ->orderBy('date', 'desc')
+        ->paginate($input['per_page']);
+
+      } else {
+        $paginate['data'] = $e_claim;
+        $paginate['status'] = true;
+        return $paginate;
+      }
+    } else {
+        $paginate['data'] = $e_claim;
+        $paginate['status'] = true;
+        return $paginate;
+    }
+} 
+else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
 		if(sizeof($user_ids) > 0) {
 			$e_claim_result = DB::table('e_claim')
@@ -2959,20 +3021,20 @@ public function getActivityOutNetworkTransactions( )
 			->where('date', '>=', $start)
 			->where('date', '<=', $end)
 			->orderBy('date', 'desc')
-			->paginate($input['per_page']);
+      ->paginate($input['per_page']);
 		} else {
 			$paginate['data'] = $e_claim;
 			$paginate['status'] = true;
 			return $paginate;
 		}
-	}
+  }
 
 	$paginate['current_page'] = $e_claim_result->getCurrentPage();
 	$paginate['from'] = $e_claim_result->getFrom();
 	$paginate['last_page'] = $e_claim_result->getLastPage();
 	$paginate['per_page'] = $e_claim_result->getPerPage();
 	$paginate['to'] = $e_claim_result->getTo();
-	$paginate['total'] = $e_claim_result->getTotal();
+  $paginate['total'] = $e_claim_result->getTotal();
 
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';
@@ -3134,7 +3196,10 @@ public function getActivityInNetworkTransactions( )
         // $customer_id = $input['customer_id'];
 
 	$start = date('Y-m-d', strtotime($input['start']));
-	$end = PlanHelper::endDate($input['end']);
+  $end = PlanHelper::endDate($input['end']);
+  $input['per_page'] = 5;
+  $byLocation = !empty($input['location_id']) ? json_decode($input['location_id']) : null;
+  $byDepartment = !empty($input['department_id']) ? json_decode($input['department_id']) : null;
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
 
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
@@ -3183,7 +3248,53 @@ public function getActivityInNetworkTransactions( )
 		->where('date_of_transaction', '<=', $end)
 		->orderBy('date_of_transaction', 'desc')
 		->paginate($input['per_page']);
-	} else {
+  } elseif ($byLocation) {
+      $checkerLocation = DB::table('customer_link_customer_buy')
+      ->join('company_locations', 'company_locations.customer_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
+      ->whereIn('company_locations.LocationID', $byLocation)
+      ->where('customer_buy_start_id', $customer_id)->first();
+
+      if($checkerLocation) {
+        $user_ids = PlanHelper::getCompanyMemberIds($customer_id);
+        if(sizeof($user_ids) > 0) {
+          $transactions = DB::table('transaction_history')
+          ->where('spending_type', $spending_type)
+          ->whereIn('UserID', $user_ids)
+          ->where('paid', 1)
+          ->where('date_of_transaction', '>=', $start)
+          ->where('date_of_transaction', '<=', $end)
+          ->orderBy('date_of_transaction', 'desc')
+          ->paginate($input['per_page']);
+        } else {
+          $transactions = [];
+        }
+      } else {
+        $transactions = [];
+      }
+  } elseif ($byDepartment) {
+      $checkerDepartment = DB::table('customer_link_customer_buy')
+        ->join('company_departments', 'company_departments.customer_id', '=', 'customer_link_customer_buy.customer_buy_start_id')
+        ->whereIn('company_departments.id', $byDepartment)
+        ->where('customer_buy_start_id', $customer_id)->first();
+
+      if($checkerDepartment) {
+        $user_ids = PlanHelper::getCompanyMemberIds($customer_id);
+        if(sizeof($user_ids) > 0) {
+          $transactions = DB::table('transaction_history')
+          ->where('spending_type', $spending_type)
+          ->whereIn('UserID', $user_ids)
+          ->where('paid', 1)
+          ->where('date_of_transaction', '>=', $start)
+          ->where('date_of_transaction', '<=', $end)
+          ->orderBy('date_of_transaction', 'desc')
+          ->paginate($input['per_page']);
+        } else {
+          $transactions = [];
+        }
+      } else {
+        $transactions = [];
+      }
+  } else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);
 		if(sizeof($user_ids) > 0) {
 			$transactions = DB::table('transaction_history')
@@ -4781,7 +4892,9 @@ public function getHrActivity( )
 	// $user_id = $data->UserID;
 	$end = PlanHelper::endDate($input['end']);
 	$spending_type = isset($input['spending_type']) ? $input['spending_type'] : 'medical';
-	$filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+  $filter = isset($input['filter']) ? $input['filter'] : 'current_term';
+  $byLocation = !empty($input['location_id']) ? json_decode($input['location_id']) : null;
+  $byDepartment = !empty($input['department_id']) ? json_decode($input['department_id']) : null;
 	$paginate = [];
 
 	$session = self::checkSession();
@@ -4829,20 +4942,54 @@ public function getHrActivity( )
 	$total_visit_limit  = 0;
 
 	
-  	// get all hr employees, spouse and dependents
-	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
-	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
-	$corporate_members = DB::table('corporate_members')
-							->join('user', 'user.UserID', '=', 'corporate_members.user_id')
-							->where('corporate_members.corporate_id', $account->corporate_id)
-							->paginate(10);
+    // get all hr employees, spouse and dependents
+  if($byLocation) {
+      $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
+      $lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
+      $corporate_members = DB::table('corporate_members')
+                  ->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+                  ->join('company_locations', 'company_locations.customer_id', '=', 'corporate_members.corporate_id')
+                  ->whereIn('company_locations.LocationID', $byLocation)
+                  ->where('corporate_members.corporate_id', $session->customer_buy_start_id)
+                  ->paginate(10);
 
-	$paginate['current_page'] = $corporate_members->getCurrentPage();
-	$paginate['from'] = $corporate_members->getFrom();
-	$paginate['last_page'] = $corporate_members->getLastPage();
-	$paginate['per_page'] = $corporate_members->getPerPage();
-	$paginate['to'] = $corporate_members->getTo();
-	$paginate['total'] = $corporate_members->getTotal();
+      $paginate['current_page'] = $corporate_members->getCurrentPage();
+      $paginate['from'] = $corporate_members->getFrom();
+      $paginate['last_page'] = $corporate_members->getLastPage();
+      $paginate['per_page'] = $corporate_members->getPerPage();
+      $paginate['to'] = $corporate_members->getTo();
+      $paginate['total'] = $corporate_members->getTotal();
+  } elseif ($byDepartment) {
+      $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
+      $lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
+      $corporate_members = DB::table('corporate_members')
+                  ->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+                  ->join('company_departments', 'company_departments.customer_id', '=', 'corporate_members.corporate_id')
+                  ->whereIn('company_departments.id', $byDepartment)
+                  ->where('corporate_members.corporate_id', $session->customer_buy_start_id)
+                  ->paginate(10);
+
+      $paginate['current_page'] = $corporate_members->getCurrentPage();
+      $paginate['from'] = $corporate_members->getFrom();
+      $paginate['last_page'] = $corporate_members->getLastPage();
+      $paginate['per_page'] = $corporate_members->getPerPage();
+      $paginate['to'] = $corporate_members->getTo();
+      $paginate['total'] = $corporate_members->getTotal();
+  } else {
+      $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
+      $lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
+      $corporate_members = DB::table('corporate_members')
+                  ->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+                  ->where('corporate_members.corporate_id', $account->corporate_id)
+                  ->paginate(10);
+
+      $paginate['current_page'] = $corporate_members->getCurrentPage();
+      $paginate['from'] = $corporate_members->getFrom();
+      $paginate['last_page'] = $corporate_members->getLastPage();
+      $paginate['per_page'] = $corporate_members->getPerPage();
+      $paginate['to'] = $corporate_members->getTo();
+      $paginate['total'] = $corporate_members->getTotal();
+  }
 	
 	if($spending_type == 'medical') {
 		$table_wallet_history = 'wallet_history';

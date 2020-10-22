@@ -1,0 +1,141 @@
+<div class="dependent-details-container" dependent-details-directive>
+  <div class="global-loader child-body-loading" hidden>
+    <div class="loader-container">
+      <div class="loader"></div>
+    </div>
+  </div>
+  <div class="dependent-information">
+
+    <div ng-repeat="list in selected_emp_dependents" class="employee-information-details-wrapper">
+      <h3 ng-if="$index == 0" class="weight-700">Dependent Information</h3>
+      <div class="dependent-information-button">
+        <button class="btn-remove" ng-click="removeDependentBtn( list )" ng-if="!list.deletion"><img
+            src="../assets/hr-dashboard/img/icons/dustbin.png">Remove</button>
+        <button class="btn-remove btn-remove-text" disabled ng-if="list.deletion"><span
+            ng-bind="list.deletion_text"></span></button>
+        <button class="btn-edit" ng-click="openUpdateDependentModal( list )"><img
+            src="../assets/hr-dashboard/img/icons/edit.png">Edit</button>
+      </div>
+      <div class="employee-information-details">
+        <div class="col-1-employee-information-details">
+          <div>
+            <strong class="font-helvetica-medium">Full Name</strong>
+            <span ng-bind="list.name">Alice Wonderland</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Date of Birth</strong>
+            <span ng-bind="formatMomentDate(list.dob, null, 'DD/MM/YYYY')">04/03/1984</span>
+          </div>
+        </div>
+        <div class="col-2-employee-information-details">
+          <div>
+            <strong class="font-helvetica-medium">Relationship</strong>
+            <span style="text-transform: capitalize;" ng-if="list.relationship != null"
+              ng-bind="list.relationship">Spouse</span>
+            <span ng-if="list.relationship == null">Dependent of <span ng-bind="list.Name"></span></span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Member ID</strong>
+            <span ng-bind="list.member_id">657835</span>
+          </div>
+        </div>
+      </div>
+      <div class="employee-information-details" ng-if="selectedEmployee.account_type == 'enterprise_plan'">
+        <div class="col-1-employee-information-details">
+          <h3 class="weight-700" style="position:relative; margin-bottom: 50px;">Dependent Visits</h3>
+          <div>
+            <strong class="font-helvetica-medium">Total</strong>
+            <span ng-bind="list.dependent_plan_history.total_visit_limit ? list.dependent_plan_history.total_visit_limit : 0 ">1</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Utilised</strong>
+            <span ng-bind="list.dependent_plan_history.total_visit_created ? list.dependent_plan_history.total_visit_created : 0 ">2</span>
+          </div>
+          <div>
+            <strong class="font-helvetica-medium">Balance</strong>
+            <span ng-bind="list.dependent_plan_history.total_balance_visit ? list.dependent_plan_history.total_balance_visit : 0 ">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-dependent-modal" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document" style="width: 800px;">
+			<div class="modal-content" style="border-radius: 0;">
+				<div class="modal-body">
+
+					<p class="text-center" style="margin-top: 5px;color: #888;font-size: 20px;font-weight: 700;">
+						<span ng-bind="selectedDependent.name">Calvin Klein</span>
+						<img src="../assets/hr-dashboard/img/icons/close-blue.svg"
+							style="width: 20px;cursor: pointer;position: absolute;right: 20px;top: 20px;" data-dismiss="modal">
+					</p>
+					<p class="text-center font-helvetica-medium"
+						style="color: #444;font-weight: 500;font-size: 35px;margin: 35px 0 40px 0;">Edit dependent details</p>
+					<p class="text-center status-wrapper"
+						style="margin-bottom: 50px;font-weight: bold;margin-top: 20px;color: #0392cf;display: none">Successful</p>
+					<div class="row">
+						<div class="col-md-12">
+							<form class="form update-form">
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Full Name</label>
+										<input disabled-specific-characters type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedDependent.name">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Date of Birth</label>
+										<input type="text" class="form-control edit-employee-modal-input datepicker"
+											ng-model="selectedDependent.dob">
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">Relationship</label>
+										<select class="form-control edit-employee-modal-input" ng-model="selectedDependent.relationship">
+											<option value="spouse">Spouse</option>
+											<option value="child">Child</option>
+											<option value="family">Family</option>
+											<option value="parent">Parent</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="edit-employee-modal-label">MemberID</label>
+										<input type="text" class="form-control edit-employee-modal-input"
+											ng-model="selectedDependent.member_id" readonly>
+									</div>
+								</div>
+
+								<div class="col-md-12">
+									<p ng-if="invalid_email" class="text-error text-left">Invalid Email</p>
+									<p ng-if="invalid_nric" class="text-error text-left">Invalid NRIC</p>
+									<p ng-if="error_message" class="text-error text-left">{{error_message}}</p>
+								</div>
+								<div class="col-md-12">
+									<button class="pull-left cancel-employee-update-button" data-dismiss="modal">
+										CANCEL
+									</button>
+									<div class="status-wrapper pull-right" style="height: 20px;width: 20px;text-align: center;margin-top: 30px;margin-left: 10px;display: none">
+										<i class="fa fa-check" style="color: green;font-size: 30px"></i>
+									</div>
+									<button ng-click="saveDependent( selectedDependent )" class="pull-right replace-employee-update-button update-replace">SAVE & CONTINUE</button>
+
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style scoped>
+  @import url('../assets/hr-dashboard/templates/employeeInformation/dependentDetails/style.css');
+</style>

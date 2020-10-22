@@ -1,0 +1,63 @@
+.company-profile-container{
+  padding: 50px 0 100px 50px;
+  /* max-width: 1345px; */
+  max-width: 90%;
+  display: flex;
+}
+.company-profile-container .left-panel{
+  padding: 100px 10px 50px 10px;
+  width: 250px;
+  margin-right: 100px;
+}
+.company-profile-container .left-panel .select-menu{
+  padding: 0 0 8px 0;
+  margin-bottom: 25px;
+  border-bottom: 3px solid transparent;
+  font-size: 16px;
+  line-height: 16px;
+  color: #02597E;
+  font-family: 'Helvetica Medium';
+  font-weight: 300;
+  display: inline-block;
+  cursor: pointer;
+}
+.company-profile-container .left-panel .select-menu.active{
+  border-bottom: 3px solid #02597E;
+}
+.company-profile-container .company-profile-content{
+  flex: 1;
+}
+.company-profile-content .page-title{
+  font-family: 'Helvetica Medium';
+  font-size: 22px;
+  line-height: 26px;
+  color: #2E4057;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+.admin-card-container .check-blue-icon {
+  height: 12px;
+  margin: 0 10px 0 0;
+}
+.admin-can-container >div {
+  display: flex;
+}
+.additional-admin .no-administrator {
+  padding: 60px;
+  text-align: center;
+}
+.additional-admin .no-administrator button,
+.additional-admin .with-administrator .btn-add-admin {
+  background-color: transparent;
+  border: 0;
+  color: #037CB0;
+  display: flex;
+  align-items: center;
+  margin: 0 auto;
+}
+.additional-admin .no-administrator img,
+.additional-admin .with-administrator .btn-add-admin img {
+  margin: 0 5px 0 0;
+  width: 16px;
+}

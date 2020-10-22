@@ -160,7 +160,6 @@ app.directive('outOfPocketDirective', [
           // scope.getEnrollmentHistory(scope.customer_active_plan_id);
         }
 
-
         scope.range = function (num) {
           var arr = [];
           for (var i = 0; i < num; i++) {

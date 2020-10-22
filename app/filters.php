@@ -327,6 +327,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
         // decode and check the properites
         $secret = Config::get('config.secret_key');
         $value = JWT::decode($token, $secret);
+        $hr_dashboard_id = $result->hr_dashboard_id;
 
         if($value->signed_in == false) {
             if(time() > $value->expire_in) {
@@ -341,35 +342,16 @@ Route::filter('auth.jwt_hr', function($request, $response)
         $data = array(
             'ip_address' => $ip,
             'date'       => $date,
-            'user_id'    => $value->hr_dashboard_id
+            'user_id'    => $hr_dashboard_id
         );
 
-        // check for redundancy
-        $check = DB::table('admin_logs')
-                    ->where('admin_id', $value->hr_dashboard_id)
-                    ->where('admin_type', 'hr')
-                    ->where('type', 'hr_active_state')
-                    // ->where('created_at', $data['date'])
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-
-        if(!$check) {
-            $admin_logs = array(
-                'admin_id'  => $value->hr_dashboard_id,
-                'admin_type' => 'hr',
-                'type'      => 'hr_active_state',
-                'data'      => SystemLogLibrary::serializeData($data)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
-        } else if(strtotime(date('Y-m-d H:i', strtotime($check->created_at))) != strtotime(date('Y-m-d H:i', strtotime($date)))) {
-            $admin_logs = array(
-                'admin_id'  => $value->hr_dashboard_id,
-                'admin_type' => 'hr',
-                'type'      => 'hr_active_state',
-                'data'      => SystemLogLibrary::serializeData($data)
-            );
-            SystemLogLibrary::createAdminLog($admin_logs);
-        }
+        $admin_logs = array(
+            'admin_id'  => $hr_dashboard_id,
+            'admin_type' => 'hr',
+            'type'      => 'hr_active_state',
+            'data'      => SystemLogLibrary::serializeData($data)
+        );
+        SystemLogLibrary::createAdminLog($admin_logs);
 
     // }
 });

@@ -43,6 +43,7 @@ app.directive('mednefitsCreditAccountDirective', [
 
         scope.termSelector = function () {
           scope.showLastTermSelector = scope.showLastTermSelector ? false : true;
+          console.log(scope.showLastTermSelector);
         }
 
         scope.formatDate = function (date) {

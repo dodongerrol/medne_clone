@@ -1,0 +1,361 @@
+.administrators-wrapper {
+  color: #2E4057;
+  font-size: 14px;
+  max-width: 950px;
+}
+.administrators-wrapper .page-title {
+  text-align: center;
+  font-size: 22px;
+}
+.admin-card-container {
+  border: 2px solid #E0E0E0;
+  background-color: #fff;
+}
+.admin-card-container >div {
+  padding: 15px;
+  border-bottom: 1px solid #E0E0E0;
+}
+.admin-card-container >div:last-child {
+  border-bottom: 0;
+}
+.primary-admin-details >span:first-child {
+  margin: 0 5px 0 0;
+}
+/* .administrators-wrapper .admin-information >div {
+  width: 50%;
+} */
+.administrators-wrapper .change-primary-btn {
+  display: flex;
+  align-items: center;
+  border: 1px solid #037CB0;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #037CB0;
+  margin: 0 auto 0 0;
+  padding: 0 10px;
+}
+.administrators-wrapper .change-primary-btn img {
+  width: 14px;
+  margin: 0 5px 0 0;
+}
+.administrators-wrapper .primary-admin {
+  margin: 0 0 30px;
+}
+.primary-admin .admin-card-container >div >div,
+.additional-admin .with-administrator .admin-information >div{
+  width: 50%;
+}
+.with-administrator .edit-remove-wrapper >div:first-child {
+  flex: 1;
+}
+.with-administrator .edit-remove-btn-container button {
+  height: 30px;
+  border-radius: 3px;
+}
+.with-administrator .edit-remove-btn-container >button:first-child {
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  margin: 0 20px 0 0;
+}
+.edit-remove-btn-container .btn-remove {
+  color: #EB635D;
+  border: 1px solid #EB635D;
+  background-color: #fff;
+}
+.edit-remove-btn-container .btn-remove .fa-trash-o { 
+  font-size: 16px;
+}
+.additional-admin .with-administrator .btn-add-admin {
+  margin: 10px auto;
+}
+.admin-card-container >div.with-administrator {
+  padding: 0;
+}
+.additional-admin-details {
+  border-top: 1px solid #E0E0E0;
+  padding: 20px 15px;
+}
+.with-administrator .primary-admin-details {
+  margin: 0 0 10px;
+}
+
+
+/* ------------ CUSTOM CHECBOX ------------ */
+.administrator-modal-container .custom-checkbox-container .checkbox-input {
+  display: block;
+  position: relative;
+  margin-bottom: 0px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-top: 0px;
+  padding: 0 0 0 30px;
+}
+.administrator-modal-container .custom-checkbox-container .checkbox-input input {
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.administrator-modal-container .custom-checkbox-container .checkbox-input input:checked ~ .checkbox-mark { 
+  background-color: transparent;
+}
+
+.administrator-modal-container .custom-checkbox-container .checkbox-input input:checked ~ .checkbox-mark:after {
+  display: block;
+}
+
+.administrator-modal-container .custom-checkbox-container .checkbox-input .checkbox-mark {
+  position: absolute;
+  top: 6px;
+  left: 2px;
+  height: 12px;
+  width: 12px;
+  border: 1px solid #BFBFBF;
+  border-radius: 2px;
+}
+
+.administrator-modal-container .custom-checkbox-container .checkbox-input .checkbox-mark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 4px;
+  bottom: 2px;
+  width: 8px;
+  height: 13px;
+  border: solid #02597E;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+/* ---------------------------------------- */
+.administrator-modal-container .modal-dialog {
+  width: 550px;
+  font-size: 14px;
+}
+.administrator-info-container input {
+  padding: 0;
+}
+.administrator-modal-container .modal-header {
+  border-bottom: none;
+}
+.administrator-modal-container .modal-footer {
+  border-top: none;
+}
+.administrator-modal-container h5 {
+  text-align: center;
+  font-family: 'Helvetica Medium';
+}
+.administrator-modal-container .modal-footer {
+  text-align: center;
+  margin: 30px 15px 15px;
+}
+.administrator-modal-container button {
+  border-radius: 3px;
+  height: 32px;
+}
+.administrator-modal-container .modal-body {
+  padding: 0 50px;
+}
+.administrator-modal-container .btn-cancel-admin {
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  background-color: #fff;
+  padding: 0 10px;
+  margin: 0 5px 0 0;
+}
+.administrator-modal-container .btn-update {
+  border: 1px solid #0392CF;
+  background-color: #0392CF;
+  color: #fff;
+  padding: 0 20px;
+}
+.administrator-modal-container .btn-update.confirm {
+  width: 150px;
+}
+.admin-input-wrapper {
+  margin: 0 0 20px;
+}
+.permission-wrapper,
+.mednefits-employee-selector-container {
+  margin: 0 0 20px;
+}
+.permission-wrapper >div .location-department-data-wrapper {
+  max-height: 100px;
+  overflow-y: auto;
+  margin: 0 0 0 15px;
+}
+.admin-input-wrapper label {
+  display: block;
+}
+.admin-input-wrapper input,
+.permission-input-wrapper{
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  width: 100%;
+  padding: 5px 10px;
+  outline: none;
+}
+.admin-input-wrapper input::placeholder {
+  font-size: 12px;
+}
+.admin-input-wrapper .mobile-number-input >div {
+  width: 20%;
+  margin: 0 10px 0 0;
+}
+.permission-input-wrapper,
+.employee-name-input-wrapper {
+  width: 210px;
+  font-size: 14px;
+  position: relative;
+}
+.employee-name-input-wrapper input {
+  background-color: #F2F2F2;
+}
+.permission-selector-dp-wrapper {
+  position: absolute;
+  background-color: #fff;
+  width: 100%;
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  left: 0;
+  top: 35px;
+  z-index: 1;
+  padding: 5px 0;
+}
+.permission-selector-dp-wrapper.location-department-container {
+  z-index: 2;
+}
+.permission-selector-dp-wrapper >div {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.permission-selector-dp-wrapper >div:hover {
+  background-color: rgba(230, 247, 255, 0.7);
+}
+.permission-input-wrapper i {
+  margin: 0 0 0 5px;
+  position: absolute;
+  top: 10px;
+  right: 7px;
+  color: #979797;
+}
+.administrator-modal-container .administrator-success {
+  text-align: center;
+}
+.administrator-modal-container .administrator-success img {
+  width: 40px;
+  margin: 0 0 10px;
+}
+.choose-selector-container {
+  margin: 10px 0 0;
+}
+.choose-selector-container {
+  position: relative;
+}
+.choose-selector-container .permission-selector-dp-wrapper {
+  position: absolute;
+  height: 150px;
+  overflow: auto;
+}
+#change-primary-admin-modal .modal-body.first-step p {
+  width: 420px;
+  text-align: center;
+  margin: 0 auto;
+}
+#change-primary-admin-modal label {
+  font-family: 'Helvetica Medium';
+}
+#change-primary-admin-modal .admin-input-wrapper.mobile-number >div >div {
+  width: 20%;
+  margin: 0 10px 0 0;
+}
+#change-primary-admin-modal .modal-dialog {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  box-shadow: 0 0 transparent;
+  background-color: transparent;
+}
+#remove-administrator-modal .modal-body.first-step >div:first-child {
+  margin: 0 0 20px;
+}
+#remove-administrator-modal .btn-update {
+  padding: 0 70px;
+}
+.filter-data-selector-wrapper {
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: -7px 0 0 -10px;
+  width: calc(100% + 12px);
+}
+.filter-data-selector-container {
+  background-color: #f2f2f2;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  padding: 0px 8px;
+  font-size: 12px;
+  border: 1px solid #BFBFBF;
+  margin: 7px 0 0 10px;
+}
+.filter-data-selector-container >div{
+  white-space: nowrap;
+  width: 57px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.filter-data-selector-container img {
+  margin: 0 0 0 20px;
+  width: 10px;
+}
+.mednefits-employee-name .activated-text,
+.mednefits-employee-name input::placeholder {
+  font-size: 13px;
+}
+.mednefits-employee-name .activated-text {
+  margin:  0 0 5px;
+}
+.mednefits-employee-name label {
+  margin: 0;
+}
+.mednefits-employee-name .emp-name-input-wrapper {
+  border: 1px solid #BFBFBF;
+  width: 210px;
+  padding: 5px 8px;
+  border-radius: 3px;
+  position: relative;
+  color: #979797;
+  display: flex;
+  align-items: center;
+}
+.mednefits-employee-name .emp-name-input-wrapper.validation {
+  border: 2px solid #EB635D;
+}
+.mednefits-employee-name input {
+  border: 0;
+  padding: 0;
+  width: 100%;
+  outline: none;
+}
+.emp-name-input-wrapper .fa-search {
+  font-size: 16px;
+  margin: 0 5px 5px 0;
+}
+.emp-name-input-wrapper .fa-angle-down {
+  font-size: 15px;
+}
+.emp-name-input-wrapper .permission-selector-dp-wrapper {
+  color: #000;
+}
+.employee-name-validation {
+  color: #EB635D;
+  font-size: 10px;
+  line-height: normal;
+  width: 170px;
+  font-family: 'Helvetica Medium';
+  margin: 0 0 0 10px;
+}

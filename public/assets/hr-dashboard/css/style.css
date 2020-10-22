@@ -26,9 +26,14 @@ body {
   letter-spacing: 0.14px;
   line-height: 24px;
   overflow-x: hidden;
+  /* background: #E5E5E5; */
+  background: #f5f5f5;
 }
 .bg-color-home {
   background: #f5f5f5;
+}
+.bg-color-auth{
+  background: #FFF;
 }
 button {
   outline: none !important;
@@ -47,7 +52,7 @@ button {
 .top-logo {
   /*height: 40px;*/
   height: 30px;
-  margin-top: 5px;
+  /* margin-top: 5px; */
 }
 
 .user-icon {
@@ -657,7 +662,7 @@ button {
 
 /* HR DASHBOARD BODY RESET CSS */
 .hrdb-body-container {
-  padding-top: 150px;
+  padding-top: 50px;
   padding-bottom: 50px;
   /*background-color: #f5f5f5;*/
   min-height: calc( 100vh - 180px );;
@@ -884,7 +889,7 @@ button {
 }
 
 .form-group .med-input {
-  margin: 35px 0;
+  /* margin: 35px 0; */
 }
 
 .form-group .med-button {
@@ -6009,7 +6014,7 @@ ul.typeahead li a.dropdown-item {
 }
 .employee-overview-new .hrdb-body-container {
   /*padding: 150px 100px 50px 100px;*/
-  padding: 110px 80px 49px 80px;
+  padding: 30px 80px 49px 80px;
 }
 
 .employee-overview-header {
@@ -7120,6 +7125,7 @@ span.dropdown-entitlement.disabled {
   font-size: 14px;
   text-align: center;
   vertical-align: top;
+  line-height: 20px;
 }
 
 /* ADD A DEPENDENT */
@@ -7224,7 +7230,8 @@ span.dropdown-entitlement.disabled {
 /* EMPLOYEE OUTCOME */
 .employee-standalone-pro-wrapper,
 .employee-insurance-bundle-wrapper {
-  padding-top: 150px;
+  /* padding-top: 150px; */
+  padding-top: 100px;
   position: relative;
   color: #283e52;
 }
@@ -7266,7 +7273,8 @@ span.dropdown-entitlement.disabled {
 
 /* REPLACEMENT EMPLOYEE */
 .employee-replacement-wrapper {
-  padding-top: 150px;
+  /* padding-top: 150px; */
+  padding-top: 50px;
 }
 
 .employee-replacement-wrapper span {
@@ -7566,7 +7574,7 @@ span.dropdown-entitlement.disabled {
 /* HEALTH SPENDING ACCOUNT */
 
 .health-spending-account-wrapper {
-  padding-top: 170px;
+  padding-top: 120px;
 }
 
 .health-spending-account-wrapper span {
@@ -8907,8 +8915,8 @@ span.dropdown-entitlement.disabled {
 .new-activity-header-calendar .eclaim-spending-type-container {
   display: inline-block;
   padding: 10px 0;
-  /*margin-left: -15px;*/
-  margin: 0;
+  margin-left: -15px;
+  /* margin: 0; */
   width: 100%;
   padding-bottom: 10px;
 }
@@ -10491,7 +10499,7 @@ span.dropdown-entitlement.disabled {
   height: 250px;
   overflow: auto;
   margin: 0 0 20px;
-  display: none;
+  /* display: none; */
 }
 .bank-list-wrapper >div {
   padding: 5px 0;
@@ -10734,6 +10742,9 @@ span.dropdown-entitlement.disabled {
   flex-direction: column;
   justify-content: center;
 }
+.datepicker table tr td.disabled, .datepicker table tr td.disabled:hover {
+  color: #e4e4e4;
+}
 
 .welcome-container .fa-angle-down {
   color: #fff;
@@ -10745,6 +10756,35 @@ span.dropdown-entitlement.disabled {
 .welcome-container .nav-drop-wrapper.account-drop-wrapper {
   width: 250px;
 }
+.bold-text {
+  font-family: 'Helvetica Medium';
+}
 .employee-details.tier-feature-item .iti__country-list {
   z-index: 1000;
+}
+
+/* Permission Modal */
+#permission-modal .modal-dialog {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  box-shadow: none;
+  background-color: transparent;
+}
+#permission-modal .modal-content {
+  box-shadow: 0 0 black;
+}
+#permission-modal .modal-body {
+  text-align: center;
+  width: 440px;
+  margin: 0 auto;
+}
+#permission-modal .modal-body img {
+  width: 40px;
+  margin: 0 0 20px;
+}
+
+#permission-modal .modal-footer button {
+  height: 25px;
+  padding: 0 60px;
 }

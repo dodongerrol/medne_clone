@@ -21,6 +21,8 @@
 	<link rel="shortcut icon" href="assets/hr-dashboard/img/icons/favicon.ico" type="image/ico">
 
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+	{{ HTML::style('assets/hr-dashboard/css/fonts.css') }}
 	<!-- <script>
       (adsbygoogle = window.adsbygoogle || []).push({
         google_ad_client: "ca-pub-8344843655918366",
@@ -35,11 +37,12 @@
 	{{ HTML::style('assets/hr-dashboard/css/bootstrap.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/font-awesome.min.css') }}
 	{{ HTML::style('assets/hr-dashboard/css/style.css') }}
+	{{ HTML::style('assets/hr-dashboard/css/tailwind.css') }}
 	<!-- {{ HTML::style('assets/hr-dashboard/css/responsive.css') }} -->
 
 </head>
 
-<body ng-cloak login-section>
+<body ng-cloak login-section class="bg-color-auth">
 	<div class="container">
 		<div class="login-need-help-container">
 			<a href="#" class="pull-right need-help-text tooltips">
@@ -87,49 +90,49 @@
 			<img src="assets/hr-dashboard/img/Mednefits Logo V1.svg" class="center-block login-logo">
 			<h2 class="text-center text-below-image">for business</h2>
 			<!-- <span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span> -->
-			<form class="med-form">
+			<form class="med-form" ng-if="!showAccounts">
 				<div ng-if="!showPassword" class="form-group">
-					<label for="email">Email</label>
-					<input type="email" name="email" class="form-control med-input" ng-class="{'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist'}" placeholder="Enter Email Address"
+					<label for="email" class="font-greycliff">Email</label>
+					<input type="email" name="email" class="form-control med-input font-greycliff" ng-class="{'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist'}" placeholder="Enter Email Address"
 						ng-model="login_details.email" ng-model-options="{debounce: 1000}" ng-change="enableContinue(login_details.email)" required>
 				</div>
 				<div ng-if="showPassword" class="form-group">
-					<label for="password">Password</label>
-					<input type="password" class="form-control med-input" placeholder="Enter password"
+					<label for="password" class="font-greycliff">Password</label>
+					<input type="password" class="form-control med-input font-greycliff" placeholder="Enter password"
 						ng-model="login_details.password" required style="margin-bottom: 15px">
 				</div>
 				<div ng-if="showPassword" class="checkbox">
-					<label style="color: #000;font-size: 15px;">
+					<label style="color: #000;font-size: 15px;" class="font-greycliff" >
 						<input type="checkbox" ng-model="login_details.signed_in" style="margin-top: 5px;"> Stay signed
 						in
 					</label>
 				</div>
 				<div class="form-group">
-					<button ng-if="!showPassword" type="submit" class="btn btn-info btn-block med-button" ng-class="{'disabled': login_details.status == false, 'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist' }" id="login-btn" ng-disabled="login_details.status == false || login_details.status == 'not activated' || login_details.status == 'not-exist'" ng-click="showPasswordToggle()">Continue</button>
-					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button" id="login-btn" ng-click="loginHr()" ng-disabled="!login_details.password">Sign in</button>
+					<button ng-if="!showPassword" type="submit" class="btn btn-info btn-block med-button font-greycliff" ng-class="{'disabled': login_details.status == false, 'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist' }" id="login-btn" ng-disabled="login_details.status == false || login_details.status == 'not activated' || login_details.status == 'not-exist'" ng-click="showPasswordToggle()">Continue</button>
+					<button ng-if='showPassword' type="submit" class="btn btn-info btn-block med-button font-greycliff" id="login-btn" ng-click="loginHr()" ng-disabled="!login_details.password">Sign in</button>
 				</div>
-				<span ng-if="ng_fail">*Please check your login credentials</span>
-				<a ng-if="showPassword" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right">Forgot
+				<span ng-if="ng_fail" class="font-greycliff">*Please check your login credentials</span>
+				<a ng-if="showPassword" href="/company-benefits-dashboard-forgot-password" class="forgot-password pull-right font-greycliff">Forgot
 					password?</a>
-				
-				<div class="not-activated" ng-if="login_details.status === 'not activated'">
-				Oops! An email to activate your account has been sent on <span ng-bind="login_details.date_created"></span>. Please click the link inside to activate your account. 
+
+				<div class="not-activated font-greycliff" ng-if="login_details.status === 'not activated'">
+				Oops! An email to activate your account has been sent on <span ng-bind="login_details.date_created"></span>. Please click the link inside to activate your account.
 				<br> <br>
 				Or <a ng-click="resend_hr_activation()">resend</a> the email now.
 				</div>
 
-				<div class="not-activated" ng-if="login_details.status === 'not-exist'">
-				Your email has not been signed up with Mednefits. 
+				<div class="not-activated font-greycliff" ng-if="login_details.status === 'not-exist'">
+				Your email has not been signed up with Mednefits.
 
 				</div>
 			</form>
+			@include('hr_dashboard.hr-login.partials.account-table')
 		</div>
 		<!-- End New Account Feature -->
 	</div>
-
 </body>
 
-
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer></script>
 {{ HTML::script('assets/hr-dashboard/js/calendar/moment/moment.js') }}
 {{ HTML::script('assets/hr-dashboard/js/calendar/moment/min/moment-with-locales.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/moment-timezone-with-data-2010-2020.min.js') }}
@@ -139,4 +142,5 @@
 {{ HTML::script('assets/hr-dashboard/js/parallax.min.js') }}
 {{ HTML::script('assets/hr-dashboard/js/angular.min.js') }}
 {{ HTML::script('assets/hr-dashboard/process/hr_login.js') }}
+{{-- {{ HTML::script('assets/hr-dashboard/process/directives/hr-login/accounts.js') }} --}}
 </html>

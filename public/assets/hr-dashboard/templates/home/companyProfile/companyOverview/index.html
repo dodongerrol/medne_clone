@@ -1,0 +1,204 @@
+<div class="company-overview-wrapper" company-profile-directive>
+  <div>
+    <h4 class="business-bold-text company-title">Company Profile</h4>
+  </div>
+  <div class="business-information-container">
+    <h5 class="business-bold-text">Business Information</h5>
+    <div class="business-card">
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Account Name</div>
+        <span ng-bind="business_info_data.account_name">Mednefits</span>
+      </div>    
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Business Legal Name</div>
+        <span ng-bind="business_info_data.company_name">Medicloud Pte Ltd</span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Business Legal Address</div>
+        <span>
+          <span ng-bind="business_info_data.company_address">7 Temasek Boulevard #18-02 Suntec Tower One, Singapore 038987</span>
+          <span ng-bind="business_info_data.building"></span>,
+          <span>{{ business_info_data.street_address }}</span>
+        </span>
+      </div>
+      <div class="display-flex business-info-row">
+        <div class="business-bold-text">Country Incorporated</div>
+        <span ng-if="business_info_data.currency_type == 'sgd' ">Singapore</span>
+        <span ng-if="business_info_data.currency_type == 'myr'">Malaysia</span>
+      </div>
+      <div class="footer-btn">
+        <button ng-click="editBusinessInformation( business_info_data )" data-toggle="modal" data-target="#business-information-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+      </div>
+    </div>
+  </div>
+  <div class="business-contact-container">
+    <h5 class="business-bold-text">Business Contact</h5>
+    <div class="business-card business-contact">
+      <div class="primary-admin-header dp-flex-ai">
+        <div>Primary Admin</div>
+      </div>
+      <div class="business-contact-details-wrapper">
+        <div ng-repeat="list in business_contacts_data" class="business-contact-details-container">
+          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Full Name</div>
+            <span ng-bind="list.first_name">Filbert Tan</span>
+          </div>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Email Address</div>
+            <span ng-bind="list.email">filbert@mednefits.com</span>
+          </div>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Mobile Number</div>
+            <span ng-bind="list.phone">(+65) 8856 4736</span>
+          </div>
+        </div>
+        <div ng-repeat="list in get_company_contact_data" class="business-contact-details-container">
+          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Full Name</div>
+            <span ng-bind="list.first_name">Filbert Tan</span>
+          </div>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Email Address</div>
+            <span ng-bind="list.email">filbert@mednefits.com</span>
+          </div>
+          <div class="display-flex business-info-row">
+            <div class="business-bold-text">Mobile Number</div>
+            <span ng-bind="list.phone">(+65) 8856 4736</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-btn">
+        <button ng-disabled="addMoreContactDisabled" ng-click="addBusinessContact()" data-toggle="modal" data-target="#business-add-contact-modal" class="add-contact-btn">Add more contact</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade business-modal-container" id="business-information-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Business Information</h5>
+        </div>
+        <div class="modal-body">
+          <div class="business-input-wrapper">
+            <label>Account Name</label>
+            <input ng-change="removeDisable()" ng-model="get_business_info_data.account_name" type="text">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Business Legal Name</label>
+            <input ng-change="removeDisable()" ng-model="get_business_info_data.company_name" type="text">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Business Legal Address</label>
+            <div>
+              <div class="legal-add-row-1">
+                <input ng-change="removeDisable()" ng-model="get_business_info_data.company_address" type="text">
+              </div>
+              <div class="legal-add-row-2 display-flex">
+                <input ng-change="removeDisable()" ng-model="get_business_info_data.building" type="text">
+                <input ng-change="removeDisable()" ng-model="get_business_info_data.street_address" type="text">
+              </div>
+            </div>
+          </div>
+          <div class="country-postal-container display-flex">
+            <div class="business-input-wrapper">
+              <label>Country Incorporated</label>
+              <input ng-model="get_business_info_data.country" id="business_info_country">
+            </div>
+            <div class="business-input-wrapper">
+              <label>Postal Code</label>
+              <input ng-change="removeDisable()" ng-model="get_business_info_data.postal_code">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+          <button ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Update</button>
+        </div>
+      </div>
+    </div>
+  </div> 
+  
+  <div class="modal fade business-modal-container" id="business-contact-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Edit Business Contact</h5>
+          <span class="primary-admin-text">Primary Admin</span>
+        </div>
+        <div class="modal-body">
+          <div class="business-input-wrapper">
+            <label>Full Name</label>
+            <input ng-change="removeDisable()" ng-model="get_primary_contact_data.first_name" type="text">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Email Address</label>
+            <input ng-change="removeDisable()" ng-model="get_primary_contact_data.email" type="text">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Mobile Number</label>
+            <div class="display-flex mobile-number">
+              <div>
+                <input ng-model="get_primary_contact_data.mobile_code" id="business_mobile_area_code" type="text">
+              </div>
+              <div>
+                <input ng-change="removeDisable()" ng-model="get_primary_contact_data.phone" type="text">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+          <button ng-click="updatePrimaryBusinessContact( get_primary_contact_data )" ng-class="{'active' : activeBusinessUpdate }" class="btn-update disabled">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade business-modal-container" id="business-add-contact-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Add Business Contact/s</h5>
+        </div>
+        <div class="modal-body">
+          <div class="business-input-wrapper">
+            <label>Full Name</label>
+            <input ng-model="business_data.first_name" type="text" placeholder="Enter new business contact’s full name">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Email Address</label>
+            <input ng-model="business_data.email" type="text" placeholder="Enter new business contact’s email address">
+          </div>
+          <div class="business-input-wrapper">
+            <label>Phone Number</label>
+            <div class="display-flex phone-number">
+              <div>
+                <input ng-model="business_data.phone_code" type="text" id="phone_number_add_contact">
+              </div>
+              <div>
+                <input ng-model="business_data.phone" type="number" placeholder="Enter new business contact’s phone number">
+              </div>
+            </div>
+          </div>
+          <div ng-if="business_ctr != 2">
+            <button ng-disabled="business_data.first_name == null || business_data.email == null || business_data.phone == null " ng-click="addMoreContact( business_data )" class="add-contact-btn">Add more contact</button>
+          </div>
+          <div class="angle-left-container">
+            <i ng-if="business_ctr != 0" ng-click="prevAddContact()" style="cursor: pointer;" class="fa fa-angle-left" aria-hidden="true"></i>
+          </div>
+          <div class="angle-right-container">
+            <i ng-if="business_arr.length != business_ctr" ng-click="nextAddContact()" style="cursor: pointer;" class="fa fa-angle-right" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+          <button ng-click="updateAddBusinessContact()" class="btn-update">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

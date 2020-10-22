@@ -330,9 +330,63 @@
               <input class="datepicker" ng-model="activateCreditsData.invoice_date" ng-disabled="true">
               <img src="../../assets/hr-dashboard/img/calendar.png">
             </div>
+            <div ng-if="isCreditsCalculationShow" class="dp-flex-ai bonus-credits">
+              <div class="top-up-icon-container calc-details">
+                <i class="fa fa-minus"></i>
+              </div>
+              <div class="bonus-credits-amount"><span><span class="currency-type">SGD</span> {{ activateCreditsData.bonus_credits }}</span> <span>(Bonus Credits)</span></div>
+            </div>
           </div>
         </div>
       </div>
+      <div class="display-flex">
+        <div>
+          <div class="company-account-text"><span class="asterisk-red">*</span>Here’s how much you’ll need to pay</div>
+        </div>
+        <div>
+          <div class="top-up-credits-container">
+            <h5>Purchased Credits</h5>
+            <span>*The credits amount company will be paying for</span>
+            <div class="top-up-input-wrapper">
+              <div class="currency-type">SGD</div>
+              <input type="text" ng-model="activateCreditsData.purchased_credits" ng-change="calculateActivateCredits('purchased_credits', activateCreditsData.purchased_credits)" ng-model-options="{ debounce: 500 }">
+            </div>
+          </div>
+          <div class="bonus-credtits-rate-container">
+            <div ng-click="toggleCreditsBonusCredit()">
+              <i ng-if="!isCreditsBonusCreditShow" class="fa fa-angle-down"></i>
+              <i ng-if="isCreditsBonusCreditShow" class="fa fa-angle-up"></i>
+              <span>{{ !isCreditsBonusCreditShow ? 'See' : 'Hide' }} Bonus Credits rate</span>
+            </div>
+            <div ng-if="isCreditsBonusCreditShow" class="top-up-bonus-credits-container top-up-credits-container">
+              <h5>Bonus Credits</h5>
+              <span>*The percentage of Purchased Credits given by Mednefits</span>
+              <div class="top-up-input-wrapper">
+                <div>%</div>
+                <input type="number" ng-model="activateCreditsData.bonus_credits_percentage" ng-change="calculateActivateCredits('bonus_credits_percentage')" ng-model-options="{ debounce: 500 }">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="display-flex">
+        <div>
+          <div class="company-account-text"><span class="asterisk-red">*</span>Invoice Date</div>
+        </div>
+        <div>
+          <div class="top-up-credits-container invoice-date">
+            <div class="top-up-input-wrapper">
+              <input class="datepicker" ng-model="activateCreditsData.invoice_date">
+              <img src="../../assets/hr-dashboard/img/calendar.png">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn-custom-cancel" ng-click="toggleCreditsActivation()">Back</button>
+      <button class="btn-custom-confirm" data-toggle="modal" data-target="#active-prepaid-credits-modal">Activate</button>
     </div>
 
     <div class="btn-container">

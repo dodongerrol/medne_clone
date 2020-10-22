@@ -1,0 +1,54 @@
+<div class="update-checkboxes-container bg-white" update-option-directive>
+  <div class="update-wrapper">
+    <div class="grid grid-cols-1 gap-6 p-12">
+      <div>
+        <h4 class="section-title font-bold flex items-center mb-8">
+          Select which type of account to edit:
+        </h4>
+        <div class="flex items-center space-x-12">
+          <div ng-repeat="list in account_types" class="custom-checkbox-container">
+            <label class="checkbox-input">
+              <span></span>
+              <input type="checkbox"/>
+              <span class="checkbox-text" ng-bind="list"></span>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-8 ">
+          <h4 class="section-title font-bold flex items-center w-auto">
+              Select which type of account to edit:
+          </h4>
+
+          <div class="select-deselect-div">
+            <div>Select All</div>
+            <div>Deselect All</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-6">
+
+          <div ng-repeat="list in details" class="custom-checkbox-container">
+            <label class="checkbox-input">
+              <span></span>
+              <input type="checkbox"/>
+              <span class="checkbox-text" ng-bind="list"></span>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-container text-right">
+      <button class="btn-submit" ng-click="nextBtn()">Next</button>
+    </div>
+  </div>
+</div>
+
+
+<style scoped>
+  @import url('../assets/hr-dashboard/templates/bulkUpdateMemberDetails/updateOptions/style.css');
+</style>

@@ -1,0 +1,253 @@
+.company-overview-wrapper {
+  color: #2E4057;
+  font-size: 14px;
+}
+.company-overview-wrapper .company-title {
+  margin: 0 0 20px;
+}
+.company-overview-wrapper h4 {
+  text-align: center;
+}
+
+.business-card {
+  background-color: #fff;
+  padding: 20px;
+  border: 2px solid #E0E0E0;
+  border-radius: 4px;
+  position: relative;
+}
+
+.business-card button {
+  display: flex;
+  align-items: center;
+  border: 1px solid #037CB0;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #037CB0;
+  margin: 0 0 0 auto;
+  padding: 0 10px;
+}
+
+.business-card button img {
+  width: 14px;
+  margin: 0 5px 0 0;
+}
+
+.business-bold-text {
+  font-family: 'Helvetica Medium';
+}
+
+.business-info-row {
+  margin: 0 0 10px;
+}
+
+.business-info-row >div:first-child {
+  width: 35%;
+}
+.primary-admin-header {
+  margin: 0 0 10px;
+  padding: 0 20px;
+}
+.primary-admin-header >div {
+  color: #40A5A3;
+  font-family: 'Helvetica Medium';
+}
+.business-contact-container .add-contact-btn {
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  margin: 0;
+  padding: 2px 25px;
+}
+.business-contact-container .footer-btn {
+  /* margin: 20px 0 0; */
+  padding: 0 20px;
+}
+.business-information-container, 
+.business-contact-container {
+  margin: 0 0 30px;
+}
+.business-modal-container .modal-dialog {
+  /* margin: 200px auto 0; */
+  width: 500px;
+  color: #000000;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  background: transparent;
+  box-shadow: none;
+  max-height: initial;
+  overflow: initial;
+}
+.business-modal-container .modal-header {
+  border-bottom: 0;
+}
+.business-modal-container .modal-body {
+  padding: 0 60px;
+  position: relative;
+}
+.business-modal-container .modal-footer {
+  border-top: 0;
+  text-align: center;
+  padding: 40px 15px;
+}
+.business-modal-container h5 {
+  text-align: center;
+  font-family: 'Helvetica Medium';
+  font-size: 15px;
+}
+.business-modal-container .modal-footer button {
+  border-radius: 3px;
+  border: 1px solid #0392CF;
+  padding: 2px;
+}
+.business-modal-container .modal-footer .btn-cancel {
+  width: 100px;
+  color: #0392CF;
+  margin: 0 10px 0 0;
+}
+.business-modal-container .modal-footer .btn-update {
+  width: 200px;
+  color: #fff;
+  background-color: #0392CF;
+}
+.business-input-wrapper {
+  margin: 0 0 20px;
+}
+.business-modal-container input {
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  padding: 2px 10px;
+  width: 100%;
+  outline: none;
+}
+.business-input-wrapper .mobile-number >div:last-child,
+.business-input-wrapper .phone-number >div:last-child {
+  width: 100%;
+}
+.business-input-wrapper label {
+  display: block;
+  font-family: 'Helvetica Medium';
+  color: #000000;
+}
+.legal-add-row-1 {
+  margin: 0 0 10px;
+}
+.legal-add-row-2 input:first-child {
+  width: 40%;
+  margin: 0 10px 0 0;
+}
+.legal-add-row-2 input:last-child {
+  width: 60;
+}
+.country-postal-container >div:first-child {
+  width: 70%;
+  margin: 0 20px 0 0;
+}
+.country-postal-container >div:last-child {
+  width: 30%;
+}
+.business-input-wrapper .mobile-number >div:first-child,
+.business-input-wrapper .phone-number >div:first-child {
+  width: 30%;
+  margin: 0 10px 0 0;
+}
+.business-modal-container .add-contact-btn {
+  color: #0392CF;
+  background-color: #fff; 
+  border: 1px solid #0392CF;
+  border-radius: 3px;
+  padding: 2px 25px;
+  font-size: 12px;
+  margin: 10px 0 0; 
+}
+.business-input-wrapper input::placeholder {
+  font-size: 12px;
+  color: #848484;
+}
+.business-modal-container .angle-left-container,
+.business-modal-container .angle-right-container {
+  position: absolute;
+  top: 135px;
+}
+.business-modal-container .angle-left-container i,
+.business-modal-container .angle-right-container i {
+  font-size: 32px;
+  cursor: pointer;
+}
+.business-modal-container .angle-left-container {
+  left: 10px;
+}
+.business-modal-container .angle-right-container {
+  right: 10px;
+}
+#phone_number_add_contact {
+  padding-left: 0 !important;
+}
+.iti--separate-dial-code .iti__selected-flag,
+.iti--allow-dropdown .iti__flag-container:hover .iti__selected-flag {
+  background-color: #fff;
+  outline: none;
+}
+.business-contact-details-wrapper .business-contact-details-container:first-child {
+  padding: 0 20px 20px;
+  border-top: 0;
+  position: initial;
+}
+.business-contact-details-container {
+  position: relative;
+  padding: 20px;
+  border-top: 1px solid #ccc;
+} 
+.business-contact-details-wrapper >div:first-child button {
+  top: 20px;
+}
+.business-contact-details-container button {
+  position: absolute;
+  right: 20px;
+}
+.business-card.business-contact {
+  padding: 20px 0;
+}
+.business-modal-container .add-contact-btn[disabled] {
+  background-color: rgba(242, 242, 242, 0.5);
+  border: 1px solid #BFBFBF;
+  color: #BFBFBF;
+}
+.country-postal-container .business-input-wrapper .iti {
+  width: 100%;
+}
+.country-postal-container .business-input-wrapper .iti__arrow {
+  display: none;
+}
+.country-postal-container >div:first-child input {
+  padding-left: 40px;
+}
+#business-information-modal .btn-update.disabled,
+#business-contact-modal .btn-update.disabled {
+  background-color: #D9D9D9;
+  border: 1px solid #D9D9D9;
+  pointer-events: none;
+}
+
+#business-information-modal .btn-update.active,
+#business-contact-modal .btn-update.active {
+  pointer-events: initial;
+  background-color: #0392CF;
+  border: 1px solid #0392CF;
+}
+.business-contact-container .add-contact-btn[disabled] {
+  background-color: rgba(242, 242, 242, 0.5);
+  border: 1px solid #BFBFBF;
+  color: #BFBFBF;
+}
+#business-contact-modal .primary-admin-text {
+  position: absolute;
+  top: 22px;
+  right: 30px;
+  color: #40A5A3;
+  font-family: 'Helvetica Medium';
+  font-size: 12px;
+}
+#business-contact-modal .modal-header {
+  position: relative;
+}

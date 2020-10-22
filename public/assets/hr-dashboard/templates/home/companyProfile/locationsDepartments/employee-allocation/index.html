@@ -1,0 +1,99 @@
+<div>
+    <button
+        type="button"
+        ng-click="$ctrl.open()"
+        class="ui-btn ui-btn-link text-blue-500 hover:bg-blue-100 w-full h-10">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+            </path>
+        </svg>
+        Allocate Employees
+    </button>
+    <div class="modal fade px-32" id="{{ $ctrl.modal.id }}" tabindex="-1" role="dialog"
+        aria-labelledby="{{ $ctrl.modal.id }}" aria-hidden="true">
+        <div class="modal-dialog w-full bg-transparent mt-32" rolPe="document">
+            <div class="modal-content">
+                <div class="modal-body py-0">
+                    <div class="py-4 px-10">
+                        <form name="{{ $ctrl.modal.form }}"
+                            class="flex flex-col items-center justify-between space-y-8">
+                            <h4 class="section-title font-bold">
+                                Allocate Employees
+                            </h4>
+                            <div class="flex items-start justify-center space-x-12 w-full">
+                                <div class="grid grid-cols-1 gap-4 w-1/2">
+                                    <div class="relative w-full form-input-group">
+                                        <svg viewBox="0 0 20 20" fill="currentColor"
+                                            class="absolute text-gray-600 w-5 h-5 ml-2 left-0">
+                                            <path fill-rule="evenodd"
+                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        <input
+                                            class="form-input pl-5 text-gray-600" type="text"
+                                            placeholder="Search by name" ng-model="filters.search">
+                                    </div>
+                                    <div>
+                                        <label class="section-title text-sm mb-1">
+                                            Enrolled Employee Names
+                                        </label>
+                                        <div class="flex flex-col h-56 overflow-y-scroll">
+                                            <label ng-repeat="employee in $ctrl.employees">
+                                                <input class="mr-2 leading-tight ui-checkbox" type="checkbox"
+                                                    ng-checked="employeeChecked(employee)" ng-click="onCheck(employee)">
+                                                <span class="pl-2 text-sm text-gray-900">
+                                                    {{ employee.name }}
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-end space-x-4 w-full py-6">
+                                        <button
+                                            ng-click="$ctrl.dismiss()" type="button"
+                                            class="ui-btn ui-btn-primary-outline">
+                                            Cancel
+                                        </button>
+                                        <button type="button" ng-disabled="selectedEmployees.length <= 0"
+                                            class="ui-btn {{ selectedEmployees.length > 0 ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-48"
+                                            ng-click="saveAllocation()">
+                                            Allocate Employees
+                                        </button>
+                                    </div>
+                                </div>
+                                <div
+                                    class="h-84 w-1 border-l border-r-0 border-t-0 border-b-0 border-solid border-color">
+                                </div>
+                                <div class="w-1/2">
+                                    <label class="section-title text-sm mb-1">
+                                        Selected Employees ({{ selectedEmployees.length }})
+                                    </label>
+                                    <div class="flex flex-col h-64 pr-4 overflow-y-scroll"
+                                        ng-if="selectedEmployees.length > 0">
+                                        <div ng-repeat="selectedEmployee in selectedEmployees"
+                                            class="flex items-center justify-between w-full border border-solid border-color-1 bg-gray-contrast text-sm rounded text-gray-900 py-1 px-3 w-full mb-2">
+                                            {{ selectedEmployee.name }}
+                                            <a class="ui-btn ui-btn-link-dark px-0"
+                                                ng-click="removeSelectedEmployee(selectedEmployee)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    class="w-4 h-4" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-2" ng-if="selectedEmployees.length <= 0">
+                                        <p class="text-gray-500 text-sm">
+                                            No selected employees yet
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

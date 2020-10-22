@@ -1,0 +1,918 @@
+<div class="account-settings-container" account-settings-directive>
+  <p class="page-title">Account Settings</p>
+  <div class="new-account-payment-wrapper">
+    <div class="hr-admin-container">
+      <h4>HR Adminstrator Contact (Primary Admin)</h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="ui-card border-solid border-2">
+          <div class="ui-card-inner">
+            <div class="account-card-row-info">
+              <div class="ui-label">Full name: </div>
+              <span ng-bind="global_hrData.full_name"> Filbert Tan</span>
+            </div>
+            <div class="account-card-row-info">
+              <div>Email address: </div>
+              <span ng-bind="global_hrData.email"> filbert@mednefits.com</span>
+            </div>
+            <div class="account-card-row-info">
+              <div>Mobile number: </div>
+              <span>+<span ng-bind="global_hrData.phone">6587671541</span></span>
+            </div>
+            <div class="btn-edit-container">
+              <button ng-click="_editDetailsBtn_( global_hrData )" data-toggle="modal" data-target="#edit_details"
+                class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+            </div>
+          </div>
+        </div>
+        <div class="centered">
+          <div class="grid grid-cols-1 gap-4">
+            <button ng-click="_updatePasswordBtn_()" data-toggle="modal" data-target="#update_password"
+              class="ui-btn ui-btn-primary w-64">
+              Update Password
+            </button>
+            <button ng-click="presentModal('change-primary-admin-warn-modal', true)" class="ui-btn ui-btn-primary w-64">
+              Change Primary Admin
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Linked Accounts -->
+    <div class="mt-6">
+      <h4>Linked Account</h4>
+      <table class="table-auto w-full">
+        <thead class="border-0">
+          <th class="font-semibold text-gray-900 px-4" ng-repeat="(index, value) in linkedAccountHeaders">
+            {{ value }}
+          </th>
+        </thead>
+        <tbody ng-repeat="list in link_account_data.data">
+          <!-- Replace with real values -->
+          <tr class="">
+            <td ng-bind="list.account_name" class="bg-white px-4 rounded-l-lg text-gray-900"> Medicloud </td>
+            <td ng-bind="list.company_id" class="bg-white px-4 text-gray-900"> 141 </td>
+            <td ng-bind="list.link_date" class="bg-white px-4 text-gray-900"> 28/02/2020 </td>
+            <td ng-bind="list.plan_type" class="bg-white px-4 text-gray-900"> Basic Plan (Post-paid) </td>
+            <td ng-bind="list.email" class="bg-white px-4 text-gray-900"> chris.teo@mednefits.com </td>
+            <td class="bg-white px-4 rounded-r-lg text-gray-900">
+              <div class="relative inline-block text-left unlink-action" x-data="{ open: false }">
+                <button class="ui-btn ui-btn-link-dark" ng-click="linkAction(list,$index)">
+                  <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
+                    <path fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+                <div ng-if="list.isUnlinkShow" class="unlink-dp-wrapper">
+                  <div ng-click="unlinkAccount( list )" data-toggle="modal" data-target="#unlink_account">Unlink Account</div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="plan-details-container">
+      <div class="plan-details-header">
+        <div>
+          <h4>Plan Details</h4>
+          <span ng-if="activePlanDetails_pagination.paginate == true" class="seperator"></span>
+          <div ng-if="activePlanDetails_pagination.paginate == true" class="plan-details-pagination-container">
+            <span class="current-active-plans-text">Current Active Plans:</span>
+            <div class="current-active-plans-pagination">
+              <div ng-if="$index + 1 < 5" ng-repeat="list in range(activePlanDetails_pagination.total_data)"
+                ng-click="selectActivePlanPage($index + 1)"
+                ng-class="{'active' : activePlan_active_page == $index + 1}">{{$index + 1}}</div>
+
+              <div ng-if="activePlanDetails_pagination.total_data > 4" class="active-plan-dot">
+                <span ng-click="_toggleActivePlanDrop_()" class="dot-click">...</span>
+                <span ng-if="isActivePlanDropShow" class="active-plan-dp-wrapper">
+                  <div ng-if="(list + 1) > 4 && (list + 1) < activePlanDetails_pagination.total_data"
+                    ng-repeat="list in range(activePlanDetails_pagination.total_data)"
+                    ng-click="selectActivePlanPage(list + 1)"
+                    ng-class="{'active' : activePlan_active_page == list + 1}">
+                    <span>Active Plan {{list + 1}}</span>
+                  </div>
+                </span>
+              </div>
+
+              <div ng-if="activePlanDetails_pagination.total_data > 4"
+                ng-click="selectActivePlanPage(activePlanDetails_pagination.total_data)"
+                ng-bind="activePlanDetails_pagination.total_data"></div>
+            </div>
+          </div>
+        </div>
+        <div ng-if="activePlanDetails_pagination.paginate == true && oldPlan_list.length > 0"
+          class="old-active-plans-wrapper">
+          <span class="old-active-plans-text" ng-if="oldPlan_active_page != null"
+            ng-click="_selectCurrentPlan_()">Select Current Plan</span>
+          <span class="old-active-plans-text" ng-click="_toggleOldActivePlanDrop_()">See Old Active Plans</span>
+          <div ng-if="isOldPlanListDropShow" class="old-active-plans-dp-container">
+            <div ng-repeat="list in oldPlan_list" ng-click="selectOldPlanPage($index + 1, list)" class="old-plan"
+              ng-class="{'active' : oldPlan_active_page == $index + 1}">
+              <span>Plan Start Date: <span ng-bind="customFormatDate(list.plan_start, 'YYYY-MM-DD', 'D MMM YYYY')">1 Jan
+                  2019</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="account-card-container">
+          <div class="plan-account-sub-title">
+            <div>Employee Account</div>
+            <span>{{employee_acount_details.duration}} account subscription term</span>
+          </div>
+          <div class="account-card-row-info">
+            <div>Plan Type: </div>
+            <span ng-bind="employee_acount_details.plan_type"></span>
+          </div>
+          <div class="account-card-row-info">
+            <div ng-if="employee_acount_details.account_type != 'enterprise_plan'">Total Enrolled Employees : </div>
+            <div ng-if="employee_acount_details.account_type == 'enterprise_plan'">Total Employee Accounts : </div>
+            <span ng-bind="employee_acount_details.total_enrolled_employees"></span>
+          </div>
+          <div class="btn-edit-container">
+            <button ng-click="_editDetails_('employee', employee_acount_details)" data-toggle="modal"
+              data-target="#edit_employee_plan" class="btn-edit-details"><img
+                src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+          </div>
+        </div>
+        <div class="account-card-container">
+          <div class="plan-account-sub-title">
+            <div>Dependent Account</div>
+            <span>{{dependent_acount_details.duration}} account subscription term</span>
+          </div>
+          <div class="account-card-row-info">
+            <div>Plan Type: </div>
+            <span ng-bind="dependent_acount_details.plan_type"></span>
+          </div>
+          <div class="account-card-row-info">
+            <div ng-if="employee_acount_details.account_type != 'enterprise_plan'">Total Enrolled Dependents : </div>
+            <div ng-if="employee_acount_details.account_type == 'enterprise_plan'">Total Dependent Accounts : </div>
+            <span ng-bind="dependent_acount_details.total_enrolled_employees">0</span>
+          </div>
+          <div class="btn-edit-container">
+            <button ng-click="_editDetails_('dependent', dependent_acount_details)" data-toggle="modal"
+              data-target="#edit_employee_plan" class="btn-edit-details"><img
+                src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="enrollment-history-container">
+      <h4>Enrollment History</h4>
+      <div class="enrollment-history-tbl-wrapper">
+        <div class="enrollment-history-tbl-container">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  Date <br><span>of enrollment</span>
+                </th>
+                <th>Plan Type</th>
+                <th>Plan Start Date</th>
+                <th>Total <br> Enrolled Employees</th>
+                <th>Total <br> Enrolled Dependents</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="list in global_enrollmentHistoryData track by $index">
+                <td ng-bind="list.date_of_edit">18 Feb 2020</td>
+                <td>
+                  <span ng-if="list.plan_type == 'Pro Plan' ">Pro Plan</span>
+                  <span ng-if="list.plan_type == 'Basic Plan' ">Basic Plan</span>
+                  <span ng-if="list.plan_type == 'Enterprise Plan' ">Enterprise Plan</span>
+                </td>
+                <td ng-bind="list.plan_start">20 Feb 2020</td>
+                <td ng-bind="list.total_enrolled_employees">03</td>
+                <td ng-bind="list.total_enrolled_dependents">0</td>
+                <td class="enrollment-actions-dp-wrapper">
+                  <span ng-click="enrollAction( list,$index )">
+                    <img src="../assets/hr-dashboard/img/down-arrow.svg">
+                    <div ng-if="list.isActionShow" class="enrollment-actions-dp-container">
+                      <div class="view-members-wrapper">
+                        <span>Members</span>
+                        <div>
+                          <button ng-click="_getEnrolledMemberList_(list)">View Members</button>
+                        </div>
+                      </div>
+                      <div class="activation-email-wrapper">
+                        <span>Activation Email</span>
+                        <div>
+                          <button data-toggle="modal" data-target="#send_immediately_modal">Send Immediately</button>
+                          <button ng-click="_editScheduleDate_(list)" data-toggle="modal"
+                            data-target="#edit_scheduled_modal">Edit Scheduled Date</button>
+                        </div>
+                      </div>
+                    </div>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="custom-pagination-container flex-1">
+        <div class="custom-pagination">
+          <div class="page-wrapper">
+            <div class="page-scroll-container">
+              <span ng-click="_prevPageList_('enrollment-history')"
+                ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">
+                <i class="fa fa-angle-left"></i>
+                <span>Prev</span>
+              </span>
+              <div class="pages-list">
+
+                <!-- <span class="page-num active">1</span>	 -->
+                <span ng-repeat="list in range( global_enrollmentHistoryPagination.last_page )" ng-bind="list + 1"
+                  class="page-num" ng-click="_selectNumList_('enrollment-history',list + 1)"
+                  ng-class="{'active' : list + 1 == enroll_page_active}">1</span>
+
+                <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+
+              </div>
+              <span ng-click="_nextPageList_('enrollment-history')" class="prev-next-container">
+                <span>Next</span>
+                <i class="fa fa-angle-right"></i>
+              </span>
+            </div>
+          </div>
+          <div ng-click="_toggleEnrollmentPerPage_()" class="custom-list-per-page">
+            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+            <span><span>10</span> per page</span>
+            <span>
+              <i class="fa fa-caret-down"></i>
+            </span>
+            <div class="opened-per-page-scroll enrollment-per-page-container">
+              <span ng-click="_setPageLimit_( 'enrollment-history',10 )">10 per page</span>
+              <span ng-click="_setPageLimit_( 'enrollment-history',25 )">20 per page</span>
+              <span ng-click="_setPageLimit_( 'enrollment-history',50 )">50 per page</span>
+              <span ng-click="_setPageLimit_( 'enrollment-history',100 )">100 per page</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-if="spending_account_status.account_type == 'enterprise_plan'" class="invoice-history-container">
+      <h4>Invoice History</h4>
+      <button ng-if="spending_account_status.account_type == 'enterprise_plan'" class="btn-download-invoice"
+        ng-click="_downloadInvoiceHistoryPDF_()">Download Invoice</button>
+      <div class="invoice-history-tbl-wrapper">
+        <div class="invoice-history-tbl-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Invoice Date</th>
+                <th>Number</th>
+                <th>Total</th>
+                <th>Amount Due</th>
+                <th>Payment Due</th>
+                <th>Payment Amount</th>
+                <th>Payment Date</th>
+                <th>Payment <br>Remarks</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="list in getPlanInvoiceData">
+                <td>
+                  <div ng-if="list.payment_status == false" class="status pending">Pending</div>
+                  <div ng-if="list.payment_status == true" class="status paid">Paid</div>
+                </td>
+                <td>
+                  <span ng-bind="list.invoice_date">18 Feb 2020</span>
+                </td>
+                <td>
+                  <span ng-bind="list.invoice_number">MC00000238283</span>
+                </td>
+                <td>
+                  <span ng-bind="list.currency_type" class="currency-type">SGD</span>
+                  <span ng-bind="list.total">300.00</span>
+                </td>
+                <td>
+                  <span ng-bind="list.currency_type" class="currency-type">SGD</span>
+                  <span ng-bind="list.amount_due">600.00</span>
+                </td>
+                <td>
+                  <span ng-bind="list.invoice_due">18 Feb 2020</span>
+                </td>
+                <td>
+                  <span ng-bind="list.currency_type" class="currency-type">SGD</span>
+                  <span ng-bind="list.payment_amount">0.00</span>
+                </td>
+                <td>
+                  <span ng-if="list.payment_status" ng-bind="list.payment_date"></span>
+                </td>
+                <td>
+                  <span ng-bind="list.payment_remarks"></span>
+                </td>
+                <td>
+                  <img src="../assets/hr-dashboard/img/down-arrow.svg">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="custom-pagination-container flex-1">
+        <div class="custom-pagination">
+          <div class="page-wrapper">
+            <div class="page-scroll-container">
+              <span ng-click="_prevPageList_('invoice-history')"
+                ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">
+                <i class="fa fa-angle-left"></i>
+                <span>Prev</span>
+              </span>
+              <div class="pages-list">
+
+                <!-- <span class="page-num active">1</span>	 -->
+                <span ng-repeat="list in range( invoicePlanPagination.last_page ) " ng-bind="list + 1" class="page-num"
+                  ng-click="_selectNumList_('invoice-history',list + 1)"
+                  ng-class="{'active' : list + 1 == page_active}">1</span>
+
+                <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+
+              </div>
+              <span ng-click="_nextPageList_('invoice-history')" class="prev-next-container">
+                <span>Next</span>
+                <i class="fa fa-angle-right"></i>
+              </span>
+            </div>
+          </div>
+          <div ng-click="_toggleInvoicePerPage_()" class="custom-list-per-page">
+            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+            <span><span>10</span> per page</span>
+            <span>
+              <i class="fa fa-caret-down"></i>
+            </span>
+            <div class="opened-per-page-scroll invoice-per-page-container">
+              <span ng-click="_setPageLimit_( 'invoice-history',10 )">10 per page</span>
+              <span ng-click="_setPageLimit_( 'invoice-history',25 )">20 per page</span>
+              <span ng-click="_setPageLimit_( 'invoice-history',50 )">50 per page</span>
+              <span ng-click="_setPageLimit_( 'invoice-history',100 )">100 per page</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal" id="edit_details" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h4>Edit HR Administrator Details</h4>
+          </div>
+          <div ng-if="!editHrSuccessfullyUpdated" class="modal-body">
+            <div class="company-account-input-wrapper">
+              <label>Full Name</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="global_hrData.full_name" type="text">
+              </div>
+            </div>
+            <div class="company-account-input-wrapper">
+              <label>Email</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="global_hrData.email" type="text">
+              </div>
+            </div>
+            <div class="company-account-input-wrapper number">
+              <label></span>Phone Number</label>
+              <div>
+                <div class="custom-input-wrapper">
+                  <input ng-model="global_hrData.phone_code" type="tel" id="phone_number">
+                  <i class="fa fa-angle-down"></i>
+                </div>
+                <div class="custom-input-wrapper">
+                  <input ng-model="global_hrData.phone" type="text">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-if="editHrSuccessfullyUpdated" class="modal-body edit-hr-success-container">
+            <div>
+              <img src="../assets/images/success-circle.png">
+            </div>
+            <span>Detail(s) has been succesfully updated.</span>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="!editHrSuccessfullyUpdated" data-dismiss="modal"
+              class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="!editHrSuccessfullyUpdated" ng-click="_updateHrDetails_( global_hrData )"
+              class="btn-update">Update</button>
+            <button ng-if="editHrSuccessfullyUpdated" data-dismiss="modal"
+              class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal" id="edit_employee_plan" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h4>Edit {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }} Plan</h4>
+          </div>
+          <div class="modal-body">
+            <div class="company-account-input-wrapper">
+              <label>Plan Type</label>
+              <div class="custom-input-wrapper disabled">
+                <!-- <input ng-model="global_planData.plan_type" type="text"> -->
+                <select ng-model="global_planData.account_type"
+                  ng-change="_planTypeChanged_(global_planData.account_type)">
+                  <option value="trial_plan">Trial Plan</option>
+                  <option value="insurance_bundle">Insurance Bundle</option>
+                  <option value="stand_alone_plan">Pro Plan</option>
+                  <option value="lite_plan">Basic Plan</option>
+                  <option value="enterprise_plan">Enterprise Plan</option>
+                </select>
+                <i class="fa fa-angle-down"></i>
+              </div>
+            </div>
+            <div class="edit-emp-row-info">
+              <div class="company-account-input-wrapper">
+                <label>Start Date</label>
+                <div class="custom-input-wrapper">
+                  <input class="datepicker" ng-model="global_planData.plan_start" type="text">
+                  <img src="../assets/images/calendar-gray.png">
+                </div>
+              </div>
+              <div class="company-account-input-wrapper">
+                <label>Plan Duration</label>
+                <div class="custom-input-wrapper">
+                  <select ng-change="_changePlanDuration_(global_planData.duration,global_planData.plan_start)"
+                    ng-model="global_planData.duration">
+                    <option value="12 months">12 months</option>
+                    <option value="11 months">11 months</option>
+                    <option value="10 months">10 months</option>
+                    <option value="9 months">9 months</option>
+                    <option value="8 months">8 months</option>
+                    <option value="7 months">7 months</option>
+                    <option value="6 months">6 months</option>
+                    <option value="5 months">5 months</option>
+                    <option value="4 months">4 months</option>
+                    <option value="3 months">3 months</option>
+                    <option value="2 months">2 months</option>
+                    <option value="1 months">1 months</option>
+                  </select>
+                  <i class="fa fa-angle-down"></i>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="company-account-input-wrapper">
+              <label>Total Enrolled Accounts</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="global_planData.dependent_account" type="text">
+              </div>
+            </div> -->
+            <div class="edit-emp-row-info">
+              <div class="company-account-input-wrapper">
+                <label ng-if="global_planData.account_type != 'enterprise_plan'">Total Enrolled
+                  {{ global_planData.type == 'employee' ? 'Employees' : 'Dependents' }}</label>
+                <label ng-if="global_planData.account_type == 'enterprise_plan'">Total
+                  {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }} Accounts</label>
+                <div class="custom-input-wrapper disabled">
+                  <input ng-model="global_planData.total_enrolled_employees" type="text" readonly>
+                </div>
+              </div>
+              <div ng-if="global_planData.account_type == 'enterprise_plan'" class="company-account-input-wrapper">
+                <label>Price Per {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }}</label>
+                <div class="custom-input-wrapper price-dependent-input-wrapper">
+                  <div>
+                    <span
+                      class="text-uppercase">{{ global_planData.currency_type ? global_planData.currency_type : 'SGD' }}</span>
+                  </div>
+                  <input ng-model="global_planData.individual_price" type="text">
+                </div>
+              </div>
+            </div>
+            <div ng-if="global_planData.account_type == 'enterprise_plan'" class="edit-emp-row-info">
+              <div class="company-account-input-wrapper">
+                <label>Invoice Start Date</label>
+                <div class="custom-input-wrapper" ng-class="{'disabled' : global_planData.type == 'dependent' }">
+                  <input class="datepicker" ng-model="global_planData.invoice_date" type="text">
+                  <img src="../assets/images/calendar-gray.png">
+                </div>
+              </div>
+              <div class="company-account-input-wrapper">
+                <label>Invoice Due Date</label>
+                <div class="custom-input-wrapper" ng-class="{'disabled' : global_planData.type == 'dependent' }">
+                  <input class="datepicker" ng-model="global_planData.invoice_due" type="text">
+                  <img src="../assets/images/calendar-gray.png">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+            <button ng-click="_updatePlanDetails_( global_planData )" class="btn-update">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal" id="update_password" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h4>Update Password</h4>
+          </div>
+          <div class="modal-body">
+            <div ng-if="!global_passwordSuccess">
+              <div class="company-account-input-wrapper">
+                <label>New Password</label>
+                <div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
+                  <input type="text" ng-model="passwordData.newPassword" placeholder="Enter new password">
+                </div>
+              </div>
+              <div class="company-account-input-wrapper">
+                <label>Confirm Password</label>
+                <div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
+                  <input type="text" ng-model="passwordData.confirmPassword" placeholder="Re-type new password">
+                </div>
+              </div>
+              <div ng-if="passwordCheck" class="password-confirmation-text">
+                <span>Your new password and confirmation password do not match.</span>
+              </div>
+            </div>
+            <div ng-if="global_passwordSuccess" class="succesfully-updated">
+              <div>
+                <img src="../assets/images/success-circle.png">
+              </div>
+              <span>Password has been succesfully updated.</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="!global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+            <button ng-click="_updatePassword_( passwordData )"
+              ng-disabled="passwordData.newPassword == '' && passwordData.confirmPassword == '' "
+              ng-if="!global_passwordSuccess" class="btn-update">Update</button>
+            <button ng-if="global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal" id="send_immediately_modal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h5>Are you sure you want to send Activation Email Immediately?</h5>
+          </div>
+          <div class="modal-body">
+            <button data-dismiss="modal" class="btn-cancel">Cancel</button>
+            <button ng-click="_confirmActivationEmail_()" class="btn-confirm">Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="viewMemberModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 700px;max-height: 100vh;">
+      <div class="modal-content">
+
+        <div class="view-member-container">
+          <div class="view-member-header">
+            <div class="enrol-member-text">Enrolled Members</div>
+            <p class="enrol-sub-text">
+              A full list of enrolled employees & dependents whose Start Date on <span
+                ng-bind="formatMomentDate(selectedEnrollHistoryList.plan_start, 'YYYY-MM-DD', 'DD/MM/YYYY')">20/02/2020</span>
+            </p>
+          </div>
+
+          <div class="div-table">
+            <div class="div-tbl-header">
+              <div class="tbl-row">
+                <div class="tbl-col">Full Name</div>
+                <div class="tbl-col tbl-search-wrapper">
+                  <div class="input-div">
+                    <div class="icon-div">
+                      <img src="../assets/hr-dashboard/img/search.png" alt="">
+                    </div>
+                    <input type="text" placeholder="Search for a member" ng-model="memberSearch"
+                      ng-model-options="{ debounce: 1000 }"
+                      ng-change="_getEnrolledMemberList_(selectedEnrollHistoryList, memberSearch)">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tbl-scroll-wrapper">
+
+              <div class="div-tbl-body">
+
+                <div ng-repeat="list in viewMemberList" class="emp-dep-row-wrapper">
+                  <div class="tbl-row tbl-employee-wrapper" ng-click="showDependentList(list)">
+                    <div class="tbl-col">
+                      <div class="icon-div">
+                        <img ng-if="list.dependents.length > 0" class="down" ng-class="{'up' : list.showDependents}"
+                          src="../assets/hr-dashboard/img/down-arrow.svg">
+                      </div>
+                      <span ng-bind="list.member.Name"></span>
+                    </div>
+                  </div>
+                  <div ng-if="list.showDependents">
+                    <div ng-repeat="dep in list.dependents" class="tbl-row tbl-dependent-wrapper">
+                      <div class="tbl-col">
+                        <span ng-bind="dep.Name"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          <div class="tbl-pagination-wrapper">
+            <div class="custom-pagination-container flex-1">
+              <div class="custom-pagination">
+                <div class="page-wrapper">
+                  <div class="page-scroll-container">
+                    <span ng-click="_viewMembersPrevPage_()" ng-disabled="mem_active_page == 1"
+                      class="prev-next-container">
+                      <i class="fa fa-angle-left"></i>
+                      <span>Prev</span>
+                    </span>
+                    <div class="pages-list">
+
+                      <!-- global_memberOpenedPagination.last_page -->
+                      <span
+                        ng-repeat="list in range( viewMemberModalPagination.last_page ) | limitTo:viewMemberModalpagesToDisplay:startViewMembersModalIndex() track by $index"
+                        ng-bind="list + 1" class="page-num" ng-click="_viewMembersSetPage_(list + 1)"
+                        ng-class="{'active' : list + 1 == mem_active_page}">1</span>
+                      <!-- global_memberOpenedPagination.last_page -->
+                      <span style="flex: initial;"
+                        ng-if="viewMemberModalPagination.last_page > 10 && mem_active_page < ( viewMemberModalPagination.last_page - 5 )"
+                        ng-click="_viewMembersSetPage_(viewMemberModalPagination.last_page)">..
+                        {{ viewMemberModalPagination.last_page }}</span>
+
+                    </div>
+                    <span ng-click="_viewMembersNextPage_()" class="prev-next-container">
+                      <span>Next</span>
+                      <i class="fa fa-angle-right"></i>
+                    </span>
+                  </div>
+                </div>
+                <div ng-click="_toggleViewMemberPopUp()" class="custom-list-per-page">
+                  <span><span ng-bind="mem_per_page">10</span> per page</span>
+                  <span>
+                    <i class="fa fa-caret-down"></i>
+                  </span>
+                  <div ng-if="isViewMemberPerPageShow" class="view-member-per-page-scroll">
+                    <span ng-click="_setViewMembersPageLimit_( 10 )">10 per page</span>
+                    <span ng-click="_setViewMembersPageLimit_( 25 )">20 per page</span>
+                    <span ng-click="_setViewMembersPageLimit_( 50 )">50 per page</span>
+                    <span ng-click="_setViewMembersPageLimit_( 100 )">100 per page</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-container">
+            <button class="close-btn" ng-click="closeViewMemberModal()">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal" id="edit_scheduled_modal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h4>Edit Schedule Date</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div ng-if="!global_passwordSuccess">
+                <div class="company-account-input-wrapper">
+                  <label>Scheduled Date</label>
+                  <div class="custom-input-wrapper disabled">
+                    <input class="schedule-date disabled" type="text" ng-model="scheduleData.schedule_date">
+                  </div>
+                </div>
+                <div class="company-account-input-wrapper">
+                  <label>New Scheduled Date</label>
+                  <div class="custom-input-wrapper">
+                    <input id="new-scheduled-date" class="datepicker" type="text" ng-model="newScheduleDate"
+                      ng-change="_changeDate_( newScheduleDate )" placeholder="DD/MM/YYYY">
+                    <img src="../assets/images/calendar-gray.png">
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
+            <button ng-click="setScheduleDate(  )" class="btn-update">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="{{ changePrimaryAdminModals.warn }}" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog max-w-xl bg-transparent mt-48 sm:mt-56 xl:mt-64" role="document">
+      <div class="modal-content">
+        <div class="modal-body py-0">
+          <div class="py-1 px-12">
+            <div class="flex flex-col items-center justify-between space-y-8 pt-6">
+              <h4 class="section-title font-bold">
+                Change HR Administrator (Primary Admin)
+              </h4>
+              <p class="helvetica-medium text-sm text-center font-medium text-gray-900 font-semibold">
+                Please note that the change of HR Administrator will make this account unlinked.
+              </p>
+              <div class="flex items-center justify-center space-x-4">
+                <button
+                  ng-click="presentModal(changePrimaryAdminModals.warn, false)" type="button"
+                  class="ui-btn ui-btn-primary-outline w-32">
+                  Cancel
+                </button>
+                <button type="button" class="ui-btn ui-btn-primary w-64" ng-click="
+                    presentModal(changePrimaryAdminModals.warn, false);
+                    presentModal(changePrimaryAdminModals.form, true)
+                  ">
+                  Continue
+                </button>
+              </div>
+              <div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="{{ changePrimaryAdminModals.form }}" tabindex="-1" role="dialog"
+    aria-labelledby="change-primary-admin-form-modal" aria-hidden="true">
+    <div class="modal-dialog max-w-xl bg-transparent mt-32" role="document">
+      <div class="modal-content">
+        <div class="modal-body py-0">
+          <div class="py-1 px-16">
+            <div class="flex flex-col items-center justify-between space-y-8 pt-6">
+              <h4 class="section-title font-bold">
+                Change HR Administrator (Primary Admin)
+              </h4>
+              <div class="new-account-modal w-full">
+                <div class="company-account-input-wrapper">
+                  <label>Full Name</label>
+                  <div class="custom-input-wrapper">
+                    <input type="text" placeholder="Enter new Primary Admin's full name" ng-model="changePrimaryData.fullname">
+                  </div>
+                </div>
+                <div class="company-account-input-wrapper">
+                  <label>Email</label>
+                  <div class="custom-input-wrapper">
+                    <input type="text" placeholder="Enter new Primary Admin's work email address" ng-model="changePrimaryData.email">
+                  </div>
+                </div>
+                <div class="company-account-input-wrapper number">
+                  <label></span>Phone Number</label>
+                  <div>
+                    <div class="custom-input-wrapper">
+                      <input ng-model="changePrimaryData.phone_code" type="tel" id="phone_number_primary_admin">
+                      <i class="fa fa-angle-down"></i>
+                    </div>
+                    <div class="custom-input-wrapper">
+                      <input ng-model="changePrimaryData.phone_no" type="text" placeholder="Enter new Primary Admin’s mobile number">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-center space-x-4">
+                <button
+                  ng-click="presentModal(changePrimaryAdminModals.form, false)" type="button"
+                  class="ui-btn ui-btn-primary-outline w-32">
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="ui-btn ui-btn-primary w-64"
+                  ng-click="submitChangePrimaryAdmin()"
+                  ng-disabled="!changePrimaryData.fullname || !changePrimaryData.email || !changePrimaryData.phone_code || !changePrimaryData.phone_no"
+                  >
+                  Continue
+                </button>
+              </div>
+              <div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="{{ changePrimaryAdminModals.success }}" tabindex="-1" role="dialog"
+    aria-labelledby="change-primary-admin-form-modal" aria-hidden="true">
+    <div class="modal-dialog max-w-xl bg-transparent mt-56" role="document">
+      <div class="modal-content">
+        <div class="modal-body py-0">
+          <div class="py-1 px-16">
+            <div class="flex flex-col items-center justify-between space-y-8 pt-6">
+              <h4 class="section-title font-bold">
+                Change HR Administrator (Primary Admin)
+              </h4>
+              <div class="flex flex-col justify-center items-center">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="text-green-500 w-12 h-12 mb-1">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="helvetica-medium text-sm text-center font-medium text-gray-900 font-semibold">
+                  HR Administrator has successfully been changed.<br>
+                  Mednefits is unlinked from Linked Accounts under <span ng-bind="global_hrData.full_name"></span>.
+                </p>
+              </div>
+              <div class="flex items-center justify-center">
+                <button type="button" class="ui-btn ui-btn-primary w-64" ng-click="presentModal(changePrimaryAdminModals.success, false)">
+                  Close
+                </button>
+              </div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade new-account-modal unlink-account" id="unlink_account" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 580px;margin-top: 200px;">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header">
+            <h4>Unlink Account</h4>
+            <p ng-if="!unlinkSuccessfullyUpdated" class="unlink-subtext">Please key in new HR Administrator (Primary Admin) details to unlink this account.</p>
+          </div>
+          <div ng-if="!unlinkSuccessfullyUpdated" class="modal-body">
+            <div class="company-account-input-wrapper">
+              <label>Full Name</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="unlinkData.full_name" type="text" placeholder="Enter new Primary Admin’s full name">
+              </div>
+            </div>
+            <div class="company-account-input-wrapper">
+              <label>Email</label>
+              <div class="custom-input-wrapper">
+                <input ng-model="unlinkData.email" type="text" placeholder="Enter new Primary Admin’s work email address">
+              </div>
+            </div>
+            <div class="company-account-input-wrapper number">
+              <label></span>Mobile Number</label>
+              <div>
+                <div class="custom-input-wrapper">
+                  <input ng-model="unlinkData.phone_code" type="tel" id="unlink_mobile_number">
+                  <i class="fa fa-angle-down"></i>
+                </div>
+                <div class="custom-input-wrapper">
+                  <input ng-model="unlinkData.mobile_number" type="number" placeholder="Enter new Primary Admin’s mobile number">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-if="unlinkSuccessfullyUpdated" class="modal-body edit-hr-success-container">
+            <div>
+              <img src="../assets/images/success-circle.png">
+            </div>
+            <span ng-bind="updatedLinkData.message">The Med has been successfully unlinked from Linked Accounts under Chris Teo.</span>
+          </div>
+          <div class="modal-footer">
+            <button ng-if="!unlinkSuccessfullyUpdated" data-dismiss="modal"
+              class="btn-edit-cancel btn-close">Cancel</button>
+            <button ng-if="!unlinkSuccessfullyUpdated" ng-click="_updateLink_( unlinkData )"
+              class="btn-update" ng-disabled="unlinkData.full_name == null || unlinkData.email == null || unlinkData.mobile_number == null">Confirm Unlink</button>
+            <button ng-if="unlinkSuccessfullyUpdated" data-dismiss="modal"
+              class="btn-edit-cancel btn-close">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
