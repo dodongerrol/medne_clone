@@ -590,10 +590,13 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// login company link account
 	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
 	// get refund invoice
-  Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
-  //empployee list for update administrator HR
-  Route::get('hr/get_employee_list', 'BenefitsDashboardController@getEmployeeCorporate');
-  Route::get('hr/validate_employee_name', 'BenefitsDashboardController@validateEmployeeName');
+	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
+	//empployee list for update administrator HR
+	Route::get('hr/get_employee_list', 'BenefitsDashboardController@getEmployeeCorporate');
+	Route::get('hr/validate_employee_name', 'BenefitsDashboardController@validateEmployeeName');
+
+	// get account permission lists
+	Route::get('hr/get_account_permissions', 'HrController@getAccountPermissions');
 });
 	
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');

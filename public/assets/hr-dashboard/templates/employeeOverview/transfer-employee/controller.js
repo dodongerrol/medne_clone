@@ -28,6 +28,10 @@
         open() {
             presentModal('transfer-employee-modal');
             console.log(this.employee);
+            
+            this.states.form = {
+                
+            };
         }
         dismiss() {
             presentModal('transfer-employee-modal', 'hide')
