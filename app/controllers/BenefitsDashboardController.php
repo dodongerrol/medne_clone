@@ -18305,17 +18305,37 @@ public function createHrLocation ()
 			}
 
 			// get location permission
-			$locationPermission = DB::table('location_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id')->first();
-			$departmentPermission = DB::table('department_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id')->first();
+			$locationPermissions = DB::table('location_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id', 'location_id')->get();
+			$departmentPermissions = DB::table('department_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id', 'department_id')->get();
 
 			$permissions_applied = ['All Employees & Dependents'];
-
-			if($locationPermission) {
+			if(sizeOf($locationPermissions) > 0) {
 				$permissions_applied[] = 'Locations';
 			}
 
-			if($departmentPermission) {
+			if(sizeOf($departmentPermissions) > 0) {
 				$permissions_applied[] = 'Department';
+			}
+
+			$locations = array();
+			$departments = array();
+
+			// get locations
+			foreach($locationPermissions as $location) {
+				$locationData = DB::table('company_locations')->where('LocationID', $location->location_id)->select('customer_id', 'location', 'LocationID')->first();
+
+				if($locationData) {
+					$locations[] = $locationData;
+				}
+			}
+
+			// get locations
+			foreach($departmentPermissions as $department) {
+				$departmentData = DB::table('company_locations')->where('LocationID', $department->department_id)->select('customer_id', 'location', 'LocationID')->first();
+
+				if($departmentData) {
+					$departments[] = $departmentData;
+				}
 			}
 			
 			$container [] = array(
@@ -18328,6 +18348,8 @@ public function createHrLocation ()
 				'create_remove_edit_admin_unlink_account'		=> $permissions->create_remove_edit_admin_unlink_account,
 				'manage_billing_and_payments'					=> $permissions->manage_billing_and_payments,
 				'add_location_departments'						=> $permissions->add_location_departments,
+				'locations'										=> $locations,
+				'departments'									=> $departments,
 				'permissions_applied'							=> $permissions_applied
 			);
 			
