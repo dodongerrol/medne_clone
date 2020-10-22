@@ -10,7 +10,7 @@
   margin-left: 50px;
 }
 .tbl-wrapper{
-  position: relative;
+  /* position: relative; */
 }
 .tbl-scroll-container{
   overflow-y: auto;
@@ -80,45 +80,12 @@
 }
 
 .td-drop{
-  position: absolute;
+  position: fixed;
   top: 0;
+  left: 0;
   background-color: #aaa;
   width: 200px;
   height: 200px;
   display: block;
 }
 
-
-
-
-
-.tbl-div{
-  min-width: 1500px;
-}
-
-.tbl-div .tbl-head-row{
-  display: flex;
-}
-.tbl-div .tbl-head-row .tbl-col{
-  flex: auto;
-}
-.tbl-div .tbl-body{
-  position: relative;
-  overflow-y: auto;
-}
-.tbl-div .tbl-row{
-  display: flex;
-}
-.tbl-div .tbl-row .tbl-col{
-  flex: 1;
-}
-.tbl-col.flex-2{
-  flex: 2;
-}
-.tbl-col.flex-3{
-  flex: 2;
-}
-
-.tbl-col .td-drop{
-  position: static;
-}

@@ -12,6 +12,9 @@ app.directive("updateExcelImportDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("updateExcelImportDirective Runnning !");
 
+        scope.backBtn = function(){
+          $state.go('bulk-update-member-details.update-options');
+        }
         scope.nextBtn = function(){
           $state.go('bulk-update-member-details.summary-preview');
         }

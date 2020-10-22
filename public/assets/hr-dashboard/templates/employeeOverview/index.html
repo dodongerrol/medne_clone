@@ -1,7 +1,5 @@
 <div employee-overview-directive class="employee-overview-container">
-  <transferemployee employee="{
-    employee: selected_employee
-  }"></transferemployee>
+  <transferemployee employee="selected_employee"></transferemployee>
   <div class="employee-overview-header emp-overview-new-header">
     <div class="overview-title">
       <h1>Employee Overview</h1>
@@ -197,36 +195,6 @@
                   <span><span>{{ isSelectOverallEmployees ? employees.total_data : selectedEmpArr.length }}</span> selected.</span>
                 </th>
                 <th colspan="10">
-<<<<<<< HEAD
-                  <span>
-                    <img src="../assets/hr-dashboard/img/new-download-icon.png">
-                    <span>Export Selected Member Details</span>
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="select-all-wrapper">
-                <td colspan="12">
-                  <span>All <span>20 </span> employees on this page are selected. <span class="select-all-container">Select all <span>70 </span> employees.</span> </span>
-                </td>
-              </tr>
-              <tr ng-repeat="emp in employees.data" ng-click="goToMemberInfo(emp, $index)">
-                <td>
-                  <div class="custom-checkbox-container">
-                    <label class="checkbox-input">
-                      <span></span>
-                      <input ng-click="_selectMemberList_(list, $index, 'select-member-block')" ng-model="list.selected" type="checkbox"/>
-                      <span class="checkbox-mark"></span>
-                    </label>
-                  </div>
-                </th>
-                <th>
-                  <span><span>20 </span> selected.</span>
-                </th>
-                <th colspan="11">
-=======
->>>>>>> 379a769ff28f91b36b53a634f2b256e3c7b9d7a9
                   <span>
                     <img src="../assets/hr-dashboard/img/new-download-icon.png">
                     <span>Export Selected Member Details</span>
@@ -330,10 +298,10 @@
                   </div>
                 </td>
                 <td ng-click="goToMemberInfo(list, $index)">
-                  <!-- <span ng-bind="list.location">Location 1</span> -->
+                  <span ng-bind="list.location">Location 1</span>
                 </td>
                 <td ng-click="goToMemberInfo(list, $index)">
-                  <!-- <span ng-bind="list.department">Department 1</span> -->
+                  <span ng-bind="list.department">Department 1</span>
                 </td>
               </tr>
             </tbody>
