@@ -3812,12 +3812,14 @@ class PlanHelper
 		foreach ($customer_active_plans as $key => $customer_active_plan) {
 			$active_plan_ids[] = $customer_active_plan;
 		}
-
+		
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
 			->whereIn('customer_active_plan_id', $active_plan_ids)
 			->where('type', 'started')
+			->groupBy('user_id')
 			->get();
+		
 		$user_ids = [];
 		foreach ($ids as $key => $id) {
 			$user_ids[] = $id->user_id;

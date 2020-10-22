@@ -137,7 +137,8 @@ class BenefitsDashboardController extends \BaseController {
 			'accessibility'					=> $accessibility,
 			'expire_in'						=> $hr->expire_in,
 			'signed_in'						=> $hr->signed_in,
-			'account_type'					=> $plan->account_type
+			'account_type'					=> $plan->account_type,
+			'currency_type'					=> strtoupper($settings->currency_type)
 		);
 		return $session;
 	}
