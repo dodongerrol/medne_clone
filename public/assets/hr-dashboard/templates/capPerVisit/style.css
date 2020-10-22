@@ -20,7 +20,7 @@
   justify-content: flex-end;
   text-align: right;
 }
-.health-pagination{
+.gp-cap-table-wrapper .health-pagination{
   text-align: center;
   justify-content: center;
 }
@@ -117,9 +117,10 @@ p.file-name{
   color: #0392CF;
   text-align: center;
   padding: 0;
+  margin: 0;
 }
 .btn-submit{
-  width: 120px;
+  width: 160px;
   height: 38px;
   text-align: center;
   border: 1px solid #0392CF;
@@ -134,4 +135,17 @@ button:disabled,
 button.disabled{
   opacity: .4;
   background-color: #eee;
+}
+
+.btn-export-member{
+  border-color: #0392CF;
+  color: #0392CF;
+  font-size: 14px;
+}
+.btn-export-member img{
+  width: 14px;
+  height: auto;
+}
+.gp-cap-table-info-container tr th{
+  background-color: #FFF;
 }
