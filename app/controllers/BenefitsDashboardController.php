@@ -18258,17 +18258,6 @@ public function createHrLocation ()
 
 		$check = DB::table('customer_admin_roles')->where('id', $id)->first();
 
-		$admin = new CustomerAdminRole;
-
-		$data = array(
-			'fullname'							=> $input['fullname'],
-			'email'								=> !empty($input['email']) ? $input['email'] : $check->email,
-			'is_mednefits_employee'				=> !empty($input['is_mednefits_employee']) ? $input['is_mednefits_employee'] : $check->is_mednefits_employee
-		);
-
-		$result = $admin
-		->updateAdminRoles($input['id'], $data);
-
 		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
 
 		$perm = array(
