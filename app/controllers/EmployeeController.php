@@ -2329,9 +2329,10 @@ class EmployeeController extends \BaseController {
               if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {  
                 if((float)$input['new_allocation_credits'] > $medical_credit_data['allocation']) {
                   // check medical balance
-                  if($new_allocation > $customer_credits->balance) {
-                    return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                  }
+                  // @TODO uncomment in the future I guess
+                  // if($new_allocation > $customer_credits->balance) {
+                  //   return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                  // }
                 }
               } else {
                 // if($new_allocation > $customer_credits->medical_supp_credits) {
@@ -2348,9 +2349,10 @@ class EmployeeController extends \BaseController {
               if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
                 if((float)$input['new_allocation_credits'] > $wellness_credit_data['allocation']) {
                   // check medical balance
-                  if($new_allocation > $customer_credits->wellness_credits) {
-                    return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                  }
+                  // @TODO uncomment in the future I guess
+                  // if($new_allocation > $customer_credits->wellness_credits) {
+                  //   return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                  // }
                 }
               } else {
                 // if($new_allocation > $customer_credits->wellness_supp_credits) {
@@ -2381,9 +2383,10 @@ class EmployeeController extends \BaseController {
                 if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
                   if((float)$input['new_allocation_credits'] > $credits) {
                     // check medical balance
-                    if($new_allocation > $customer_credits->balance) {
-                      return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                    }
+                    // @TODO uncomment in the future I guess
+                    // if($new_allocation > $customer_credits->balance) {
+                    //   return ['status' => FALSE, 'message' => 'Company Medical Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                    // }
                   }
                 } else {
                   // if($new_allocation > $customer_credits->medical_supp_credits) {
@@ -2416,9 +2419,10 @@ class EmployeeController extends \BaseController {
                 if($spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
                   if((float)$input['new_allocation_credits'] > $credits) {
                     // check medical balance
-                    if($new_allocation > $customer_credits->wellness_credits) {
-                      return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
-                    }
+                    // @TODO uncomment in the future I guess
+                    // if($new_allocation > $customer_credits->wellness_credits) {
+                    //   return ['status' => FALSE, 'message' => 'Company Wellness Balance is not sufficient for this Member', 'credit_balance_exceed' => true];
+                    // }
                   }
                 } else {
                   // if($new_allocation > $customer_credits->wellness_supp_credits) {
@@ -2566,8 +2570,8 @@ class EmployeeController extends \BaseController {
         $spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
         $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
         $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
-        $medical = (int)$spending->medical_enable == 1 ? true : false;
-        $wellness = (int)$spending->wellness_enable == 1 ? true : false;
+        $medical_status = (int)$spending->medical_enable == 1 ? true : false;
+        $wellness_status = (int)$spending->wellness_enable == 1 ? true : false;
 
 
         $container = array();
@@ -2597,13 +2601,13 @@ class EmployeeController extends \BaseController {
             'Full Name' => $user->Name
           );
 
-          if($medical) {
+          if($medical_status) {
             $temp['Current Medical Allocation'] = (string)$medical['allocation'];
             $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : null;
             $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = $medical_schedule ? date('d/m/Y', strtotime($medical_schedule->effective_date)) : date('d/m/Y');
           }
 
-          if($wellness) {
+          if($wellness_status) {
             $temp['Current Wellness Allocation'] = (string)$wellness['allocation'];
             $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : null;
             $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = $wellness_schedule ? date('d/m/Y', strtotime($wellness_schedule->effective_date)) : date('d/m/Y');

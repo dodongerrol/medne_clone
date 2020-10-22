@@ -130,6 +130,10 @@ class SpendingInvoiceController extends \BaseController {
 	public function downloadSpendingInvoiceOld( )
 	{
 		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return ['status' => false, 'message' => 'token is required'];
+		}
       	$result = self::checkToken($input['token']);
 
 		if(!$result) {
@@ -155,6 +159,11 @@ class SpendingInvoiceController extends \BaseController {
 	public function downloadSpendingInvoice( )
 	{
 		$input = Input::all();
+		
+		if(empty($input['token']) || $input['token'] == null) {
+			return ['status' => false, 'message' => 'token is required'];
+		}
+
       	$result = self::checkToken($input['token']);
 
 		if(!$result) {
@@ -173,14 +182,16 @@ class SpendingInvoiceController extends \BaseController {
 			if((int)$data->lite_plan == 1) {
 				$lite_plan = true;
 			}
-
+			$billingContact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 			$total = round($results['total_post_paid_spent'], 2);
 			$amount_due = (float)$total - (float)$data->paid_amount;
 
 			$temp = array(
 				'company' => ucwords($data->statement_company_name),
 				'company_address' => ucwords($data->statement_company_address),
-				'postal'		=> $data->postal,
+				'postal'		=> $data->postal ? $data->postal : $company_details->postal_code,
+				'building_name'		=> $company_details->building_name,
+				'unit_number'		=> $company_details->unit_number,
 				'contact_email' => $data->statement_contact_email,
 				'contact_name' => ucwords($data->statement_contact_name),
 				'contact_contact_number' => $data->statement_contact_number,
@@ -218,7 +229,7 @@ class SpendingInvoiceController extends \BaseController {
 				'total_post_paid_spent'	=> number_format($results['total_post_paid_spent'], 2)
 			);
 
-    		// return View::make('pdf-download.globalTemplates.panel-invoice', $temp);
+    		return View::make('pdf-download.globalTemplates.panel-invoice', $temp);
 			$pdf = \PDF::loadView('pdf-download.globalTemplates.panel-invoice', $temp);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
@@ -264,6 +275,11 @@ class SpendingInvoiceController extends \BaseController {
 	public function downloadSpendingInNetwork( )
 	{
 		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return ['status' => false, 'message' => 'token is required'];
+		}
+
 		$result = self::checkToken($input['token']);
 	    if(!$result) {
 	    	return array('status' => FALSE, 'message' => 'Invalid Token.');

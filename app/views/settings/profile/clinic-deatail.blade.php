@@ -24,12 +24,7 @@
     <tr>
         <td><label class="profile-lbl" style="padding-top: 25px;">Logo / Photo</label></td>
         <td colspan="3">
-        	<?php if(!empty($clinicdetails['image'])){ ?>
-           		<span><img id="clinic-update-image" class="clinic-image" src="{{ $clinicdetails['image'] }}" width="100" height="100" style="cursor: pointer;"></span>
-           	<?php } else { ?>
-            	<span><img class="clinic-image" src="{{ URL::asset('assets/images/img-portfolio-place.png') }}" width="100" height="100" style="cursor: pointer;"></span>
-           	<?php } ?>
-
+        	<span><img id="clinic-update-image" class="clinic-image" src="{{ $clinicdetails['image'] }}" width="100" height="100" style="cursor: pointer;"></span>
            	<input type="file" id="clinic-profile-image-file" name="file" style="display: none">
         </td>
     </tr>

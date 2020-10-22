@@ -974,6 +974,7 @@
 					hrSettings.getSession( )
 						.then(function(response){
 							console.log(response);
+							scope.eclaimCurrencyType = response.data.currency_type;
 							scope.options = response.data;
 							console.log(scope.options);
 	        	});

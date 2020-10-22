@@ -2493,67 +2493,6 @@ class BenefitsDashboardController extends \BaseController {
 		$paginate['wellness_wallet'] = $wellness_wallet;
 		return $paginate;
   }
-  
-  public function getEmployeeCorporate()
-  {
-    $input = Input::all();
-    $result = self::checkSession();
-    $search = !empty($input['search']) ? $input['search'] : null;
-    $response = [];
-
-    if($search) {
-				$users = DB::table('user')
-				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-				->where('corporate_members.corporate_id', $result->customer_buy_start_id)
-        ->where('user.Name', 'like', '%'.$search.'%')
-        ->where('user.member_activated', 1)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
-				->get();
-			} else {
-				$users = DB::table('user')
-				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-        ->where('corporate_members.corporate_id', $result->customer_buy_start_id)
-        ->where('user.member_activated', 1)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name', 'emp_no', 'user.member_activated', 'user.Status', 'user.passport')
-				->orderBy('corporate_members.removed_status', 'asc')
-				->orderBy('user.UserID', 'asc')
-        ->get();
-      }
-
-      $response['status'] = sizeof($users) > 0 ? true : false;
-      $response['message'] = sizeof($users) > 0 ? 'ok' : 'user not found!';
-      $response['data'] = $users;
-
-      return $response;
-  }
-
-  public function validateEmployeeName() 
-  {
-    $input = Input::all();
-    $result = self::checkSession();
-
-    if(empty($input['user_id'])) {
-				return ['status' => false, 'message' => 'user id required!'];
-		}
-
-    $users = DB::table('user')
-				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-				->where('corporate_members.corporate_id', $result->customer_buy_start_id)
-        ->where('user.UserID', $input['user_id'])
-        ->where('user.member_activated', 1)
-				->select('user.UserID', 'user.Name', 'user.Email', 'user.NRIC', 'user.PhoneNo', 'user.PhoneCode', 'user.Job_Title', 'user.DOB', 'user.created_at', 'user.Zip_Code', 'user.bank_account', 'user.Active', 'user.bank_code', 'user.bank_brh', 'user.wallet', 'user.bank_name','user.emp_no', 'user.member_activated', 'user.Status', 'user.passport')
-        ->first();
-        
-    if(!$users) {
-        return array('status' => false, 'message' => 'user not found!');
-    }
-    
-    if($users->member_activated !== 1) {
-        return ['status' => false, 'message' => 'Please have this account activated before assigning Administrator.'];
-    }
-
-    return ['status' => true, 'message' => 'user are valid', 'data' => $users];
-  }
 
 	public function getCorporateUserByAllocated($corporate_id, $customer_id) 
 	{
@@ -5048,7 +4987,7 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function updateHrBusinessInformation( )
+    public function updateHrBusinessInformation( )
 	{
 		// get admin session from mednefits admin login
 		$admin_id = Session::get('admin-session-id');
@@ -5088,6 +5027,62 @@ class BenefitsDashboardController extends \BaseController {
 		->update($customer);
 
 		return array('status' => TRUE, 'message'	=> 'successfully updated business information.');
+	}
+
+	public function updateBusinessInformation( )
+	{
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_data = StringHelper::getJwtHrSession();
+		$hr_id = $hr_data->hr_dashboard_id;
+		$input = Input::all();
+
+		$check = DB::table('customer_business_information')->where('customer_business_information_id', $input['customer_business_information_id'])->count();
+
+		if($check == 0) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'No business information exist'
+			);
+		}
+
+		$business_information = new CorporateBusinessInformation();
+
+		$data = array(
+			'company_address'	=> $input['address'],
+			'postal_code'			=> $input['postal']
+		);
+
+		$result = $business_information->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
+
+		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_company_business_information',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_company_business_information',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			}
+			return array(
+				'status'	=> TRUE,
+				'message'	=> 'Success.'
+			);
+		}
+
+		return array(
+			'status'	=> FALSE,
+			'message'	=> 'Failed.'
+		);
 	}
 
 	public function updateBusinessContact( )
@@ -5151,7 +5146,57 @@ class BenefitsDashboardController extends \BaseController {
 		);
 	}
 
-	public function updateHrBillingContact( )
+	public function updateBillingContact( )
+	{
+		$input = Input::all();
+		$result = self::checkSession();
+		// get admin session from mednefits admin login
+		$admin_id = Session::get('admin-session-id');
+		$hr_id = $result->hr_dashboard_id;
+
+		// customer_billing_contact_id
+		$details = array(
+			'first_name'		=> $input['first_name'],
+			'last_name'			=> $input['last_name'],
+			'billing_email'		=> $input['work_email'],
+			'updated_at'		=> date('Y-m-d H:i:s')
+		);
+
+		$result = DB::table('customer_billing_contact')
+		->where('customer_billing_contact_id', $input['customer_billing_contact_id'])
+		->update($details);
+
+		if($result) {
+			if($admin_id) {
+				$admin_logs = array(
+					'admin_id'  => $admin_id,
+					'admin_type' => 'mednefits',
+					'type'      => 'admin_hr_updated_company_billing_contact',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			} else {
+				$admin_logs = array(
+					'admin_id'  => $hr_id,
+					'admin_type' => 'hr',
+					'type'      => 'admin_hr_updated_company_billing_contact',
+					'data'      => SystemLogLibrary::serializeData($input)
+				);
+				SystemLogLibrary::createAdminLog($admin_logs);
+			}
+			return array(
+				'status'	=> TRUE,
+				'message'	=> 'Success.'
+			);
+		}
+
+		return array(
+			'status'	=> FALSE,
+			'message'	=> 'Failed.'
+		);
+	}
+
+    public function updateHrBillingContact( )
 	{
 		$admin_id = Session::get('admin-session-id');
 		$hr_data = StringHelper::getJwtHrSession();
@@ -6164,18 +6209,10 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
 		->first();
 
-		// check if head count or not
-		// if((int)$get_active_plan->new_head_count == 0) {
-			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
-			// return $data;
-			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		// } else {
-		// 	$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-		// 	// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-		// 	$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		// }
-
+		$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
+		// return $data;
+		// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+		$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream();
@@ -6345,10 +6382,9 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
 		$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
-
+		$data['building_name'] = $business_info->building_name;
+		$data['unit_number'] = $business_info->unit_number;
 		$data['email'] = $contact->work_email;
 		$data['phone']     = $contact->phone;
 		$data['company'] = ucwords($business_info->company_name);
@@ -13562,7 +13598,6 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
-
 			if($transaction_access)	{
 				$result['spending_feature_status_type'] = false;
 			}
@@ -13595,9 +13630,10 @@ class BenefitsDashboardController extends \BaseController {
 			return array('status' => false, 'message' => 'Company has no Business Information');
 		}
 
-		$hr_id = \CustomerHelper::getHRId($customer_id);
+        $hr_id = \CustomerHelper::getHRId($customer_id);
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+
 
 		$data = [];
 		$data['company_name'] = ucwords($company->company_name);
@@ -17075,7 +17111,7 @@ class BenefitsDashboardController extends \BaseController {
 		return $response;
 	}
 
-	public function employeeByID( $id )
+    public function employeeByID( $id )
 	{
 		$input = Input::all();
 		$result = self::checkSession();
@@ -17954,7 +17990,7 @@ public function createHrLocation ()
 
 		return array('data' => $data);
 	}
-	
+
 	public function removeAllEnrolleeTemp()
 	{
 		$session = self::checkSession();
@@ -17971,7 +18007,8 @@ public function createHrLocation ()
 		);
 
 	}
-	public function getHrBillingContact()
+
+    public function getHrBillingContact()
 	{
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
@@ -18046,11 +18083,11 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
-		$id = $result->customer_buy_start_id;
+		$customer_id = $result->customer_buy_start_id;
 	
-
+		$is_mednefits_employee = $input['is_mednefits_employee'] ?? 0;
 		$search = !empty($input['search']) ? $input['search'] : null;
-		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
 		$data = [
 			'message'	=> null,
@@ -18060,48 +18097,94 @@ public function createHrLocation ()
 		$employee_id = $input['employee_id'] ?? null;
 		$location_id = $input['location_id'] ?? null;
 
-		$employee = DB::table('user')
+		if((int)$is_mednefits_employee == 1) {
+			$employee = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->where('user.UserID', $employee_id)
+				->where('user.UserID', 'user.member_activated', 'user.Active')
 				->first();
 
 		
-		if(!$employee)
-		{
-			$data['message'] = 'Member/s does not exist'; 
-			$data['status']  = false;
+			if(!$employee)
+			{
+				$data['message'] = 'Member/s does not exist'; 
+				$data['status']  = false;
 
-			return $data;
+				return $data;
+			}
+			
+			if($employee->member_activated = 0)
+			{
+				$data['message'] = 'Please have this account activated before assigning Administrator.'; 
+				$data['status']  = false;
+
+				return $data;
+			}
+
+			if($employee->Active = 0)
+			{
+				$data['message'] = 'Please go to Employee Information to register an email address for this account before assigning Secondary Admin.'; 
+				$data['status']  = false;
+			
+				return $data;
+			}
+			
+			$role = array (
+				'customer_id'						=> $customer_id,
+				'member_id'							=> $employee->UserID,
+				'fullname'							=> $input['fullname'],
+				'email'								=> $input['email'],
+				'is_mednefits_employee'				=> 1,
+				'status'							=> 1
+			);
+
+			$employee_id = $employee_id;
+		} else {
+			// require phone no and phone code
+			if(empty($input['phone_code']) || $input['phone_code'] == null) {
+				return ['status' => false, 'message' => 'phone code is required'];
+			}
+
+			if(empty($input['phone_no']) || $input['phone_no'] == null) {
+				return ['status' => false, 'message' => 'phone no is required'];
+			}
+			// check if email is already got it
+			$checkEmail =  \DB::table('user')->where('email', $input['email'])->where('Active', 1)->where('member_activated', 1)->where('UserType', 6)->first();
+
+			if($checkEmail) {
+				return ['status' => false, 'message' => 'Email Address already taken.'];
+			}
+
+			// create new member but label user type as 5 as external user
+			$externalUserId = DB::table('user')->insertGetId([
+				'Name'					=> $input['fullname'],
+				'Email'					=> $input['email'],
+				'member_activated'		=> 0,
+				'PhoneCode'				=> $input['phone_code'],
+				'PhoneNo'				=> $input['phone_no'],
+				'ActiveLink'			=> StringHelper::getEncryptValue(),
+				'UserType'				=> 6,
+				'created_at'			=> date('Y-m-d'),
+				'updated_at'			=> date('Y-m-d'),
+				'account_update_status'	=> 1,
+				'account_already_update'	=> 1,
+				'account_update_date'	=> date('Y-m-d H:i:s')
+			]);
+
+			$role = array (
+				'customer_id'						=> $customer_id,
+				'member_id'							=> $externalUserId,
+				'fullname'							=> $input['fullname'],
+				'email'								=> $input['email'],
+				'is_mednefits_employee'				=> 0,
+				'status'							=> 1
+			);
+
+			$employee_id = $externalUserId;
 		}
 		
-		if($employee->member_activated = 0)
-		{
-			$data['message'] = 'Please have this account activated before assigning Administrator.'; 
-			$data['status']  = false;
-
-			return $data;
-		}
-
-		if($employee->Active = 0)
-		{
-			$data['message'] = 'Please go to Employee Information to register an email address for this account before assigning Secondary Admin.'; 
-			$data['status']  = false;
-		
-			return $data;
-		}
-		
-		$role = array (
-			'customer_id'						=> $result->customer_buy_start_id,
-			'member_id'							=> $employee->UserID,
-			'fullname'							=> $input['fullname'],
-			'email'								=> $input['email'],
-			'is_mednefits_employee'				=> $input['is_mednefits_employee'] ,
-			'status'							=> 1
-		);
-		$admin_role = \CustomerAdminRole::create($role);		
-
-		
+		$admin_role = \CustomerAdminRole::create($role);
 		$permission = DB::table('employee_and_dependent_permissions')->insert([
 			'customer_admin_role_id'							=> $admin_role->id,
 			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ,
@@ -18145,30 +18228,29 @@ public function createHrLocation ()
 			}
 		}
 
-		// update member/employee status if already an hr administrator
-		DB::table('user')->where('UserID', $employee->UserID)->update(['is_hr_admin' => 1]);
+		if((int)$is_mednefits_employee == 1) {
+			// update member/employee status if already an hr administrator
+			DB::table('user')->where('UserID', $employee_id)->update(['is_hr_admin' => 1]);
+		}
+		
 		$message = [];
         $emailData = [];
 		
-		if(url('/') == 'https://admin.medicloud.sg') {
-            $url = 'https://medicloud.sg/company-benefits-dashboard';
-        } else if(url('/') == 'http://stage.medicloud.sg') {
-            $url = 'http://staging.medicloud.sg/company-benefits-dashboard';
-        } else {
-            $url = 'http://medicloud.local/company-benefits-dashboard';
-		}
-		
+		$employee = DB::table('user')->where('UserID', $employee_id)->select('UserID', 'Email', 'Name', 'ActiveLink')->first();
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
-		$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template';
-		$emailDdata['url'] = $url;
+
+		if((int)$is_mednefits_employee == 1) {
+			$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template';
+		} else {
+			$emailDdata['emailPage'] = 'email-templates.latest-templates.external-user-email-activation';
+		}
 		
+		$emailDdata['button'] = url('/').'/company-activation#/activation-link?activation_token='.$employee->ActiveLink.'&user_type=external_admin';
 		\EmailHelper::sendEmail($emailDdata);
-		$data['message'] = 'Successfully Add Administrator.';
 
-		return $data;
-
+		return ['status' => true, 'message' => 'Successfully Add Administrator.'];
 	}
 
 	public function getPrimaryAdminDetails()
@@ -18176,20 +18258,23 @@ public function createHrLocation ()
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
+		$hr_id = $result->hr_dashboard_id;
 
-		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $id)->first();
-		// $permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+		// get permissions;
+		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, 'hr_admin');
 		
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
 			'fullname'										=> $hr->fullname,
-			'email'											=> $hr->email
-			// 'edit_employee_dependent'						=> $permission->edit_employee_dependent,
-			// 'enroll_terminate_employee'						=> $permission->enroll_terminate_employee,
-			// 'approve_reject_edit_non_panel_claims'			=> $permission->approve_reject_edit_non_panel_claims,
-			// 'create_remove_edit_admin_unlink_account'		=> $permission->create_remove_edit_admin_unlink_account,
-			// 'manage_billing_and_payments'					=> $permission->manage_billing_and_payments,
-			// 'add_location_departments'						=> $permission->add_location_departments
+			'email'											=> $hr->email,
+			'edit_employee_dependent'						=> $permission->edit_employee_dependent,
+			'enroll_terminate_employee'						=> $permission->enroll_terminate_employee,
+			'approve_reject_edit_non_panel_claims'			=> $permission->approve_reject_edit_non_panel_claims,
+			'create_remove_edit_admin_unlink_account'		=> $permission->create_remove_edit_admin_unlink_account,
+			'manage_billing_and_payments'					=> $permission->manage_billing_and_payments,
+			'add_location_departments'						=> $permission->add_location_departments,
+			'permissions_applied'							=> \UserPermissionsHelper::getLocationAndDepartments($hr_id, 'hr_admin')
 		);
 		return array ('admin_details' => $data);
 	}
@@ -18198,19 +18283,33 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
-		$id = $result->customer_buy_start_id;
+		$customer_id = $result->customer_buy_start_id;
 
-		// $employee_id = $input['member_id'];
-
-		$details = CustomerAdminRole::where('customer_id', $id)->get();
-		// $users = DB::table('user')->where('UserID', $employee_id)->select('user.UserID', 'user.Name' ,'user.Email')->get();
+		$details = CustomerAdminRole::where('customer_id', $customer_id)->select('id', 'customer_id', 'hr_id', 'member_id', 'is_mednefits_employee', 'fullname', 'email')->get();
 		$container = array();
+
 		foreach ($details as $detail) {
-			$permissions = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+			$permissions = DB::table('employee_and_dependent_permissions')->where('customer_admin_role_id', $detail->id)->first();
+
 			if(!$permissions)
 			{
 				return array('status' => false, 'message'	=> 'Permissions doesnt exist.'); 
 			}
+
+			// get location permission
+			$locationPermission = DB::table('location_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id')->first();
+			$departmentPermission = DB::table('department_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id')->first();
+
+			$permissions_applied = ['All Employees & Dependents'];
+
+			if($locationPermission) {
+				$permissions_applied[] = 'Locations';
+			}
+
+			if($departmentPermission) {
+				$permissions_applied[] = 'Department';
+			}
+			
 			$container [] = array(
 				'id'											=> $detail->id,
 				'fullname'										=> $detail->fullname,
@@ -18220,7 +18319,8 @@ public function createHrLocation ()
 				'approve_reject_edit_non_panel_claims'			=> $permissions->approve_reject_edit_non_panel_claims,
 				'create_remove_edit_admin_unlink_account'		=> $permissions->create_remove_edit_admin_unlink_account,
 				'manage_billing_and_payments'					=> $permissions->manage_billing_and_payments,
-				'add_location_departments'						=> $permissions->add_location_departments
+				'add_location_departments'						=> $permissions->add_location_departments,
+				'permissions_applied'							=> $permissions_applied
 			);
 			
 		}
@@ -18231,14 +18331,15 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
-		$id = $result->customer_buy_start_id;
 
 		if(empty($input['admin_id']) || $input['admin_id'] == null) {
             return ['status' => false, 'message' => 'id is required'];
 		}
 
+		// update admin status to 0
 		$remove = DB::table('customer_admin_roles')
-		->where('id', $input['admin_id'])->delete();
+		->where('id', $input['admin_id'])
+		->update(['status' => 0]);
 
 		return array(
 			'status'		=> TRUE,
@@ -18250,42 +18351,63 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
-		$id = $result->customer_buy_start_id;
+		$customer_id = $result->customer_buy_start_id;
 
 		if(empty($input['id']) || $input['id'] == null) {
 			return ['status' => false, 'message' => 'id is required'];
 		}
 
-		$check = DB::table('customer_admin_roles')->where('id', $id)->first();
+		$check = DB::table('customer_admin_roles')->where('id', $input['id'])->select('id', 'is_mednefits_employee', 'email')->first();
+
+		if(!$check) {
+			return ['status' => false, 'message' => 'Admin does not exists'];
+		}
 
 		$admin = new CustomerAdminRole;
-
 		$data = array(
 			'fullname'							=> $input['fullname'],
 			'email'								=> !empty($input['email']) ? $input['email'] : $check->email,
-			'is_mednefits_employee'				=> !empty($input['is_mednefits_employee']) ? $input['is_mednefits_employee'] : $check->is_mednefits_employee
+			'is_mednefits_employee'				=> !empty($input['is_mednefits_employee']) ? $input['is_mednefits_employee'] : $check->is_mednefits_employee,
+			'updated_at'						=> date('Y-m-d H:i:s')
 		);
 
 		$result = $admin
 		->updateAdminRoles($input['id'], $data);
 
-		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
-
+		$permission = DB::table('employee_and_dependent_permissions')->where('customer_admin_role_id', $input['id'])->select('id', 'edit_employee_dependent', 'enroll_terminate_employee', 'approve_reject_edit_non_panel_claims', 'create_remove_edit_admin_unlink_account', 'manage_billing_and_payments', 'add_location_departments')->first();
+		$perm = array();
+		
 		$perm = array(
-			'customer_admin_role_id'							=> $permission->id,
-			'edit_employee_dependent'							=> !empty($input['edit_employee_dependent']) ? $input['edit_employee_dependent'] : $permission->edit_employee_dependent,
+			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ?? $permission->edit_employee_dependent,
 			'view_employee_dependent'							=> 1 ,
-			'enroll_terminate_employee'							=> !empty($input['enroll_terminate_employee']) ? $input['enroll_terminate_employee'] : $permission->enroll_terminate_employee,
-			'approve_reject_edit_non_panel_claims'				=> !empty($input['approve_reject_edit_non_panel_claims']) ? $input['approve_reject_edit_non_panel_claims'] : $permission->approve_reject_edit_non_panel_claims,
-			'create_remove_edit_admin_unlink_account'			=> !empty($input['create_remove_edit_admin_unlink_account']) ? $input['create_remove_edit_admin_unlink_account'] : $permission->create_remove_edit_admin_unlink_account,
-			'manage_billing_and_payments'						=> !empty($input['manage_billing_and_payments']) ? $input['manage_billing_and_payments'] : $permission->manage_billing_and_payments,
-			'add_location_departments'							=> !empty($input['add_location_departments']) ? $input['add_location_departments'] : $permission->add_location_departments,
+			'enroll_terminate_employee'							=> $input['enroll_terminate_employee'] ?? $permission->enroll_terminate_employee,
+			'approve_reject_edit_non_panel_claims'				=> $input['approve_reject_edit_non_panel_claims'] ?? $permission->approve_reject_edit_non_panel_claims,
+			'create_remove_edit_admin_unlink_account'			=> $input['create_remove_edit_admin_unlink_account'] ?? $permission->create_remove_edit_admin_unlink_account,
+			'manage_billing_and_payments'						=> $input['manage_billing_and_payments'] ?? $permission->manage_billing_and_payments,
+			'add_location_departments'							=> $input['add_location_departments'] ?? $permission->add_location_departments,
 			'status'											=> 1 
 		);
-
+		
 		$account = DB::table('employee_and_dependent_permissions')
-		->where('customer_admin_role_id', $id)
+		->where('customer_admin_role_id', $input['id'])
 		->update($perm);
+
+		// update location if any
+		if(!empty($input['location_ids']) && sizeof($input['location_ids']) > 0) {
+			// check loop
+			foreach($input['location_ids'] as $location) {
+				$locationPermission = DB::table('location_admin_permission')
+										->where('customer_admin_role_id', $input['id'])
+										->where('location_id', (int)$location)
+										->select('id')
+										->first();
+
+				if(!$locationPermission) {
+					// create
+					DB::table('location_admin_permission')->insert(['customer_admin_role_id' => $input['id'], 'location_id' => $location, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+				}
+			}
+		}
 
 		return array('status' => TRUE, 'message'	=> 'successfully updated admin.');
 	}

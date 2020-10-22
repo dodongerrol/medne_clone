@@ -79,6 +79,8 @@ class SpendingAccountController extends \BaseController {
 		$creditAccount = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 	
 		$utilised_credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
+		$refund_amount  = ($total_credits - $utilised_credits['credits']) - $bonus_credits;
+
 		$format = array(
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
@@ -95,7 +97,8 @@ class SpendingAccountController extends \BaseController {
 			'to_top_up_status'      => $toTopUp > 0 ? true : false,
 			'to_top_value'          => $toTopUp,
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
-			'currency_type'			    => strtoupper($customer->currency_type)
+			'currency_type'			    => strtoupper($customer->currency_type),
+			'refund_amount'					=> number_format($refund_amount, 2),
 		);
 		return ['status' => true, 'data' => $format];
 	}
@@ -183,8 +186,10 @@ class SpendingAccountController extends \BaseController {
 
 		if($input['type'] == "medical") {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'medical', true);
-			$panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_panel_previous : $spending_account_settings->medical_payment_method_panel;
-      		$non_panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_non_panel_previous : $spending_account_settings->medical_payment_method_non_panel;
+			$panel_payment_method = $this->getPanelPaymentMethod($pendingInvoice, $spending_account_settings);
+			$non_panel_payment_method = $this->getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings);
+			// $panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_panel_previous : $spending_account_settings->medical_payment_method_panel;
+      		// $non_panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_non_panel_previous : $spending_account_settings->medical_payment_method_non_panel;
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
@@ -707,43 +712,80 @@ class SpendingAccountController extends \BaseController {
 			return array('status' => false, 'message' => 'end term is required.');
 		}
 		
-		$limit = !empty($data['per_page']) ? $data['per_page'] : 5;
-		// get spending account activity
-		$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->paginate($limit);
-		
-		$pagination = [];
-		$pagination['current_page'] = $activites->getCurrentPage();
-		$pagination['last_page'] = $activites->getLastPage();
-		$pagination['total'] = $activites->getTotal();
-		$pagination['per_page'] = $activites->getPerPage();
-		$pagination['count'] = $activites->count();
+		$limit = !empty($input['per_page']) ? $input['per_page'] : 5;
+		$type = !empty($input['coverage_type']) ? $input['coverage_type'] : false;
 		$format = [];
+		$pagination = [];
 
-		foreach($activites as $key => $activity) {
-			if($activity->type == "added_purchase_credits") {
-				$activity->label = 'Purchased Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "added_bonus_credits") {
-				$activity->label = 'Bonus Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "carried_forward_renewal_credits") {
-				$activity->label = 'Carried-forward Purchased Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "carried_forward_bonus_credits") {
-				$activity->label = 'Bonus Credits';
-				$activity->type_status = "added";
-			} else if($activity->type == "deduct_panel_spending") {
-				$activity->label = 'Panel Monthly Spending';
-				$activity->type_status = "deduct";
-			} else if($activity->type == "deduct_non_panel_spending") {
-				$activity->label = 'Non-Panel Spending';
-				$activity->type_status = "deduct";
-			} else if($activity->type == "deduct_non_panel_spending") {
-				$activity->label = 'Refund';
-				$activity->type_status = "deduct";
+		if($type == "out_of_pocket") {
+			$start = $input['start'];
+			$end = \PlanHelper::endDate($input['end']);
+			// get out of pocket transaction logs
+			$members = \CustomerHelper::getAllMembers($customer_id);
+			if(sizeof($members) > 0) {
+				$activites = DB::table('transaction_history')
+								  ->whereIn('UserID', $members)
+								  ->where('credit_cost', 0)
+								  ->where('created_at', '>=', $start)
+								  ->where('created_at', '<=', $end)
+								  ->select('transaction_id', 'credit_cost', 'procedure_cost', 'currency_type', 'spending_type', 'ClinicID', 'created_at', 'updated_at', 'UserID as member_id')
+								  ->paginate($limit);
+				
+				$pagination['current_page'] = $activites->getCurrentPage();
+				$pagination['last_page'] = $activites->getLastPage();
+				$pagination['total'] = $activites->getTotal();
+				$pagination['per_page'] = $activites->getPerPage();
+				$pagination['count'] = $activites->count();
+
+				foreach($activites as $transaction) {
+				  $clinic = DB::table('clinic')
+							  ->join('clinic_types', 'clinic_types.ClinicTypeID', '=', 'clinic.Clinic_Type')
+							  ->where('clinic.ClinicID', $transaction->ClinicID)
+							  ->select('clinic.ClinicID as clinic_id', 'clinic.Name as clinic_name', 'clinic_types.Name as clinic_type_name')
+							  ->first();
+				  
+				  $transaction->type_status = "deduct";
+				  $transaction->type = "created_transaction";
+				  $transaction->label = $clinic->clinic_type_name.' Transaction';
+				  $transaction->credit = number_format($transaction->procedure_cost, 2);
+				  $format[] = $transaction;
+				}
 			}
-			$activity->credit = number_format($activity->credit, 2);
-			$format[] = $activity;
+		} else {
+			// get spending account activity
+			$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->paginate($limit);
+			$pagination['current_page'] = $activites->getCurrentPage();
+			$pagination['last_page'] = $activites->getLastPage();
+			$pagination['total'] = $activites->getTotal();
+			$pagination['per_page'] = $activites->getPerPage();
+			$pagination['count'] = $activites->count();
+
+			foreach($activites as $key => $activity) {
+				if($activity->type == "added_purchase_credits") {
+					$activity->label = 'Purchased Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "added_bonus_credits") {
+					$activity->label = 'Bonus Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "carried_forward_renewal_credits") {
+					$activity->label = 'Carried-forward Purchased Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "carried_forward_bonus_credits") {
+					$activity->label = 'Bonus Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "deduct_panel_spending") {
+					$activity->label = 'Panel Monthly Spending';
+					$activity->type_status = "deduct";
+				} else if($activity->type == "deduct_non_panel_spending") {
+					$activity->label = 'Non-Panel Spending';
+					$activity->type_status = "deduct";
+				} else if($activity->type == "deduct_non_panel_spending") {
+					$activity->label = 'Refund';
+					$activity->type_status = "deduct";
+				}
+				$activity->credit = number_format($activity->credit, 2);
+				$format[] = $activity;
+			}
 		}
 
 		$pagination['data'] = $format;
@@ -791,6 +833,9 @@ class SpendingAccountController extends \BaseController {
 			$type_status = null;
 
 			if($activity->type == "added_employee_credits") {
+				$label = "Member Enrollment";
+				$type_status = "add";
+			} if($activity->type == "new_employee_enrollment") {
 				$label = "Member Enrollment";
 				$type_status = "add";
 			} else if($activity->type == "added_employee_entitlement") {
@@ -1348,5 +1393,29 @@ class SpendingAccountController extends \BaseController {
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream($data['invoice_number'].' - '.time().'.pdf');
+	}
+
+	private function getPanelPaymentMethod($pendingInvoice, $spending_account_settings)
+	{
+		if (
+			$pendingInvoice &&
+			$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
+		) {
+			return $spending_account_settings->medical_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+		}
+
+		return $spending_account_settings->medical_payment_method_panel;
+	}
+
+	private function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings)
+	{
+		if (
+		$pendingInvoice &&
+		$spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits'
+		) {
+			return $spending_account_settings->medical_payment_method_non_panel_previous == 'mednefits_credits' ? 					'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel_previous;
+		}
+
+		return $spending_account_settings->medical_payment_method_non_panel;
 	}
 }

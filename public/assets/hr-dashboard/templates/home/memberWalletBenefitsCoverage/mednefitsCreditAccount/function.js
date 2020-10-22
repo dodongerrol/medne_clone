@@ -49,6 +49,9 @@ app.directive('mednefitsCreditAccountDirective', [
         scope.formatDate = function (date) {
           return moment(new Date(date)).format("DD/MM/YYYY");
         };
+        scope.formatMomentDate = function (date, from, to) {
+          return moment(date, from).format(to);
+        };
 
         scope.formatTableDate = function (date) {
           return moment(new Date(date)).format("DD MMMM YYYY");

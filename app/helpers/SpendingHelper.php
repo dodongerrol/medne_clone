@@ -48,7 +48,7 @@ class SpendingHelper {
                             $wellness = DB::table('wellness_wallet_history')
                             ->whereIn('wallet_id', $wallet_ids)
                             ->whereIn('where_spend', ['in_network_transaction', 'e_claim_transaction'])
-                            ->where('spending_method', 'pre_paid')
+                            // ->where('spending_method', 'pre_paid')
                             ->where('created_at', '>=', $start)
                             ->where('created_at', '<=', $end)
                             ->sum('credit');
@@ -56,7 +56,7 @@ class SpendingHelper {
                     $wellness_refund = DB::table('wellness_wallet_history')
                             ->whereIn('wallet_id', $wallet_ids)
                             ->where('logs', 'credits_back_from_in_network')
-                            ->where('spending_method', 'pre_paid')
+                            // ->where('spending_method', 'pre_paid')
                             ->where('created_at', '>=', $start)
                             ->where('created_at', '<=', $end)
                             ->sum('credit');
@@ -126,11 +126,19 @@ class SpendingHelper {
             $payment_status = false;
             
             foreach($account_credits as $key => $credits) {
-                if((int)$credits->payment_status == 1) {
-                    $payment_status = true;
-                } else {
+                $totalCredits = $credits->medical_purchase_credits + $credits->wellness_purchase_credits;
+                $paidAmount = $credits->payment_amount;
+                $amountDue = $totalCredits - $paidAmount;
+                if($amountDue > 0) {
                     $payment_status = false;
+                } else {
+                    $payment_status = true;
                 }
+                // if((int)$credits->payment_status == 1) {
+                //     $payment_status = true;
+                // } else {
+                //     $payment_status = false;
+                // }
             
                 $purchased_credits += $credits->credits;
                 $bonus_credits += $credits->bonus_credits;
@@ -206,11 +214,19 @@ class SpendingHelper {
             $enable = true;
             
             foreach($account_credits as $key => $credits) {
-                if((int)$credits->payment_status == 1) {
-                    $payment_status = true;
-                } else {
+                $totalCredits = $credits->medical_purchase_credits + $credits->wellness_purchase_credits;
+                $paidAmount = $credits->payment_amount;
+                $amountDue = $totalCredits - $paidAmount;
+                if($amountDue > 0) {
                     $payment_status = false;
+                } else {
+                    $payment_status = true;
                 }
+                // if((int)$credits->payment_status == 1) {
+                //     $payment_status = true;
+                // } else {
+                //     $payment_status = false;
+                // }
             
                 $purchased_credits += $credits->credits;
                 $bonus_credits += $credits->bonus_credits;
