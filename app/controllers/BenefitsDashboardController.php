@@ -18404,7 +18404,7 @@ public function createHrLocation ()
 
 		$check = DB::table('customer_admin_roles')->where('id', $input['id'])->select('id', 'is_mednefits_employee', 'email')->first();
 
-		$permission = DB::table('employee_and_dependent_permissions')->where('id', $id)->first();
+		$permission = DB::table('employee_and_dependent_permissions')->where('id', $customer_id)->first();
 
 		$perm = array(
 			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ?? $permission->edit_employee_dependent,
