@@ -2570,8 +2570,8 @@ class EmployeeController extends \BaseController {
         $spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
         $account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
         $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->where('removed_status', 0)->get();
-        $medical = (int)$spending->medical_enable == 1 ? true : false;
-        $wellness = (int)$spending->wellness_enable == 1 ? true : false;
+        $medical_status = (int)$spending->medical_enable == 1 ? true : false;
+        $wellness_status = (int)$spending->wellness_enable == 1 ? true : false;
 
 
         $container = array();
@@ -2601,13 +2601,13 @@ class EmployeeController extends \BaseController {
             'Full Name' => $user->Name
           );
 
-          if($medical) {
+          if($medical_status) {
             $temp['Current Medical Allocation'] = (string)$medical['allocation'];
             $temp['New Medical Allocation'] = $medical_schedule ? $medical_schedule->new_allocation_credits : null;
             $temp['Effective Date of New Medical Allocation (DD/MM/YYYY)'] = $medical_schedule ? date('d/m/Y', strtotime($medical_schedule->effective_date)) : date('d/m/Y');
           }
 
-          if($wellness) {
+          if($wellness_status) {
             $temp['Current Wellness Allocation'] = (string)$wellness['allocation'];
             $temp['New Wellness Allocation'] = $wellness_schedule ? $wellness_schedule->new_allocation_credits : null;
             $temp['Effective Date of New Wellness Allocation (DD/MM/YYYY)'] = $wellness_schedule ? date('d/m/Y', strtotime($wellness_schedule->effective_date)) : date('d/m/Y');

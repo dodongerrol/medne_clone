@@ -1108,6 +1108,17 @@ class MemberHelper
 		if($status) {
 			return true;
 		} else {
+			// get member account settings
+			// check for spending transaction access
+			$customer_id = \PlanHelper::getCustomerId($member_id);
+			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+
+			if($type == "non_panel") {
+				if($spending['medical_non_panel_submission'] == false) {
+					return true;
+				}
+			}
+
 			// check of from top up and pending
 			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
 
@@ -1128,8 +1139,6 @@ class MemberHelper
 				}
 			}
 
-			// check for spending transaction access
-			$customer_id = \PlanHelper::getCustomerId($member_id);
 			$accessTransaction = $type == "panel" ? \SpendingHelper::checkSpendingCreditsAccess($customer_id) : \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
 			
 			if(!$top_up_user) {
