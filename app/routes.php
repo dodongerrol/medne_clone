@@ -117,7 +117,7 @@ Route::get('app/resetclinicpassword', 'HomeController@getClinicForgotPasswordVie
 
 Route::get('download/transaction_receipt/{transaction_id}', 'BenefitsDashboardController@downloadTransactionReceipt');
 Route::post('hr/create-password-activated', 'BenefitsDashboardController@createCompanyPasswordActivated');
-Route::post('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
+Route::get('employee/check_email_validation', 'EmployeeController@checkEmailValidation');
 Route::post('hr/employee_reset_password', 'EmployeeController@employeeResetPassword');
 // admin resend activation email
 Route::post('hr/resend_activation_email', 'CorporateController@resendCorporateActivationEmail');
@@ -225,6 +225,10 @@ Route::get('hr/download_dependent_invoice', 'DependentController@getDependentInv
 
 // get pending employee replacement
 Route::get('hr/get_pending_employee_deactivate', 'BenefitsDashboardController@getPendingEmployeeDeactivate');
+// get external admin active link
+Route::get('hr/validate_external_admin_token', 'HrController@validateExernalAdminToken');
+// create password for external user
+Route::post('hr/create_external_admin_user_password', 'HrController@createExternalAdminUserPassword');
 
 // update agree status
 Route::get('update/agree_status', 'BenefitsDashboardController@updateAgreeStatus');

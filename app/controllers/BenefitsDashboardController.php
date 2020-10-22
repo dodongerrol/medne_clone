@@ -81,7 +81,14 @@ class BenefitsDashboardController extends \BaseController {
 		} 
 		
 		// check if creds suffice for member
-		$member = DB::table('user')->where('Email', $input['email'])->where('Password', md5($input['password']))->where('Active', 1)->select('UserID', 'PhoneNo', 'PhoneCode')->first();
+		$member = DB::table('user')
+						->where('Email', $input['email'])
+						->where('Password', md5($input['password']))
+						->where('Active', 1)
+						->whereIn('UserType', [5,6])
+						->whereIn('is_hr_admin', [0,1])
+						->select('UserID', 'PhoneNo', 'PhoneCode')
+						->first();
 
 		if($member) {
 			// check if member is an admin type
@@ -18169,7 +18176,8 @@ public function createHrLocation ()
 				'updated_at'			=> date('Y-m-d'),
 				'account_update_status'	=> 1,
 				'account_already_update'	=> 1,
-				'account_update_date'	=> date('Y-m-d H:i:s')
+				'account_update_date'	=> date('Y-m-d H:i:s'),
+				'expiration_time'		=> date('Y-m-d H:i:s', strtotime('+7 days'))
 			]);
 
 			$role = array (
@@ -18297,29 +18305,56 @@ public function createHrLocation ()
 			}
 
 			// get location permission
-			$locationPermission = DB::table('location_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id')->first();
-			$departmentPermission = DB::table('department_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id')->first();
+			$locationPermissions = DB::table('location_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id', 'location_id')->get();
+			$departmentPermissions = DB::table('department_admin_permission')->where('customer_admin_role_id', $detail->id)->select('id', 'department_id')->get();
 
 			$permissions_applied = ['All Employees & Dependents'];
-
-			if($locationPermission) {
+			if(sizeOf($locationPermissions) > 0) {
 				$permissions_applied[] = 'Locations';
 			}
 
-			if($departmentPermission) {
+			if(sizeOf($departmentPermissions) > 0) {
 				$permissions_applied[] = 'Department';
+			}
+
+			$locations = array();
+			$departments = array();
+
+			// get locations
+			foreach($locationPermissions as $location) {
+				$locationData = DB::table('company_locations')->where('LocationID', $location->location_id)->select('customer_id', 'location', 'LocationID')->first();
+
+				if($locationData) {
+					$locations[] = $locationData;
+				}
+			}
+
+			// get locations
+			foreach($departmentPermissions as $department) {
+				$departmentData = DB::table('company_locations')->where('LocationID', $department->department_id)->select('customer_id', 'location', 'LocationID')->first();
+
+				if($departmentData) {
+					$departments[] = $departmentData;
+				}
 			}
 			
 			$container [] = array(
 				'id'											=> $detail->id,
+				'member_id'										=> $detail->member_id,
+				'hr_id'											=> $detail->hr_id,
+				'is_mednefits_employee'							=> $detail->is_mednefits_employee,
 				'fullname'										=> $detail->fullname,
 				'email'											=> $detail->email,
+				'phone_code'									=> $detail->phone_code,
+				'phone_no'										=> $detail->phone_no,
 				'edit_employee_dependent'						=> $permissions->edit_employee_dependent,
 				'enroll_terminate_employee'						=> $permissions->enroll_terminate_employee,
 				'approve_reject_edit_non_panel_claims'			=> $permissions->approve_reject_edit_non_panel_claims,
 				'create_remove_edit_admin_unlink_account'		=> $permissions->create_remove_edit_admin_unlink_account,
 				'manage_billing_and_payments'					=> $permissions->manage_billing_and_payments,
 				'add_location_departments'						=> $permissions->add_location_departments,
+				'locations'										=> $locations,
+				'departments'									=> $departments,
 				'permissions_applied'							=> $permissions_applied
 			);
 			
