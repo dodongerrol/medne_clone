@@ -13804,6 +13804,11 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_admin_roles.status', 1)
     ->get();
 
+    $total_of_administrator = DB::table('customer_admin_roles')
+		->where('customer_admin_roles.customer_id', $account_link->corporate_id)
+		->where('customer_admin_roles.status', 1)
+    ->get();
+
 		$total_active_members = sizeof($corporate_members);
 		foreach ($corporate_members as $key => $member) {
 			$total_active_dependents += DB::table('employee_family_coverage_sub_accounts')
@@ -13814,7 +13819,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$total_members = $total_active_members + $total_active_dependents;
 
-		return array('status' => true, 'total_members' => $total_members, 'total_administrators' => sizeof($total_of_administrator));
+		return array('status' => true, 'total_members' => $total_members);
 	}
 
 	public function getEmployeeSpendingAccountSummaryNew( )
@@ -16293,12 +16298,12 @@ class BenefitsDashboardController extends \BaseController {
 	
 
 		$phone_code = str_replace('+', '', $input['phone_code']);
-		$phone_number = str_replace('+', '', $input['phone_no']);
+		$phone_number = str_replace('+', '', $input['phone_number']);
 
         $data = array(
             'fullname'                  => $input['fullname'],
             'email'                     => $input['email'],
-			'phone_no'             		=> $phone_number,
+			'phone_number'              => $phone_number,
 			'phone_code'				=> $phone_code,
             'updated_at'                => date('Y-m-d H:i:s')
         );
