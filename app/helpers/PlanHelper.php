@@ -2067,6 +2067,29 @@ class PlanHelper
 			);
 
 			DB::table('user')->where('UserID', $user_id)->update($updateMemberAdminHr);
+		} else {
+			// check external admin if matches
+			$checkExternalAdmin = DB::table('customer_admin_roles')->where('phone_no', $data['PhoneNo'])->where('status', 1)->select('id')->select('id', 'member_id')->first();
+
+			if($checkExternalAdmin) {
+				if($checkExternalAdmin->member_id) {
+					// get previous member of admin role
+					$adminRole = DB::table('user')->where('UserID', $checkExternalAdmin->member_id)->select('UserID', 'member_activated', 'is_external_admin')->first();
+
+					if($adminRole) {
+						// replace customer admin roles with new employee link to medi user
+						$updateMemberAdminHr = array(
+							'member_activated'		=> $adminRole->member_activated,
+							'is_external_admin'		=> $adminRole->is_external_admin,
+							'updated_at'			=> date('Y-m-d')
+						);
+
+						DB::table('user')->where('UserID', $user_id)->update($updateMemberAdminHr);
+						// replace customer admin role with new member id
+						DB::table('customer_admin_roles')->where('id', $checkExternalAdmin->id)->update(['member_id' => $user_id]);
+					}
+				}
+			}
 		}
 
 		// create transaction block
