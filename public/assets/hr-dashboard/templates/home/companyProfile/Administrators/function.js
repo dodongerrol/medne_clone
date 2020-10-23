@@ -202,6 +202,8 @@ app.directive("administratorsDirective", [
           console.log(data);
           scope.isAddAdministratorConfirm = false;
           scope.isAddAdministratorSuccess = false;
+          scope.showEmployeeList = false;
+          scope.chooseSelectorLocation = false;
 
           if ( scope.get_permissions_data.create_remove_edit_admin_unlink_account == 1 ) {
             $('#add-administrator-modal').modal('show');
@@ -333,10 +335,10 @@ app.directive("administratorsDirective", [
 
           });
         }
+        scope.employee_list_arr = [];
         scope.getEmployeeName = function () {
           scope.showLoading();
-          hrSettings.fetchEmployeeName().then(function (response) {
-            console.log(response);
+          hrSettings.fetchEmployeeList().then(function (response) {
             scope.employee_data = response.data.data;
             scope.hideLoading();
           });
