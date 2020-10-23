@@ -6950,15 +6950,13 @@ public function payCreditsNew( )
     $check_if_administrator = DB::table('customer_hr_dashboard')
     ->join('user', 'user.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
     ->select('UserID as user_id', 'Name as name', 'user.Email as email', 'is_hr_admin_linked', 'is_account_linked')
-    ->where('UserID', $member_id)->first();
+    ->where('UserID', $member_id)
+    ->first();
 
     // //check if administrator
     if($check_if_administrator && $check_if_administrator->is_account_linked === 1) {
       $returnObject->administrator = true;
     }
-
-    //remove OTPCode
-    DB::table('user')->where('UserID', $member_id)->update(['OTPCode' => NULL]);
 
     $returnObject->status = true;
     $returnObject->message = 'OTP Code is valid';
@@ -6983,8 +6981,9 @@ public function payCreditsNew( )
       }
 
       $checker = DB::table('user')
-      ->select('UserID', 'Name as name', 'member_activated')
-      ->where('UserID', $input['user_id'])->first();
+      ->select('UserID', 'Name as name', 'member_activated', 'is_hr_admin_linked', 'is_hr_admin')
+      ->where('UserID', $input['user_id'])
+      ->first();
 
       if(!$checker) {
         $returnObject->status = false;
@@ -6993,7 +6992,25 @@ public function payCreditsNew( )
       }
 
       $member_id = $checker->UserID;
-      DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code']]);
+      
+      // check if member is an hr admin
+      if((int)$checker->is_hr_admin_linked == 1 && (int)$checker->is_hr_admin == 1) {
+        $updateAccountStatus = [
+          'member_activated' => 1,
+          'account_update_status' => 1,
+          'account_already_update'  => 1,
+          'Zip_Code'  => $input['postal_code'],
+          'OTPCode' => NULL
+        ];
+  
+        DB::table('user')->where('UserID', $member_id)->update($updateAccountStatus);
+        $token = StringHelper::createLoginToken($checker->UserID, 'cfcd208495d565ef66e7dff9f98764da');
+        $checker->token = $token->data['access_token'];
+        $checker->member_admin = 1;
+      } else {
+        DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code'], 'OTPCode' => NULL]);
+      }
+      
       $returnObject->status = true;
       $returnObject->message = 'Postal Code already set';
       $returnObject->data = $checker;
@@ -7048,7 +7065,8 @@ public function payCreditsNew( )
         'Password' => StringHelper::encode($input['password_confirm']),
         'member_activated' => 1,
         'account_update_status' => 1,
-        'account_already_update'  => 1
+        'account_already_update'  => 1,
+        'OTPCode' => NULL
       ];
 
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
@@ -7197,20 +7215,27 @@ public function payCreditsNew( )
     }
 
     $checker = DB::table('user')
-    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp')
-    ->where('PhoneNo', $keys['mobile'])->first();
+    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp', 'is_hr_admin_linked', 'is_hr_admin')
+    ->where('PhoneNo', $keys['mobile'])
+    ->where('Active', 1)
+    ->first();
 
     if(!$checker) {
         $returnObject->status = false;
         $returnObject->message = 'Unregistered Member.';
         return Response::json($returnObject);
     }
-
+    
+    $checker->disabled_password_creation = 0;
     if($checker->postal_code == null || $checker->postal_code === null) {
         $checker->postal_code = 0;
     }
     else {
         $checker->postal_code = 1;
+    }
+
+    if((int)$checker->is_hr_admin_linked == 1 && (int)$checker->is_hr_admin == 1) {
+      $checker->disabled_password_creation = 1;
     }
 
     $returnObject->status = true;
@@ -7238,6 +7263,10 @@ public function payCreditsNew( )
           return Response::json($returnObject);
         } else  {
           $returnObject->status = true;
+          $userDetails->disabled_password_creation = 0;
+          if((int)$userDetails->is_hr_admin_linked == 1 && (int)$userDetails->is_hr_admin == 1) {
+            $userDetails->disabled_password_creation = 1;
+          }
           $returnObject->data = $userDetails;
 
           return Response::json($returnObject);
@@ -7258,6 +7287,11 @@ public function payCreditsNew( )
           return Response::json($returnObject);
       } else {
         $returnObject->status = true;
+        $returnObject->status = true;
+        $userDetails->disabled_password_creation = 0;
+        if((int)$userDetails->is_hr_admin_linked == 1 && (int)$userDetails->is_hr_admin == 1) {
+          $userDetails->disabled_password_creation = 1;
+        }
         $returnObject->data = $userDetails;
 
         return Response::json($returnObject);
@@ -7278,6 +7312,11 @@ public function payCreditsNew( )
           return Response::json($returnObject);
       } else {
         $returnObject->status = true;
+        $returnObject->status = true;
+        $userDetails->disabled_password_creation = 0;
+        if((int)$userDetails->is_hr_admin_linked == 1 && (int)$userDetails->is_hr_admin == 1) {
+          $userDetails->disabled_password_creation = 1;
+        }
         $returnObject->data = $userDetails;
 
         return Response::json($returnObject);
