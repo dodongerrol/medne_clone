@@ -2,6 +2,19 @@
 use Illuminate\Support\Facades\Input;
 
 class BenefitsDashboardController extends \BaseController {
+	
+const USER_COLUMNS = [
+			'ID'								=>	'user.UserID',
+			'Full Name'							=> 	'user.Name',
+			'Status'							=>	'user.Status',
+			'Mobile Number'						=>	'user.PhoneNo',
+			'Email'								=>	'user.Email',
+			'Medical Entitlement'				=>	'employee_wallet_entitlement.medical_entitlement',
+			'Wellness Entitlement'				=>	'employee_wallet_entitlement.wellness_entitlement',
+			// 'Benefits Start Date'				=>	'plan_start',
+			// 'Benefits End Date'					=>	'plan_end',	
+
+];
 
 	public function getDownloadToken( )
 	{
@@ -18484,27 +18497,91 @@ public function createHrLocation ()
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
 
-
-		$container = array();
-		$customers = array();
-		$today = date_create(\PlanHelper::endDate(date('Y-m-d')));
-		// $today = new \DateTime(\PlanHelper::endDate(date('Y-m-d')));
-
-
-		$employee_id = $input['employee_id'];
-		$search = !empty($input['search']) ? $input['search'] : null;
-
-		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-
 		$data = [
 			'message'	=> null,
 			'status'	=> true 
 		];
 
-		$employee = DB::table('user')
+		$selected_columns = $input['columns'] ?? [];
+		$container = array();
+		$customers = array();
+		$today = date_create(\PlanHelper::endDate(date('Y-m-d')));
+
+		if(count($selected_columns) <= 0)
+		{
+			$data ['message'] = 'Please Select atleast one field';
+			$data ['status']  = false;
+
+			return $data;
+		}
+
+		$employee_ids = $input['employee_ids'];
+		$search = !empty($input['search']) ? $input['search'] : null;
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$spending = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->first();
+
+		
+		$columns = array_merge(
+			  self::USER_COLUMNS,
+			  [
+					'(Medical) Benefits Coverage'       	=>  'medical_benefits_coverage',
+					'Family Coverage'                   =>  'family_coverage',
+					'Medical Entitlement Last Term'     =>  'medical_entitlement_last_term',
+					'Medical Usage Last Term'           =>  'medical_usage_last_term',
+					'Medical Balance Last Term'         =>  'medical_balance_last_term',
+					'Wellness Entitlement Last Term'    =>  'wellness_entitlement_last_term',
+					'Wellness Usage Last Term'          =>  'wellness_usage_last_term',
+					'Wellness Balance Last Term'        =>  'wellness_balance_last_term',
+					'Locations'                         =>  'Locations',
+					'Departments'                       =>  'Departments'
+			  ]
+		);
+
+		$keys = array_keys($columns);
+		$extracted_columns = array_filter($keys, function($column) use($selected_columns) {
+			return in_array($column, $selected_columns);
+	  });
+
+	  
+		$user_columns = array_filter($extracted_columns, function($column) {
+			return in_array($column, array_keys(self::USER_COLUMNS));
+			
+	  });
+	  
+	  
+
+	  $user_db_colums = [];
+
+	  foreach ($user_columns as $user_column)	{
+		  $user_db_columns[] = $columns[$user_column];
+	  }
+	  $employees = DB::table('user')
+				->select($user_db_columns)
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('e_wallet', 'e_wallet.UserID', '=', 'user.UserID')
+				->join('employee_wallet_entitlement', 'employee_wallet_entitlement.member_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
-				->where('user.UserID', $employee_id)
-				->first();
+				->whereIn('user.UserID', $employee_ids)
+				->get();
+
+		if(count($employees) <= 0) {
+			$data ['message'] = 'Employee ids is required.';
+			$data ['status']  = false;
+
+			return $data;
+		}
+		
+		$employees = json_decode( json_encode($employees), true);
+		 $excel = Excel::create('Employee Information', function($excel) use($employees) {
+			$excel->sheet('Sheetname', function($sheet) use($employees) {
+				$sheet->fromArray( $employees );
+			});
+		})->export('xls');
+		return $excel;
+		
 	}
 }
