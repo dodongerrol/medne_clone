@@ -195,7 +195,7 @@
                   <span><span>{{ isSelectOverallEmployees ? employees.total_data : selectedEmpArr.length }}</span> selected.</span>
                 </th>
                 <th colspan="10">
-                  <span>
+                  <span ng-click="exportSelectedMember()">
                     <img src="../assets/hr-dashboard/img/new-download-icon.png">
                     <span>Export Selected Member Details</span>
                   </span>

@@ -41,7 +41,7 @@
 			<div class="drop-select-wrapper" @click="open = true">
 				<div class="user-img-icon">
 					<div class="circle">
-						<div class="letter" ng-bind="navCtr.primaryHrDetails.first_name[0]">F</div>
+						<div class="letter" ng-bind="navCtr.primaryHrDetails.first_name[0] | uppercase">F</div>
 					</div>
 				</div>
 				<div class="company-name" ng-bind="navCtr.accountDetails.account_name ? navCtr.accountDetails.account_name : 'Account Name'">Mednefits Pte Ltd</div>
@@ -51,10 +51,10 @@
 			</div>
 
 			<div x-show="open" @click.away="open = false" class="user-setting-drop-wrapper">
-				<div class="drop-user-details">
+				<!-- <div class="drop-user-details">
 					<div class="user-img-icon">
 						<div class="circle">
-							<div class="letter" ng-bind="navCtr.primaryHrDetails.first_name[0]">F</div>
+							<div class="letter" ng-bind="navCtr.primaryHrDetails.first_name[0] | uppercase">F</div>
 						</div>
 					</div>
 					<div class="drop-user-info">
@@ -89,6 +89,27 @@
 					</div>
 					<div class="drop-item" id="signout-btn">
 						Sign out
+					</div>
+				</div> -->
+				
+				<div class="more-account-list">
+					<div class="back-div">
+						<i class="fa fa-arrow-left"></i> Back
+					</div>
+					<div class="current-company">
+						<div class="comp-name">
+							<p class="company" ng-bind="navCtr.allLinkedAccountsArr[0].account_name">Medicloud</p>
+							<p class="comp-id">Company ID: {{ navCtr.allLinkedAccountsArr[0].company_id }}</p>
+						</div>
+					</div>
+					<div ng-if="$index != 0" ng-repeat="list in navCtr.allLinkedAccountsArr" class="linked-account">
+						<div class="comp-name">
+							<p class="company" ng-bind="list.account_name">Medicloud</p>
+							<p class="comp-id">Company ID: {{ list.company_id }}</p>
+						</div>
+						<div class="switch-account">
+							<span ng-click="navCtr._switchAccount_(list)">Switch Account</span>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -100,11 +100,20 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	}
 
 	vm._getLinkedAccounts_	=	function(){
-		var url = window.location.origin + `/hr/get/corporate_linked_account?limit=5&page=1&total_enrolled_employee_status=true&total_enrolled_dependent_status=true`;
+		var url = window.location.origin + `/hr/get/corporate_linked_account?limit=5&page=1&total_enrolled_employee_status=true&total_enrolled_dependent_status=true&except_current=enable`;
 		$http.get(url)
 		.success(function(response){
 			console.log(response);
 			vm.linkedAccountsArr = response.data;
+		});
+	}
+
+	vm._getLinkedAccountsWithCurrent_	=	function(){
+		var url = window.location.origin + `/hr/get/corporate_linked_account?limit=5&page=1&total_enrolled_employee_status=true&total_enrolled_dependent_status=true`;
+		$http.get(url)
+		.success(function(response){
+			console.log(response);
+			vm.allLinkedAccountsArr = response.data;
 		});
 	}
 
@@ -139,6 +148,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	vm.onLoad = async function(){
 		await vm._getAccountDetails();
 		await vm._getLinkedAccounts_();
+		await vm._getLinkedAccountsWithCurrent_();
 		await vm._getPrimaryHrDetails_();
 		await vm.accountType();
 		await vm.getCompanyContacts();
