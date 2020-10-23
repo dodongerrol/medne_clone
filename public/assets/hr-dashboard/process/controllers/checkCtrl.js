@@ -118,6 +118,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	}
 
 	vm._switchAccount_	=	function(data){
+		console.log(data);
 		$http.get(window.location.origin + '/hr/login_company_linked?id=' + data.id + '&token=' + localStorage.getItem('token'))
 			.success(function(response){
 				console.log(response);
@@ -144,6 +145,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 				vm.primaryHrDetails	=	response[0];
 			});
 	}
+	
 
 	vm.onLoad = async function(){
 		await vm._getAccountDetails();
