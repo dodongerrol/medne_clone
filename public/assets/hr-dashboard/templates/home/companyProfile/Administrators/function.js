@@ -345,7 +345,7 @@ app.directive("administratorsDirective", [
         }
         scope.employeeNameSelector = function ( data ) {
           scope.add_admin_data.employee_id = data.user_id;
-          scope.add_admin_data.employee_name = data.name;
+          scope.add_admin_data.employee_name = data.Name;
           scope.showEmployeeList = false;
         }
 

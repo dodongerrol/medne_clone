@@ -344,6 +344,7 @@
   padding: 0;
   width: 100%;
   outline: none;
+  color: #000;
 }
 .emp-name-input-wrapper .fa-search {
   font-size: 16px;
@@ -365,4 +366,13 @@
 }
 .confirm-add-administrator >div:nth-child(1) {
   margin: 0 0 20px;
+}
+.default-permission {
+  pointer-events: none;
+}
+.default-permission .checkbox-text {
+  color: #ABABAB;
+}
+.administrator-modal-container .custom-checkbox-container.default-permission .checkbox-input .checkbox-mark:after {
+  border-color: #858585;
 }
