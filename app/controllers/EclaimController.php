@@ -6706,6 +6706,7 @@ public function updateEclaimStatus( )
 	if((int)$input['status'] == 1) {
 		$customer_id = PlanHelper::getCustomerId($employee);
 		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$amount = !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount;
 		$amount = TransactionHelper::floatvalue($amount);
 		$claim_amount = TransactionHelper::floatvalue($input['claim_amount']);
@@ -6811,6 +6812,10 @@ public function updateEclaimStatus( )
           			// send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 					EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
+					// create non panel invoice
+					$start = date('Y-m-d', strtotime($e_claim_details->created_at));
+					$end = PlanHelper::endDate($start);
+					EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
 					if($admin_id) {
 						$data = array(
 							'e_claim_id' => $e_claim_id,

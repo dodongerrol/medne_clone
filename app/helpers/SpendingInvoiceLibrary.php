@@ -1102,6 +1102,9 @@ class SpendingInvoiceLibrary
 		$total_wellness = 0;
 		$transaction_data = array();
 		$total_credits = 0;
+		$total_post_paid_spent = 0;
+		$with_post_paid = false;
+		$total_pre_paid_spent = 0;
 
 		foreach($transactions as $key => $transaction) {
 			$e_claim = DB::table('e_claim')->where('e_claim_id', $transaction->e_claim_id)->where('status', 1)->first();
@@ -1120,6 +1123,12 @@ class SpendingInvoiceLibrary
 				if($logs) {
 					$credits = $logs->credit;
 					$e_claim->amount = $logs->credit;
+					if($logs->spending_method == "post_paid") {
+						$total_post_paid_spent += $credits;
+						$with_post_paid = true;
+					} else {
+						$total_pre_paid_spent += $credits;
+					}
 				} else {
 					$credits = $e_claim->amount;
 					$e_claim->amount = $logs->credit;
@@ -1223,7 +1232,7 @@ class SpendingInvoiceLibrary
 		}
 
 		$total_credits = $total_medical + $total_wellness;
-		return ['total_medical' => $total_medical, 'total_wellness' => $total_wellness, 'total_credits' => $total_credits, 'transactions' => $transaction_data, 'total_consultation' => 0, 'credits' => $total_credits, 'lite_plan' => false];
+		return ['total_pre_paid_spent' => $total_pre_paid_spent, 'with_post_paid' => $with_post_paid, 'total_post_paid_spent' => $total_post_paid_spent, 'total_medical' => $total_medical, 'total_wellness' => $total_wellness, 'total_credits' => $total_credits, 'transactions' => $transaction_data, 'total_consultation' => 0, 'credits' => $total_credits, 'lite_plan' => false];
 	}
 }
 ?>
