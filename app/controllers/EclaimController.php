@@ -5484,7 +5484,12 @@ public function getHrActivity( )
 	if($total_visit_created > 0) {
 		$total_average_visit = $total_visit_created / $total_occupied_seats;
 	}
-	
+
+	$temp_total_in_network_spent_format_number = array_sum(
+		array_column($transaction_details, 'amount')
+	);
+
+
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
 		'total_balance'			=> $total_allocation - $total_spent,
@@ -5498,7 +5503,8 @@ public function getHrActivity( )
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,
 		'total_in_network_spent'    => number_format($in_network_spent + $total_lite_plan_consultation, 2),
-		'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
+		// 'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
+		'total_in_network_spent_format_number' => number_format($temp_total_in_network_spent_format_number, 2),
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
