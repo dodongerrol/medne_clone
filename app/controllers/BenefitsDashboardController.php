@@ -42,11 +42,18 @@ class BenefitsDashboardController extends \BaseController {
 
 		// check hr creds
 		$result = DB::table('customer_hr_dashboard')
-		->where('email', $input['email'])
-		->where('password', md5($input['password']))
-		->where('active', 1)
-		->first();
-
+					->where(function($query) use ($input){
+						$query->where('email', $input['email'])
+						->where('password', md5($input['password']))
+						->where('active', 1);
+					})
+					->orWhere(function($query) use ($input){
+						$query->where('phone_number', (int)$input['email'])
+						->where('password', md5($input['password']))
+						->where('active', 1);
+					})
+					->first();
+		
 		if($result) {
 			// Session::put('hr-session', $result);
 			// create token
@@ -82,13 +89,22 @@ class BenefitsDashboardController extends \BaseController {
 		
 		// check if creds suffice for member
 		$member = DB::table('user')
-						->where('Email', $input['email'])
+					->where(function($query) use ($input){
+						$query->where('Email', $input['email'])
 						->where('Password', md5($input['password']))
 						->where('Active', 1)
 						->whereIn('UserType', [5,6])
-						->whereIn('is_hr_admin', [0,1])
-						->select('UserID', 'PhoneNo', 'PhoneCode')
-						->first();
+						->whereIn('is_hr_admin', [0,1]);
+					})
+					->orWhere(function($query) use ($input){
+						$query->where('PhoneNo', (int)$input['email'])
+						->where('Password', md5($input['password']))
+						->where('Active', 1)
+						->whereIn('UserType', [5,6])
+						->whereIn('is_hr_admin', [0,1]);
+					})
+					->select('UserID', 'PhoneNo', 'PhoneCode')
+					->first();
 
 		if($member) {
 			// check if member is an admin type
