@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Input;
 
 class BenefitsDashboardController extends \BaseController {
 
+
 const USER_COLUMNS = [
 		'ID'                                =>  'user.UserID',
 		'Full Name'                         =>  'user.Name',
@@ -18528,6 +18529,11 @@ public function createHrLocation ()
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
 
+		$data = [
+			'message'	=> null,
+			'status'	=> true 
+		];
+
 		$selected_columns = $input['columns'] ?? [];
 		$container = array();
 		$customers = array();
@@ -18600,6 +18606,7 @@ public function createHrLocation ()
 
 			return $data;
 		}
+		
 		$employees = json_decode( json_encode($employees), true);
 		 $excel = Excel::create('Employee Information', function($excel) use($employees) {
 			$excel->sheet('Sheetname', function($sheet) use($employees) {

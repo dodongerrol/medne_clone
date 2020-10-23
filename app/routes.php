@@ -295,7 +295,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
 	// Route::post('hr/finish/enroll', 'BenefitsDashboardController@finishEnroll');
 
-	// upload filter member details
+	// employee overview
 	Route::get('hr/export_selected_member_details', 'BenefitsDashboardController@exportFilterMemberDetails');
 	
 	// upload via excel
