@@ -18130,6 +18130,18 @@ public function createHrLocation ()
 		$employee_id = $input['employee_id'] ?? null;
 		$location_id = $input['location_id'] ?? null;
 
+		if($search) {
+			$users = DB::table('user')
+			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+			->where('corporate_members.corporate_id', $account_link->corporate_id)
+			->where('user.Name', 'like', '%'.$search.'%')
+			->where('user.member_activated', 1)
+			->select('user.UserID', 'user.Name')
+			->get();
+			
+			return $users;
+		}
+
 		if((int)$is_mednefits_employee == 1) {
 			$employee = DB::table('user')
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
@@ -18298,8 +18310,9 @@ public function createHrLocation ()
     $result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
-
+	
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+		
 		// get permissions;
 		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, $result->user_type);
 		
@@ -18463,5 +18476,35 @@ public function createHrLocation ()
 		}
 
 		return array('status' => TRUE, 'message'	=> 'successfully updated admin.');
+	}
+
+	public function exportFilterMemberDetails()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
+
+		$container = array();
+		$customers = array();
+		$today = date_create(\PlanHelper::endDate(date('Y-m-d')));
+		// $today = new \DateTime(\PlanHelper::endDate(date('Y-m-d')));
+
+
+		$employee_id = $input['employee_id'];
+		$search = !empty($input['search']) ? $input['search'] : null;
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+
+		$data = [
+			'message'	=> null,
+			'status'	=> true 
+		];
+
+		$employee = DB::table('user')
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->where('user.UserID', $employee_id)
+				->first();
 	}
 }
