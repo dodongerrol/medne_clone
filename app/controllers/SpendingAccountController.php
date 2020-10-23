@@ -223,7 +223,7 @@ class SpendingAccountController extends \BaseController {
 				'non_panel_payment_method'	=> $non_panel_payment_method,
 				'benefits_start'	=> $spending_account_settings->wellness_spending_start_date,
 				'benefits_end'		=> $spending_account_settings->wellness_spending_end_date,
-				'total_company_budget' => $total_credits,
+				'total_company_budget' => $credits['total_company_entitlement'],
 				'total_company_entitlement' => $credits['total_company_entitlement'],
 				'total_wellness_entitlement' => $credits['total_wellness_entitlement'],
 				'total_balance' => $credits['wellness_credits'],
@@ -238,7 +238,7 @@ class SpendingAccountController extends \BaseController {
 				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		}
-		
+
 		return ['status' => true, 'data' => $format];
 	}
 
