@@ -107,6 +107,7 @@ class SpendingAccountController extends \BaseController {
 	{
 		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
+		$format = [];
 		
 		if(empty($input['start']) || $input['start'] == null) {
 			return array('status' => false, 'message' => 'start term is required.');
@@ -662,9 +663,22 @@ class SpendingAccountController extends \BaseController {
 	{
 		$input = Input::all();
 		$customer_id = PlanHelper::getCusomerIdToken();
+
+		$type = $input['type'] ?? 'medical';
+
+		$selects = $type === 'wellness' ? [
+			'customer_id',
+			'wellness_spending_start_date as start',
+			'wellness_spending_end_date as end'
+		  ] : [
+			'customer_id',
+			'medical_spending_start_date as start',
+			'medical_spending_end_date as end'
+		];
+
 		$spending_account_settings = DB::table('spending_account_settings')
 										->where('customer_id', $customer_id)
-										->select('customer_id', 'medical_spending_start_date as start', 'medical_spending_end_date as end')
+										->select($selects)
 										->groupBy('medical_spending_start_date')
                                     	->orderBy('created_at', 'desc')
                                     	->limit(2)
