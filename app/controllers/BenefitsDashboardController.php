@@ -18282,8 +18282,9 @@ public function createHrLocation ()
     $result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
-
+	
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+		
 		// get permissions;
 		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, $result->user_type);
 		
@@ -18447,5 +18448,16 @@ public function createHrLocation ()
 		}
 
 		return array('status' => TRUE, 'message'	=> 'successfully updated admin.');
+	}
+
+	public function exportFilterMemberDetails()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
+		$search = !empty($input['search']) ? $input['search'] : null;
+
+		
 	}
 }
