@@ -9,8 +9,8 @@
           <div ng-repeat="list in account_types" class="custom-checkbox-container">
             <label class="checkbox-input">
               <span></span>
-              <input type="checkbox"/>
-              <span class="checkbox-text" ng-bind="list"></span>
+              <input type="checkbox" ng-model="list.selected" ng-click="_selectedAccountType_(list)" />
+              <span class="checkbox-text" ng-bind="list.name"></span>
               <span class="checkbox-mark"></span>
             </label>
           </div>
@@ -23,18 +23,36 @@
           </h4>
 
           <div class="select-deselect-div">
-            <div>Select All</div>
-            <div>Deselect All</div>
+            <div ng-click="_selectDeselectAll_(1)">Select All</div>
+            <div ng-click="_selectDeselectAll_(0)">Deselect All</div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-6">
 
-          <div ng-repeat="list in details" class="custom-checkbox-container">
-            <label class="checkbox-input">
+          <div ng-if="state.isEmployee && state.isDependent" ng-repeat="list in details" class="custom-checkbox-container">
+            <label class="checkbox-input" ng-class="{'default-check': list.name == 'Full Name'}">
               <span></span>
-              <input type="checkbox"/>
-              <span class="checkbox-text" ng-bind="list"></span>
-              <span class="checkbox-mark"></span>
+              <input type="checkbox" ng-model='list.selected' ng-click="_selectedAccountDetails_(list)" />
+              <span class="checkbox-text" ng-bind="list.name"></span>
+              <span class="checkbox-mark" ng-class="{'default-check': list.name == 'Full Name'}"></span>
+            </label>
+          </div>
+
+          <div ng-if="state.isEmployee && !state.isDependent" ng-repeat="list in details_emp" class="custom-checkbox-container">
+            <label class="checkbox-input" ng-class="{'default-check': list.name == 'Full Name'}">
+              <span></span>
+              <input type="checkbox" ng-model='list.selected' ng-click="_selectedAccountDetails_(list)" />
+              <span class="checkbox-text" ng-bind="list.name"></span>
+              <span class="checkbox-mark" ng-class="{'default-check': list.name == 'Full Name'}"></span>
+            </label>
+          </div>
+
+          <div ng-if="!state.isEmployee && state.isDependent" ng-repeat="list in details_dep" class="custom-checkbox-container">
+            <label class="checkbox-input" ng-class="{'default-check': list.name == 'Full Name'}">
+              <span></span>
+              <input type="checkbox" ng-model='list.selected' ng-click="_selectedAccountDetails_(list)" />
+              <span class="checkbox-text" ng-bind="list.name"></span>
+              <span class="checkbox-mark" ng-class="{'default-check': list.name == 'Full Name'}"></span>
             </label>
           </div>
 
@@ -43,7 +61,7 @@
     </div>
 
     <div class="btn-container text-right">
-      <button class="btn-submit" ng-click="nextBtn()">Next</button>
+      <button class="btn-submit" ng-click="nextBtn()" ng-disabled="selected_account_details.length <= 1">Next</button>
     </div>
   </div>
 </div>

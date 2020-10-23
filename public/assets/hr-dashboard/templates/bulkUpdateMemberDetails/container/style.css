@@ -78,7 +78,7 @@
   width: 120px;
   height: 38px;
   text-align: center;
-  border: 1px solid #0392CF;
+  border: 0px solid #0392CF;
   background: #0392CF;
   border-radius: 3px;
   font-size: 14px;
@@ -96,4 +96,14 @@ button.disabled{
 
 .update-wrapper{
   max-width: 1180px;
+}
+
+.custom-checkbox-container .checkbox-input.default-check {
+  pointer-events: none;
+}
+.custom-checkbox-container .checkbox-input .checkbox-mark.default-check {
+  background: #e0e0e0 !important;
+}
+.custom-checkbox-container .checkbox-input .checkbox-mark.default-check:after {
+  border-color: #9e9e9e !important
 }

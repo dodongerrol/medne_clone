@@ -595,7 +595,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
 
   hrFactory.fetchEmployeeName = function () {
-    return $http.get( serverUrl.url + "/hr/employee/list?status[]=active" );
+    return $http.get( serverUrl.url + "/hr/employee/list?status[]=active&status[]=pending" );
   }
 
   hrFactory.updateAdditionalAdmin = function ( data ) {
@@ -612,6 +612,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   hrFactory.updateAddAdministrator = function ( data ) {
     return $http.post( serverUrl.url + "/hr/update_administrator",data );
+  }
+
+  hrFactory.fetchEmployeeList = function ( ) {
+    return $http.get( serverUrl.url + "/hr/employee_lists" );
   }
 
   return hrFactory;

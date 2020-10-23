@@ -2043,31 +2043,32 @@ class PlanHelper
 			->where('temp_enrollment_id', $temp_enrollment_id)
 			->update(['enrolled_status' => "true", 'active_plan_id' => $active_plan->customer_active_plan_id]);
 
-		// check if there is a plan tier
-		// if ($data_enrollee->plan_tier_id) {
-		// 	// check plan tier if exist
-		// 	$plan_tier = DB::table('plan_tiers')
-		// 		->where('plan_tier_id', $data_enrollee->plan_tier_id)
-		// 		->first();
-		// 	if ($plan_tier) {
-		// 		$plan_tier_user = new PlanTierUsers();
-		// 		$tier_history = array(
-		// 			'plan_tier_id'              => $data_enrollee->plan_tier_id,
-		// 			'user_id'                   => $user_id,
-		// 			'status'                    => 1
-		// 		);
-
-		// 		$plan_tier_user->createData($tier_history);
-		// 		// increment member head count
-		// 		$plan_tier_class = new PlanTier();
-		// 		$plan_tier_class->increamentMemberEnrolledHeadCount($data_enrollee->plan_tier_id);
-		// 	}
-		// }
-
 		// record enrollment status for member
 		PlanHelper::createEnrollmentHistoryStatus($user_id, $active_plan->customer_active_plan_id, date('Y-m-d'), $start_date, $schedule_date, $communcation_send, "employee");
 		// enrolle dependent if any
 		self::enrollDependents($temp_enrollment_id, $customer_id, $user_id, $planned->customer_plan_id);
+		// check if member mobile number match the hr primary admin
+		$hrAccountPrimary = DB::table('customer_hr_dashboard')
+				->join('company_link_accounts', 'company_link_accounts.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
+				->where('customer_hr_dashboard.phone_number', $data['PhoneNo'])
+				->where('customer_hr_dashboard.active', 1)
+				->where('customer_hr_dashboard.hr_activated', 1)
+				->where('company_link_accounts.status', 1)
+				->first();
+
+		if($hrAccountPrimary) {
+			// update member key and linked to this primary hr
+			$updateMemberAdminHr = array(
+				'Password'				=> $hrAccountPrimary->password,
+				'hr_id'					=> $hrAccountPrimary->hr_dashboard_id,
+				'is_hr_admin_linked'	=> 1,
+				'is_hr_admin'			=> 1,
+				'updated_at'			=> date('Y-m-d')
+			);
+
+			DB::table('user')->where('UserID', $user_id)->update($updateMemberAdminHr);
+		}
+
 		// create transaction block
 		MemberHelper::createMemberTransactionAccessBlock($user_id);
 		// send email to new employee

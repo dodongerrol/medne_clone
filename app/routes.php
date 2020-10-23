@@ -165,13 +165,14 @@ Route::group(array('before' => 'auth.jwt_employee'), function( ){
 	// get date terms
 	Route::get('employee/get_date_terms', 'EmployeeController@getEmployeeDateTerms');
 });
-	Route::post('employee/add_postal_code_member', 'EmployeeController@addPostalCodeEmployee');
-	Route::post('employee/create_new_password_member', 'EmployeeController@createNewPasswordEmployee');
-	Route::get('employee/check_user_otp_status', 'EmployeeController@checkUserOtp');
-	Route::post('employee/send_otp_web', 'EmployeeController@sendOtpWeb');
-	Route::get('employee/check_member', 'EmployeeController@checkMember');
-	Route::post('employee/validate_otp_web', 'EmployeeController@validateOtpWeb');
-	Route::post('employee/check_member_password', 'EmployeeController@confirmMemberPassword');
+
+Route::post('employee/add_postal_code_member', 'EmployeeController@addPostalCodeEmployee');
+Route::post('employee/create_new_password_member', 'EmployeeController@createNewPasswordEmployee');
+Route::get('employee/check_user_otp_status', 'EmployeeController@checkUserOtp');
+Route::post('employee/send_otp_web', 'EmployeeController@sendOtpWeb');
+Route::get('employee/check_member', 'EmployeeController@checkMember');
+Route::post('employee/validate_otp_web', 'EmployeeController@validateOtpWeb');
+Route::post('employee/check_member_password', 'EmployeeController@confirmMemberPassword');
 
 // api for getting local_network
 Route::get('list/local_network', 'NetworkPatnerController@getLocalNetworkList');

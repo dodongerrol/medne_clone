@@ -13,25 +13,121 @@ app.directive("bulkUpdateMemberDetailsDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("bulkUpdateMemberDetailsDirective Runnning !");
 
-        scope.selected_account_types = [];
         scope.account_types = [
-          'Employee',
-          'Dependent'
+          {
+            name: 'Employee',
+            selected: true,
+          },
+          {
+            name: 'Dependent',
+            selected: true,
+          },
         ];
+        // both emp and dep
         scope.details = [
-          'Full Name',
-          'Mobile Number',
-          'Postal Code',
-          'Locations & Department',
-          'Work Email',
-          'Date of Birth',
-          'For Communication',
-          'Bank Name & Bank Account Number',
-          'Employee ID',
-          'Benefits Start Date',
-          'Relationship'
+          {
+            name: 'Full Name',
+            selected: true,
+          },
+          {
+            name: 'Mobile Number',
+            selected: false,
+          },
+          {
+            name: 'Postal Code',
+            selected: false,
+          },
+          {
+            name: 'Locations & Department',
+            selected: false,
+          },
+          {
+            name: 'Work Email',
+            selected: false,
+          },
+          {
+            name: 'Date of Birth',
+            selected: false,
+          },
+          {
+            name: 'For Communication',
+            selected: false,
+          },
+          {
+            name: 'Bank Name & Bank Account Number',
+            selected: false,
+          },
+          {
+            name: 'Employee ID',
+            selected: false,
+          },
+          {
+            name: 'Benefits Start Date',
+            selected: false,
+          },
+          {
+            name: 'Relationship',
+            selected: false,
+          },
         ];
-
+        // emp only
+        scope.details_emp = [
+          {
+            name: 'Full Name',
+            selected: true,
+          },
+          {
+            name: 'Mobile Number',
+            selected: false,
+          },
+          {
+            name: 'Postal Code',
+            selected: false,
+          },
+          {
+            name: 'Locations & Department',
+            selected: false,
+          },
+          {
+            name: 'Work Email',
+            selected: false,
+          },
+          {
+            name: 'Date of Birth',
+            selected: false,
+          },
+          {
+            name: 'For Communication',
+            selected: false,
+          },
+          {
+            name: 'Bank Name & Bank Account Number',
+            selected: false,
+          },
+          {
+            name: 'Employee ID',
+            selected: false,
+          },
+          {
+            name: 'Benefits Start Date',
+            selected: false,
+          },
+        ];
+        // dep only
+        scope.details_dep = [
+          {
+            name: 'Full Name',
+            selected: true,
+          },
+          {
+            name: 'Date of Birth',
+            selected: false,
+          },
+          {
+            name: 'Relationship',
+            selected: false,
+          },
+        ];
 
         scope.onLoad  = function(){
 
