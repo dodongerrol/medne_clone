@@ -1482,6 +1482,13 @@ app.directive('activityPage', [
             });
         }
 
+				scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
 
 
 
@@ -1492,7 +1499,8 @@ app.directive('activityPage', [
 					await scope.getSpendingAcctStatus();
 
 					await scope._getLocationListing_();
-          await scope._getDepartmentListing_();
+					await scope._getDepartmentListing_();
+					await scope.getPermissionsData();
 				};
 
 				scope.credits = {};

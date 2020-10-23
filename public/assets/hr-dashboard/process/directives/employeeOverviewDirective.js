@@ -2956,7 +2956,6 @@ app.directive("employeeOverviewDirective", [
           scope.getSession();
           scope.companyAccountType();
           scope.getSpendingAcctStatus();
-
           console.log(scope.emp_entitlement.medical_new_entitlement);
         };
 

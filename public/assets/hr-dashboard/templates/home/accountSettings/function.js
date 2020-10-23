@@ -78,16 +78,23 @@ app.directive("accountSettingsDirective", [
         }
 
         scope.presentModal = (id, show = true) => {
-          $(`#${id}`).modal(show ? "show" : "hide");
 
-          if(id == scope.changePrimaryAdminModals.form && show == true){
-            scope.changePrimaryData = {
-              phone_code: '65'
+          if ( scope.get_permissions_data.create_remove_edit_admin_unlink_account == 1 ) {
+            $(`#${id}`).modal(show ? "show" : "hide");
+
+            if(id == scope.changePrimaryAdminModals.form && show == true){
+              scope.changePrimaryData = {
+                phone_code: '65'
+              }
+              $timeout(function(){
+                scope.initializeChangePrimaryAdminCountryCode();
+              },400);
             }
-            $timeout(function(){
-              scope.initializeChangePrimaryAdminCountryCode();
-            },400);
+          } else {
+            $('#permission-modal').modal('show');
+            $(`#${id}`).modal("hide");
           }
+          
         };
 
         scope.changeAdmin = () => {
@@ -763,12 +770,18 @@ app.directive("accountSettingsDirective", [
         }
 
         scope.unlinkAccount = async function ( data ) {
-          console.log(data);
-          scope.link_account_id = data.id;
-          scope.unlinkData = {
-            phone_code: '65'
-          }
-          await scope.initializeUnlinkCountryCode();
+          if ( scope.get_permissions_data.create_remove_edit_admin_unlink_account == 1 ) {
+            $('#unlink_account').modal('show');
+            console.log(data);
+            scope.link_account_id = data.id;
+            scope.unlinkData = {
+              phone_code: '65'
+            }
+            await scope.initializeUnlinkCountryCode();
+          } else {
+            $('#permission-modal').modal('show');
+            $('#unlink_account').modal('hide');
+          } 
         }
 
         scope.initializeUnlinkCountryCode = function(){
@@ -814,6 +827,14 @@ app.directive("accountSettingsDirective", [
           });
         }
 
+        scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
+
         scope.range = function (num) {
           var arr = [];
           for (var i = 0; i < num; i++) {
@@ -838,6 +859,7 @@ app.directive("accountSettingsDirective", [
           await scope.getOldPlansList();
           await scope.getPlanDetails();
           await scope.getLinkedAccount();
+          await scope.getPermissionsData();
         };
         scope.onLoad();
       },

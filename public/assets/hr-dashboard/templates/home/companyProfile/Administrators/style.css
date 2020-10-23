@@ -359,3 +359,6 @@
   font-family: 'Helvetica Medium';
   margin: 0 0 0 10px;
 }
+.confirm-add-administrator >div:nth-child(1) {
+  margin: 0 0 20px;
+}
