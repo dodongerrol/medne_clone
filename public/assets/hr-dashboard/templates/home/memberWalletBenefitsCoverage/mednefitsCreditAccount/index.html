@@ -161,7 +161,7 @@
             <div class="member-bold-text">Medical Wallet:</div>
             <div class="display-flex wallet-panel-container">
               <div ng-if="medicalWalletData.panel_payment_method">Mednefits Panel</div>
-              <div ng-if="medicalWalletData.non_panel_payment_method">Non Panel</div>
+              <div ng-if="medicalWalletData.non_panel_reimbursement && medicalWalletData.non_panel_payment_method">Non Panel</div>
             </div>
           </div>
           <div class="wallet-container wellness-wallet-container display-flex">

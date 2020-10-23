@@ -69,11 +69,11 @@ return array(
 		'read' => array(
             // Return a random host
             // 'host' => 'root',
-            'host' => 'db',
+            'host' => '127.0.0.1',
     ),
     'write' => array(
             // 'host' => 'root'
-            'host' => 'db'
+            'host' => '127.0.0.1',
     ),
     // 'database'  => 'root',
     'database'  => 'medicloud_v3',

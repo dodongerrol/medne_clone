@@ -28,7 +28,7 @@ app.directive('memberWellnessWalletDirective', [
         }
 				
 				scope.getDateTerms = async function () {
-          await hrSettings.fetchDateTerms()
+          await hrSettings.fetchDateTerms('wellness')
           .then(async function(response){
 						scope.account_details = response.data;
             scope.dateTerm = response.data.data;
