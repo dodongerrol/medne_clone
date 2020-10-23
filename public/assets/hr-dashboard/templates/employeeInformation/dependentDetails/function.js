@@ -7,7 +7,7 @@ app.directive('dependentDetailsDirective', [
       restrict: "A",
       scope: true,
       link: function link(scope, element, attributeSet) {
-        console.log('dependentDetailsDirective running!');
+        console.log('dependentDetailsDirectiveasdasd as running!');
         scope.selected_member_id = localStorage.getItem('selected_member_id');
         scope.selected_emp_dependents = [];
         scope.selectedDependent = {};
@@ -78,6 +78,21 @@ app.directive('dependentDetailsDirective', [
             });
         }
 
+        scope.removeDependentBtn = function () {
+          if ( scope.get_permissions_data.enroll_terminate_employee == 1 ) {
+
+          } else {
+            $('#permission-modal').modal('show');
+          }
+        }
+
+        scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
 
         // CUSTOM REUSABLE FUNCTIONS
         
@@ -105,6 +120,7 @@ app.directive('dependentDetailsDirective', [
 
         scope.onLoad  = async function(){
           scope.getEmpDependents(scope.selected_member_id);
+          await scope.getPermissionsData();
         }
         scope.onLoad();
       }

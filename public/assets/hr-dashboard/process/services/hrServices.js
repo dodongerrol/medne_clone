@@ -606,6 +606,14 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/remove_additional_administrator?admin_id="+id );
   }
 
+  hrFactory.getPermissions = function ( ) {
+    return $http.get( serverUrl.url + "/hr/get_account_permissions" );
+  }
+
+  hrFactory.updateAddAdministrator = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_administrator",data );
+  }
+
   return hrFactory;
 });
 

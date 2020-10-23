@@ -149,10 +149,22 @@ app.directive('employeeInfoContainerDirective', [
         }
 
         scope.goToRemoveEmployee  = function(){
-          $state.go('member-remove.remove-emp-inputs', { member_id : scope.selected_member_id });
+          if ( scope.get_permissions_data.enroll_terminate_employee == 1 ) {
+            $state.go('member-remove.remove-emp-inputs', { member_id : scope.selected_member_id });
+          } else {
+            $('#permission-modal').modal('show');
+          }
+          
         }
         scope.goToHealthAccountSummary  = function(){
           $state.go('member.health-spending-account-summary');
+        }
+        scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
         }
 
 				
@@ -185,6 +197,7 @@ app.directive('employeeInfoContainerDirective', [
           await scope.getEmployeeDetails();
           await scope.getEmpPlans(scope.selected_member_id);
           await scope.getEmpDependents(scope.selected_member_id);
+          await scope.getPermissionsData();
           // await scope.entitlementCalc(scope.selected_member_id);
 
           if (scope.empOverviewData.isSearchEmp != null && scope.empOverviewData.isSearchEmp != 'null') {

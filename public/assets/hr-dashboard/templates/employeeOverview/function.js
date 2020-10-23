@@ -211,9 +211,14 @@ app.directive("employeeOverviewDirective", [
           window.open(serverUrl.url + '/hr/get_company_employee_lists_credits?token=' + window.localStorage.getItem('token'));
         }
         scope.enrollMoreEmployees = function () {
-          localStorage.setItem('fromEmpOverview', true);
-          $state.go( 'create-team-benefits-tiers' );
-          $('body').css('overflow', 'auto');
+          if ( scope.get_permissions_data.enroll_terminate_employee == 1 ) {
+            localStorage.setItem('fromEmpOverview', true);
+            $state.go( 'create-team-benefits-tiers' );
+            $('body').css('overflow', 'auto');
+          } else {
+            $('#permission-modal').modal('show');
+          }
+          
         }
         scope.goToMemberInfo  = function(data, index){
           console.log(data);
@@ -399,6 +404,13 @@ app.directive("employeeOverviewDirective", [
             });
         }
 
+        scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
 
 
 
@@ -443,6 +455,8 @@ app.directive("employeeOverviewDirective", [
           await scope._getLocationListing_();
           await scope._getDepartmentListing_();
           // await scope.getProgress();
+
+          await scope.getPermissionsData();
 
           localStorage.setItem('selected_member_id', null);
           localStorage.setItem('selected_member_index', null);

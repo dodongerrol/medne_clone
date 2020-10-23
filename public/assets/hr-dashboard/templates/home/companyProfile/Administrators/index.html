@@ -15,23 +15,25 @@
           </div>
         </div>
         <div>
-          <button ng-click="changePrimAdmin()" data-toggle="modal"  data-target="#change-primary-admin-modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
+          <button ng-click="changePrimAdmin()" data-toggle="modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Change Primary Administrator</button>
         </div>
       </div>
       <div class="display-flex admin-information">
         <div>
           <div class="bold-text">This admin's permissions applied to:</div>
-          <span>All Employees & Dependents </span>
+          <div ng-repeat="list in primary_admin_data.permissions_applied">
+            <span ng-bind="list">All Employees & Dependents </span>
+          </div>
         </div>
         <div class="admin-can-container">
           <div class="bold-text">This admin can:</div>
           <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>View employee + dependent profile information</span></div>
-          <div ng-if="primary_admin_data.edit_employee_dependent == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
-          <div ng-if="primary_admin_data.enroll_terminate_employee == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
-          <div ng-if="primary_admin_data.approve_reject_edit_non_panel_claims == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
-          <div ng-if="primary_admin_data.create_remove_edit_admin_unlink_account == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
-          <div ng-if="primary_admin_data.manage_billing_and_payments == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
-          <div ng-if="primary_admin_data.add_location_departments == 1"><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Edit employee + dependent profiles</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Enroll & terminate employee + dependent</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Approve, reject & edit non-panel claims</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Create, remove admins, edit admins permission & unlink company account</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Managing billing & payments</span></div>
+          <div><span><img class="check-blue-icon" src="../../assets/hr-dashboard/img/check-blue-icon.svg"></span><span>Add locations & Depeartments</span></div>
         </div>
       </div>
     </div>
@@ -40,10 +42,10 @@
     <h5 class="bold-text">Additional Administrators</h5>
     <div class="admin-card-container">
       <div ng-if="additional_admin_data.length == 0 " class="no-administrator">
-        <button ng-click="addAdministrator()" data-toggle="modal" data-target="#add-administrator-modal" class="bold-text"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
+        <button ng-click="addAdministratorBtn( add_admin_data )" data-toggle="modal" data-target="#add-administrator-modal" class="bold-text"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
       </div>
       <div ng-if="additional_admin_data.length != 0 " class="with-administrator">
-        <button ng-click="addAdministrator()" data-toggle="modal" data-target="#add-administrator-modal" class="bold-text btn-add-admin"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
+        <button ng-click="addAdministratorBtn( add_admin_data )" data-toggle="modal" class="bold-text btn-add-admin"><img src="../assets/hr-dashboard/img/add-blue-icon.png">Add Administrator</button>
         <div ng-repeat="list in additional_admin_data" class="additional-admin-details">
           <div class="display-flex edit-remove-wrapper">
             <div>
@@ -57,14 +59,16 @@
               </div>
             </div>
             <div class="display-flex edit-remove-btn-container">
-              <button ng-click="editAdministrator()" data-toggle="modal" data-target="#edit-administrator-modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Edit</button>
-              <button ng-click="removeAdmin( list )" data-toggle="modal" data-target="#remove-administrator-modal" class="btn-remove"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
+              <button ng-click="editAdministrator( list )" data-toggle="modal" class="change-primary-btn"><img src="../../assets/hr-dashboard/img/edit.png"> Edit</button>
+              <button ng-click="removeAdmin( list )" data-toggle="modal" class="btn-remove"><i class="fa fa-trash-o" aria-hidden="true"></i> Remove</button>
             </div>
           </div>
           <div class="display-flex admin-information">
             <div>
               <div class="bold-text">This admin's permissions applied to:</div>
-              <span>All Employees & Dependents</span>
+              <div ng-repeat="list in list.permissions_applied">
+                <span ng-bind="list">All Employees & Dependents</span>
+              </div>
             </div>
             <div class="admin-can-container">
               <div class="bold-text">This admin can:</div>
@@ -91,7 +95,7 @@
         <div ng-if="!isShowNoteAdmin" class="modal-body first-step">
           <p>Please note that the change of HR Administrator will make this account unlinked.</p>
         </div>
-        <div ng-if="isShowNoteAdmin" class="modal-body">
+        <div ng-if="isShowNoteAdmin && !isShowChangeAdmin" class="modal-body">
           <div class="admin-input-wrapper">
             <label>Full Name</label>
             <input ng-model="changePrimaryData.fullname" type="text" placeholder="Enter new Primary Admin's full name">
@@ -110,7 +114,7 @@
             </div>
           </div>
         </div>
-        <div ng-if="false" class="modal-body administrator-success">
+        <div ng-if="isShowChangeAdmin" class="modal-body administrator-success">
           <img src="../assets/images/success-circle.png">
           <div>
             <div>HR Administrator has successfully been change.</div>
@@ -118,10 +122,10 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="isShowNoteAdmin" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }" ng-click="updateHrAdmin()">Confirm Change</button>
+          <button ng-if="!isShowChangeAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="isShowNoteAdmin && !isShowChangeAdmin" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }" ng-click="updateHrAdmin()">Confirm Change</button>
           <button ng-if="!isShowNoteAdmin" ng-click="continuePrimAdmin()" class="btn-update confirm">Continue</button>
-          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+          <button ng-if="isShowChangeAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
       </div>
     </div>
@@ -133,20 +137,20 @@
         <div class="modal-header">
           <h5>Remove Administrator</h5>
         </div>
-        <div ng-if="!isShowSuccessfulRemoveAdmin" class="modal-body first-step">
+        <div ng-if="!isShowSuccessfullRemoveAdmin" class="modal-body first-step">
           <div>Are you sure you want to remove this administrator?</div>
           <div>Please confirm to proceed.</div>
         </div>
-        <div ng-if="isShowSuccessfulRemoveAdmin" class="modal-body administrator-success">
+        <div ng-if="isShowSuccessfullRemoveAdmin" class="modal-body administrator-success">
           <img src="../assets/images/success-circle.png">
           <div>
             <div>The administrator has succesfully been removed.</div>
           </div>
         </div>
         <div class="modal-footer">
-          <button ng-if="!isShowSuccessfulRemoveAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="!isShowSuccessfulRemoveAdmin" ng-click="confirmRemoveAdmin( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
-          <button ng-if="isShowSuccessfulRemoveAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
+          <button ng-if="!isShowSuccessfullRemoveAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="!isShowSuccessfullRemoveAdmin" ng-click="confirmRemoveAdmin( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
+          <button ng-if="isShowSuccessfullRemoveAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
       </div>
     </div>
@@ -158,27 +162,27 @@
         <div class="modal-header">
           <h5>Add Administrator</h5>
         </div>
-        <div ng-if="true" class="modal-body">
+        <div ng-if="!isAddAdministratorConfirm && !isAddAdministratorSuccess" class="modal-body">
           <div class="mednefits-employee-selector-container">
             <label class="bold-text">Is this name a Mednefits employee?</label>
             <div class="display-flex">
               <div class="custom-checkbox-container active">
                 <label class="checkbox-input">
                   <span class="checkbox-text">Yes</span >
-                  <input ng-model="add_admin_data.is_mednefits_emp" value="1" type="radio"/>
+                  <input ng-model="add_admin_data.is_mednefits_emp" ng-value="1" type="radio"/>
                   <span class="checkbox-mark"></span>
                 </label>
               </div>
               <div class="custom-checkbox-container active">
                 <label class="checkbox-input">
                   <span class="checkbox-text">No</span >
-                  <input ng-click="mednefitsEmployee( add_admin_data.is_mednefits_emp )" ng-model="add_admin_data.is_mednefits_emp" value="0" type="radio"/>
+                  <input ng-click="mednefitsEmployee( add_admin_data.is_mednefits_emp )" ng-model="add_admin_data.is_mednefits_emp" ng-value="0" type="radio"/>
                   <span class="checkbox-mark"></span>
                 </label>
               </div>
             </div>
           </div>
-          <div ng-if="add_admin_data.is_mednefits_emp == 1" class="mednefits-employee-name">
+          <div ng-if="add_admin_data.is_mednefits_emp == 1 " class="mednefits-employee-name">
             <div class="permission-wrapper employee-name">
               <label class="bold-text">Employee name</label>
               <div class="activated-text">(Activated account and email address are required to be an Administrator)</div>
@@ -198,7 +202,7 @@
               </div>
             </div>
           </div>
-          <div ng-if="add_admin_data.is_mednefits_emp == 0" class="">
+          <div ng-if="add_admin_data.is_mednefits_emp == 0 " class="">
             <div class="admin-input-wrapper">
               <label class="bold-text">Full Name</label>
               <input ng-model="add_admin_data.fullname" type="text" placeholder="Enter Admin's full name">
@@ -283,7 +287,7 @@
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">View employee + dependent profile information</span >
-                <input ng-model="add_admin_data.view_employee_dependent" type="checkbox"/>
+                <input ng-model="add_admin_data.view_employee_dependent" type="checkbox">
                 <span class="checkbox-mark"></span>
               </label>
             </div>
@@ -331,19 +335,19 @@
             </div>
           </div>
         </div>
-        <div ng-if="false" class="modal-body">
+        <div ng-if="isAddAdministratorConfirm && !isAddAdministratorSuccess" class="modal-body confirm-add-administrator">
           <div>Are you sure you want to add this administrator?</div>
           <div>Please confirm to proceed.</div>
         </div>
-        <div ng-if="false" class="modal-body administrator-success">
+        <div ng-if="isAddAdministratorSuccess" class="modal-body administrator-success">
           <img src="../assets/images/success-circle.png">
           <div>Administrator has been successfully added.</div>
         </div>
         <div class="modal-footer">
-          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="true" ng-click="addAdmininistrator( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
-          <button ng-if="false" class="btn-update confirm">Confirm</button>
-          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+          <button ng-if="!isAddAdministratorSuccess" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
+          <button ng-if="isAddAdministratorConfirm && !isAddAdministratorSuccess" ng-click="confirmAdmininistrator( )" class="btn-update confirm">Confirm</button>
+          <button ng-if="isAddAdministratorSuccess" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
       </div>
     </div>
@@ -355,10 +359,31 @@
         <div class="modal-header">
           <h5>Edit Administrator</h5>
         </div>
-        <div ng-if="true" class="modal-body">
-          <div class="admin-input-wrapper employee-name-input-wrapper">
-            <label class="bold-text">Employee name</label>
-            <input type="text" readonly>
+        <div ng-if="!isShowUpdateAdmin && !isShowSuccessAdmin" class="modal-body">
+          <div ng-if="edit_administrator_data.is_mednefits_employee == 1">
+            <div class="admin-input-wrapper employee-name-input-wrapper">
+              <label class="bold-text">Employee name</label>
+              <input ng-model="edit_administrator_data.fullname" type="text" readonly>
+            </div>
+          </div>
+          <div ng-if="edit_administrator_data.is_mednefits_employee == 0">
+            <div class="admin-input-wrapper">
+              <label class="bold-text">Full Name</label>
+              <input ng-model="edit_administrator_data.fullname" type="text" placeholder="Enter Admin's full name">
+            </div>
+            <div class="admin-input-wrapper">
+              <label class="bold-text">Email Address</label>
+              <input ng-model="edit_administrator_data.email" type="text" placeholder="Enter Admin's full name">
+            </div>
+            <div class="admin-input-wrapper">
+              <label class="bold-text">Mobile Number</label>
+              <div class="display-flex mobile-number-input">
+                <div>
+                  <input ng-model="edit_administrator_data.phone_code" type="tel" id="phone_number_add_admin">
+                </div>
+                <input ng-model="edit_administrator_data.phone_no" type="text" placeholder="Enter Admin's Mobile Number">
+              </div>
+            </div>
           </div>
           <div class="permission-wrapper">
             <label class="bold-text">Permissions will be applied to</label>
@@ -407,15 +432,15 @@
               </div>
               <div class="location-department-data-wrapper">
                 <div ng-if="permission_data == 'Locations' " class="filter-data-selector-wrapper">
-                  <div ng-repeat="list in selected_location_data" class="filter-data-selector-container">
+                  <div ng-repeat="list in edit_administrator_data.locations" class="filter-data-selector-container">
                     <div ng-bind="list.location">Location 1</div>
-                    <img ng-click="selectedPermission('locations',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
+                    <img ng-click="editSelectedPermission('locations',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
                   </div>
                 </div>
                 <div ng-if="permission_data == 'Departments' " class="filter-data-selector-wrapper">
                   <div ng-repeat="list in selected_deparment_data" class="filter-data-selector-container">
                     <div ng-bind="list.department">Location 1</div>
-                    <img ng-click="selectedPermission('departments',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
+                    <img ng-click="editSelectedPermission('departments',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
                   </div>
                 </div>
               </div>
@@ -426,67 +451,72 @@
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">View employee + dependent profile information</span >
-                <input type="checkbox"/>
+                <input ng-model="add_admin_data.view_employee_dependent" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Edit employee + dependent profiles</span >
-                <input type="checkbox"/>
+                <input ng-model="edit_administrator_data.edit_employee_dependent" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Enroll & terminate employee + dependent</span >
-                <input type="checkbox"/>
+                <input ng-model="edit_administrator_data.enroll_terminate_employee" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Approve, reject & edit non-panel claims</span >
-                <input type="checkbox"/>
+                <input ng-model="edit_administrator_data.approve_reject_edit_non_panel_claims" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Create, remove admins, edit admins permission & unlink company account</span >
-                <input type="checkbox"/>
+                <input ng-model="edit_administrator_data.create_remove_edit_admin_unlink_account" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Managing billing & payments</span >
-                <input type="checkbox"/>
+                <input ng-model="edit_administrator_data.manage_billing_and_payments" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Add locations & Depeartments</span >
-                <input type="checkbox"/>
+                <input ng-model="edit_administrator_data.add_location_departments" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
           </div>
         </div>
-        <div ng-if="false" class="modal-body">
+        <div ng-if="isShowUpdateAdmin && !isShowSuccessAdmin" class="modal-body">
           <div>Are you sure you want to update the details of this administrator?</div>
           <div>Please confirm to proceed.</div>
         </div>
-        <div ng-if="false" class="modal-body administrator-success">
+        <div ng-if="isShowSuccessAdmin" class="modal-body administrator-success">
           <img src="../assets/images/success-circle.png">
           <div>The detail(s) has successfully been updated.</div>
         </div>
         <div class="modal-footer">
-          <button ng-if="true" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="true" ng-click="updateBusinessInformation( get_business_info_data )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Update</button>
-          <button ng-if="false" class="btn-update confirm">Confirm</button>
-          <button ng-if="false" data-dismiss="modal" class="btn-update btn-close">Close</button>
+          <button ng-if="!isShowSuccessAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="!isShowUpdateAdmin" ng-click="updateAdmin( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Update</button>
+          <button ng-if="isShowUpdateAdmin && !isShowSuccessAdmin" ng-click="confirmUpdateAdmin( edit_administrator_data )" class="btn-update confirm">Confirm</button>
+          <button ng-if="isShowSuccessAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
+
+          <!-- <button ng-if="!isAddAdministratorSuccess" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
+          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
+          <button ng-if="isAddAdministratorConfirm && !isAddAdministratorSuccess" ng-click="confirmAdmininistrator( )" class="btn-update confirm">Confirm</button>
+          <button ng-if="isAddAdministratorSuccess" data-dismiss="modal" class="btn-update btn-close">Close</button> -->
         </div>
       </div>
     </div>
@@ -499,7 +529,7 @@
           <h5>Permission Denied</h5>
         </div>
         <div class="modal-body">
-          <img src="../assets/hr-dashboard/img/close-circular-button-symbol.svg">
+          <img src="../assets/hr-dashboard/img/close-circular-button-symbol.png">
           <div>
             <div>Sorry! You have no permission to manage locations and departments.</div>
           </div>

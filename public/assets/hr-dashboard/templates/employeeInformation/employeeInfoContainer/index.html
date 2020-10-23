@@ -278,6 +278,26 @@
         ng-click="nextSelectedEmployee()">Next employee</button>
     </div>
   </div>
+
+  <div class="modal fade administrator-modal-container" id="permission-modal" tabindex="-1" role= "dialog">
+    <div ng-if="true" class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Permission Denied</h5>
+        </div>
+        <div class="modal-body">
+          <img src="../assets/hr-dashboard/img/close-circular-button-symbol.png">
+          <div>
+            <div>Sorry! You have no permission to manage locations and departments.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button data-dismiss="modal" class="btn-update btn-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 
 <style scoped>

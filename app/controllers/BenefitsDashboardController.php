@@ -18119,7 +18119,7 @@ public function createHrLocation ()
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->where('user.UserID', $employee_id)
-				->where('user.UserID', 'user.member_activated', 'user.Active')
+				->select('user.UserID', 'user.member_activated', 'user.Active', 'user.PhoneCode', 'user.PhoneNo')
 				->first();
 
 		
@@ -18151,7 +18151,8 @@ public function createHrLocation ()
 				'customer_id'						=> $customer_id,
 				'member_id'							=> $employee->UserID,
 				'fullname'							=> $input['fullname'],
-				'email'								=> $input['email'],
+				'phone_code'				=> $employee->PhoneCode,
+				'phone_no'				=> $employee->PhoneNo,
 				'is_mednefits_employee'				=> 1,
 				'status'							=> 1
 			);
@@ -18195,6 +18196,8 @@ public function createHrLocation ()
 				'member_id'							=> $externalUserId,
 				'fullname'							=> $input['fullname'],
 				'email'								=> $input['email'],
+				'phone_code'				=> $input['phone_code'],
+				'phone_no'				=> $input['phone_no'],
 				'is_mednefits_employee'				=> 0,
 				'status'							=> 1
 			);
@@ -18266,7 +18269,9 @@ public function createHrLocation ()
 		}
 		
 		$emailDdata['button'] = url('/').'/company-activation#/activation-link?activation_token='.$employee->ActiveLink.'&user_type=external_admin';
-		\EmailHelper::sendEmail($emailDdata);
+		if($employee->Email) {
+			\EmailHelper::sendEmail($emailDdata);
+		}
 
 		return ['status' => true, 'message' => 'Successfully Add Administrator.'];
 	}
@@ -18274,13 +18279,13 @@ public function createHrLocation ()
 	public function getPrimaryAdminDetails()
 	{
 		$input = Input::all();
-        $result = StringHelper::getJwtHrSession();
+    $result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
 
 		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
 		// get permissions;
-		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, 'hr_admin');
+		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, $result->user_type);
 		
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
@@ -18303,7 +18308,7 @@ public function createHrLocation ()
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
 
-		$details = CustomerAdminRole::where('customer_id', $customer_id)->select('id', 'customer_id', 'hr_id', 'member_id', 'is_mednefits_employee', 'fullname', 'email')->get();
+		$details = CustomerAdminRole::where('customer_id', $customer_id)->where('status', 1)->select('id', 'customer_id', 'hr_id', 'member_id', 'is_mednefits_employee', 'fullname', 'email', 'status', 'phone_no', 'phone_code')->get();
 		$container = array();
 
 		foreach ($details as $detail) {
@@ -18335,6 +18340,7 @@ public function createHrLocation ()
 				$locationData = DB::table('company_locations')->where('LocationID', $location->location_id)->select('customer_id', 'location', 'LocationID')->first();
 
 				if($locationData) {
+					$locationData->status = true;
 					$locations[] = $locationData;
 				}
 			}
@@ -18344,6 +18350,7 @@ public function createHrLocation ()
 				$departmentData = DB::table('company_locations')->where('LocationID', $department->department_id)->select('customer_id', 'location', 'LocationID')->first();
 
 				if($departmentData) {
+					$departmentData->status = true;
 					$departments[] = $departmentData;
 				}
 			}
@@ -18363,6 +18370,7 @@ public function createHrLocation ()
 				'create_remove_edit_admin_unlink_account'		=> $permissions->create_remove_edit_admin_unlink_account,
 				'manage_billing_and_payments'					=> $permissions->manage_billing_and_payments,
 				'add_location_departments'						=> $permissions->add_location_departments,
+				'status'										=> (int)$detail->status == 1 ? true : false,
 				'locations'										=> $locations,
 				'departments'									=> $departments,
 				'permissions_applied'							=> $permissions_applied

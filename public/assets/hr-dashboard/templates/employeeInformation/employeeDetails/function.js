@@ -72,11 +72,18 @@ app.directive('employeeDetailsDirective', [
         }
 
         scope.openUpdateEmployeeModal = function () {
-          scope.isUpdateEmpInfoModalOpen = true;
-          $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
-          scope.inititalizeGeoCode();
-          scope.initializeDatepickers();
-          $("#update-employee-modal").modal('show');
+          console.log(scope.get_permissions_data);
+          if ( scope.get_permissions_data.edit_employee_dependent == 1 ) {
+            scope.isUpdateEmpInfoModalOpen = true;
+            $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
+            scope.inititalizeGeoCode();
+            scope.initializeDatepickers();
+            $("#update-employee-modal").modal('show');
+          } else {
+            $("#update-employee-modal").modal('hide');
+            $("#permission-modal").modal('show');
+          }
+          
         }
 
         scope.inititalizeGeoCode = function () {
@@ -439,6 +446,14 @@ app.directive('employeeDetailsDirective', [
             });
         }
 
+        scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
+
 
 
         // CUSTOM REUSABLE FUNCTIONS
@@ -473,6 +488,7 @@ app.directive('employeeDetailsDirective', [
           await scope.entitlementCalc(scope.selected_member_id);
           await scope.checkDependentsStatus();
           await scope.companyDependents();
+          await scope.getPermissionsData();
           scope.hideLoading();
         }
         scope.onLoad();
