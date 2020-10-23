@@ -192,8 +192,8 @@
                   <input type="type" placeholder="Search by name" ng-model="add_admin_data.employee_name" ng-click="seachEmployeeName()">
                   <i class="fa fa-angle-down"></i>
 
-                  <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper">
-                    <div ng-click="employeeNameSelector(list)" ng-repeat="list in employee_data"><span ng-bind="list.name"></span></div>
+                  <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper employee-name">
+                    <div ng-click="employeeNameSelector(list)" ng-repeat="list in employee_data"><span ng-bind="list.Name"></span></div>
                   </div>
                 </div>
                 <div ng-if="false" class="employee-name-validation">

@@ -225,6 +225,10 @@
   top: 35px;
   z-index: 1;
   padding: 5px 0;
+  overflow: auto;
+}
+.permission-selector-dp-wrapper.employee-name {
+  height: 150px;
 }
 .permission-selector-dp-wrapper.location-department-container {
   z-index: 2;
