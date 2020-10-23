@@ -43,7 +43,7 @@ class GenerateExcelUrls
     {
         if (
             ($this->status['medical_enabled'] && $this->status['wellness_enabled']) &&
-            ($this->status['medicak_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
+            ($this->status['medical_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
         ) {
             return [
                 'employee' => "{$this->baseUrl}/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx",
