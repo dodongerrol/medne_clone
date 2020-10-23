@@ -18198,11 +18198,12 @@ public function createHrLocation ()
 				'PhoneCode'				=> $input['phone_code'],
 				'PhoneNo'				=> $input['phone_no'],
 				'ActiveLink'			=> StringHelper::getEncryptValue(),
-				'UserType'				=> 6,
+				'UserType'				=> 5,
 				'created_at'			=> date('Y-m-d'),
 				'updated_at'			=> date('Y-m-d'),
 				'account_update_status'	=> 1,
 				'account_already_update'	=> 1,
+				'is_external_admin'		=> 1,
 				'account_update_date'	=> date('Y-m-d H:i:s'),
 				'expiration_time'		=> date('Y-m-d H:i:s', strtotime('+7 days'))
 			]);
