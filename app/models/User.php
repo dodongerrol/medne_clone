@@ -921,7 +921,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     function checkMemberExistence ($params) {
         $query = User::query();
 
-        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo', 'Active');
+        $query->select('UserID as user_id', 'Name as name', 'member_activated', DB::raw('IFNULL((case when Zip_Code <= 0 then 0 else Zip_Code end), 0)as postal_code'), 'disabled_otp', 'PhoneNo', 'Active', 'is_hr_admin_linked', 'is_hr_admin');
        
         // Append where clause
         foreach ($params as $key => $value) {
