@@ -6933,7 +6933,9 @@ public function payCreditsNew( )
 
     $checker = DB::table('user')
     ->select('UserID as user_id', 'Name as name', 'member_activated', 'Email as email_user')
-    ->where('UserID', $input['user_id'])->first();
+    ->where('UserID', $input['user_id'])
+    ->where('UserType', 5)
+    ->first();
 
     if(!$checker) {
       $returnObject->status = false;
@@ -6981,10 +6983,10 @@ public function payCreditsNew( )
       }
 
       $checker = DB::table('user')
-      ->select('UserID', 'Name as name', 'member_activated', 'is_hr_admin_linked', 'is_hr_admin')
+      ->select('UserID', 'Name as name', 'member_activated', 'is_hr_admin_linked', 'is_hr_admin', 'is_external_admin')
       ->where('UserID', $input['user_id'])
       ->first();
-
+      
       if(!$checker) {
         $returnObject->status = false;
         $returnObject->message = 'User not found!';
@@ -6994,7 +6996,7 @@ public function payCreditsNew( )
       $member_id = $checker->UserID;
       
       // check if member is an hr admin
-      if((int)$checker->is_hr_admin_linked == 1 && (int)$checker->is_hr_admin == 1) {
+      if((int)$checker->is_hr_admin_linked == 1 && (int)$checker->is_hr_admin == 1 || (int)$checker->is_external_admin == 1) {
         $updateAccountStatus = [
           'member_activated' => 1,
           'account_update_status' => 1,
@@ -7002,12 +7004,17 @@ public function payCreditsNew( )
           'Zip_Code'  => $input['postal_code'],
           'OTPCode' => NULL
         ];
-  
+
+        if((int)$checker->is_external_admin == 1) {
+          $updateAccountStatus['is_external_admin_activated'] = 1;
+        }
+        
         DB::table('user')->where('UserID', $member_id)->update($updateAccountStatus);
         $token = StringHelper::createLoginToken($checker->UserID, 'cfcd208495d565ef66e7dff9f98764da');
         $checker->token = $token->data['access_token'];
         $checker->member_admin = 1;
       } else {
+        return "yeah";
         DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code'], 'OTPCode' => NULL]);
       }
       
@@ -7215,11 +7222,12 @@ public function payCreditsNew( )
     }
 
     $checker = DB::table('user')
-    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp', 'is_hr_admin_linked', 'is_hr_admin')
+    ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp', 'is_hr_admin_linked', 'is_hr_admin', 'is_external_admin', 'is_external_admin_activated')
     ->where('PhoneNo', $keys['mobile'])
-    ->where('Active', 1)
+    // ->where('Active', 1)
+    ->where('UserType', 5)
     ->first();
-
+    
     if(!$checker) {
         $returnObject->status = false;
         $returnObject->message = 'Unregistered Member.';
@@ -7234,8 +7242,15 @@ public function payCreditsNew( )
         $checker->postal_code = 1;
     }
 
-    if((int)$checker->is_hr_admin_linked == 1 && (int)$checker->is_hr_admin == 1) {
+    if((int)$checker->is_hr_admin_linked == 1 && (int)$checker->is_hr_admin == 1 || (int)$checker->is_external_admin == 1) {
       $checker->disabled_password_creation = 1;
+      if((int)$checker->is_external_admin == 1) {
+        $checker->is_hr_admin_linked = 1;
+        $checker->is_hr_admin = 1;
+        if((int)$checker->is_external_admin_activated == 0) {
+          $checker->member_activated = 0;
+        }
+      }
     }
 
     $returnObject->status = true;
@@ -7406,7 +7421,8 @@ public function payCreditsNew( )
 
     $checker = DB::table('user')
                 ->select('UserID as user_id', 'Name as name', 'member_activated')
-                ->where('UserID', $input['user_id'])->first();
+                ->where('UserID', $input['user_id'])
+                ->first();
 
     if(!$checker) {
       $returnObject->status = false;
@@ -7505,7 +7521,9 @@ public function payCreditsNew( )
 
       $checker = DB::table('user')
       ->select('UserID as user_id', 'Name as name', 'PhoneNo as mobile_number')
-      ->where('PhoneNo', $input['mobile'])->first();
+      ->where('PhoneNo', $input['mobile'])
+      ->where('UserType', 5)
+      ->first();
 
       if(!$checker) {
         $returnObject->status = false;

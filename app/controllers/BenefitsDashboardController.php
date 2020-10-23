@@ -18198,7 +18198,7 @@ public function createHrLocation ()
 				'PhoneCode'				=> $input['phone_code'],
 				'PhoneNo'				=> $input['phone_no'],
 				'ActiveLink'			=> StringHelper::getEncryptValue(),
-				'UserType'				=> 5,
+				'UserType'				=> 6,
 				'created_at'			=> date('Y-m-d'),
 				'updated_at'			=> date('Y-m-d'),
 				'account_update_status'	=> 1,
@@ -18465,4 +18465,36 @@ public function createHrLocation ()
 
 		return array('status' => TRUE, 'message'	=> 'successfully updated admin.');
 	}
+
+	public function validateEmployeeName( )
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
+		if(empty($input['user_id']) || $input['user_id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$member = DB::table('user')->where('UserID', $input['user_id'])->first();
+
+		if(!$member) {
+			return ['status' => false, 'message' => 'Member does not exist'];
+		}
+
+		$message = 'Member is Active';
+		$status = true;
+		if((int)$member->Active == 0 || (int)$member->member_activated == 0) {
+			$message = 'Please have this account activated before assigning Administrator.';
+			$status = false;
+		}
+		
+		if(!$member->Email) {
+			$message = 'Please got to Employee Information to register an email address for this account before assigning Secondary Admin.';
+			$status = false;
+		}
+
+		return ['status' => $status, 'message' => $message];
+	}
+	
 }
