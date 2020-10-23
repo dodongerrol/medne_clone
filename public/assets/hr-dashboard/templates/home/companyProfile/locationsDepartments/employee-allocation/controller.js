@@ -8,8 +8,12 @@
                 id: 'employee-allocation-modal',
                 form: 'employeeAllocationModal'
             }
+            this.employeeAllocationApi = employeeAllocationApi;
+            this.get_permission_data = {};
+            
         }
         $onInit() {
+            this.permission();
         }
         get() {
             this.api.getEmployees().then(response => {
@@ -18,10 +22,27 @@
             });
         }
         open() {
-            this.get();
+            // this.get();
+            // this.permission();
+            // console.log('test test');
+            if ( this.get_permission_data.add_location_departments == 1 ) {
+                console.log('test allocate employees');
+            } else {
+                this.presentModal('permission-modal', true);
+            }
         }
         dismiss() {
             presentModal(this.modal.id, 'hide');
+        }
+        presentModal(id, show = true) {
+            $(`#${id}`).modal(show ? "show" : "hide");
+        }
+        permission() {
+            this.employeeAllocationApi.permission().then(response => {
+                console.log(response)
+                this.get_permission_data = response.data;
+                console.log(this.get_permission_data);
+            });
         }
     }
     angular.module('app')

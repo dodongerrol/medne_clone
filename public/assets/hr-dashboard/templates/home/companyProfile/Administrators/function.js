@@ -204,6 +204,7 @@ app.directive("administratorsDirective", [
           scope.isAddAdministratorSuccess = false;
           scope.showEmployeeList = false;
           scope.chooseSelectorLocation = false;
+          scope.activeAdminBtn = false;
 
           if ( scope.get_permissions_data.create_remove_edit_admin_unlink_account == 1 ) {
             $('#add-administrator-modal').modal('show');
@@ -340,13 +341,19 @@ app.directive("administratorsDirective", [
           scope.showLoading();
           hrSettings.fetchEmployeeList().then(function (response) {
             scope.employee_data = response.data.data;
+            // console.log(scope.employee_data);
             scope.hideLoading();
           });
         }
-        scope.employeeNameSelector = function ( data ) {
+        scope.employeeNameSelector = async function ( data ) {
           scope.add_admin_data.employee_id = data.user_id;
           scope.add_admin_data.employee_name = data.Name;
           scope.showEmployeeList = false;
+          console.log(data);
+          scope.employee_user_id = data.user_id;
+
+          await scope.checkEmployeeName();
+          await scope.changeBtnToActive();
         }
 
         scope.get_dept_id = [];
@@ -484,6 +491,37 @@ app.directive("administratorsDirective", [
               console.log(response);
               scope.get_permissions_data = response.data.data;
           });
+        }
+        scope.activeAdminBtn = false;
+        scope.changeBtnToActive = function () {
+          scope.activeAdminBtn = true;
+        }
+        scope.checkEmployeeName = async function () {
+          await hrSettings.validateEmployeeName( scope.employee_user_id )
+            .then( function (response) {
+              console.log(response);
+          });
+        }
+        scope.searchEmployeeName = async function ( input ) {
+          if ( input ) {
+            console.log(input);
+            let data = {
+              search: input,
+            }
+            scope.showLoading();
+            await hrSettings.searchEmployee( data )
+              .then( function (response) {
+                console.log(response);
+                scope.employee_data = response.data;
+
+                scope.hideLoading();
+            });
+          } else {
+            scope.removeEmployeeSearch();
+          }
+        }
+        scope.removeEmployeeSearch = function () {
+          scope.getEmployeeName();
         }
         scope.checkEmail = function (email) {
 					var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

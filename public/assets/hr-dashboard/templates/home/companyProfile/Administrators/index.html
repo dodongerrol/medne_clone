@@ -98,19 +98,19 @@
         <div ng-if="isShowNoteAdmin && !isShowChangeAdmin" class="modal-body">
           <div class="admin-input-wrapper">
             <label>Full Name</label>
-            <input ng-model="changePrimaryData.fullname" type="text" placeholder="Enter new Primary Admin's full name">
+            <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.fullname" type="text" placeholder="Enter new Primary Admin's full name">
           </div>
           <div class="admin-input-wrapper">
             <label>Email</label>
-            <input ng-model="changePrimaryData.email" type="text" placeholder="Enter new Primary Admin's work email address">
+            <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.email" type="text" placeholder="Enter new Primary Admin's work email address">
           </div>
           <div class="admin-input-wrapper mobile-number">
             <label>Mobile Number</label>
             <div class="display-flex">
               <div>
-                <input ng-model="changePrimaryData.phone_code" id="phone_number_primary_admin" type="tel">
+                <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.phone_code" id="phone_number_primary_admin" type="tel">
               </div>
-              <input ng-model="changePrimaryData.phone_no" type="number" placeholder="Enter new Primary Admin's mobile number">
+              <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.phone_no" type="number" placeholder="Enter new Primary Admin's mobile number">
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@
         </div>
         <div class="modal-footer">
           <button ng-if="!isShowSuccessfullRemoveAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="!isShowSuccessfullRemoveAdmin" ng-click="confirmRemoveAdmin( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
+          <button ng-if="!isShowSuccessfullRemoveAdmin" ng-click="confirmRemoveAdmin( )" class="btn-update" ng-class="{'active': activeBusinessUpdate }">Confirm</button>
           <button ng-if="isShowSuccessfullRemoveAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
       </div>
@@ -187,15 +187,17 @@
               <label class="bold-text">Employee name</label>
               <div class="activated-text">(Activated account and email address are required to be an Administrator)</div>
               <div class="display-flex">
-                <div class="emp-name-input-wrapper">
-                  <i class="fa fa-search"></i>
-                  <input type="type" placeholder="Search by name" ng-model="add_admin_data.employee_name" ng-click="seachEmployeeName()">
-                  <i class="fa fa-angle-down"></i>
+                <form ng-submit="searchEmployeeName(add_admin_data.employee_name)">
+                  <div class="emp-name-input-wrapper">
+                    <i class="fa fa-search"></i>
+                    <input ng-change="changeBtnToActive()" type="type" placeholder="Search by name" ng-model="add_admin_data.employee_name" ng-click="seachEmployeeName()">
+                    <i class="fa fa-angle-down"></i>
 
-                  <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper employee-name">
-                    <div ng-click="employeeNameSelector(list)" ng-repeat="list in employee_data"><span ng-bind="list.Name"></span></div>
+                    <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper employee-name">
+                      <div ng-click="employeeNameSelector(list)" ng-repeat="list in employee_data"><span ng-bind="list.Name"></span></div>
+                    </div>
                   </div>
-                </div>
+                </form>
                 <div ng-if="false" class="employee-name-validation">
                   <span>*Please have this account activated before assigning Administrator</span>
                 </div>
@@ -205,19 +207,19 @@
           <div ng-if="add_admin_data.is_mednefits_emp == 0 " class="">
             <div class="admin-input-wrapper">
               <label class="bold-text">Full Name</label>
-              <input ng-model="add_admin_data.fullname" type="text" placeholder="Enter Admin's full name">
+              <input ng-change="changeBtnToActive()" ng-model="add_admin_data.fullname" type="text" placeholder="Enter Admin's full name">
             </div>
             <div class="admin-input-wrapper">
               <label class="bold-text">Email Address</label>
-              <input ng-model="add_admin_data.email" type="text" placeholder="Enter Admin's full name">
+              <input ng-change="changeBtnToActive()" ng-model="add_admin_data.email" type="text" placeholder="Enter Admin's full name">
             </div>
             <div class="admin-input-wrapper">
               <label class="bold-text">Mobile Number</label>
               <div class="display-flex mobile-number-input">
                 <div>
-                  <input ng-model="add_admin_data.phone_code" type="tel" id="phone_number_add_admin">
+                  <input ng-change="changeBtnToActive()" ng-model="add_admin_data.phone_code" type="tel" id="phone_number_add_admin">
                 </div>
-                <input ng-model="add_admin_data.mobile_number" type="number" placeholder="Enter Admin's Mobile Number">
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.mobile_number" type="number" placeholder="Enter Admin's Mobile Number">
               </div>
             </div>
           </div>
@@ -244,7 +246,7 @@
                     <div ng-repeat="list in locations_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
                         <span ng-bind="list.location" class="checkbox-text"></span>
-                        <input ng-click="selectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <input ng-change="changeBtnToActive()" ng-click="selectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
                     </div>
@@ -259,7 +261,7 @@
                     <div ng-repeat="list in departments_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
                         <span ng-bind="list.department_name" class="checkbox-text"></span>
-                        <input ng-click="selectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <input ng-change="changeBtnToActive()" ng-click="selectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
                     </div>
@@ -294,42 +296,42 @@
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Edit employee + dependent profiles</span >
-                <input ng-model="add_admin_data.edit_employee_dependent" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.edit_employee_dependent" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Enroll & terminate employee + dependent</span >
-                <input ng-model="add_admin_data.enroll_terminate_employee" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.enroll_terminate_employee" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Approve, reject & edit non-panel claims</span >
-                <input ng-model="add_admin_data.approve_reject_edit_non_panel_claims" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.approve_reject_edit_non_panel_claims" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Create, remove admins, edit admins permission & unlink company account</span >
-                <input ng-model="add_admin_data.create_remove_edit_admin_unlink_account" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.create_remove_edit_admin_unlink_account" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Managing billing & payments</span >
-                <input ng-model="add_admin_data.manage_billing_and_payments" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.manage_billing_and_payments" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Add locations & Depeartments</span >
-                <input ng-model="add_admin_data.add_location_departments" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="add_admin_data.add_location_departments" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
@@ -345,7 +347,7 @@
         </div>
         <div class="modal-footer">
           <button ng-if="!isAddAdministratorSuccess" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }">Add Admin</button>
+          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeAdminBtn }">Add Admin</button>
           <button ng-if="isAddAdministratorConfirm && !isAddAdministratorSuccess" ng-click="confirmAdmininistrator( )" class="btn-update confirm">Confirm</button>
           <button ng-if="isAddAdministratorSuccess" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
@@ -369,19 +371,19 @@
           <div ng-if="edit_administrator_data.is_mednefits_employee == 0">
             <div class="admin-input-wrapper">
               <label class="bold-text">Full Name</label>
-              <input ng-model="edit_administrator_data.fullname" type="text" placeholder="Enter Admin's full name">
+              <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.fullname" type="text" placeholder="Enter Admin's full name">
             </div>
             <div class="admin-input-wrapper">
               <label class="bold-text">Email Address</label>
-              <input ng-model="edit_administrator_data.email" type="text" placeholder="Enter Admin's full name">
+              <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.email" type="text" placeholder="Enter Admin's full name">
             </div>
             <div class="admin-input-wrapper">
               <label class="bold-text">Mobile Number</label>
               <div class="display-flex mobile-number-input">
                 <div>
-                  <input ng-model="edit_administrator_data.phone_code" type="tel" id="phone_number_add_admin">
+                  <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.phone_code" type="tel" id="phone_number_add_admin">
                 </div>
-                <input ng-model="edit_administrator_data.phone_no" type="text" placeholder="Enter Admin's Mobile Number">
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.phone_no" type="text" placeholder="Enter Admin's Mobile Number">
               </div>
             </div>
           </div>
@@ -408,7 +410,7 @@
                     <div ng-repeat="list in locations_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
                         <span ng-bind="list.location" class="checkbox-text"></span>
-                        <input ng-click="editSelectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <input ng-change="changeBtnToActive()" ng-click="editSelectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
                     </div>
@@ -423,7 +425,7 @@
                     <div ng-repeat="list in departments_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
                         <span ng-bind="list.department" class="checkbox-text"></span>
-                        <input ng-click="editSelectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <input ng-change="changeBtnToActive()" ng-click="editSelectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
                     </div>
@@ -448,7 +450,7 @@
           </div>
           <div class="administrator-info-container">
             <label class="bold-text">This admin will able to</label>
-            <div class="custom-checkbox-container active">
+            <div class="custom-checkbox-container default-permission">
               <label class="checkbox-input">
                 <span class="checkbox-text">View employee + dependent profile information</span >
                 <input ng-model="add_admin_data.view_employee_dependent" type="checkbox"/>
@@ -458,42 +460,42 @@
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Edit employee + dependent profiles</span >
-                <input ng-model="edit_administrator_data.edit_employee_dependent" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.edit_employee_dependent" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Enroll & terminate employee + dependent</span >
-                <input ng-model="edit_administrator_data.enroll_terminate_employee" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.enroll_terminate_employee" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Approve, reject & edit non-panel claims</span >
-                <input ng-model="edit_administrator_data.approve_reject_edit_non_panel_claims" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.approve_reject_edit_non_panel_claims" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Create, remove admins, edit admins permission & unlink company account</span >
-                <input ng-model="edit_administrator_data.create_remove_edit_admin_unlink_account" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.create_remove_edit_admin_unlink_account" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Managing billing & payments</span >
-                <input ng-model="edit_administrator_data.manage_billing_and_payments" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.manage_billing_and_payments" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>
             <div class="custom-checkbox-container active">
               <label class="checkbox-input">
                 <span class="checkbox-text">Add locations & Depeartments</span >
-                <input ng-model="edit_administrator_data.add_location_departments" type="checkbox"/>
+                <input ng-change="changeBtnToActive()" ng-model="edit_administrator_data.add_location_departments" type="checkbox"/>
                 <span class="checkbox-mark"></span>
               </label>
             </div>

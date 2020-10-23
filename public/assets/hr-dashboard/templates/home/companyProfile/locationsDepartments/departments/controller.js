@@ -13,9 +13,11 @@
         },
       };
       this.departmentAPI = departmentAPI;
+      this.get_permission_data = {};
     }
     $onInit() {
       this.get();
+      this.permission();
     }
     get() {
       this.departmentAPI.get().then((response) => {
@@ -23,8 +25,13 @@
       });
     }
     add() {
-      this.reset();
-      this.presentModal("create-department-modal", true);
+      if ( this.get_permission_data.add_location_departments == 1 ) {
+        this.reset();
+        this.presentModal("create-department-modal", true);
+      } else {
+        this.presentModal('permission-modal', true);
+      }
+      
     }
     store() {
       $(".circle-loader").fadeIn();
@@ -37,8 +44,13 @@
       });
     }
     edit(department) {
-      this.state.department = department;
-      this.presentModal("edit-department-modal", true);
+      if ( this.get_permission_data.add_location_departments == 1 ) {
+        this.state.department = department;
+        this.presentModal("edit-department-modal", true);
+      } else {
+        this.presentModal('permission-modal', true);
+      }
+      
     }
     update() {
       $(".circle-loader").fadeIn();
@@ -78,6 +90,13 @@
     }
     reset() {
       this.state.department = _.mapValues(this.state.department, () => null);
+    }
+    permission() {
+      this.departmentAPI.permission().then(response => {
+          console.log(response)
+          this.get_permission_data = response.data;
+          console.log(this.get_permission_data);
+      });
     }
   }
 

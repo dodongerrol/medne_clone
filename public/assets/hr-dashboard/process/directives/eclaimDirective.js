@@ -295,47 +295,52 @@
 				}
 
 				scope.updateStatus = function( list, num ){
-					console.log( list );
-					if( num == 1 ){
-						list.showReasonInput = false;
-						list.showRemarksInput = true;
+					if ( scope.get_permissions_data.approve_reject_edit_non_panel_claims == 1 ) {
+						console.log( list );
+						if( num == 1 ){
+							list.showReasonInput = false;
+							list.showRemarksInput = true;
 
-						if( !list.claim_amount || list.claim_amount == 0 ){
-							if( !list.cap_amount || list.cap_amount == 0 || list.amount < list.cap_amount ){
-								list.approve_claim_amount = list.amount;
-							}else{
-								list.approve_claim_amount = parseFloat(list.cap_amount ).toFixed(2);
-							}
-						}else{
-							list.approve_claim_amount = list.claim_amount;
-						}
-					}
-					if( num == 2 ){
-						list.showReasonInput = true;
-						list.showRemarksInput = false;
-					}
-					if( num == 3 ){
-						// list.showReasonInput = true;
-						// list.showRemarksInput = false;
-						var data = {
-							e_claim_id : list.trans_id
-						}
-						scope.showLoading();
-						hrActivity.revertEclaim( data )
-							.then(function(response){
-								console.log(response);
-								if( response.data.status == true ){
-									list.status = 0;
-									list.status_text = 'Pending';
-									list.res = true;
-									list.message = response.data.message;
-									// scope.applyDates();
+							if( !list.claim_amount || list.claim_amount == 0 ){
+								if( !list.cap_amount || list.cap_amount == 0 || list.amount < list.cap_amount ){
+									list.approve_claim_amount = list.amount;
 								}else{
-									swal( 'Oops!', response.data.message, 'error' );
+									list.approve_claim_amount = parseFloat(list.cap_amount ).toFixed(2);
 								}
-								scope.hideLoading();
-							});
+							}else{
+								list.approve_claim_amount = list.claim_amount;
+							}
+						}
+						if( num == 2 ){
+							list.showReasonInput = true;
+							list.showRemarksInput = false;
+						}
+						if( num == 3 ){
+							// list.showReasonInput = true;
+							// list.showRemarksInput = false;
+							var data = {
+								e_claim_id : list.trans_id
+							}
+							scope.showLoading();
+							hrActivity.revertEclaim( data )
+								.then(function(response){
+									console.log(response);
+									if( response.data.status == true ){
+										list.status = 0;
+										list.status_text = 'Pending';
+										list.res = true;
+										list.message = response.data.message;
+										// scope.applyDates();
+									}else{
+										swal( 'Oops!', response.data.message, 'error' );
+									}
+									scope.hideLoading();
+								});
+						}
+					} else {
+						$('#permission-modal').modal('show');
 					}
+					
 				}
 
 				scope.updateStatusToApprove = function( list, num ){
@@ -970,7 +975,7 @@
 
 				scope.onLoad = function( ){
 					scope.companyAccountType( );
-
+					scope.getPermissionsData();
 					hrSettings.getSession( )
 						.then(function(response){
 							console.log(response);
@@ -1001,6 +1006,13 @@
 					hrSettings.getCheckCredits();
 				}
 
+				scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
 				
 
 				// scope.checkCompanyBalance();

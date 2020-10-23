@@ -25,6 +25,10 @@
         id,
       });
     }
+    permission () {
+      return this.$http.get(`${this.serverUrl}/hr/get_account_permissions`)
+          .then(response => response.data)
+    }
   }
 
   angular.module("app").service("departmentAPI", DepartmentAPI);

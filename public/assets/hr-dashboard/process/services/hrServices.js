@@ -618,6 +618,14 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.get( serverUrl.url + "/hr/employee_lists" );
   }
 
+  hrFactory.validateEmployeeName = function ( id ) {
+    return $http.get( serverUrl.url + "/hr/validate_employee_name?user_id=" + id );
+  }
+  
+  hrFactory.searchEmployee = function ( search ) {
+    return $http.post( serverUrl.url + "/hr/add_employee_admin?",search );
+  }
+
   return hrFactory;
 });
 

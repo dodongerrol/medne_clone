@@ -17,9 +17,11 @@
                     postal_code: null
                 },
             }
+            this.get_permission_data = {};
         }
         $onInit() {
             this.get();
+            this.permission();
         }
         buttonState () {
             return this.locations.length > 0 ? 'h-10' : 'h-40';
@@ -31,9 +33,13 @@
             });
         }
         add() {
-            this.reset();
-            this.state.form.country = 'Singapore';
-            this.presentModal('create-location-modal', true);
+            if ( this.get_permission_data.add_location_departments == 1 ) {
+                this.reset();
+                this.state.form.country = 'Singapore';
+                this.presentModal('create-location-modal', true);
+            } else {
+                this.presentModal('permission-modal', true);
+            }
         }
         store() {
             const location = this.getFormData();
@@ -50,8 +56,12 @@
             });
         }
         edit(location) {
-            this.state.form = { ...location };
-            presentModal('edit-location-modal');
+            if ( this.get_permission_data.add_location_departments == 1 ) { 
+                this.state.form = { ...location };
+                presentModal('edit-location-modal');
+            } else {
+                this.presentModal('permission-modal', true);
+            }
         }
         update() {
             const location = {
@@ -106,6 +116,13 @@
         }
         setField(field, value) {
             this.state.form[field] = value;
+        }
+        permission() {
+            this.locationAPI.permission().then(response => {
+                console.log(response)
+                this.get_permission_data = response.data;
+                console.log(this.get_permission_data);
+            });
         }
     }
 
