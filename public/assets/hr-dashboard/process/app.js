@@ -45,7 +45,7 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
 app.factory('serverUrl',[
     function factory(){
       return {
-        url: window.location.origin,
+        // url: window.location.origin,
         // url: "https://hrapi.medicloud.sg"
       }
     }
