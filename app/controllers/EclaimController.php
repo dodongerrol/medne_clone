@@ -1494,7 +1494,7 @@ class EclaimController extends \BaseController {
 		// }
 
 		// $total_visit_created = count($transactions) + count($e_claim_result);
-		$total_balance_visit = $user_plan_history->total_visit_limit - $total_visit_created;
+		$total_balance_visit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
 		return array(
 			'status' 				   => TRUE,
 			'e_claim' 				   => $e_claim,
@@ -1517,7 +1517,7 @@ class EclaimController extends \BaseController {
 			'currency_type'					=> $wallet->currency_type,
 			'account_type'				=> $active_plan->account_type,
 			'total_visit_limit'          => $user_plan_history->total_visit_limit,
-            'total_visit_created'       => $total_visit_created,
+            'total_visit_created'       => $user_plan_history->total_visit_created,
 			'total_balance_visit'       => $total_balance_visit,
 			'medical_enabled'	=> $spending['medical_enabled'],
 			'wellness_enabled'	=> $spending['wellness_enabled']
