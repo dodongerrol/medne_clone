@@ -448,12 +448,12 @@ class InvoiceController extends \BaseController {
 						'procedure_cost'					=> $trans->procedure_cost,
 						'services'							=> $procedure,
 						'customer'							=> ucwords($trans->user_name),
-						'mednefits_fee'						=> $trans->currency_type.toUpperCase() + ' ' + number_format($fee, 2),
+						'mednefits_fee'						=> number_format($fee, 2),
 						'discount'							=> $trans->clinic_discount,
 						'multiple_procedures' 				=> $trans->multiple_service_selection,
 						'health_provider'					=> $trans->health_provider_done,
-						'mednefits_credits'					=> $trans->currency_type.toUpperCase() + ' ' + number_format($mednefits_credits, 2),
-						'cash'								=> $trans->currency_type.toUpperCase() + ' ' +  number_format($cash, 2),
+						'mednefits_credits'					=> number_format($mednefits_credits, 2),
+						'cash'								=> number_format($cash, 2),
 						'procedure_ids'						=> $procedure_ids,
 						'total'								=> number_format($fee + $mednefits_credits, 2),
 						'currency_type'						=> strtoupper($trans->currency_type),
@@ -514,7 +514,7 @@ class InvoiceController extends \BaseController {
 		}
 
 		$transactions['amount_due'] = number_format($balance, 2);
-    // return View::make('pdf-download.clinic_invoice', $transactions);
+    	// return View::make('pdf-download.clinic_invoice', $transactions);
 		$pdf = PDF::loadView('pdf-download.clinic_invoice', $transactions);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
