@@ -9616,21 +9616,21 @@ public function downloadEclaimCsv( )
 								$payment_type = "Cash";
 								$transaction_type = "cash";
 								if((int)$trans->lite_plan_enabled == 1) {
-			              if((int)$trans->half_credits == 1) {
-			                $total_amount = $trans->credit_cost + $trans->consultation_fees;
-			                $cash = $transation->cash_cost;
-			              } else {
-			                $total_amount = $trans->procedure_cost;
-			                $total_amount = $trans->procedure_cost + $trans->consultation_fees;
-			                $cash = $trans->procedure_cost;
-			              }
-			          } else {
-			            if((int)$trans->half_credits == 1) {
-			              $cash = $trans->cash_cost;
-			            } else {
-			              $cash = $trans->procedure_cost;
-			            }
-			          }
+									if((int)$trans->half_credits == 1) {
+										$total_amount = $trans->credit_cost + $trans->consultation_fees;
+										$cash = $transation->cash_cost;
+									} else {
+										$total_amount = $trans->procedure_cost;
+										$total_amount = $trans->procedure_cost + $trans->consultation_fees;
+										$cash = $trans->procedure_cost;
+									}
+								} else {
+									if((int)$trans->half_credits == 1) {
+									$cash = $trans->cash_cost;
+									} else {
+									$cash = $trans->procedure_cost;
+									}
+								}
 							} else {
 								if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 							      $payment_type = 'Mednefits Credits + Cash';
@@ -9641,33 +9641,33 @@ public function downloadEclaimCsv( )
 								$transaction_type = "credits";
 								// $cash = number_format($trans->credit_cost, 2);
 								if((int)$trans->lite_plan_enabled == 1) {
-			              if((int)$trans->half_credits == 1) {
-			                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-			                $procedure_cost = $trans->credit_cost + $trans->consultation_fees;
-			                $transaction_type = "credit_cash";
-			                // $total_amount = $trans->credit_cost + $trans->cash_cost;
-			                $cash = $trans->cash_cost;
-			              } else {
-			                $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-			                // $total_amount = $trans->procedure_cost;
-			                if($trans->credit_cost > 0) {
-			                  $cash = 0;
-			                } else {
-			                  $cash = $trans->procedure_cost - $trans->consultation_fees;
-			                }
-			              }
-			            } else {
-			              $total_amount = $trans->procedure_cost;
-			              if((int)$trans->half_credits == 1) {
-			                $cash = $trans->cash_cost;
-			              } else {
-			                if($trans->credit_cost > 0) {
-			                  $cash = 0;
-			                } else {
-			                  $cash = $trans->procedure_cost;
-			                }
-			              }
-			            }
+									if((int)$trans->half_credits == 1) {
+										$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+										$procedure_cost = $trans->credit_cost + $trans->consultation_fees;
+										$transaction_type = "credit_cash";
+										// $total_amount = $trans->credit_cost + $trans->cash_cost;
+										$cash = $trans->cash_cost;
+									} else {
+										$total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+										// $total_amount = $trans->procedure_cost;
+										if($trans->credit_cost > 0) {
+										$cash = 0;
+										} else {
+										$cash = $trans->procedure_cost - $trans->consultation_fees;
+										}
+									}
+									} else {
+									$total_amount = $trans->procedure_cost;
+									if((int)$trans->half_credits == 1) {
+										$cash = $trans->cash_cost;
+									} else {
+										if($trans->credit_cost > 0) {
+										$cash = 0;
+										} else {
+										$cash = $trans->procedure_cost;
+										}
+									}
+									}
 							}
 
 							$bill_amount = 0;
@@ -9722,6 +9722,20 @@ public function downloadEclaimCsv( )
 								}
 							}
 
+							if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
+								$total_amount = $total_amount * $trans->currency_amount;
+								$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
+								$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
+								$trans->cash_cost = $trans->cash_cost * $trans->currency_amount;
+								$consultation_credits = $consultation_credits * $trans->currency_amount;
+								$paid_by_credits = $paid_by_credits * $trans->currency_amount;
+								$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
+								$trans->currency_type = "myr";
+								$procedure_cost = $procedure_cost * $trans->currency_amount;
+							} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
+								$trans->currency_type = "sgd";
+							}
+
 							$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 							if((int) $trans->lite_plan_enabled == 1) {
@@ -9762,31 +9776,31 @@ public function downloadEclaimCsv( )
 		}
 
 		usort($container, function($a, $b) {
-      return strtotime($b['CLAIM DATE']) - strtotime($a['CLAIM DATE']);
-  	});
+			return strtotime($b['CLAIM DATE']) - strtotime($a['CLAIM DATE']);
+		});
 
 		
-    if($download_type == "both") {
-    	usort($in_network_transactions, function($a, $b) {
-	      return strtotime($b['DATE']) - strtotime($a['DATE']);
-	  	});
+		if($download_type == "both") {
+			usort($in_network_transactions, function($a, $b) {
+			return strtotime($b['DATE']) - strtotime($a['DATE']);
+			});
 
-	  	return \Excel::create('Transactions - '.$start.' - '.$input['end'], function($excel) use($in_network_transactions, $container) {
-	      $excel->sheet('Panel', function($sheet) use($in_network_transactions) {
-	          $sheet->fromArray( $in_network_transactions );
-	      });
+			return \Excel::create('Transactions - '.$start.' - '.$input['end'], function($excel) use($in_network_transactions, $container) {
+			$excel->sheet('Panel', function($sheet) use($in_network_transactions) {
+				$sheet->fromArray( $in_network_transactions );
+			});
 
-	      $excel->sheet('Non-Panel', function($sheet) use($container) {
-	          $sheet->fromArray( $container );
-	      });
-	    })->export('xls');
-    } else {
-    	return \Excel::create('Non-Panel Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
-	      $excel->sheet('Non-Panel', function($sheet) use($container) {
-	          $sheet->fromArray( $container );
-	      });
-	    })->export('xls');
-    }
+			$excel->sheet('Non-Panel', function($sheet) use($container) {
+				$sheet->fromArray( $container );
+			});
+			})->export('xls');
+		} else {
+			return \Excel::create('Non-Panel Transactions - '.$start.' - '.$input['end'], function($excel) use($container) {
+			$excel->sheet('Non-Panel', function($sheet) use($container) {
+				$sheet->fromArray( $container );
+			});
+			})->export('xls');
+		}
 	}
 
 	public function checkEClaimDatesBalance( )
