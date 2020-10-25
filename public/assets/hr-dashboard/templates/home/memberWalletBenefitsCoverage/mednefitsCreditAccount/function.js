@@ -105,8 +105,13 @@ app.directive('mednefitsCreditAccountDirective', [
                 scope.hideLoading();
               } else {
                 scope.isPrepaidCreditsActivated = response.data.status;
+                scope.mednefitsCreditsData = {
+                  currency_type : localStorage.getItem('currency_type').toUpperCase()
+                }
                 scope.hideLoading();
               }
+
+
              
             })
         }

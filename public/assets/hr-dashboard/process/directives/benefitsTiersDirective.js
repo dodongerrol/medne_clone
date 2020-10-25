@@ -1777,7 +1777,7 @@ app.directive('benefitsTiersDirective', [
           if(
 						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'post_paid') ||
 						(scope.spendingPlan_status.account_type == 'lite_plan' && scope.spendingPlan_status.medical_enabled && scope.spendingPlan_status.medical_method == 'pre_paid' && scope.spendingPlan_status.paid_status) ||
-						(scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.medical_enabled)
+						(scope.spendingPlan_status.account_type != 'lite_plan' && scope.spendingPlan_status.account_type != 'enterprise_plan' && scope.spendingPlan_status.account_type != 'out_of_pocket' && scope.spendingPlan_status.medical_enabled)
 						){
             scope.isMedicalAllocColShow = true;
           }

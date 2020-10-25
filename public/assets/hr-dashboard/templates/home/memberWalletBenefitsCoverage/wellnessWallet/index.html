@@ -4,7 +4,7 @@
       <div class="flex-1">
         <span class="member-bold-text">Show details on</span> 
         <div class="current-term-wrapper"> 
-          <div ng-click="termSelector()" class="current-term-input-wrapper" ng-class="{'disable' : account_details.account_type == 'out_of_pocket'}">
+          <div ng-click="termSelector()" class="current-term-input-wrapper" ng-class="{'disable' : wellnessWalletData.benefits_coverage == 'out_of_pocket'}">
             <span>{{ selectedTerm.term }}</span>
             <i class="fa fa-angle-down"></i>
           </div>
@@ -16,14 +16,11 @@
           <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
         </div>
       </div>
-      <!-- <div>
-        <button ng-class="{'btnActive': isSaveEnable == true}" ng-disabled="isSaveEnable == false" ng-click="_saveWallet_()">Save</button>
-      </div> -->
     </div>
     <div class="mwbc-box-container">
-      <h4 class="member-bold-text">Wellness Wallet <span ng-if="account_details.account_type == 'lite_plan'" class="status" ng-class="{'active' : wellnessWalletData.wallet_status, 'inactive' : !wellnessWalletData.wallet_status }">({{wellnessWalletData.wallet_status ? 'Active':'Deactivated'}})</span></h4>
-      <label ng-if="account_details.account_type != 'lite_plan' && wellnessWalletData.benefits_coverage != 'lite_plan'" class="font-helvetica-medium">Benefits Period</label>
-      <div ng-if="account_details.account_type == 'lite_plan'" class="mwbc-card-box-container">
+      <h4 class="member-bold-text">Wellness Wallet <span ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="status" ng-class="{'active' : wellnessWalletData.wallet_status, 'inactive' : !wellnessWalletData.wallet_status }">({{wellnessWalletData.wallet_status ? 'Active':'Deactivated'}})</span></h4>
+      <label ng-if="wellnessWalletData.benefits_coverage != 'lite_plan'" class="font-helvetica-medium">Benefits Period</label>
+      <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="mwbc-card-box-container">
         <div class="available-credits-container">
           <div class="available-credits">
             <span class="available-credits-container dp-flex-ai">
@@ -116,16 +113,9 @@
             <i class="fa fa-angle-down"></i>
           </div>
         </div>
-        <!-- <div ng-if="false">
-          <label>Deposits</label>
-          <div class="benefits-input-wrapper deposits">
-            <input ng-change="_saveButtonTrigger_()" ng-model="wellnessWalletData.deposits" type="text">
-            <span>%</span>
-          </div>
-        </div> -->
       </div>
     </div>
-    <div class="mwbc-box-container" ng-class="{'border-bottom-enterprise' : account_details.account_type != 'lite_plan'}">
+    <div class="mwbc-box-container" ng-class="{'border-bottom-enterprise' : wellnessWalletData.benefits_coverage != 'lite_plan'}">
       <h5 class="member-bold-text">Benefits Coverage (Reimbursement)</h5>
       <div class="dp-flex-ai">
         <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'">Mednefits Basic Plan</div>
@@ -153,106 +143,8 @@
       <h5 class="member-bold-text">Payment Methods (Reimbursement)</h5>
       <div>Payment methods for monthly spending invoice</div>
       <div class="payment-methods-box-container">
-        <!-- <div class="mwbc-card-box-container mednefits-panel">
-          <h5 class="member-bold-text">Mednefits Panel</h5>
-          <div class="dp-flex-ai">
-            <div class="flex-1">GIRO</div>
-            <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-              <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
-                <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-              </button>
-              <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-            </div>
-          </div>
-          <div class="dp-flex-ai">
-            <div class="flex-1">Bank Transfer/PayNow</div>
-            <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-              <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
-                <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-              </button>
-              <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-            </div>
-          </div>
-          <div class="dp-flex-ai">
-            <div class="dp-flex-ai flex-1">
-              <span>Mednefits Credits</span>
-              <img class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
-            </div>
-            <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-              <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
-                <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-              </button>
-              <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-            </div>
-          </div>
-        </div> -->
         <div class="mwbc-card-box-container mednefits-panel">
           <h5 class="member-bold-text">Non-Panel (for reimbursement)</h5>
-          <div ng-if="false" class="display-flex">
-            <div class="flex-1">GIRO</div>
-            <div ng-class="{'on' : wellnessWalletData.non_panel_payment_method == 'giro','off' : wellnessWalletData.non_panel_payment_method != 'giro' }" class="on-off-container">
-              <button ng-click="_nonPanelPaymentMethod_( 'giro' )" ng-class="{'on' : wellnessWalletData.non_panel_payment_method == 'giro' }" class="">
-
-                <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-              </button>
-              <button ng-if="wellnessWalletData.non_panel_payment_method == 'giro'" ng-click="_nonPanelPaymentMethod_( false )" ng-class="{'off' : wellnessWalletData.non_panel_payment_method != 'giro' }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-              <button ng-if="wellnessWalletData.non_panel_payment_method != 'giro'" ng-click="_nonPanelPaymentMethod_( wellnessWalletData.non_panel_payment_method )" ng-class="{'off' : wellnessWalletData.non_panel_payment_method != 'giro' }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-            </div>
-
-          </div>
-          <div ng-if="false" class="display-flex">
-            <div class="flex-1">Bank Transfer/PayNow</div>
-            <div ng-class="{'on' : wellnessWalletData.non_panel_payment_method == 'bank_transfer','off' : wellnessWalletData.non_panel_payment_method != 'bank_transfer' }" class="on-off-container">
-              <button ng-click="_nonPanelPaymentMethod_( 'bank_transfer' )" ng-class="{'on' : wellnessWalletData.non_panel_payment_method == 'bank_transfer' }" class="">
-                <!-- <span class="check-mark"></span> -->
-                <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-              </button>
-              <button ng-if="wellnessWalletData.non_panel_payment_method == 'bank_transfer'" ng-click="_nonPanelPaymentMethod_( false )" ng-class="{'off' : wellnessWalletData.non_panel_payment_method != 'bank_transfer' }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-              <button ng-if="wellnessWalletData.non_panel_payment_method != 'bank_transfer'" ng-click="_nonPanelPaymentMethod_( wellnessWalletData.non_panel_payment_method )" ng-class="{'off' : wellnessWalletData.non_panel_payment_method != 'bank_transfer' }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-            </div>
-          </div>
-          <div ng-if="false" class="display-flex">
-            <div class="dp-flex-ai flex-1 prepaid-credits-toggle">
-              <span>Prepaid Credits</span>
-              <span class="credits-tooltip-wrapper">
-                <img ng-click="toggleMednefitsCredits()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
-                <div class="credits-tooltip-container mednefits-credits">
-                  <div class="tooltip-title">Prepaid Credits</div>
-                  <p>The total budgeted amount of medical and wellness benefits allocated to the employees.
-                  </p>
-                  <div class="tooltip-btn-footer">
-                    <button>Got it</button>
-                  </div>
-                </div> 
-              </span>  
-            </div>
-            <div ng-class="{'on' : wellnessWalletData.non_panel_payment_method == 'mednefits_credits','off' : wellnessWalletData.non_panel_payment_method != 'mednefits_credits' }" class="on-off-container">
-              <button ng-click="_nonPanelPaymentMethod_( 'mednefits_credits' )" ng-class="{'on' : wellnessWalletData.non_panel_payment_method == 'mednefits_credits' }" class="">
-                <!-- <span class="check-mark"></span> -->
-                <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-              </button>
-              <button ng-if="wellnessWalletData.non_panel_payment_method == 'mednefits_credits'" ng-click="_nonPanelPaymentMethod_( false )" ng-class="{'off' : wellnessWalletData.non_panel_payment_method != 'mednefits_credits' }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-              <button ng-if="wellnessWalletData.non_panel_payment_method != 'mednefits_credits'" ng-click="_nonPanelPaymentMethod_( wellnessWalletData.non_panel_payment_method )" ng-class="{'off' : wellnessWalletData.non_panel_payment_method != 'mednefits_credits' }" class="">
-                <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-              </button>
-            </div>
-          </div>
           <div class="dp-flex-ai payment-current-method">
             <div>Current Method:</div>
             <div>
@@ -262,9 +154,9 @@
               <span ng-if="wellnessWalletData.non_panel_payment_method == 'mednefits_credits'" x-data="{ open: false }" class="credits-tooltip-wrapper">
                 <img @click="open = true" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png"> 
                 <div x-show="open" @click.away="open = false" class="credits-tooltip-container mednefits-basic-plan">
-                  <div ng-if="account_details.account_type == 'lite_plan'" class="tooltip-title">Mednefits Basic Plan</div>
+                  <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="tooltip-title">Mednefits Basic Plan</div>
                   <div ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'" class="tooltip-title">Out of pocket (Reimbursement)</div>
-                  <p ng-if="account_details.account_type == 'lite_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
+                  <p ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'">Mednefits executes reimbursement to members; hence, requiring the companies to settle reimbursement payment to Mednefits via the payment methods below.
                   </p>
                   <p ng-if="wellnessWalletData.benefits_coverage == 'out_pocket' || wellnessWalletData.benefits_coverage == 'out_of_pocket'">All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
                   <div class="tooltip-btn-footer">
@@ -279,37 +171,13 @@
     </div>
     <div class="mwbc-box-container non-panel-claim-container">
       <h5 class="member-bold-text">Non-Panel Claim</h5>
-      <!-- <div>Members are allowed to submit <span class="member-bold-text">Non-panel</span> claims.</div>
-      <div>Mednefits executes reimbursement to members.</div> -->
-      <!-- <div class="dp-flex-ai">
-        <div class="non-panel-text">Would you allow members to submit <span class="member-bold-text">Non-Panel</span> claims?</div>
-        <div ng-class="{'on' : giroStatus == true,'off' : giroStatus == false }" class="on-off-container">
-          <button ng-click="_accountSelector_( true )" ng-class="{'on' : giroStatus == true }" class="">
-            <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-          </button>
-          <button ng-click="_accountSelector_( false )" ng-class="{'off' : giroStatus == false }" class="">
-            <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-          </button>
-        </div>
-      </div> -->
-      <!-- <div class="dp-flex-ai">
-        <div class="non-panel-text">Would Mednefits exectute reimbursement to members?</div>
-        <div ng-class="{'on' : wellnessWalletData.non_panel_reimbursement == true,'off' : wellnessWalletData.non_panel_reimbursement == false }" class="on-off-container">
-          <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',true )" ng-class="{'on' : wellnessWalletData.non_panel_reimbursement == true }" class="">
-            <span><img src="../../assets/hr-dashboard/img/new-chek-icon.svg"></span>
-          </button>
-          <button ng-click="toggleNonPanelClaim( 'non-panel-reimbursement',false )" ng-class="{'off' : wellnessWalletData.non_panel_reimbursement == false }" class="">
-            <img src="../../assets/hr-dashboard/img/new-close-icon.png">
-          </button>
-        </div>
-      </div> -->
       <div class="reimbursement-text-wrapper">
         <span class="reimbursement-text">Reimbursement:</span> 
         <span ng-if="wellnessWalletData.non_panel_reimbursement == true">Mednefits executes reimbursement to members.</span>
         <span ng-if="wellnessWalletData.non_panel_reimbursement == false">Mednefits does not execute reimbursement to members.</span>
       </div>
     </div>
-    <div ng-if="account_details.account_type == 'lite_plan'" class="mwbc-box-container activities-container">
+    <div ng-if="wellnessWalletData.benefits_coverage == 'lite_plan'" class="mwbc-box-container activities-container">
       <h5 class="member-bold-text">Activites</h5>
       <div class="member-activities-table-wrapper">
         <div class="member-activities-table-container">

@@ -18,7 +18,7 @@
 						<img ng-if="inputSearch" src="../assets/hr-dashboard/img/icons/cancel.png" ng-click="removeSearchEmp()">
 					</label>
 				</form>
-				<button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-click="goToBulkAllocation()">Bulk Entitlement</button>
+				<button class="btn-export-member" ng-if="showBulkEntitlement" ng-click="goToBulkAllocation()">Bulk Entitlement</button>
 				<!-- <button class="btn-export-member" ng-if="(spending_account_status.account_type != 'enterprise_plan' && (spending_account_status.medical_enabled == true || spending_account_status.wellness_enabled == true)) || (spending_account_status.account_type == 'enterprise_plan' && spending_account_status.wellness_enabled == true)" ng-click="goToBulkAllocation()">Bulk <span ng-if="(account_plan_status.account_type == 'lite_plan') && (account_plan_status.plan_method == 'pre_paid')">Credits</span> Allocation</button> -->
 				<button class="btn-export-member" ng-click="empDetailsLoadingState()"><img src="../assets/hr-dashboard/img/new-assets/Download.png">Export members details</button>
 				<!-- <button class="btn-add-seat" ><img src="../assets/hr-dashboard/img/icons/add-employee.svg">Add seats</button> -->
@@ -648,7 +648,7 @@
 							<div class="col-2-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Country Code</strong>
-									<span ng-bind="selectedEmployee.country_code">+63</span>
+									<span ng-bind="selectedEmployee.phone_no == '0' ? (default_currency_type == 'sgd' ? '+65' : '+60') :selectedEmployee.country_code">+63</span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Mobile Number</strong>
@@ -658,7 +658,7 @@
 									<strong class="font-helvetica-medium">NRIC</strong>
 									<span ng-bind="selectedEmployee.nric">87589582</span>
 								</div>
-								<div ng-if="selectedEmployee.spending_account.currency_type == 'myr'>
+								<div ng-if="selectedEmployee.spending_account.currency_type == 'myr'">
 									<strong class="font-helvetica-medium">Passport Number</strong>
 									<span ng-bind="selectedEmployee.passport">87589582</span>
 								</div>

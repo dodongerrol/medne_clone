@@ -586,18 +586,18 @@ class SpendingAccountController extends \BaseController {
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending_account_settings = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-
+		
 		// get wallet use
-		$medical = array(
-			'panel'     => $spending_account_settings->medical_payment_method_panel == "mednefits_credits" ? true : false,
-			'non_panel' => $spending_account_settings->medical_payment_method_non_panel == "mednefits_credits" ? true : false
-		);
+    $medical = array(
+      'panel'     => $spending_account_settings->medical_payment_method_panel == "mednefits_credits" || $spending_account_settings->medical_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->medical_enable == 1 ? true : false,
+      'non_panel' => $spending_account_settings->medical_payment_method_non_panel == "mednefits_credits" || $spending_account_settings->medical_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->medical_enable == 1 ? true : false
+    );
 
-		// get wallet use
-		$wellness = array(
-			'panel'     => $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" ? true : false,
-			'non_panel' => $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" ? true : false
-		);
+    // get wallet use
+    $wellness = array(
+      'panel'     => $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" || $spending_account_settings->wellness_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->wellness_enable == 1 ? true : false,
+      'non_panel' => $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" || $spending_account_settings->wellness_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->wellness_enable == 1 ? true : false
+    );
 	
 		if($input['type'] == "enterprise_plan") {
 			if($plan->account_type == "out_of_pocket") {

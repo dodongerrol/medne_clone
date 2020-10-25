@@ -15,9 +15,6 @@
         <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
       </div>
     </div>
-    <!-- <div>
-      <button ng-class="{'btnActive': isSaveEnable == true}" ng-disabled="isSaveEnable == false" ng-click="_saveWallet_()">Save</button>
-    </div> -->
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text">Medical Wallet <span ng-if="medicalWalletData.benefits_coverage == 'lite_plan'" class="status" ng-class="{'active' : medicalWalletData.wallet_status, 'inactive' : !medicalWalletData.wallet_status }">({{medicalWalletData.wallet_status ? 'Active':'Deactivated'}})</span></h4>
@@ -113,16 +110,8 @@
             <option value="false">No</option>
             <option value="true">Yes</option>
           </select>
-          <!-- <i class="fa fa-angle-down"></i> -->
         </div>
       </div>
-      <!-- <div ng-if="false">
-        <label>Deposits</label>
-        <div class="benefits-input-wrapper deposits">
-          <input ng-change="_saveButtonTrigger_()" ng-model="medicalWalletData.deposits" type="text">
-          <span>%</span>
-        </div>
-      </div> -->
     </div>
   </div>
   <div class="mwbc-box-container" ng-class="{'border-bottom-enterprise' : medicalWalletData.benefits_coverage != 'lite_plan'}">
@@ -141,8 +130,17 @@
             <p ng-if="medicalWalletData.benefits_coverage == 'lite_plan' || medicalWalletData.benefits_coverage == 'basic_plan'">
               This plan enables customised employee benefits by setting employee entitlement for cashless payments at panel providers and e-claim submissions at non-panel providers.
             </p>
-            <p ng-if="medicalWalletData.benefits_coverage == 'out_pocket' || medicalWalletData.benefits_coverage == 'out_of_pocket'">All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
-            <p ng-if="medicalWalletData.benefits_coverage == 'enterprise_plan'">This plan covers a maximum of 14 visits and transactions at panel and non-panel GP, TCM, and A&E per annum.
+            <p ng-if="medicalWalletData.benefits_coverage == 'out_pocket' || medicalWalletData.benefits_coverage == 'out_of_pocket'">
+              All employees will be charged for the cost of their own benefits usage. Mednefits does not execute reimbursement to employees.
+            </p>
+            <p ng-if="medicalWalletData.benefits_coverage == 'enterprise_plan'">
+              {{
+                medicalWalletData.currency_type == 'MYR' ? 
+                'This plan covers a maximum of 14 visits and transactions at panel GPs per annum' 
+                : 
+                'This plan covers a maximum of 14 visits and transactions at panel and non-panel GP, TCM, and A&E per annum.'
+              }}
+            </p>
             <div class="tooltip-btn-footer">
               <button @click="open = false">Got it</button>
             </div>

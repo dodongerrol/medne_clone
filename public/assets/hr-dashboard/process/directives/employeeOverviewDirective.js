@@ -14,6 +14,7 @@ app.directive("employeeOverviewDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("employeeOverviewDirective Runnning !");
 
+        scope.default_currency_type = localStorage.getItem('currency_item');
         scope.employees = {};
         scope.options = {};
         scope.page_ctr = 5;
@@ -690,6 +691,7 @@ app.directive("employeeOverviewDirective", [
 						.then(function (response) {
 							console.log(response);
               scope.spending_account_status = response.data;
+              scope.checkSpendingValuesStatus();
 						});
         }
 
@@ -2939,6 +2941,24 @@ app.directive("employeeOverviewDirective", [
           }
           return passport_pattern.test(value);
         };
+
+        scope.checkSpendingValuesStatus = function(){
+          if( scope.spending_account_status.account_type == 'lite_plan' ){
+            if(scope.spending_account_status.medical_enabled == true || scope.spending_account_status.wellness_enabled == true){
+              scope.showBulkEntitlement = true;
+            }
+          }
+          if( scope.spending_account_status.account_type == 'enterprise_plan' ){
+            if(scope.spending_account_status.wellness_enabled == true){
+              scope.showBulkEntitlement = true;
+            }
+          }
+          if( scope.spending_account_status.account_type == 'out_of_pocket' ){
+            if( scope.spending_account_status.wellness_enabled && scope.spending_account_status.wellness_reimbursement){
+              scope.showBulkEntitlement = true;
+            }
+          }
+        }
 
         scope.onLoad = function () {
           console.log($state.current);

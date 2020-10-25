@@ -21,7 +21,14 @@
   </div>
   <div class="mwbc-box-container">
     <h4 class="member-bold-text">Mednefits Enterprise Plan</h4>
-    <p class="prepaid-subtext">This plan covers a maximum of 14 visits and transactions at panel and non-panel GP, TCM, and A&E per annum.</p>
+    <p class="prepaid-subtext">
+      {{
+        benefitsCoverageData.currency_type == 'MYR' ? 
+        'This plan covers a maximum of 14 visits and transactions at panel GPs per annum' 
+        : 
+        'This plan covers a maximum of 14 visits and transactions at panel and non-panel GP, TCM, and A&E per annum.'
+      }}
+    </p>
     <div class="mwbc-card-box-container">
       <div class="available-credits-container">
         <div class="available-credits">

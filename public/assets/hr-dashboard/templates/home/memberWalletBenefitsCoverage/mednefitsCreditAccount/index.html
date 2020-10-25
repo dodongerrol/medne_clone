@@ -157,14 +157,14 @@
       <div ng-if="mednefitsCreditsData.payment_status">
         <div>Prepaid Credits is currently used in:</div>
         <div>
-          <div ng-if="account_details.account_type != 'enterprise_plan'" class="wallet-container medical-wallet-container display-flex">
+          <div ng-if="medicalWalletData.benefits_coverage == 'lite_plan' && (medicalWalletData.panel_payment_method == 'mednefits_credits' || medical_wallet_details.non_panel_payment_method == 'mednefits_credits')" class="wallet-container medical-wallet-container display-flex">
             <div class="member-bold-text">Medical Wallet:</div>
             <div class="display-flex wallet-panel-container">
               <div ng-if="medicalWalletData.panel_payment_method">Mednefits Panel</div>
               <div ng-if="medicalWalletData.non_panel_reimbursement && medicalWalletData.non_panel_payment_method">Non Panel</div>
             </div>
           </div>
-          <div class="wallet-container wellness-wallet-container display-flex">
+          <div ng-if="wellnessWalletData.non_panel_payment_method == 'mednefits_credits'" class="wallet-container wellness-wallet-container display-flex">
             <div class="member-bold-text">Wellness Wallet:</div>
             <div>
               <div ng-if="wellnessWalletData.non_panel_payment_method">Non Panel</div>
