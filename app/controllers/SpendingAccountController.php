@@ -796,6 +796,12 @@ class SpendingAccountController extends \BaseController {
 				} else if($activity->type == "deduct_non_panel_spending") {
 					$activity->label = 'Refund';
 					$activity->type_status = "deduct";
+				}  else if($activity->type == "new_purchase_credits") {
+					$activity->label = 'New Purchase Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "new_bonus_credits") {
+					$activity->label = 'New Bonus Credits';
+					$activity->type_status = "added";
 				}
 				$activity->credit = number_format($activity->credit, 2);
 				$format[] = $activity;
