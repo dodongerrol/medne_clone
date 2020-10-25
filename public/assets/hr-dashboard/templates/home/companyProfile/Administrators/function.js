@@ -18,7 +18,7 @@ app.directive("administratorsDirective", [
         scope.chooseSelectorDepartment = false;
         scope.permission_data = 'All Employees & Dependents'
         scope.selected_location_data = [];
-        scope.selected_deparment_data = [];
+        scope.selected_department_data = [];
         scope.showLocationSelector = false;
         scope.showEmployeeList = false;
         scope.isShowChangeAdmin = false;
@@ -38,11 +38,18 @@ app.directive("administratorsDirective", [
 
             scope.showDepartmentSelector = false;
 
-            scope.locations_data.map(function(value,key){
-              if( _.findIndex(scope.edit_administrator_data.locations, {'LocationID' : value.LocationID}) > -1 ){
-                value.status = true;
-              }
+            // this is for edit
+            // scope.locations_data.map(function(value,key){
+            //   if( _.findIndex(scope.edit_administrator_data.locations, {'LocationID' : value.LocationID}) > -1 ){
+            //     value.status = true;
+            //   }
+            // });
+            scope.selected_location_data = [];
+            scope.locations_data.map((res) => {
+              console.log(res);
+              res.status = false;
             });
+
           }
           if ( type == 'departments' ) {
             scope.permission_data = 'Departments';
@@ -50,6 +57,11 @@ app.directive("administratorsDirective", [
             
             scope.showLocationSelector = false;
 
+            scope.selected_department_data = [];
+            scope.departments_data.map((res) => {
+              console.log(res);
+              res.status = false;
+            });
             
           }
           console.log(type);
@@ -64,13 +76,13 @@ app.directive("administratorsDirective", [
             scope.chooseSelectorDepartment = scope.chooseSelectorDepartment == true ? false : true;
           }
         }
-
         scope.selectedPermission = function ( type, data, opt ) {
           if ( type == 'locations' ) {
             // scope.showLocationSelector = false;
             scope.chooseSelectorLocation = false;
             if ( opt ) {
               scope.selected_location_data.push(data);
+              console.log(scope.selected_location_data);
             } else {
               console.log('close pud siyaaa sulod');
               let index = $.inArray(data, scope.selected_location_data);
@@ -82,11 +94,11 @@ app.directive("administratorsDirective", [
             // scope.showDepartmentSelector = false;
             scope.chooseSelectorDepartment = false;
             if ( opt ) {
-              scope.selected_deparment_data.push(data);
+              scope.selected_department_data.push(data);
             } else {
               console.log('close pud siyaaa sulod');
-              let index = $.inArray(data, scope.selected_deparment_data);
-              scope.selected_deparment_data.splice(index, 1);
+              let index = $.inArray(data, scope.selected_department_data);
+              scope.selected_department_data.splice(index, 1);
               data.status = false;             
             }
           }
@@ -109,11 +121,11 @@ app.directive("administratorsDirective", [
             // scope.showDepartmentSelector = false;
             scope.chooseSelectorDepartment = false;
             if ( opt ) {
-              scope.selected_deparment_data.push(data);
+              scope.selected_department_data.push(data);
             } else {
               console.log('close pud siyaaa sulod');
-              let index = $.inArray(data, scope.selected_deparment_data);
-              scope.selected_deparment_data.splice(index, 1);
+              let index = $.inArray(data, scope.selected_department_data);
+              scope.selected_department_data.splice(index, 1);
               data.status = false;             
             }
           }
@@ -187,14 +199,52 @@ app.directive("administratorsDirective", [
             scope.initializeChangePrimaryAdminCountryCode();
           },400);
         }
+        scope.noMednefitsEmpAddAdmin = false;
+        scope.mednefitsEmployee = function ( opt ) {
+          scope.permission_data = 'All Employees & Dependents';
+          scope.showLocationSelector = false;
+          scope.showDepartmentSelector = false;
+          
+          scope.selected_locaction_data = [];
+          scope.locations_data.map((res) => {
+            console.log(res);
+            res.status = false;
+          });
+          
+          scope.selected_department_data = [];
+          scope.departments_data.map((res) => {
+            console.log(res);
+            res.status = false;
+          });
 
-        scope.mednefitsEmployee = function ( val ) {
-          console.log(val);
-          scope.sample = val;
-          if (val == 0) {
+          if ( opt == 'yes' ) {
+            scope.add_admin_data.employee_name = '';
+            scope.showEmployeeList = false;
+            scope.add_admin_data.edit_employee_dependent = false;
+            scope.add_admin_data.enroll_terminate_employee = false;
+            scope.add_admin_data.approve_reject_edit_non_panel_claims = false;
+            scope.add_admin_data.create_remove_edit_admin_unlink_account = false;
+            scope.add_admin_data.manage_billing_and_payments = false;
+            scope.add_admin_data.add_location_departments = false;
+            scope.noMednefitsEmpAddAdmin = false;
+            scope.activeAdminBtn = false;
+
+          } else {
             $timeout( async function(){
               await scope.initializeAddAdminCountryCode();
             },400);
+
+            scope.add_admin_data.fullname = '';
+            scope.add_admin_data.email = '';
+            scope.add_admin_data.mobile_number = '';
+            scope.add_admin_data.edit_employee_dependent = false;
+            scope.add_admin_data.enroll_terminate_employee = false;
+            scope.add_admin_data.approve_reject_edit_non_panel_claims = false;
+            scope.add_admin_data.create_remove_edit_admin_unlink_account = false;
+            scope.add_admin_data.manage_billing_and_payments = false;
+            scope.add_admin_data.add_location_departments = false;
+            scope.noMednefitsEmpAddAdmin = true;
+            scope.activeAdminBtn = false;
           }
         }
 
@@ -205,13 +255,18 @@ app.directive("administratorsDirective", [
           scope.showEmployeeList = false;
           scope.chooseSelectorLocation = false;
           scope.activeAdminBtn = false;
+          scope.isEmployeePending = false;
+
+          scope.selected_location_data = [];
+          scope.selected_department_data = [];
 
           if ( scope.get_permissions_data.create_remove_edit_admin_unlink_account == 1 ) {
             $('#add-administrator-modal').modal('show');
             scope.add_admin_data = {
               is_mednefits_emp : 1,
               view_employee_dependent: true,
-              phone_code: '65'
+              phone_code: '65',
+              employee_name: '',
             }
             console.log(scope.add_admin_data.is_mednefits_emp);
             scope.resetData();
@@ -353,7 +408,6 @@ app.directive("administratorsDirective", [
           scope.employee_user_id = data.user_id;
 
           await scope.checkEmployeeName();
-          await scope.changeBtnToActive();
         }
 
         scope.get_dept_id = [];
@@ -369,7 +423,7 @@ app.directive("administratorsDirective", [
             scope.get_loc_id.push( value.LocationID )
             console.log(value)
           });
-          scope.selected_deparment_data.map((value, key) => {
+          scope.selected_department_data.map((value, key) => {
             scope.get_dept_id.push( value.id )
             console.log(value)
           });
@@ -495,14 +549,34 @@ app.directive("administratorsDirective", [
         scope.activeAdminBtn = false;
         scope.changeBtnToActive = function () {
           scope.activeAdminBtn = true;
+          console.log( scope.activeAdminBtn );
         }
+        scope.isEmployeePending = false;
         scope.checkEmployeeName = async function () {
+          scope.showLoading();
           await hrSettings.validateEmployeeName( scope.employee_user_id )
             .then( function (response) {
               console.log(response);
+              scope.validate_data = response.data;
+              if ( response.data.status == false ) {
+                scope.isEmployeePending = true;
+                console.log(scope.isEmployeePending);
+                scope.hideLoading();
+              } else {
+                scope.isEmployeePending = false;
+                scope.hideLoading();
+              }
           });
         }
+        scope.checkSearchInput = function ( data ) {
+          if ( data == '' ) {
+            scope.activeAdminBtn = false;
+          }
+        }
+        // scope.isSearchEmpty = false;
         scope.searchEmployeeName = async function ( input ) {
+          console.log(scope.activeAdminBtn);
+          console.log(scope.isEmployeePending)
           if ( input ) {
             console.log(input);
             let data = {
@@ -513,11 +587,16 @@ app.directive("administratorsDirective", [
               .then( function (response) {
                 console.log(response);
                 scope.employee_data = response.data;
-
+                scope.showEmployeeList = true;
+                scope.activeAdminBtn = false;
                 scope.hideLoading();
             });
           } else {
             scope.removeEmployeeSearch();
+            scope.showEmployeeList = false;
+            scope.isEmployeePending = false;
+
+            
           }
         }
         scope.removeEmployeeSearch = function () {

@@ -45,7 +45,15 @@ app.directive("employeeOverviewDirective", [
         scope.departmentList  = [];
         scope.isApplyFilter = false;
 
-
+        scope.add_admin_data = {
+          is_mednefits_emp : 1,
+          view_employee_dependent: true,
+          phone_code: '65',
+          employee_name: '',
+        }
+        scope.permission_data = 'All Employees & Dependents';
+        scope.showEmployeeList = false;
+        scope.isEmployeePending = false;
         
         scope.empFiltersObj = {
           status : [
@@ -411,9 +419,129 @@ app.directive("employeeOverviewDirective", [
               scope.get_permissions_data = response.data.data;
           });
         }
+        scope.permissionSelector = false;
+        scope.activeAdminBtn = false;
+        scope.showLocationSelector = false;
+        scope.showDepartmentSelector = false;
+        scope.changeBtnToActive = function () {
+          scope.activeAdminBtn = true;
+          console.log( scope.activeAdminBtn );
+        }
+        scope.adminPermission = function () {
+          console.log('test');
+          scope.permissionSelector = scope.permissionSelector == true ? false : true;
+          // console.log(scope.locations_data);
+        }
 
+        scope.permissionSelectorData = async function ( type ) {
+          scope.permissionSelector = false;
 
+          if ( type == 'locations' ) {
+            scope.permission_data = 'Locations';
+            scope.showLocationSelector = true;
 
+            scope.showDepartmentSelector = false;
+
+            // this is for edit
+            // scope.locations_data.map(function(value,key){
+            //   if( _.findIndex(scope.edit_administrator_data.locations, {'LocationID' : value.LocationID}) > -1 ){
+            //     value.status = true;
+            //   }
+            // });
+            scope.selected_location_data = [];
+            scope.locations_data.map((res) => {
+              console.log(res);
+              res.status = false;
+            });
+
+          }
+          if ( type == 'departments' ) {
+            scope.permission_data = 'Departments';
+            scope.showDepartmentSelector = true;
+            
+            scope.showLocationSelector = false;
+
+            scope.selected_department_data = [];
+            scope.departments_data.map((res) => {
+              console.log(res);
+              res.status = false;
+            });
+            
+          }
+          console.log(type);
+        }
+        scope.chooseSelector = function ( type ) {
+          if ( type == 'locations' ) {
+            scope.chooseSelectorLocation = scope.chooseSelectorLocation == true ? false : true;
+          }
+          if ( type == 'departments' ) {
+            scope.chooseSelectorDepartment = scope.chooseSelectorDepartment == true ? false : true;
+          }
+        }
+        scope.selectedPermission = function ( type, data, opt ) {
+          if ( type == 'locations' ) {
+            // scope.showLocationSelector = false;
+            scope.chooseSelectorLocation = false;
+            if ( opt ) {
+              scope.selected_location_data.push(data);
+              console.log(scope.selected_location_data);
+            } else {
+              console.log('close pud siyaaa sulod');
+              let index = $.inArray(data, scope.selected_location_data);
+              scope.selected_location_data.splice(index, 1);
+              data.status = false;             
+            }
+          }
+          if ( type == 'departments' ) {
+            // scope.showDepartmentSelector = false;
+            scope.chooseSelectorDepartment = false;
+            if ( opt ) {
+              scope.selected_department_data.push(data);
+            } else {
+              console.log('close pud siyaaa sulod');
+              let index = $.inArray(data, scope.selected_department_data);
+              scope.selected_department_data.splice(index, 1);
+              data.status = false;             
+            }
+          }
+        }
+        scope.resetData = function () {
+          scope.permission_data = 'All Employees & Dependents';
+          scope.showDepartmentSelector = false;
+          scope.showLocationSelector =  false;
+          scope.permissionSelector = false;
+        }
+        scope.getLocationData = async function () {
+          scope.showLoading();
+          await hrSettings.fetchLocationData()
+          .then( function (response) {
+            console.log(response);
+            scope.locations_data = response.data;
+            scope.hideLoading();
+          });
+        }
+
+        scope.getDepartmentData = async function () {
+          scope.showLoading();
+          await hrSettings.fetchDepartmentData()
+          .then( function (response) {
+            console.log(response);
+            scope.departments_data = response.data;
+            scope.hideLoading();
+          });
+        }
+        scope.assignAdmin = function () {
+          scope.isAddAdministratorConfirm = false;
+          scope.isAddAdministratorSuccess = false;
+          scope.chooseSelectorLocation = false;
+          scope.chooseSelectorDepartment = false;
+          scope.showLocationSelector = false;
+          scope.showDepartmentSelector = false;
+          scope.activeAdminBtn = false;
+          scope.permission_data = 'All Employees & Dependents'
+          scope.selected_location_data = [];
+          scope.selected_department_data = [];
+        }
 
 
         // CUSTOM REUSABLE FUNCTIONS
@@ -457,6 +585,8 @@ app.directive("employeeOverviewDirective", [
           // await scope.getProgress();
 
           await scope.getPermissionsData();
+          await scope.getLocationData();
+          await scope.getDepartmentData()
 
           localStorage.setItem('selected_member_id', null);
           localStorage.setItem('selected_member_index', null);

@@ -444,3 +444,11 @@
 .selected-properties-scroll{
   height: 308px;
 }
+.administrator-modal-container.employee-overview .mednefits-employee-selector-container >div{
+  opacity: 0.5;
+  pointer-events: none;
+}
+.administrator-modal-container.employee-overview .emp-name-input-wrapper.emp-overview-employee-input,
+.administrator-modal-container.employee-overview .emp-name-input-wrapper.emp-overview-employee-input input {
+  background-color: #F2F2F2;
+}

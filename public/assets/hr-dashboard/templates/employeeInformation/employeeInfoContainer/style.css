@@ -4,13 +4,20 @@
 }
 .employee-information-container{
   /* padding: 15px; */
+  padding: 20px 40px;
 }
 .emp-left-panel-container{
 
 }
 .emp-right-panel-container{
+  /* background-color: #fff;
+  border: 1px solid #cbcbcb; */
+  background-color: transparent;
+  border: 0;
+}
+.emp-right-panel-container >div:nth-child(2) {
+  height: 100%;
   background-color: #fff;
-  border: 1px solid #cbcbcb;
 }
 .emp-right-panel-container .employee-dependent-information,
 .emp-right-panel-container .dependent-information,

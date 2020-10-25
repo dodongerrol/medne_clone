@@ -169,14 +169,14 @@
               <div class="custom-checkbox-container active">
                 <label class="checkbox-input">
                   <span class="checkbox-text">Yes</span >
-                  <input ng-model="add_admin_data.is_mednefits_emp" ng-value="1" type="radio"/>
+                  <input ng-click="mednefitsEmployee('yes')" ng-model="add_admin_data.is_mednefits_emp" ng-value="1" type="radio"/>
                   <span class="checkbox-mark"></span>
                 </label>
               </div>
               <div class="custom-checkbox-container active">
                 <label class="checkbox-input">
                   <span class="checkbox-text">No</span >
-                  <input ng-click="mednefitsEmployee( add_admin_data.is_mednefits_emp )" ng-model="add_admin_data.is_mednefits_emp" ng-value="0" type="radio"/>
+                  <input ng-click="mednefitsEmployee('no')" ng-model="add_admin_data.is_mednefits_emp" ng-value="0" type="radio"/>
                   <span class="checkbox-mark"></span>
                 </label>
               </div>
@@ -188,9 +188,9 @@
               <div class="activated-text">(Activated account and email address are required to be an Administrator)</div>
               <div class="display-flex">
                 <form ng-submit="searchEmployeeName(add_admin_data.employee_name)">
-                  <div class="emp-name-input-wrapper">
+                  <div class="emp-name-input-wrapper" ng-class="{'validation' : isEmployeePending == true}">
                     <i class="fa fa-search"></i>
-                    <input ng-change="changeBtnToActive()" type="type" placeholder="Search by name" ng-model="add_admin_data.employee_name" ng-click="seachEmployeeName()">
+                    <input ng-change="checkSearchInput( add_admin_data.employee_name )" type="type" placeholder="Search by name" ng-model="add_admin_data.employee_name" ng-click="seachEmployeeName()">
                     <i class="fa fa-angle-down"></i>
 
                     <div  ng-if="showEmployeeList" class="permission-selector-dp-wrapper employee-name">
@@ -198,8 +198,8 @@
                     </div>
                   </div>
                 </form>
-                <div ng-if="false" class="employee-name-validation">
-                  <span>*Please have this account activated before assigning Administrator</span>
+                <div ng-if="isEmployeePending" class="employee-name-validation">
+                  <span ng-bind="validate_data.message">*Please have this account activated before assigning Administrator</span>
                 </div>
               </div>
             </div>
@@ -246,7 +246,7 @@
                     <div ng-repeat="list in locations_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
                         <span ng-bind="list.location" class="checkbox-text"></span>
-                        <input ng-change="changeBtnToActive()" ng-click="selectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <input ng-click="selectedPermission('locations',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
                     </div>
@@ -261,7 +261,7 @@
                     <div ng-repeat="list in departments_data track by $index" class="custom-checkbox-container">
                       <label class="checkbox-input">
                         <span ng-bind="list.department_name" class="checkbox-text"></span>
-                        <input ng-change="changeBtnToActive()" ng-click="selectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
+                        <input ng-click="selectedPermission('departments',list,list.status)" ng-model="list.status" type="checkbox"/>
                         <span class="checkbox-mark"></span>
                       </label>
                     </div>
@@ -269,14 +269,14 @@
                 </div>
               </div>
               <div class="location-department-data-wrapper">
-                <div ng-if="permission_data == 'Locations' " class="filter-data-selector-wrapper">
+                <div ng-if="selected_location_data.length > 0" class="filter-data-selector-wrapper">
                   <div ng-repeat="list in selected_location_data" class="filter-data-selector-container">
                     <div ng-bind="list.location">Location 1</div>
                     <img ng-click="selectedPermission('locations',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
                   </div>
                 </div>
                 <div ng-if="permission_data == 'Departments' " class="filter-data-selector-wrapper">
-                  <div ng-repeat="list in selected_deparment_data" class="filter-data-selector-container">
+                  <div ng-repeat="list in selected_department_data" class="filter-data-selector-container">
                     <div ng-bind="list.department_name">Location 1</div>
                     <img ng-click="selectedPermission('departments',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
                   </div>
@@ -347,7 +347,9 @@
         </div>
         <div class="modal-footer">
           <button ng-if="!isAddAdministratorSuccess" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeAdminBtn }">Add Admin</button>
+          <!-- <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeAdminBtn && isEmployeePending == false || isSearchEmpty == false}">Add Admin</button> -->
+          <!-- <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update" ng-disabled="( isEmployeePending == true ) && ( activeAdminBtn == false || add_admin_data.fullname == '' || add_admin_data.email == '' || add_admin_data.mobile_number == '' ) ">Add Admin</button> -->
+          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update" ng-disabled="( activeAdminBtn == false || isEmployeePending == true ) && ( activeAdminBtn == false || add_admin_data.fullname == '' || add_admin_data.email == '' || add_admin_data.mobile_number == '' )">Add Admin</button>
           <button ng-if="isAddAdministratorConfirm && !isAddAdministratorSuccess" ng-click="confirmAdmininistrator( )" class="btn-update confirm">Confirm</button>
           <button ng-if="isAddAdministratorSuccess" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
@@ -440,7 +442,7 @@
                   </div>
                 </div>
                 <div ng-if="permission_data == 'Departments' " class="filter-data-selector-wrapper">
-                  <div ng-repeat="list in selected_deparment_data" class="filter-data-selector-container">
+                  <div ng-repeat="list in selected_department_data" class="filter-data-selector-container">
                     <div ng-bind="list.department">Location 1</div>
                     <img ng-click="editSelectedPermission('departments',list,false)" src="../assets/hr-dashboard/img/times-dark-blue.png">
                   </div>

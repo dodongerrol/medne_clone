@@ -74,6 +74,11 @@
 .additional-admin-details {
   border-top: 1px solid #E0E0E0;
   padding: 20px 15px;
+  opacity: 0.5;
+}
+.additional-admin-details:hover {
+  background-color: rgba(230, 247, 255, 0.7);
+  opacity: 1;
 }
 .with-administrator .primary-admin-details {
   margin: 0 0 10px;
@@ -377,7 +382,8 @@
   border-color: #858585;
 }
 
-.administrator-modal-container .btn-update.disabled {
+.administrator-modal-container .btn-update.disabled,
+.administrator-modal-container .btn-update:disabled {
   border: 1px solid #BFBFBF;
   background-color: #BFBFBF;
   pointer-events: none;
