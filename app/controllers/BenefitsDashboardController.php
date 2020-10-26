@@ -17640,7 +17640,9 @@ public function createHrLocation ()
 				'location' 				=> $input['location'],
 				'business_address'		=> $input['business_address'],
 				'country'				=> $input['country'],
-				'postal_code'			=> $input['postal_code']
+				'postal_code'			=> $input['postal_code'],
+				'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : null,
+				'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : null,
 			);
 			\CorporateHrLocation::create($data);
 		} 
@@ -17700,9 +17702,8 @@ public function createHrLocation ()
 				'postal_code' 			=> $location->postal_code,
 				'country' 				=> $location->country,
 				'business_address' 		=> $location->business_address,
-				'street_address'		=> $address[0] ?? null,
-				'unit'					=> $address[1] ?? null,
-				'building'				=> $address[2] ?? null,
+				'unit_number'			=> $location->unit_number,
+				'building_name'			=> $location->building_name,
 				'total_employees'		=> DB::table('company_location_members')->where('company_location_id', $location->LocationID)->count()
 			);
 		  }
@@ -17728,6 +17729,8 @@ public function createHrLocation ()
 		$data = array(
 			'location'					=> !empty($input['location']) ? $input['location'] : $check->location,
 			'business_address'			=> !empty($input['business_address']) ? $input['business_address'] : $check->business_address,
+			'unit_number'				=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
+			'building_name'				=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 			'postal_code'				=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
 			'country'					=> !empty($input['country']) ? $input['country'] : $check->country,
 		);
