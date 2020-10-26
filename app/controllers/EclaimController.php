@@ -5507,7 +5507,7 @@ public function getHrActivity( )
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		'in_network_transactions' => $transaction_details,
 		'in_network_transactions_size' => sizeof($transaction_details),
-		'in_network_spending_format_number' => $in_network_spent + $total_lite_plan_consultation,
+		'in_network_spending_format_number' => $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,
 		'total_in_network_spent'    => number_format($in_network_spent + $total_lite_plan_consultation, 2),
