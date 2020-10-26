@@ -1924,7 +1924,8 @@ public function getEcardDetails( )
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->data = $e_card->newEcardDetails($findUserID);
-                    // return $e_card->newEcardDetails($findUserID);
+    DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
+    // return $e_card->newEcardDetails($findUserID);
     if($returnObject->data == 0) {
      $returnObject->status = FALSE;
      $returnObject->message = 'User does not have a package plan.';
@@ -5651,7 +5652,7 @@ $data = array(
  'spending_type' => $input['spending_type'],
  'default_currency' => $check_user_balance->currency_type
 );
-return $data;
+// return $data;
 $visit_deduction = false;
 
 if($customer_id) {
