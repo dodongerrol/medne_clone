@@ -5045,6 +5045,8 @@ const USER_COLUMNS = [
 			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
 			'company_address'		=> !empty($input['company_address']) ? $input['company_address'] : $check->company_address,
 			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
+			'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
+			'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 		);
 
 		$result = $business_information
@@ -18034,9 +18036,8 @@ public function createHrLocation ()
 			'company_name' 							=> $business->company_name,
 			'postal_code'							=> $business->postal_code,
 			'company_address'						=> $business->company_address,
-			'street_address'						=> $address[0] ?? null,
-			'unit'									=> $address[1] ?? null,
-			'building'								=> $address[2] ?? null,
+			'unit_number'							=> $business->unit_number,
+			'building_name'							=> $business->building_name,
 			'account_name'							=> $info->account_name,
 			'currency_type'							=> $info->currency_type
 		);
