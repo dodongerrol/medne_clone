@@ -18189,13 +18189,15 @@ public function createHrLocation ()
 			
 				return $data;
 			}
-			
+			if(empty($input['fullname']) || $input['fullname'] == null) {
+				return array('status' => false, 'message' => 'Full Name is required.');
+			}
 			$role = array (
 				'customer_id'						=> $customer_id,
 				'member_id'							=> $employee->UserID,
 				'fullname'							=> $input['fullname'],
-				'phone_code'				=> $employee->PhoneCode,
-				'phone_no'				=> $employee->PhoneNo,
+				'phone_code'						=> $employee->PhoneCode,
+				'phone_no'							=> $employee->PhoneNo,
 				'is_mednefits_employee'				=> 1,
 				'status'							=> 1
 			);
@@ -18734,7 +18736,7 @@ public function createHrLocation ()
 		$location = \CorporateHrLocation::where('LocationID', $input['location_id'] ?? null)->first();
 		$department = \CorporateHrDepartment::where('id', $input['department_id'] ?? null)->first();
 
-<<<<<<< HEAD
+
 		// $data = array(
 		// 	'Name'					=> $users->Name,
 		// 	'Current Location'		=> $location->location,
@@ -18744,16 +18746,7 @@ public function createHrLocation ()
 		if($transfer_option == 1){
 			if($assign == 1) {
 			DB::table('company_location_members')->update([
-=======
-		$data = array(
-			'Name'					=> $users->Name,
-			'Current Location'		=> $location->location
-		);
-		
-		if($transfer_option == 1){
-			if($assign == 1) {
-			DB::table('company_location_members')->insert([
->>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
+
 				'company_location_id'		=> $location['LocationID'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
@@ -18761,15 +18754,9 @@ public function createHrLocation ()
 				'updated_at'				=> $users->updated_at
 			]);
 			}
-<<<<<<< HEAD
 		} elseif ($transfer_option == 1){
 			if($assign == 0)
 			DB::table('company_department_members')->update([
-=======
-		} elseif ($transfer_option == 0){
-			if($assign == 0)
-			DB::table('company_department_members')->insert([
->>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
 				'company_department_id'		=> $department['id'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
@@ -18792,7 +18779,23 @@ public function createHrLocation ()
 								->where('status', 1)
 								->get();
 				}
-<<<<<<< HEAD
+
+					$customer = DB::table('customer_buy_start')
+					->join('company_link_accounts', 'company_link_accounts.customer_id', '=', 'customer_buy_start.customer_buy_start_id')
+					->where('customer_buy_start_id', $link_accounts->customer_id)
+					->select('customer_buy_start.')
+					->first();
+					$info = DB::table('customer_business_information')->where('customer_buy_start_id', $account->customer_id)->first();
+		
+
+					DB::table('company_link_accounts')->update([
+						'customer_id'				=> $customer['LocationID'],
+						'hr_id'						=> $users->UserID,
+						'status'					=> 1,
+						'created_at'				=> $users->created_at,
+						'updated_at'				=> $users->updated_at
+					]);
+
 				DB::table('company_link_accounts')->update([
 					'company_location_id'		=> $location['LocationID'],
 					'member_id'					=> $users->UserID,
@@ -18801,20 +18804,15 @@ public function createHrLocation ()
 					'updated_at'				=> $users->updated_at
 				]);
 
-=======
-				$data = array(
-					"Account Name"			=> $customer->account_name
-				);
->>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
+
 			}
 			
 
 		}
-<<<<<<< HEAD
+
 		$data['message'] = 'Successfully transfer employee.'; 
-=======
-		// $data['message'] = 'Successfully transfer employee.'; 
->>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
+
+		$data['message'] = 'Successfully transfer employee.'; 
 
 		return $data;
 	}
