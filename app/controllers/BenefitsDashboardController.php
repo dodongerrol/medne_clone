@@ -17908,17 +17908,20 @@ public function createHrLocation ()
 		}
 
 		foreach ($input['business_contacts'] as $key => $user) {
-		if($id) {
-			$data = array (
-				'customer_id'					=> $id,
-				'first_name'					=> $user['first_name'],
-				'email' 						=> $user['email'],
-				'phone_code'					=> $user['phone_code'],
-				'phone'							=> $user['phone']
-			);
-			\CorporateCompanyContacts::create($data);
+			if($id) {
+				$data = array (
+					'customer_id'					=> $id,
+					'first_name'					=> $user['first_name'],
+					'last_name'						=> $user['first_name'],
+					'email' 						=> $user['email'],
+					'phone_code'					=> $user['phone_code'],
+					'phone'							=> $user['phone'],
+					'created_at'					=> date('Y-m-d H:i:s'),
+					'updated_at'					=> date('Y-m-d H:i:s')
+				);
+				DB::table('company_contacts')->insert($data);
+			}
 		}
-	}
 		return array('status' => TRUE, 'message' => 'Successfully added business contact.', 'id'	=> $id);			
 	}
 
