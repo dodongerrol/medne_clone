@@ -7014,7 +7014,6 @@ public function payCreditsNew( )
         $checker->token = $token->data['access_token'];
         $checker->member_admin = 1;
       } else {
-        return "yeah";
         DB::table('user')->where('UserID', $member_id)->update(['Zip_Code' => $input['postal_code'], 'OTPCode' => NULL]);
       }
       
