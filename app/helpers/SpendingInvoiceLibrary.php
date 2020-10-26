@@ -1097,7 +1097,7 @@ class SpendingInvoiceLibrary
 
 	public static function getNonPanelTransactionDetails($invoice_id, $customer_id, $fields)
 	{
-		$transactions = DB::table('statement_e_claim_transactions', $invoice_id)->get();
+		$transactions = DB::table('statement_e_claim_transactions')->where('statement_id', $invoice_id)->get();
 		$total_medical = 0;
 		$total_wellness = 0;
 		$transaction_data = array();
