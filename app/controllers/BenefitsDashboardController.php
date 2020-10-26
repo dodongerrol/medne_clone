@@ -11,7 +11,8 @@ const USER_COLUMNS = [
 		'Mobile Number'                     =>  'user.PhoneNo',
 		'Email'                             =>  'user.Email',
 		'Medical Entitlement'				=>	'employee_wallet_entitlement.medical_entitlement',
-		'Wellness Entitlement'				=>	'employee_wallet_entitlement.wellness_entitlement'
+		'Wellness Entitlement'				=>	'employee_wallet_entitlement.wellness_entitlement',
+		
 ];
 
 	public function getDownloadToken( )
@@ -18560,12 +18561,12 @@ public function createHrLocation ()
 		$columns = array_merge(
 			  self::USER_COLUMNS,
 			  [
-					'(Medical) Benefits Coverage'       	=>  'medical_benefits_coverage',
+					'(Medical) Benefits Coverage'       =>  'medical_benefits_coverage',
 					'Family Coverage'                   =>  'family_coverage',
 					'Medical Entitlement Last Term'     =>  'medical_entitlement_last_term',
 					'Medical Usage Last Term'           =>  'medical_usage_last_term',
-					'Medical Balance Last Term'         =>  'medical_balance_last_term',
-					'Wellness Entitlement Last Term'    =>  'wellness_entitlement_last_term',
+					
+					
 					'Wellness Usage Last Term'          =>  'wellness_usage_last_term',
 					'Wellness Balance Last Term'        =>  'wellness_balance_last_term',
 					'Locations'                         =>  'Locations',
@@ -18587,6 +18588,7 @@ public function createHrLocation ()
 	  
 
 	  $user_db_colums = [];
+	  $temp = [];
 
 	  foreach ($user_columns as $user_column)	{
 		  $user_db_columns[] = $columns[$user_column];
@@ -18606,6 +18608,15 @@ public function createHrLocation ()
 
 			return $data;
 		}
+
+		foreach ($employees as $employee) {
+			$temp[] = array_merge($employee, [
+				'Medical Entitlement Last Term'     =>  'medical_entitlement_last_term',
+				'Wellness Entitlement Last Term'    =>  'wellness_entitlement_last_term',
+			]
+		);
+	}
+		dd($temp);	
 		
 		$employees = json_decode( json_encode($employees), true);
 		 $excel = Excel::create('Employee Information', function($excel) use($employees) {
