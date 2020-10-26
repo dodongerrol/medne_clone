@@ -158,6 +158,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post(serverUrl.url + "/hr/update/business_contact", data);
   };
 
+  hrFactory.updateCompanyContact = function(data) {
+    return $http.post(serverUrl.url + "/hr/update_company_contact", data);
+  };
+
   hrFactory.updateBillingContact = function(data) {
     return $http.post(serverUrl.url + "/hr/update/billing_contact", data);
   };

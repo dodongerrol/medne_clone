@@ -39,7 +39,7 @@
       </div>
       <div class="business-contact-details-wrapper">
         <div ng-repeat="list in business_contacts_data" class="business-contact-details-container">
-          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <button ng-click="editPrimaryBusinessContact( list, 'primary' )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
           <div class="display-flex business-info-row">
             <div class="business-bold-text">Full Name</div>
             <span ng-bind="list.first_name">Filbert Tan</span>
@@ -54,7 +54,7 @@
           </div>
         </div>
         <div ng-repeat="list in get_company_contact_data" class="business-contact-details-container">
-          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <button ng-click="editPrimaryBusinessContact( list, 'secondary' )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
           <div class="display-flex business-info-row">
             <div class="business-bold-text">Full Name</div>
             <span ng-bind="list.first_name">Filbert Tan</span>
