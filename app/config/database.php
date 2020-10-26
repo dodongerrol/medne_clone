@@ -76,7 +76,7 @@ return array(
             'host' => '127.0.0.1',
     ),
     // 'database'  => 'root',
-    'database'  => 'medicloud_v3',
+    'database'  => 'spending_db',
     'username'  => 'root',
     'password'  => '',
             'charset'   => 'utf8',
