@@ -273,6 +273,9 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/update/billing_information', 'BenefitsDashboardController@updateBillingInformation');
 	Route::get('hr/get_billing_information', 'BenefitsDashboardController@getBillingInformation');
 
+	// transfer employee
+	Route::post('hr/transfer_employee', 'BenefitsDashboardController@transferEmployee');
+
 	// Administrator
 	Route::post('hr/add_employee_admin', 'BenefitsDashboardController@addAdministrator');
 	Route::get('hr/get_primary_admin_details', 'BenefitsDashboardController@getPrimaryAdminDetails');
