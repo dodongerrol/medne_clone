@@ -22,6 +22,7 @@
     get() {
       this.departmentAPI.get().then((response) => {
         this.departments = response;
+        console.log(this.departments);
       });
     }
     add() {
