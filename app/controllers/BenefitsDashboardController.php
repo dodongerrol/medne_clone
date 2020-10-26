@@ -18572,11 +18572,19 @@ public function createHrLocation ()
 
 	public function exportFilterMemberDetails()
 	{
-
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
 
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return ['status' => false, 'message' => 'token is required'];
+		}
+		$token = self::checkToken($input['token']);
+
+		if(!$token) {
+			return array('status' => FALSE, 'message' => 'Invalid Token.');
+		}
 		$data = [
 			'message'	=> null,
 			'status'	=> true 
