@@ -2050,6 +2050,7 @@ class PlanHelper
 		// check if member mobile number match the hr primary admin
 		$hrAccountPrimary = DB::table('customer_hr_dashboard')
 				->join('company_link_accounts', 'company_link_accounts.hr_id', '=', 'customer_hr_dashboard.hr_dashboard_id')
+				->where('company_link_accounts.customer_id', $customer_id)
 				->where('customer_hr_dashboard.phone_number', $data['PhoneNo'])
 				->where('customer_hr_dashboard.active', 1)
 				->where('customer_hr_dashboard.hr_activated', 1)

@@ -310,6 +310,8 @@ class CorporateController extends BaseController {
 		$primary = DB::table('customer_hr_dashboard')->where('email', $data['email'])->first();
 		
 		$customer_id = $data['customer_id'];
+		$old_hr_id_link = $result->hr_dashboard_id;
+
 		if($primary) {
 			// check if hr account is already process the activate flow
 			if((int)$primary->hr_activated == 0) {
@@ -363,11 +365,14 @@ class CorporateController extends BaseController {
 			}
 
 			if($action_type == "change_primary") {
+				// get latest company that is active from hr company link
+				$token = \CustomerHelper::generateNewHrAccountLinkLoginToken($result);
 				return [
 					'status' => true,
 					'type'	=> 'change_primary',
 					'company' => ucwords($info->account_name),
 					'hr_account' => ucwords($primary->fullname),
+					'token'		=> $token,
 					'message' => 'success'
 				];
 			} else {
@@ -387,17 +392,6 @@ class CorporateController extends BaseController {
 			$under_hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $old_under_customer_id)->first();
 			$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 			// create new activation and information for hr
-			
-			// if(url('/') == 'https://admin.medicloud.sg') {
-			// 	$url = 'https://medicloud.sg';
-			// } else if(url('/') == 'http://stage.medicloud.sg') {
-			// 	$url = 'http://staging.medicloud.sg';
-			// } else if(url('/') == 'http://stage_v2.medicloud.sg') {
-			// 	$url = 'http://staging_v2.medicloud.sg';
-			// } else {
-			// 	$url = 'http://medicloud.local';
-			// }
-
 			if(url('/') == 'https://medicloud.sg') {
 				$url = 'https://medicloud.sg';
 			} else if(url('/') == 'http://staging.medicloud.sg') {
@@ -431,6 +425,31 @@ class CorporateController extends BaseController {
 			);
 		
 			$newHRId = DB::table('customer_hr_dashboard')->insertGetId($hr);
+			$role = array (
+				'hr_id'								=> $newHRId,
+				'fullname'							=> $data['fullname'],
+				'email'								=> $data['email'],
+				'phone_code'						=> $data['phone_code'],
+				'phone_no'							=> $data['phone_no'],
+				'is_mednefits_employee'				=> 0,
+				'status'							=> 1
+			);
+			
+			$admin_role = \CustomerAdminRole::create($role);
+			// create admin role for new hr and permissions
+			DB::table('employee_and_dependent_permissions')->insert([
+				'customer_admin_role_id'							=> $admin_role->id,
+				'edit_employee_dependent'							=> 1,
+				'view_employee_dependent'							=> 1,
+				'enroll_terminate_employee'							=> 1,
+				'approve_reject_edit_non_panel_claims'				=> 1,
+				'create_remove_edit_admin_unlink_account'			=> 1,
+				'manage_billing_and_payments'						=> 1,
+				'add_location_departments'							=> 1,
+				'status'											=> 1,
+				'created_at'										=> date('Y-m-d H:i:s'),
+				'updated_at'										=> date('Y-m-d H:i:s')
+			]);
 			// create link account
 			// insert to new hr link
 			DB::table('company_link_accounts')->insert(['hr_id' => $newHRId, 'customer_id' => $customer_id, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
@@ -474,11 +493,14 @@ class CorporateController extends BaseController {
 			}
 
 			if($action_type == "change_primary") {
+				// get latest company that is active from hr company link
+				$token = \CustomerHelper::generateNewHrAccountLinkLoginToken($result);
 				return [
 					'status' => true,
 					'type'	=> 'change_primary',
 					'company' => ucwords($info->account_name),
 					'hr_account' => ucwords($data['fullname']),
+					'token'		=> $token,
 					'message' => 'success'
 				];
 			} else {
