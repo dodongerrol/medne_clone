@@ -1362,7 +1362,7 @@ return Response::json($returnObject);
             $customer_id = PlanHelper::getCustomerId($user_id);
             $wallet_data = array(
               'spending_type'             => $spending_type,
-              'balance'                   => $customer_active_plan->account_type == "out_of_network" ? number_format($out_of_pocket_spent, 2) : $balance,
+              'balance'                   => $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
