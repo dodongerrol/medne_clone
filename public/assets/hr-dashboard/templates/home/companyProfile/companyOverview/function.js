@@ -181,10 +181,28 @@ app.directive("companyProfileDirective", [
           });
         }
 
-        scope.editBusinessInformation = async function ( data ) {
-
-
+        scope.editBusinessInformation = async data =>{
+          console.log(data);
+          scope.get_business_info_data = data;
+          scope.activeBusinessUpdate = false;
           await scope.initializeEditBusinessInfoCountryCode();
+        }
+
+        scope.updateBusinessInformation = async information_data =>{
+          let payload_data = {
+            customer_business_information_id: information_data.customer_business_information_id,
+            account_name: information_data.account_name,
+            currency_type: information_data.currency_type,
+            company_name: information_data.company_name,
+            company_address: information_data.company_address,
+          }
+          await $http.post("medicloud.local/hr/update/business_information",payload_data)
+          .then(async response =>{
+            scope.hideLoading();
+            // await scope.getBusinessInformation();
+            $("#business-information-modal").modal('hide');
+            swal('Success', response.data.message, 'success');
+          })
         }
 
         scope.getCompanyContacts = async function () {
@@ -193,6 +211,7 @@ app.directive("companyProfileDirective", [
             console.log(response);
 
             scope.get_company_contact_data = response.data;
+            console.log(scope.get_company_contact_data);
 
             angular.forEach(scope.get_company_contact_data, function (value, key) {
 							console.log(key);
@@ -200,7 +219,8 @@ app.directive("companyProfileDirective", [
                 console.log('true and disabled');
                 scope.addMoreContactDisabled = true;
               }
-						});
+            });
+
           });
         }
 

@@ -2,6 +2,7 @@
   <div>
     <h4 class="business-bold-text company-title">Company Profile</h4>
   </div>
+
   <div class="business-information-container">
     <h5 class="business-bold-text">Business Information</h5>
     <div class="business-card">
@@ -31,6 +32,7 @@
       </div>
     </div>
   </div>
+
   <div class="business-contact-container">
     <h5 class="business-bold-text">Business Contact</h5>
     <div class="business-card business-contact">
@@ -85,38 +87,38 @@
         <div class="modal-body">
           <div class="business-input-wrapper">
             <label>Account Name</label>
-            <input type="text">
+            <input type="text" ng-change="removeDisable()" ng-model="get_business_info_data.account_name">
           </div>
           <div class="business-input-wrapper">
             <label>Business Legal Name</label>
-            <input type="text">
+            <input type="text" ng-change="removeDisable()" ng-model="get_business_info_data.company_name">
           </div>
           <div class="business-input-wrapper">
             <label>Business Legal Address</label>
             <div>
               <div class="legal-add-row-1">
-                <input type="text">
+                <input type="text" ng-change="removeDisable()" ng-model="get_business_info_data.company_address">
               </div>
               <div class="legal-add-row-2 display-flex">
-                <input type="text">
-                <input type="text">
+                <input type="text" ng-change="removeDisable()" ng-model="get_business_info_data.company_address">
+                <input type="text" ng-change="removeDisable()" ng-model="get_business_info_data.company_address">
               </div>
             </div>
           </div>
           <div class="country-postal-container display-flex">
             <div class="business-input-wrapper">
               <label>Country Incorporated</label>
-              <input id="business_info_country">
+              <input id="business_info_country" ng-change="removeDisable()" ng-model="get_business_info_data.currency_type">
             </div>
             <div class="business-input-wrapper">
               <label>Postal Code</label>
-              <input >
+              <input ng-change="removeDisable()" ng-model="get_business_info_data.postal_code">
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button data-dismiss="modal" class="btn-cancel">Cancel</button>
-          <button class="btn-update" >Update</button>
+          <button class="btn-update disabled" ng-class="{'active' : activeBusinessUpdate }" ng-click="updateBusinessInformation(get_business_info_data)">Update</button>
         </div>
       </div>
     </div>

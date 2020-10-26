@@ -9,7 +9,7 @@
           <div class="custom-checkbox-container">
             <label class="checkbox-input">
               <span></span>
-              <input type="checkbox"/>
+              <input type="checkbox" ng-click=accounts() ng-model="account_types.employee"/>
               <span class="checkbox-text">Employee</span>
               <span class="checkbox-mark"></span>
             </label>
@@ -17,8 +17,8 @@
           <div class="custom-checkbox-container">
             <label class="checkbox-input">
               <span></span>
-              <input type="checkbox"/>
-              <span class="checkbox-text" >Dependent</span>
+              <input type="checkbox" ng-click=accounts() ng-model="account_types.dependent"/>
+              <span class="checkbox-text">Dependent</span>
               <span class="checkbox-mark"></span>
             </label>
           </div>
@@ -31,8 +31,8 @@
           </h4>
 
           <div class="select-deselect-div">
-            <div>Select All</div>
-            <div>Deselect All</div>
+            <div ng-click=selectAll() ng-class={'select-disable':account_types.employee==false&&account_types.dependent==false}>Select All</div>
+            <div ng-click=deselectAll()>Deselect All</div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-6">
@@ -44,7 +44,7 @@
           >
             <label class="checkbox-input">
               <span></span>
-              <input type="checkbox" ng-model="list.selected" ng-disabled="$index == 0"/>
+              <input type="checkbox" ng-model="list.selected" ng-disabled="$index == 0" ng-click="selected(list)"/>
               <span class="checkbox-text" ng-bind="list.name"></span>
               <span class="checkbox-mark mark"></span>
             </label>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="btn-container text-right">
-      <button class="btn-submit">Next</button>
+      <button class="btn-submit" ng-disabled="isDisabled" ng-click=nextBtn()>Next</button>
     </div>
   </div>
 </div>
