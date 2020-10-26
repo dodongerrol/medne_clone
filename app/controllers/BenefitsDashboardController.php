@@ -18189,13 +18189,15 @@ public function createHrLocation ()
 			
 				return $data;
 			}
-			
+			if(empty($input['fullname']) || $input['fullname'] == null) {
+				return array('status' => false, 'message' => 'Full Name is required.');
+			}
 			$role = array (
 				'customer_id'						=> $customer_id,
 				'member_id'							=> $employee->UserID,
 				'fullname'							=> $input['fullname'],
-				'phone_code'				=> $employee->PhoneCode,
-				'phone_no'				=> $employee->PhoneNo,
+				'phone_code'						=> $employee->PhoneCode,
+				'phone_no'							=> $employee->PhoneNo,
 				'is_mednefits_employee'				=> 1,
 				'status'							=> 1
 			);
