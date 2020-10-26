@@ -3,7 +3,8 @@ app.directive("companyProfileDirective", [
   "serverUrl",
   "$timeout",
   "hrSettings",
-  function directive($state, serverUrl, $timeout, hrSettings) {
+  "$http",
+  function directive($state, serverUrl, $timeout, hrSettings, $http) {
     return {
       restrict: "A",
       scope: true,
@@ -181,46 +182,9 @@ app.directive("companyProfileDirective", [
         }
 
         scope.editBusinessInformation = async function ( data ) {
-          scope.get_business_info_data = data;
-          scope.activeBusinessUpdate =false;
 
-          if ( scope.get_business_info_data.currency_type == 'sgd' ) {
-            scope.get_business_info_data.country = 'Singapore'
-          } else {
-            scope.get_business_info_data.country = 'Malaysia'
-          }
 
           await scope.initializeEditBusinessInfoCountryCode();
-        }
-
-        scope.updateBusinessInformation = async function ( business_info ) {
-          if ( business_info.country == 'Singapore' ) {
-            business_info.currency_type = 'sgd';
-          } else {
-            business_info.currency_type = 'myr';
-          }
-
-          let data = {
-            customer_business_information_id: business_info.customer_business_information_id,
-            account_name: business_info.account_name,
-            currency_type: business_info.currency_type, 
-            company_name: business_info.company_name,
-            company_address: business_info.company_address,
-          }
-
-          console.log(data);
-          scope.showLoading();
-          await hrSettings.updateBusinessInformation( data )
-          .then(async function (response) {
-            console.log(response);
-
-            scope.hideLoading();
-            await scope.getBusinessInformation();
-            
-            $("#business-information-modal").modal('hide');
-
-            swal('Success', response.data.message, 'success');
-          });
         }
 
         scope.getCompanyContacts = async function () {
