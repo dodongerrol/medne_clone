@@ -230,6 +230,8 @@ app.directive("companyProfileDirective", [
             currency_type: business_info.currency_type, 
             company_name: business_info.company_name,
             company_address: business_info.company_address,
+            unit_number: business_info.unit_number,
+            building_name: business_info.building_name
           }
 
           console.log(data);
