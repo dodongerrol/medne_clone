@@ -18588,7 +18588,6 @@ public function createHrLocation ()
 	  
 
 	  $user_db_colums = [];
-	  $temp = [];
 
 	  foreach ($user_columns as $user_column)	{
 		  $user_db_columns[] = $columns[$user_column];
@@ -18608,7 +18607,7 @@ public function createHrLocation ()
 
 			return $data;
 		}
-
+		$temp = [];
 		foreach ($employees as $employee) {
 			$temp[] = array_merge($employee, [
 				'Medical Entitlement Last Term'     =>  'medical_entitlement_last_term',
@@ -18627,4 +18626,18 @@ public function createHrLocation ()
 		return $excel;
 		
 	}
+
+	public function transferEmployee()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
+
+		$data = [
+			'message'	=> null,
+			'status'	=> true 
+		];
+	}
+
 }
