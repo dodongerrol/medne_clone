@@ -1255,11 +1255,12 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
           // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-          // scope.selectedEmployee.country_code = scope.selectedEmployee.country_code;
+          scope.editEmpCountryCode = scope.selectedEmployee.country_code;
           console.log(scope.selectedEmployee.dob);
           $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
           scope.inititalizeGeoCode();
           console.log(scope.selectedEmployee);
+          console.log(scope.editEmpCountryCode);
         }
 
         scope.openUpdateDependentModal = function (data) {
@@ -2517,7 +2518,8 @@ app.directive("employeeOverviewDirective", [
                   nric: data.nric == '' || data.nric == null ? '' : data.nric,
                   email: data.email,
                   phone_no: data.phone_no,
-                  country_code: data.country_code.replace('+', ''),
+                  // country_code: data.country_code.replace('+', ''),
+                  country_code: scope.editEmpCountryCode,
                   job_title: data.job_title,
                   postal_code: data.postal_code,
                   bank_account: data.bank_account,
@@ -2527,6 +2529,7 @@ app.directive("employeeOverviewDirective", [
                   bank_name: data.bank_name,
                   emp_id: data.employee_id,
                   passport: data.passport,
+                  // phone_code: scope.editEmpCountryCode,
                 };
                 console.log(update_data);
                 dependentsSettings.updateEmployee(update_data)
@@ -2947,7 +2950,6 @@ app.directive("employeeOverviewDirective", [
           scope.getSession();
           scope.companyAccountType();
           scope.getSpendingAcctStatus();
-
           console.log(scope.emp_entitlement.medical_new_entitlement);
         };
 
