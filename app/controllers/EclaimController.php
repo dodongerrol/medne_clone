@@ -3443,7 +3443,7 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
-       	// check user if it is spouse or dependent
+       			// check user if it is spouse or dependent
 				if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -3526,7 +3526,7 @@ public function getActivityInNetworkTransactions( )
 						}
 					}
 				}
-
+				
 				$bill_amount = 0;
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -3617,10 +3617,10 @@ public function getActivityInNetworkTransactions( )
 					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
+					$bill_amount = $bill_amount * $trans->currency_amount;
 				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
 					$trans->currency_type = "sgd";
 				}
-
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,
@@ -4980,10 +4980,10 @@ public function getHrActivity( )
 					$procedure_temp = "";
 					$procedure = "";
 
-	         // get services
+	         		// get services
 					if((int)$trans->multiple_service_selection == 1)
 					{
-	          // get multiple service
+	          			// get multiple service
 						$service_lists = DB::table('transaction_services')
 						->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
 						->where('transaction_services.transaction_id', $trans->transaction_id)
@@ -5010,7 +5010,7 @@ public function getHrActivity( )
 						}
 					}
 
-	        // check if there is a receipt image
+	        		// check if there is a receipt image
 					$receipts = DB::table('user_image_receipt')
 					->where('transaction_id', $trans->transaction_id)
 					->get();
@@ -5100,9 +5100,9 @@ public function getHrActivity( )
 						}
 					}
 
-	        $employee = $customer->Name;
+	        		$employee = $customer->Name;
 					$dependent = null;
-	        // check user if it is spouse or dependent
+	        		// check user if it is spouse or dependent
 					if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 						$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 						$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -5268,7 +5268,7 @@ public function getHrActivity( )
 						}
 					}
 
-					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					if($trans->currency_type == "myr") {
 						$total_amount = $total_amount * $trans->currency_amount;
 						$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
 						$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
@@ -5279,6 +5279,7 @@ public function getHrActivity( )
 						$cash = $cash * $trans->currency_amount;
 					}
 
+					$in_network_spent += $consultation;
 					$total_cash_spent += $cash;
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
@@ -5461,7 +5462,8 @@ public function getHrActivity( )
 		}
 	}
 
-	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
+	$total_spent = $e_claim_spent + $in_network_spent;
+	$temp_total_in_network_spent_format_number = $in_network_spent;
   	// sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
@@ -5488,9 +5490,9 @@ public function getHrActivity( )
 		$total_average_visit = $total_visit_created / $total_occupied_seats;
 	}
 
-	$temp_total_in_network_spent_format_number = array_sum(
-		array_column($transaction_details, 'amount')
-	);
+	// $temp_total_in_network_spent_format_number = array_sum(
+	// 	array_column($transaction_details, 'amount')
+	// );
 
 	if($plan->account_type == "out_of_pocket") {
 		$total_spent = $total_cash_spent;
