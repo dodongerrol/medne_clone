@@ -17938,7 +17938,8 @@ public function createHrLocation ()
 				'customer_business_contact_id'		=> $contact->customer_business_contact_id,
 				'first_name' 						=> $contact->first_name, 
 				'email' 							=> $contact->work_email,
-				'phone' 							=> $contact->phone
+				'phone' 							=> $contact->phone,
+				'mobile_code'						=> $contact->phone_code ? $contact->phone_code : 65
 			);
 		  }
 
@@ -17996,12 +17997,17 @@ public function createHrLocation ()
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 
+		if(empty($input['medi_company_contact_id']) || $input['medi_company_contact_id'] == null) {
 
-		$check = DB::table('company_contacts')->where('medi_company_contact_id', $id)->first();
+		}
 
-		
+		$check = DB::table('company_contacts')->where('medi_company_contact_id', $input['medi_company_contact_id'])->first();
+
+		if(!$check) {
+			return ['status' => false, 'message' => 'Company Contact does not exist'];
+		}
+
 		$contact = new CorporateCompanyContacts();
-
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'email'							=> !empty($input['email']) ? $input['email'] : $check->email,
