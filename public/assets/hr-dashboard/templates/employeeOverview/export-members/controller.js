@@ -1,7 +1,9 @@
 (function (angular) {
     'use strict';
     class ExportMembersController {
-        constructor() {
+				constructor($http, serverUrl) {
+						this.$http = $http;
+						this.serverUrl = serverUrl.url;
             this.exportMembersAPI = null;
             this.state = {
                 properties: [
@@ -118,7 +120,6 @@
             presentModal('export-members-modal', 'hide')
         }
         selectProperty(prop, opt){
-            console.log(scope.selectedEmpArr);
             prop.selected = opt;
             if(opt){
                 this.state.selectedPropertiesArr.push(prop);
@@ -127,9 +128,29 @@
                 this.state.selectedPropertiesArr.splice(index, 1);
             }
         }
-        downloadMemberDetails(){
-            console.log( this.selectedEmployeeData );
-            console.log( this.state.selectedPropertiesArr );
+        async downloadMemberDetails(){
+					console.log( this.selectedEmployeeData );
+					console.log( this.state.selectedPropertiesArr );
+
+					var url = `${this.serverUrl}/hr/export_selected_member_details`;
+					let columns	=	[];
+					await this.state.selectedPropertiesArr.map(async (value, key)	=>	{
+						if(value.selected){
+							await columns.push(value.name);
+						}
+					});
+
+					let data = {
+						type: this.selectedEmployeeData.selectedEmpArr.length == 0 || this.selectedEmployeeData.isExportAll ? 'all' : 'by_id',
+						columns: columns,
+						employee_ids: this.selectedEmployeeData.selectedEmpArr,
+						token: localStorage.getItem('token'),
+					}
+					console.log(data);
+
+					let params = $.param(data);
+
+					window.open(url + '?' + params);
         }
     }
 

@@ -27,9 +27,9 @@
                                 </div>
                                 <div class="w-64">
                                     <p class="ui-label">
-                                        <span ng-bind="location.business_address"></span>
+                                        <span ng-bind="location.business_address"></span><br>
                                         <span ng-bind="location.unit_number"></span>
-                                        <span ng-bind="location.building_name"></span>,
+                                        <span ng-bind="location.building_name"></span>{{ location.unit_number || location.building_name ? ',' : '' }}<br ng-if="location.unit_number || location.building_name">
                                         <span ng-bind="location.country"></span>
                                         <span ng-bind="location.postal_code"></span>
                                     </p>
@@ -48,7 +48,7 @@
                                         </svg>
                                         Edit
                                     </button>
-                                    <allocation id="location.id"></allocation>
+                                    <allocation ng-if="$index != 0" id="location.id"></allocation>
                                 </div>
                             </div>
                         </div>

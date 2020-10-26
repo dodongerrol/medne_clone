@@ -172,6 +172,11 @@
   padding-bottom: 2rem
 }
 
+.prb-20px {
+  padding-bottom: 20px;
+  padding-right: 20px;
+}
+
 .text-gray-600 {
   --text-opacity: 1;
   color: #718096;

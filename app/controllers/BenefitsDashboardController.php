@@ -13907,7 +13907,7 @@ const USER_COLUMNS = [
 
 		$total_members = $total_active_members + $total_active_dependents;
 
-		return array('status' => true, 'total_members' => $total_members);
+		return array('status' => true, 'total_members' => $total_members, 'total_administrators' => sizeof($total_of_administrator));
 	}
 
 	public function getEmployeeSpendingAccountSummaryNew( )
@@ -18603,7 +18603,7 @@ public function createHrLocation ()
 	public function exportFilterMemberDetails()
 	{
 		$input = Input::all();
-        $result = StringHelper::getJwtHrSession();
+		$result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
 
 
@@ -18779,9 +18779,9 @@ public function createHrLocation ()
 				'updated_at'				=> $users->updated_at
 			]);
 			}
-		} elseif ($transfer_option == 1){
+		} elseif ($transfer_option == 0){
 			if($assign == 0)
-			DB::table('company_department_members')->update([
+			DB::table('company_department_members')->insert([
 				'company_department_id'		=> $department['id'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
@@ -18804,23 +18804,6 @@ public function createHrLocation ()
 								->where('status', 1)
 								->get();
 				}
-
-					$customer = DB::table('customer_buy_start')
-					->join('company_link_accounts', 'company_link_accounts.customer_id', '=', 'customer_buy_start.customer_buy_start_id')
-					->where('customer_buy_start_id', $link_accounts->customer_id)
-					->select('customer_buy_start.')
-					->first();
-					$info = DB::table('customer_business_information')->where('customer_buy_start_id', $account->customer_id)->first();
-		
-
-					DB::table('company_link_accounts')->update([
-						'customer_id'				=> $customer['LocationID'],
-						'hr_id'						=> $users->UserID,
-						'status'					=> 1,
-						'created_at'				=> $users->created_at,
-						'updated_at'				=> $users->updated_at
-					]);
-
 				DB::table('company_link_accounts')->update([
 					'company_location_id'		=> $location['LocationID'],
 					'member_id'					=> $users->UserID,

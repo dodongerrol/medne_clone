@@ -777,7 +777,8 @@ app.directive("accountSettingsDirective", [
             scope.link_account_id = data.id;
             scope.link_hr_id = data.hr_id;
             scope.unlinkData = {
-              phone_code: '65'
+              phone_code: '65',
+              hr_id: data.hr_id
             }
             await scope.initializeUnlinkCountryCode();
           } else {
@@ -806,8 +807,9 @@ app.directive("accountSettingsDirective", [
 
         scope._updateLink_ = async function ( ) {
           let data = {
-            hr_id: scope.link_hr_id,
-            customer_id: scope.link_account_id,
+            id: scope.link_account_id,
+            hr_id: scope.unlinkData.hr_id,
+            customer_id: scope.spending_account_status.customer_id,
             fullname: scope.unlinkData.full_name,
             email: scope.unlinkData.email,
             phone_code: scope.unlinkData.phone_code,
