@@ -1924,7 +1924,7 @@ public function getEcardDetails( )
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->data = $e_card->newEcardDetails($findUserID);
-                    return $e_card->newEcardDetails($findUserID);
+                    // return $e_card->newEcardDetails($findUserID);
     if($returnObject->data == 0) {
      $returnObject->status = FALSE;
      $returnObject->message = 'User does not have a package plan.';
