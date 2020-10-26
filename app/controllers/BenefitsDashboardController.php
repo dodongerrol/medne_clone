@@ -5030,16 +5030,15 @@ const USER_COLUMNS = [
 		$hr_id = $hr_data->customer_buy_start_id;
 		$input = Input::all();
 
-		$check = DB::table('customer_business_information')->where('customer_business_information_id', $hr_id)->first();
+		$check = DB::table('customer_business_information')->where('customer_business_information_id', $input['customer_business_information_id'])->first();
 
-		// if($check == 0) {
-		// 	return array(
-		// 		'status'	=> FALSE,
-		// 		'message'	=> 'No business information exist'
-		// 	);
-		// }
+		if(!$check) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'No business information exist'
+			);
+		}
 		
-
 		$business_information = new CorporateBusinessInformation;
 
 		$data = array(
@@ -5049,9 +5048,9 @@ const USER_COLUMNS = [
 		);
 
 		$result = $business_information
-		->updateBillingAddress($input['customer_business_information_id'], $data);
+		->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
 
-		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
+		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
 		$customer = array(
 			'account_name'			=> !empty($input['account_name']) ? $input['account_name'] : $info->account_name,
 			'currency_type' 		=> !empty($input['currency_type']) ? $input['currency_type'] : $info->currency_type,
