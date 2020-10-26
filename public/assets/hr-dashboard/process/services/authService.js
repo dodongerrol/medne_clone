@@ -42,13 +42,13 @@ service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope, 
 					// $('#global_message').text(response.data);
 					// $('#login-status').show();
 			// }
-			window.location.href = window.location.origin + '/business-portal-login';
+			// window.location.href = window.location.origin + '/business-portal-login';
 			$('#global_modal').modal('show');
 			$('#global_message').text(response.data);
 			$('#login-status').show();
 			$('.circle-loader').hide();
 		} else if(response.status == 401) {
-			window.location.href = window.location.origin + '/company-benefits-dashboard-login';
+			// window.location.href = window.location.origin + '/company-benefits-dashboard-login';
 			$('#global_modal').modal('show');
 			if(response.data.type && response.data.type == "hr_not_activated"){
 				$('#global_message').text(response.data.message);
@@ -59,7 +59,7 @@ service.factory('AuthInterceptor', function($q, $window, $injector, $rootScope, 
 			}
 			$('.circle-loader').hide();
 		} else if(response.status == 500 || response.status == 408) {
-			window.location.href = window.location.origin + '/company-benefits-dashboard-login';
+			// window.location.href = window.location.origin + '/company-benefits-dashboard-login';
 			$('#global_modal').modal('show');
 			$('#global_message').text('Ooops! Something went wrong. Please check you internet connection or reload the page.');
 			$('#login-status').hide();
