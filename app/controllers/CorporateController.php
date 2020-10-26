@@ -310,6 +310,8 @@ class CorporateController extends BaseController {
 		$primary = DB::table('customer_hr_dashboard')->where('email', $data['email'])->first();
 		
 		$customer_id = $data['customer_id'];
+		$old_hr_id_link = $result->hr_dashboard_id;
+
 		if($primary) {
 			// check if hr account is already process the activate flow
 			if((int)$primary->hr_activated == 0) {
@@ -363,11 +365,14 @@ class CorporateController extends BaseController {
 			}
 
 			if($action_type == "change_primary") {
+				// get latest company that is active from hr company link
+				$token = \CustomerHelper::generateNewHrAccountLinkLoginToken($result);
 				return [
 					'status' => true,
 					'type'	=> 'change_primary',
 					'company' => ucwords($info->account_name),
 					'hr_account' => ucwords($primary->fullname),
+					'token'		=> $token,
 					'message' => 'success'
 				];
 			} else {
@@ -387,17 +392,6 @@ class CorporateController extends BaseController {
 			$under_hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $old_under_customer_id)->first();
 			$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 			// create new activation and information for hr
-			
-			// if(url('/') == 'https://admin.medicloud.sg') {
-			// 	$url = 'https://medicloud.sg';
-			// } else if(url('/') == 'http://stage.medicloud.sg') {
-			// 	$url = 'http://staging.medicloud.sg';
-			// } else if(url('/') == 'http://stage_v2.medicloud.sg') {
-			// 	$url = 'http://staging_v2.medicloud.sg';
-			// } else {
-			// 	$url = 'http://medicloud.local';
-			// }
-
 			if(url('/') == 'https://medicloud.sg') {
 				$url = 'https://medicloud.sg';
 			} else if(url('/') == 'http://staging.medicloud.sg') {
@@ -474,11 +468,14 @@ class CorporateController extends BaseController {
 			}
 
 			if($action_type == "change_primary") {
+				// get latest company that is active from hr company link
+				$token = \CustomerHelper::generateNewHrAccountLinkLoginToken($result);
 				return [
 					'status' => true,
 					'type'	=> 'change_primary',
 					'company' => ucwords($info->account_name),
 					'hr_account' => ucwords($data['fullname']),
+					'token'		=> $token,
 					'message' => 'success'
 				];
 			} else {

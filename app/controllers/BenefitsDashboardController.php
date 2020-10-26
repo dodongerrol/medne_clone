@@ -117,7 +117,7 @@ const USER_COLUMNS = [
 					})
 					->select('UserID', 'PhoneNo', 'PhoneCode')
 					->first();
-
+		
 		if($member) {
 			// check if member is an admin type
 			$adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->where('status', 1)->select('id')->first();
@@ -13632,7 +13632,7 @@ const USER_COLUMNS = [
 				}
 			}
 
-			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
+			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id, 'medical');
 			if($transaction_access)	{
 				$result['spending_feature_status_type'] = false;
 			}
@@ -18129,7 +18129,7 @@ public function createHrLocation ()
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
-	
+		$hr_id = $result->hr_dashboard_id;
 		$is_mednefits_employee = $input['is_mednefits_employee'] ?? 0;
 		$search = !empty($input['search']) ? $input['search'] : null;
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
@@ -18196,7 +18196,7 @@ public function createHrLocation ()
 				'is_mednefits_employee'				=> 1,
 				'status'							=> 1
 			);
-
+			DB::table('user')->where('UserID', $employee->UserID)->update(['is_external_admin' => 1, 'updated_at' => date('Y-m-d')]);
 			$employee_id = $employee_id;
 		} else {
 			// require phone no and phone code
@@ -18214,36 +18214,75 @@ public function createHrLocation ()
 				return ['status' => false, 'message' => 'Email Address already taken.'];
 			}
 
-			// create new member but label user type as 5 as external user
-			$externalUserId = DB::table('user')->insertGetId([
-				'Name'					=> $input['fullname'],
-				'Email'					=> $input['email'],
-				'member_activated'		=> 0,
-				'PhoneCode'				=> $input['phone_code'],
-				'PhoneNo'				=> $input['phone_no'],
-				'ActiveLink'			=> StringHelper::getEncryptValue(),
-				'UserType'				=> 6,
-				'created_at'			=> date('Y-m-d'),
-				'updated_at'			=> date('Y-m-d'),
-				'account_update_status'	=> 1,
-				'account_already_update'	=> 1,
-				'is_external_admin'		=> 1,
-				'account_update_date'	=> date('Y-m-d H:i:s'),
-				'expiration_time'		=> date('Y-m-d H:i:s', strtotime('+7 days'))
-			]);
+			$existing_member_account_link = false;
+			// check mobile for member
+			$checkMemberMobileAccountLink = DB::table('user')->where('PhoneNo', $input['phone_no'])->where('UserType', 5)->where('Active', 1)->select('UserID')->first();
 
-			$role = array (
-				'customer_id'						=> $customer_id,
-				'member_id'							=> $externalUserId,
-				'fullname'							=> $input['fullname'],
-				'email'								=> $input['email'],
-				'phone_code'				=> $input['phone_code'],
-				'phone_no'				=> $input['phone_no'],
-				'is_mednefits_employee'				=> 0,
-				'status'							=> 1
-			);
+			if($checkMemberMobileAccountLink) {
+				// get customer id of that member
+				$customer_id = PlanHelper::getCustomerId($checkMemberMobileAccountLink->UserID);
 
-			$employee_id = $externalUserId;
+				if($customer_id) {
+					// check if customer id is link with this hr
+					$acountLink = DB::table('company_link_accounts')
+							->join('customer_hr_dashboard', 'customer_hr_dashboard.hr_dashboard_id', '=', 'company_link_accounts.hr_id')
+							->where('company_link_accounts.hr_id', $hr_id)
+							->where('company_link_accounts.customer_id', $customer_id)
+							->select('company_link_accounts.id', 'company_link_accounts.hr_id', 'company_link_accounts.customer_id')
+							->first();
+					
+					if($acountLink) {
+						// update member to assign hr id and status
+						DB::table('user')->where('UserID', $checkMemberMobileAccountLink->UserID)->update(['hr_id' => $hr_id, 'is_hr_admin_linked' => 1, 'is_hr_admin' => 1]);
+						$role = array (
+							'customer_id'						=> $customer_id,
+							'member_id'							=> $checkMemberMobileAccountLink->UserID,
+							'fullname'							=> $input['fullname'],
+							'email'								=> $input['email'],
+							'phone_code'						=> $input['phone_code'],
+							'phone_no'							=> $input['phone_no'],
+							'is_mednefits_employee'				=> 0,
+							'status'							=> 1
+						);
+		
+						$employee_id = $checkMemberMobileAccountLink->UserID;
+						$existing_member_account_link = true;
+					}
+				}
+			} 
+			
+			if($existing_member_account_link == false) {
+				// create new member but label user type as 5 as external user
+				$externalUserId = DB::table('user')->insertGetId([
+					'Name'					=> $input['fullname'],
+					'Email'					=> $input['email'],
+					'member_activated'		=> 0,
+					'PhoneCode'				=> $input['phone_code'],
+					'PhoneNo'				=> $input['phone_no'],
+					'ActiveLink'			=> StringHelper::getEncryptValue(),
+					'UserType'				=> 6,
+					'created_at'			=> date('Y-m-d'),
+					'updated_at'			=> date('Y-m-d'),
+					'account_update_status'	=> 1,
+					'account_already_update'	=> 1,
+					'is_external_admin'		=> 1,
+					'account_update_date'	=> date('Y-m-d H:i:s'),
+					'expiration_time'		=> date('Y-m-d H:i:s', strtotime('+7 days'))
+				]);
+
+				$role = array (
+					'customer_id'						=> $customer_id,
+					'member_id'							=> $externalUserId,
+					'fullname'							=> $input['fullname'],
+					'email'								=> $input['email'],
+					'phone_code'				=> $input['phone_code'],
+					'phone_no'				=> $input['phone_no'],
+					'is_mednefits_employee'				=> 0,
+					'status'							=> 1
+				);
+
+				$employee_id = $externalUserId;
+			}
 		}
 		
 		$admin_role = \CustomerAdminRole::create($role);
