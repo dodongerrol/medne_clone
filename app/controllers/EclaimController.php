@@ -4827,11 +4827,12 @@ public function getHrActivity( )
 	$total_visit_created = 0;
 	$total_allocation = 0;
 	$total_visit_limit  = 0;
-
+	$total_cash_spent = 0;
 	
   	// get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
+	$plan = DB::table('customer_plan')->where('customer_buy_start_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 	$corporate_members = DB::table('corporate_members')
 							->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 							->where('corporate_members.corporate_id', $account->corporate_id)
@@ -5275,8 +5276,10 @@ public function getHrActivity( )
 						$consultation_credits = $consultation_credits * $trans->currency_amount;
 						$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 						$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
+						$cash = $cash * $trans->currency_amount;
 					}
 
+					$total_cash_spent += $cash;
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					$format = array(
@@ -5489,6 +5492,9 @@ public function getHrActivity( )
 		array_column($transaction_details, 'amount')
 	);
 
+	if($plan->account_type == "out_of_pocket") {
+		$total_spent = $total_cash_spent;
+	}
 
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
