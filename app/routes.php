@@ -598,8 +598,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// create unlinked account
 	Route::post('hr/unlink/company_account', 'CorporateController@unlinkCompanyAccount');
 
-	// login company link account
-	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
 	// get refund invoice
 	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
 	//empployee list for update administrator HR
@@ -609,7 +607,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// get account permission lists
 	Route::get('hr/get_account_permissions', 'HrController@getAccountPermissions');
 });
-	
+	// login company link account
+	Route::get('hr/login_company_linked', 'BenefitsDashboardController@accessCompanyLogin');
 	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
 	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 	// download non-panel reimbursement

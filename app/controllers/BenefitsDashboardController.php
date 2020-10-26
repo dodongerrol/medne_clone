@@ -115,7 +115,7 @@ const USER_COLUMNS = [
 						->whereIn('UserType', [5,6])
 						->whereIn('is_hr_admin', [0,1]);
 					})
-					->select('UserID', 'PhoneNo', 'PhoneCode')
+					->select('UserID', 'PhoneNo', 'PhoneCode', 'hr_id')
 					->first();
 		
 		if($member) {
@@ -158,6 +158,22 @@ const USER_COLUMNS = [
 					$member->expire_in = strtotime('+15 days', time());
 				}
 				
+				if($member->hr_id) {
+					// get member details
+					$member->hr_dashboard_id = $member->hr_id;
+				} else {
+					// get customer_id and get hr link
+					$customer_id = \PlanHelper::getCustomerId($member->UserID);
+					if($customer_id) {
+						$member->customer_buy_start_id = $customer_id;
+						$linkAccount = DB::table('company_link_accounts')->where('customer_id', $customer_id)->where('status', 1)->select('id', 'customer_id', 'hr_id')->first();
+
+						if($linkAccount) {
+							$member->hr_dashboard_id = $linkAccount->hr_id;
+						}
+					}
+				}
+
 				$token = $jwt->encode($member, $secret);
 				$admin_logs = array(
 					'admin_id'  => $member->UserID,
