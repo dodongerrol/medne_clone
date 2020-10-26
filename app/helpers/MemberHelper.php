@@ -1125,7 +1125,7 @@ class MemberHelper
 			// check if account is active
 			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
 
-			if(($accountStatus != "active") && ($accountStatus != "login")) {
+			if($accountStatus == "expired" || $accountStatus == "deactivated") {
 				return true;
 			}
 
