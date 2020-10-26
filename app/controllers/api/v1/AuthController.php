@@ -1924,7 +1924,7 @@ public function getEcardDetails( )
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->data = $e_card->newEcardDetails($findUserID);
-                    // return $e_card->newEcardDetails($findUserID);
+                    return $e_card->newEcardDetails($findUserID);
     if($returnObject->data == 0) {
      $returnObject->status = FALSE;
      $returnObject->message = 'User does not have a package plan.';
@@ -5578,16 +5578,6 @@ public function createEclaim( )
     }
   }
 
-  // // check if enable to access feature
-  // $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
-
-  // if($transaction_access)	{
-  //   $returnObject->status = FALSE;
-  //   $returnObject->head_message = 'Non-Panel Error';
-  //   $returnObject->message = 'Non-Panel function is disabled for your company.';
-  //   return Response::json($returnObject);
-  // }
-
   $input_amount = 0;
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
     $input_amount = trim($input['amount']);
@@ -5661,7 +5651,7 @@ $data = array(
  'spending_type' => $input['spending_type'],
  'default_currency' => $check_user_balance->currency_type
 );
-
+return $data;
 $visit_deduction = false;
 
 if($customer_id) {

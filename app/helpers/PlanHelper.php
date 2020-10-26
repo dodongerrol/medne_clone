@@ -811,9 +811,8 @@ class PlanHelper
 		}
 
 		if($active_plan->account_type == "out_of_pocket") {
-			return [];
-		}
-		if($active_plan->account_type == "insurance_bundle") {
+			$account_type = $active_plan->account_type;
+		} else if($active_plan->account_type == "insurance_bundle") {
 			if($active_plan->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
 				if ($plan->secondary_account_type == null) {
@@ -851,12 +850,16 @@ class PlanHelper
 			$wallet = 1;
 		}
 
+		if ($account_type == "out_of_pocket") {
+			$wallet = 0;
+		}
+		
 		$package_group = DB::table('package_group')
 			->where('account_type', $account_type)
 			->where('secondary_account_type', $secondary_account_type)
 			->where('wallet', $wallet)
 			->first();
-
+		
 		// update user package plan
 		if ((int)$user_plan->package_group_id !== (int)$package_group->package_group_id) {
 			\UserPlanType::where('user_plan_type_id', $user_plan->user_plan_type_id)->update(['package_group_id' => $package_group->package_group_id]);
