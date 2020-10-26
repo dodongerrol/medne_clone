@@ -6,11 +6,19 @@
           Select which type of account to edit:
         </h4>
         <div class="flex items-center space-x-12">
-          <div ng-repeat="list in account_types" class="custom-checkbox-container">
+          <div class="custom-checkbox-container">
             <label class="checkbox-input">
               <span></span>
-              <input type="checkbox"/>
-              <span class="checkbox-text" ng-bind="list"></span>
+              <input type="checkbox" ng-model="account_types.employee" ng-click="checkCheckbox()"/>
+              <span class="checkbox-text">Employee</span>
+              <span class="checkbox-mark"></span>
+            </label>
+          </div>
+          <div class="custom-checkbox-container">
+            <label class="checkbox-input">
+              <span></span>
+              <input type="checkbox" ng-model="account_types.dependent" ng-click="checkCheckbox()"/>
+              <span class="checkbox-text" >Dependent</span>
               <span class="checkbox-mark"></span>
             </label>
           </div>
@@ -23,18 +31,22 @@
           </h4>
 
           <div class="select-deselect-div">
-            <div>Select All</div>
-            <div>Deselect All</div>
+            <div ng-click="selectAll()"  ng-disabled="selectIsDisabled">Select All</div>
+            <div ng-click="deselectAll()">Deselect All</div>
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-y-6">
 
-          <div ng-repeat="list in details" class="custom-checkbox-container">
+          <div 
+            ng-if="(account_types.employee == true && [0,1,2,3,4,5,6,7,8,9].indexOf($index) > -1) || (account_types.dependent == true && [0,5,10].indexOf($index) > -1)" 
+            ng-repeat="list in details" 
+            class="custom-checkbox-container" 
+          >
             <label class="checkbox-input">
               <span></span>
-              <input type="checkbox"/>
-              <span class="checkbox-text" ng-bind="list"></span>
-              <span class="checkbox-mark"></span>
+              <input type="checkbox" ng-model="list.selected" ng-disabled="$index == 0" ng-click="check(list)"/>
+              <span class="checkbox-text" ng-bind="list.name"></span>
+              <span class="checkbox-mark mark"></span>
             </label>
           </div>
 
@@ -43,7 +55,9 @@
     </div>
 
     <div class="btn-container text-right">
-      <button class="btn-submit" ng-click="nextBtn()">Next</button>
+      <button 
+       ng-disabled="isDisabled"
+      class="btn-submit" ng-click="nextBtn()">Next</button>
     </div>
   </div>
 </div>
