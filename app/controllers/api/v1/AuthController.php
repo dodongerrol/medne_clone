@@ -5652,7 +5652,7 @@ $data = array(
  'spending_type' => $input['spending_type'],
  'default_currency' => $check_user_balance->currency_type
 );
-// return $data;
+
 $visit_deduction = false;
 
 if($customer_id) {
@@ -6646,7 +6646,7 @@ public function payCreditsNew( )
           $user_id = StringHelper::getUserId($findUserID);
           $customer_id = PlanHelper::getCustomerId($user_id);
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
-          $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+          $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
           $user_type = PlanHelper::getUserAccountType($findUserID);
 
           if($type == "spending") {
@@ -6751,16 +6751,7 @@ public function payCreditsNew( )
               $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
-
-            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-            //   $returnObject->status = FALSE;
-            //   $returnObject->status_type = 'without_e_claim';
-            //   $returnObject->head_message = 'E-Claim Unavailable';
-            //   $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
-            //   return Response::json($returnObject);
-            // }
-
+            
             if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
               if($spending['wellness_enabled'] == false) {
                 $returnObject->status = FALSE;
@@ -6773,16 +6764,16 @@ public function payCreditsNew( )
             }
 
             // check if e-claim platform is enable
-            $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+            // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-            if($customer && (int)$customer->access_e_claim == 0) {
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-Claim Unavailable';
-              $returnObject->message = 'The E-Claim function has been disabled for your company.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
-              return Response::json($returnObject);
-            }
+            // if($customer && (int)$customer->access_e_claim == 0) {
+            //   $returnObject->status = FALSE;
+            //   $returnObject->status_type = 'without_e_claim';
+            //   $returnObject->head_message = 'E-Claim Unavailable';
+            //   $returnObject->message = 'The E-Claim function has been disabled for your company.';
+            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //   return Response::json($returnObject);
+            // }
 
             // check for member transaction
             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
@@ -6822,7 +6813,7 @@ public function payCreditsNew( )
               }
             }
 
-            if($customer_active_plan->account_type == "out_of_pocket")	{
+            if($customer_active_plan->account_type == "out_of_pocket" && $spending['medical_benefits_coverage'] == "out_of_pocket" && $spending['wellness_benefits_coverage'] == "out_of_pocket")	{
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-Claim Unavailable ';
@@ -6833,7 +6824,6 @@ public function payCreditsNew( )
 
             // check member wallet spending validity
             $validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
-
             if(!$validity) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
