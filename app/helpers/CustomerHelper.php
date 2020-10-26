@@ -1602,5 +1602,26 @@ class CustomerHelper
 			return $hr_account->hr_dashboard_id;
 		}
 	}
+
+	public static function generateNewHrAccountLinkLoginToken($data)
+	{
+		$latestCompanyLink = DB::table('company_link_accounts')->where('hr_id', $data->hr_dashboard_id)->where('status', 1)->select('customer_id')->first();
+
+		if($latestCompanyLink) {
+			// generate token
+			$jwt = new JWT();
+			$secret = Config::get('config.secret_key');
+
+			$result = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $data->hr_dashboard_id)->first();
+			$result->customer_id = $latestCompanyLink->customer_id;
+			$result->hr_dashboard_id = $latestCompanyLink->customer_id;
+			$result->user_type = "hr_admin";
+			$token = $jwt->encode($result, $secret);
+			return $token;
+		}
+
+		return false;
+
+	}
 }
 ?>
