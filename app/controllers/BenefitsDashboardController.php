@@ -17813,8 +17813,12 @@ public function createHrLocation ()
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
-		
-		$location = \CorporateHrLocation::where('LocationID', $input['location_id'] ?? null)->first();
+
+		if(empty($input['location_id']) || $input['location_id'] == null) {
+			return ['status' => false, 'message' => 'location_id is requuired.'];
+		}
+
+		$location = \CorporateHrLocation::where('LocationID', $input['location_id'])->select('LocationID')->first();
 
 		$data = [
 			'message'	=> null,
@@ -17824,40 +17828,45 @@ public function createHrLocation ()
 			$data['message'] = 'Location does not exist'; 
 			$data['status']  = false;
 		
-		return $data;
+			return $data;
 		}
 		
 		$employee_ids = $input['employee_ids'] ?? [];
 		
 		if(count($employee_ids) <= 0)
 		{
-			$data['message'] = 'Input is empty.'; 
+			$data['message'] = 'Employee lists is empty'; 
 			$data['status']  = false;
 
-		return $data;
+			return $data;
 		}
-		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->get();
+		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->select('UserID')->get();
 		
 		if(count($employees) <= 0)
 		{
 			$data['message'] = 'Member/s does not exist'; 
 			$data['status']  = false;
 
-		return $data;
+			return $data;
 		}
 
 		foreach ($employees as $employee)
 		{
-			DB::table('company_location_members')->insert([
-				'company_location_id'		=> $location['LocationID'],
-				'member_id'					=> $employee->UserID,
-				'status'					=> 1,
-				'created_at'				=> $employee->created_at,
-				'updated_at'				=> $employee->updated_at
-			]);
-		}
-		$data['message'] = 'Successfully allocated member.'; 
+			// check if already exist
+			$checkLocationMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
 
+			if(!$checkLocationMember) {
+				DB::table('company_location_members')->insert([
+					'company_location_id'		=> $location['LocationID'],
+					'member_id'					=> $employee->UserID,
+					'status'					=> 1,
+					'created_at'				=> date('Y-m-d H:i:s'),
+					'updated_at'				=> date('Y-m-d H:i:s')
+				]);
+			}
+		}
+		
+		$data['message'] = 'Successfully allocated member.';
 		return $data;
 
 	}
