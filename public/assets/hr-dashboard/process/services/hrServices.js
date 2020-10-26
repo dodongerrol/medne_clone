@@ -625,6 +625,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.searchEmployee = function ( search ) {
     return $http.post( serverUrl.url + "/hr/add_employee_admin?",search );
   }
+  
+  hrFactory.updateUnlinkAccount = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/unlink/company_account",data );
+  }
 
   return hrFactory;
 });

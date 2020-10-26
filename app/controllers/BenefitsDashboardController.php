@@ -17908,17 +17908,20 @@ public function createHrLocation ()
 		}
 
 		foreach ($input['business_contacts'] as $key => $user) {
-		if($id) {
-			$data = array (
-				'customer_id'					=> $id,
-				'first_name'					=> $user['first_name'],
-				'email' 						=> $user['email'],
-				'phone_code'					=> $user['phone_code'],
-				'phone'							=> $user['phone']
-			);
-			\CorporateCompanyContacts::create($data);
+			if($id) {
+				$data = array (
+					'customer_id'					=> $id,
+					'first_name'					=> $user['first_name'],
+					'last_name'						=> $user['first_name'],
+					'email' 						=> $user['email'],
+					'phone_code'					=> $user['phone_code'],
+					'phone'							=> $user['phone'],
+					'created_at'					=> date('Y-m-d H:i:s'),
+					'updated_at'					=> date('Y-m-d H:i:s')
+				);
+				DB::table('company_contacts')->insert($data);
+			}
 		}
-	}
 		return array('status' => TRUE, 'message' => 'Successfully added business contact.', 'id'	=> $id);			
 	}
 
@@ -18731,6 +18734,7 @@ public function createHrLocation ()
 		$location = \CorporateHrLocation::where('LocationID', $input['location_id'] ?? null)->first();
 		$department = \CorporateHrDepartment::where('id', $input['department_id'] ?? null)->first();
 
+<<<<<<< HEAD
 		// $data = array(
 		// 	'Name'					=> $users->Name,
 		// 	'Current Location'		=> $location->location,
@@ -18740,6 +18744,16 @@ public function createHrLocation ()
 		if($transfer_option == 1){
 			if($assign == 1) {
 			DB::table('company_location_members')->update([
+=======
+		$data = array(
+			'Name'					=> $users->Name,
+			'Current Location'		=> $location->location
+		);
+		
+		if($transfer_option == 1){
+			if($assign == 1) {
+			DB::table('company_location_members')->insert([
+>>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
 				'company_location_id'		=> $location['LocationID'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
@@ -18747,9 +18761,15 @@ public function createHrLocation ()
 				'updated_at'				=> $users->updated_at
 			]);
 			}
+<<<<<<< HEAD
 		} elseif ($transfer_option == 1){
 			if($assign == 0)
 			DB::table('company_department_members')->update([
+=======
+		} elseif ($transfer_option == 0){
+			if($assign == 0)
+			DB::table('company_department_members')->insert([
+>>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
 				'company_department_id'		=> $department['id'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
@@ -18772,6 +18792,7 @@ public function createHrLocation ()
 								->where('status', 1)
 								->get();
 				}
+<<<<<<< HEAD
 				DB::table('company_link_accounts')->update([
 					'company_location_id'		=> $location['LocationID'],
 					'member_id'					=> $users->UserID,
@@ -18780,11 +18801,20 @@ public function createHrLocation ()
 					'updated_at'				=> $users->updated_at
 				]);
 
+=======
+				$data = array(
+					"Account Name"			=> $customer->account_name
+				);
+>>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
 			}
 			
 
 		}
+<<<<<<< HEAD
 		$data['message'] = 'Successfully transfer employee.'; 
+=======
+		// $data['message'] = 'Successfully transfer employee.'; 
+>>>>>>> 0a06f9dc0c8a1cc888f955bd989ff2cd2f0860de
 
 		return $data;
 	}

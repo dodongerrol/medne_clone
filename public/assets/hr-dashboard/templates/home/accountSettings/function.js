@@ -737,7 +737,8 @@ app.directive("accountSettingsDirective", [
             email: scope.changePrimaryData.email,
             phone_code: scope.changePrimaryData.phone_code,
             phone_no: scope.changePrimaryData.phone_no,
-            customer_id: scope.spending_account_status.customer_id
+            customer_id: scope.spending_account_status.customer_id,
+            action_type: 'change_primary',
           }
           scope.showLoading();
           $http.post(serverUrl.url + "/hr/unlink/company_account", data)
@@ -774,6 +775,7 @@ app.directive("accountSettingsDirective", [
             $('#unlink_account').modal('show');
             console.log(data);
             scope.link_account_id = data.id;
+            scope.link_hr_id = data.hr_id;
             scope.unlinkData = {
               phone_code: '65'
             }
@@ -804,11 +806,13 @@ app.directive("accountSettingsDirective", [
 
         scope._updateLink_ = async function ( ) {
           let data = {
-            id: scope.link_account_id,
+            hr_id: scope.link_hr_id,
+            customer_id: scope.link_account_id,
             fullname: scope.unlinkData.full_name,
             email: scope.unlinkData.email,
             phone_code: scope.unlinkData.phone_code,
             phone_no: scope.unlinkData.mobile_number,
+            action_type: 'unlink',
           }
           if( scope.checkEmail(data.email) == false ){
             return swal('Error!', 'Invalid Email', 'error');
