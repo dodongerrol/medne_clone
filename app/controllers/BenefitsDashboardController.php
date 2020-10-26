@@ -18588,7 +18588,7 @@ public function createHrLocation ()
 	  
 
 	  $user_db_colums = [];
-	  $temp = [];
+	//   $temp = [];
 
 	  foreach ($user_columns as $user_column)	{
 		  $user_db_columns[] = $columns[$user_column];
@@ -18609,14 +18609,14 @@ public function createHrLocation ()
 			return $data;
 		}
 
-		foreach ($employees as $employee) {
-			$temp[] = array_merge($employee, [
-				'Medical Entitlement Last Term'     =>  'medical_entitlement_last_term',
-				'Wellness Entitlement Last Term'    =>  'wellness_entitlement_last_term',
-			]
-		);
-	}
-		dd($temp);	
+	// 	foreach ($employees as $employee) {
+	// 		$temp[] = array_merge($employee, [
+	// 			'Medical Entitlement Last Term'     =>  'medical_entitlement_last_term',
+	// 			'Wellness Entitlement Last Term'    =>  'wellness_entitlement_last_term',
+	// 		]
+	// 	);
+	// }
+	// 	dd($temp);	
 		
 		$employees = json_decode( json_encode($employees), true);
 		 $excel = Excel::create('Employee Information', function($excel) use($employees) {
