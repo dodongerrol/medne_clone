@@ -18286,7 +18286,7 @@ public function createHrLocation ()
 		}
 		
 		$admin_role = \CustomerAdminRole::create($role);
-		$permission = DB::table('employee_and_dependent_permissions')->insert([
+		$permissions = [
 			'customer_admin_role_id'							=> $admin_role->id,
 			'edit_employee_dependent'							=> $input['edit_employee_dependent'] ,
 			'view_employee_dependent'							=> 1,
@@ -18298,12 +18298,15 @@ public function createHrLocation ()
 			'status'											=> 1,
 			'created_at'										=> date('Y-m-d H:i:s'),
 			'updated_at'										=> date('Y-m-d H:i:s')
-		]);
-			
+		];
 
+		$permission = DB::table('employee_and_dependent_permissions')->insert($permissions);
 		$locations = $input['locations'] ?? [];
+		$permissions_applied = ['All Employees & Dependents'];
+		
 		if(sizeof($locations) > 0)
 		{
+			$permissions_applied[] = 'Locations';
 			foreach ($locations as $location){
 				 DB::table('location_admin_permission')->insert([
 					'customer_admin_role_id'							=> $admin_role->id,
@@ -18318,6 +18321,7 @@ public function createHrLocation ()
 		$departments = $input['departments'] ?? [];
 		if(sizeof($departments) > 0)
 		{
+			$permissions_applied[] = 'Departments';
 			foreach ($departments as $department){
 				 DB::table('department_admin_permission')->insert([
 					'customer_admin_role_id'							=> $admin_role->id,
@@ -18338,9 +18342,13 @@ public function createHrLocation ()
         $emailData = [];
 		
 		$employee = DB::table('user')->where('UserID', $employee_id)->select('UserID', 'Email', 'Name', 'ActiveLink')->first();
+		$info = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
+		$emailDdata['permissions'] = $permissions;
+		$emailDdata['permissions_applied'] = $permissions_applied;
+		$emailDdata['company'] = ucwords($info->company_name);
 
 		if((int)$is_mednefits_employee == 1) {
 			$emailDdata['emailPage'] = 'email-templates.latest-templates.appoint-admin-template';
@@ -18359,7 +18367,7 @@ public function createHrLocation ()
 	public function getPrimaryAdminDetails()
 	{
 		$input = Input::all();
-    $result = StringHelper::getJwtHrSession();
+    	$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
 	

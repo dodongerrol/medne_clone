@@ -59,27 +59,55 @@
           <div style="border-bottom: 2px solid #999;padding-bottom: 30px;">
             <p style="font-size: 18px;">Hi {{$emailName}},</p>
 
-            <p style="margin: 16px 0 0;">You have been appointed as an administrator of Mednefits.</p>
+            <p style="margin: 16px 0 0;">You have been appointed as an administrator of {{ $company }}.</p>
             <p style="margin: 0 0 16px;">You are now able to:</p>
 
             <div>
               <ul>
+                @if((int)$permissions['view_employee_dependent'] == 1)
                 <li>
                   <span>View employee + dependent profile information</span>
                 </li>
+                @endif
+                @if((int)$permissions['edit_employee_dependent'] == 1)
                 <li>
                   <span>Edit employee + dependent profiles</span>
                 </li>
+                @endif
+                @if((int)$permissions['enroll_terminate_employee'] == 1)
                 <li>
                   <span>Enroll & terminate employee + dependent</span>
                 </li>
+                @endif
+                @if((int)$permissions['approve_reject_edit_non_panel_claims'] == 1)
                 <li>
                   <span>Approve, reject & edit non-panel claims</span>
                 </li>
+                @endif
+                @if((int)$permissions['create_remove_edit_admin_unlink_account'] == 1)
+                <li>
+                  <span>Create, remove admins, edit admins permission & unlink company account</span>
+                </li>
+                @endif
+                @if((int)$permissions['manage_billing_and_payments'] == 1)
+                <li>
+                  <span>Managing billing & payments</span>
+                </li>
+                @endif
+                @if((int)$permissions['add_location_departments'] == 1)
+                <li>
+                  <span>Add locations & Depeartments</span>
+                </li>
+                @endif
               </ul>
             </div>
 
-            <p>The permissions above will be applied to: All Employees & Dependents</p>
+            <p>The permissions above will be applied to: 
+              @foreach($permissions_applied as $applied)
+                {{ $applied }}
+                <span> </span>
+              @endforeach
+            </p>
           </div>
 
           <p style="font-size: 25px;color: #0392cf;font-weight: 400;margin-top: 40px;">Need help?</p>

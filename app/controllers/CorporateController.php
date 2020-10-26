@@ -425,6 +425,31 @@ class CorporateController extends BaseController {
 			);
 		
 			$newHRId = DB::table('customer_hr_dashboard')->insertGetId($hr);
+			$role = array (
+				'hr_id'								=> $newHRId,
+				'fullname'							=> $data['fullname'],
+				'email'								=> $data['email'],
+				'phone_code'						=> $data['phone_code'],
+				'phone_no'							=> $data['phone_no'],
+				'is_mednefits_employee'				=> 0,
+				'status'							=> 1
+			);
+			
+			$admin_role = \CustomerAdminRole::create($role);
+			// create admin role for new hr and permissions
+			DB::table('employee_and_dependent_permissions')->insert([
+				'customer_admin_role_id'							=> $admin_role->id,
+				'edit_employee_dependent'							=> 1,
+				'view_employee_dependent'							=> 1,
+				'enroll_terminate_employee'							=> 1,
+				'approve_reject_edit_non_panel_claims'				=> 1,
+				'create_remove_edit_admin_unlink_account'			=> 1,
+				'manage_billing_and_payments'						=> 1,
+				'add_location_departments'							=> 1,
+				'status'											=> 1,
+				'created_at'										=> date('Y-m-d H:i:s'),
+				'updated_at'										=> date('Y-m-d H:i:s')
+			]);
 			// create link account
 			// insert to new hr link
 			DB::table('company_link_accounts')->insert(['hr_id' => $newHRId, 'customer_id' => $customer_id, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
