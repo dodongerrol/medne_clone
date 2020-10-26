@@ -18640,7 +18640,16 @@ public function createHrLocation ()
 	  foreach ($user_columns as $user_column)	{
 		  $user_db_columns[] = $columns[$user_column];
 	  }
-	  $employees = DB::table('user')
+	  if(!empty($input['type']) && $input['type'] == 'all'){
+		$employees = DB::table('user')
+				->select($user_db_columns)
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('e_wallet', 'e_wallet.UserID', '=', 'user.UserID')
+				->join('employee_wallet_entitlement', 'employee_wallet_entitlement.member_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->get();
+	  }else{
+		$employees = DB::table('user')
 				->select($user_db_columns)
 				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 				->join('e_wallet', 'e_wallet.UserID', '=', 'user.UserID')
@@ -18648,6 +18657,7 @@ public function createHrLocation ()
 				->where('corporate_members.corporate_id', $account_link->corporate_id)
 				->whereIn('user.UserID', $employee_ids)
 				->get();
+	  }
 
 		if(count($employees) <= 0) {
 			$data ['message'] = 'Employee ids is required.';
@@ -18674,4 +18684,95 @@ public function createHrLocation ()
 		return $excel;
 		
 	}
+
+	public function transferEmployee()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
+
+		$data = [
+			'message'	=> null,
+			'status'	=> true 
+		];
+		$employee_id = $input['employee_id'] ?? null;
+
+		$transfer_option = $input['transfer_option'] ?? null;
+
+		$assign = $input['assign'] ?? null;
+
+		$except_current = isset($input['except_current']) && $input['except_current'] == "enable" ? true : false;
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$users = DB::table('user')
+			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+			->join('company_location_members', 'company_location_members.member_id', '=', 'user.UserID')
+			->where('corporate_members.corporate_id', $account_link->corporate_id)
+			->where('user.UserID', $employee_id)
+			->where('user.member_activated', 1)
+			->select('user.UserID', 'user.Name')
+			->first();
+
+		$location = DB::table('company_locations')
+			->join('company_location_members', 'company_location_members.company_location_id', '=', 'company_locations.LocationID')
+			// ->where('company_locations.LocationID', $employee_id)
+			->where('company_location_members.member_id', $employee_id)
+			->first();
+		
+		$location = \CorporateHrLocation::where('LocationID', $input['location_id'] ?? null)->first();
+		$department = \CorporateHrDepartment::where('id', $input['department_id'] ?? null)->first();
+
+		$data = array(
+			'Name'					=> $users->Name,
+			'Current Location'		=> $location->location
+		);
+		
+		if($transfer_option == 1){
+			if($assign == 1) {
+			DB::table('company_location_members')->insert([
+				'company_location_id'		=> $location['LocationID'],
+				'member_id'					=> $users->UserID,
+				'status'					=> 1,
+				'created_at'				=> $users->created_at,
+				'updated_at'				=> $users->updated_at
+			]);
+			}
+		} elseif ($transfer_option == 0){
+			if($assign == 0)
+			DB::table('company_department_members')->insert([
+				'company_department_id'		=> $department['id'],
+				'member_id'					=> $users->UserID,
+				'status'					=> 1,
+				'created_at'				=> $users->created_at,
+				'updated_at'				=> $users->updated_at
+			]);
+		}
+		if($transfer_option == 0){
+			if($assign == 1){
+				if($except_current) {
+					$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+					$link_accounts = DB::table('company_link_accounts')
+								->where('hr_id', $hr_id)
+								->where('customer_id', '!=', $customer_id)
+								->where('status', 1)
+								->get();
+				} else {
+					$link_accounts = DB::table('company_link_accounts')
+								->where('hr_id', $hr_id)
+								->where('status', 1)
+								->get();
+				}
+				$data = array(
+					"Account Name"			=> $customer->account_name
+				);
+			}
+			
+
+		}
+		// $data['message'] = 'Successfully transfer employee.'; 
+
+		return $data;
+	}
+
 }
