@@ -80,13 +80,14 @@
             });
         }
         getFormData() {
-            const address = `${this.state.form.street_address},${this.state.form.unit},${this.state.form.building}`;
 
             return {
                 location: this.state.form.location,
-                business_address: address,
+                business_address: this.state.form.business_address,
                 country: this.state.form.country,
-                postal_code: this.state.form.postal_code
+                postal_code: this.state.form.postal_code,
+                unit_number: this.state.form.unit_number,
+                building_name: this.state.form.building_name
             }
         }
         attemptDelete() {
