@@ -6821,9 +6821,15 @@ public function updateEclaimStatus( )
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 					EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 					// create non panel invoice
-					$start = date('Y-m-d', strtotime($e_claim_details->created_at));
-					$end = PlanHelper::endDate($start);
-					EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
+					try {
+						EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
+						$email['logs'] = 'E-Claim Update Status Medical Create Invoice - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+					}
 					if($admin_id) {
 						$data = array(
 							'e_claim_id' => $e_claim_id,
@@ -6919,7 +6925,18 @@ public function updateEclaimStatus( )
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
-            			// send notification to browser
+						$start = date('Y-m-d', strtotime($e_claim_details->created_at));
+						$end = PlanHelper::endDate($start);
+						try {
+							EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
+						} catch(Exception $e) {
+							$email = [];
+							$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
+							$email['logs'] = 'E-Claim Update Status Wellness Create Invoice - '.$e;
+							$email['emailSubject'] = 'Error log.';
+							EmailHelper::sendErrorLogs($email);
+						}
+						// send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 						if($admin_id) {
