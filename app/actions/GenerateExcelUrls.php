@@ -69,6 +69,15 @@ class GenerateExcelUrls
             ];
         }
 
+        if (
+            ($this->status['wellness_enabled'])
+         ) {
+            return [
+                'employee' => "{$this->baseUrl}/excel/v5/myr/enterprise/employee/Employee-Wellness.xlsx",
+                'dependent'	=> "{$this->baseUrl}/excel/v5/myr/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx"
+            ];
+        }
+
         return $urls;
     }
 }
