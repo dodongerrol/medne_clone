@@ -17,8 +17,8 @@
         <div class="business-bold-text">Business Legal Address</div>
         <span>
           <span ng-bind="business_info_data.company_address">7 Temasek Boulevard #18-02 Suntec Tower One, Singapore 038987</span>
-          <span ng-bind="business_info_data.building"></span>,
-          <span>{{ business_info_data.street_address }}</span>
+          <span ng-bind="business_info_data.building_name"></span>,
+          <span ng-bind="business_info_data.unit_number"></span>
         </span>
       </div>
       <div class="display-flex business-info-row">
@@ -39,7 +39,7 @@
       </div>
       <div class="business-contact-details-wrapper">
         <div ng-repeat="list in business_contacts_data" class="business-contact-details-container">
-          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <button ng-click="editPrimaryBusinessContact( list, 'primary' )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
           <div class="display-flex business-info-row">
             <div class="business-bold-text">Full Name</div>
             <span ng-bind="list.first_name">Filbert Tan</span>
@@ -54,7 +54,7 @@
           </div>
         </div>
         <div ng-repeat="list in get_company_contact_data" class="business-contact-details-container">
-          <button ng-click="editPrimaryBusinessContact( list )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+          <button ng-click="editPrimaryBusinessContact( list, 'secondary' )" data-toggle="modal" data-target="#business-contact-modal"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
           <div class="display-flex business-info-row">
             <div class="business-bold-text">Full Name</div>
             <span ng-bind="list.first_name">Filbert Tan</span>
@@ -98,8 +98,8 @@
                 <input ng-change="removeDisable()" ng-model="get_business_info_data.company_address" type="text">
               </div>
               <div class="legal-add-row-2 display-flex">
-                <input ng-change="removeDisable()" ng-model="get_business_info_data.building" type="text">
-                <input ng-change="removeDisable()" ng-model="get_business_info_data.street_address" type="text">
+                <input ng-change="removeDisable()" ng-model="get_business_info_data.unit_number" type="text">
+                <input ng-change="removeDisable()" ng-model="get_business_info_data.building_name" type="text">
               </div>
             </div>
           </div>

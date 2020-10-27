@@ -80,6 +80,7 @@ const USER_COLUMNS = [
 			}
 			
 			$result->user_type = "hr_admin";
+			$result->with_account_link = true;
 			$token = $jwt->encode($result, $secret);
 
 			$hr = new HRDashboard();
@@ -115,12 +116,12 @@ const USER_COLUMNS = [
 						->whereIn('UserType', [5,6])
 						->whereIn('is_hr_admin', [0,1]);
 					})
-					->select('UserID', 'PhoneNo', 'PhoneCode')
+					->select('UserID', 'PhoneNo', 'PhoneCode', 'hr_id')
 					->first();
 		
 		if($member) {
 			// check if member is an admin type
-			$adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->where('status', 1)->select('id')->first();
+			$adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->where('status', 1)->select('id', 'customer_id', 'hr_id')->first();
 
 			if($adminRole) {
 				// check if member has dependents
@@ -151,6 +152,8 @@ const USER_COLUMNS = [
 				$jwt = new JWT();
 				$secret = Config::get('config.secret_key');
 				$member->user_type = "member_admin";
+				$member->with_account_link = false;
+				$member->customer_buy_start_id = $adminRole->customer_id;
 				if(isset($input['signed_in']) && $input['signed_in'] == true) {
 					$member->signed_in = TRUE;
 				} else {
@@ -158,6 +161,22 @@ const USER_COLUMNS = [
 					$member->expire_in = strtotime('+15 days', time());
 				}
 				
+				if($member->hr_id) {
+					// get member details
+					$member->hr_dashboard_id = $member->hr_id;
+				} else {
+					// get customer_id and get hr link
+					$customer_id = \PlanHelper::getCustomerId($member->UserID);
+					if($customer_id) {
+						$member->customer_buy_start_id = $customer_id;
+						$linkAccount = DB::table('company_link_accounts')->where('customer_id', $customer_id)->where('status', 1)->select('id', 'customer_id', 'hr_id')->first();
+
+						if($linkAccount) {
+							$member->hr_dashboard_id = $linkAccount->hr_id;
+						}
+					}
+				}
+
 				$token = $jwt->encode($member, $secret);
 				$admin_logs = array(
 					'admin_id'  => $member->UserID,
@@ -5030,28 +5049,29 @@ const USER_COLUMNS = [
 		$hr_id = $hr_data->customer_buy_start_id;
 		$input = Input::all();
 
-		$check = DB::table('customer_business_information')->where('customer_business_information_id', $hr_id)->first();
+		$check = DB::table('customer_business_information')->where('customer_business_information_id', $input['customer_business_information_id'])->first();
 
-		// if($check == 0) {
-		// 	return array(
-		// 		'status'	=> FALSE,
-		// 		'message'	=> 'No business information exist'
-		// 	);
-		// }
+		if(!$check) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'No business information exist'
+			);
+		}
 		
-
 		$business_information = new CorporateBusinessInformation;
 
 		$data = array(
 			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
 			'company_address'		=> !empty($input['company_address']) ? $input['company_address'] : $check->company_address,
 			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
+			'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
+			'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 		);
 
 		$result = $business_information
-		->updateBillingAddress($input['customer_business_information_id'], $data);
+		->updateCorporateBusinessInformation($input['customer_business_information_id'], $data);
 
-		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $hr_id)->first();
+		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $check->customer_buy_start_id)->first();
 		$customer = array(
 			'account_name'			=> !empty($input['account_name']) ? $input['account_name'] : $info->account_name,
 			'currency_type' 		=> !empty($input['currency_type']) ? $input['currency_type'] : $info->currency_type,
@@ -13890,7 +13910,7 @@ const USER_COLUMNS = [
 
 		$total_members = $total_active_members + $total_active_dependents;
 
-		return array('status' => true, 'total_members' => $total_members);
+		return array('status' => true, 'total_members' => $total_members, 'total_administrators' => sizeof($total_of_administrator));
 	}
 
 	public function getEmployeeSpendingAccountSummaryNew( )
@@ -17639,7 +17659,9 @@ public function createHrLocation ()
 				'location' 				=> $input['location'],
 				'business_address'		=> $input['business_address'],
 				'country'				=> $input['country'],
-				'postal_code'			=> $input['postal_code']
+				'postal_code'			=> $input['postal_code'],
+				'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : null,
+				'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : null,
 			);
 			\CorporateHrLocation::create($data);
 		} 
@@ -17699,9 +17721,8 @@ public function createHrLocation ()
 				'postal_code' 			=> $location->postal_code,
 				'country' 				=> $location->country,
 				'business_address' 		=> $location->business_address,
-				'street_address'		=> $address[0] ?? null,
-				'unit'					=> $address[1] ?? null,
-				'building'				=> $address[2] ?? null,
+				'unit_number'			=> $location->unit_number,
+				'building_name'			=> $location->building_name,
 				'total_employees'		=> DB::table('company_location_members')->where('company_location_id', $location->LocationID)->count()
 			);
 		  }
@@ -17727,6 +17748,8 @@ public function createHrLocation ()
 		$data = array(
 			'location'					=> !empty($input['location']) ? $input['location'] : $check->location,
 			'business_address'			=> !empty($input['business_address']) ? $input['business_address'] : $check->business_address,
+			'unit_number'				=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
+			'building_name'				=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 			'postal_code'				=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
 			'country'					=> !empty($input['country']) ? $input['country'] : $check->country,
 		);
@@ -17793,8 +17816,12 @@ public function createHrLocation ()
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
-		
-		$location = \CorporateHrLocation::where('LocationID', $input['location_id'] ?? null)->first();
+
+		if(empty($input['location_id']) || $input['location_id'] == null) {
+			return ['status' => false, 'message' => 'location_id is requuired.'];
+		}
+
+		$location = \CorporateHrLocation::where('LocationID', $input['location_id'])->select('LocationID')->first();
 
 		$data = [
 			'message'	=> null,
@@ -17804,40 +17831,45 @@ public function createHrLocation ()
 			$data['message'] = 'Location does not exist'; 
 			$data['status']  = false;
 		
-		return $data;
+			return $data;
 		}
 		
 		$employee_ids = $input['employee_ids'] ?? [];
 		
 		if(count($employee_ids) <= 0)
 		{
-			$data['message'] = 'Input is empty.'; 
+			$data['message'] = 'Employee lists is empty'; 
 			$data['status']  = false;
 
-		return $data;
+			return $data;
 		}
-		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->get();
+		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->select('UserID')->get();
 		
 		if(count($employees) <= 0)
 		{
 			$data['message'] = 'Member/s does not exist'; 
 			$data['status']  = false;
 
-		return $data;
+			return $data;
 		}
 
 		foreach ($employees as $employee)
 		{
-			DB::table('company_location_members')->insert([
-				'company_location_id'		=> $location['LocationID'],
-				'member_id'					=> $employee->UserID,
-				'status'					=> 1,
-				'created_at'				=> $employee->created_at,
-				'updated_at'				=> $employee->updated_at
-			]);
-		}
-		$data['message'] = 'Successfully allocated member.'; 
+			// check if already exist
+			$checkLocationMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
 
+			if(!$checkLocationMember) {
+				DB::table('company_location_members')->insert([
+					'company_location_id'		=> $location['LocationID'],
+					'member_id'					=> $employee->UserID,
+					'status'					=> 1,
+					'created_at'				=> date('Y-m-d H:i:s'),
+					'updated_at'				=> date('Y-m-d H:i:s')
+				]);
+			}
+		}
+		
+		$data['message'] = 'Successfully allocated member.';
 		return $data;
 
 	}
@@ -17938,7 +17970,8 @@ public function createHrLocation ()
 				'customer_business_contact_id'		=> $contact->customer_business_contact_id,
 				'first_name' 						=> $contact->first_name, 
 				'email' 							=> $contact->work_email,
-				'phone' 							=> $contact->phone
+				'phone' 							=> $contact->phone,
+				'mobile_code'						=> $contact->phone_code ? $contact->phone_code : 65
 			);
 		  }
 
@@ -17996,12 +18029,17 @@ public function createHrLocation ()
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 
+		if(empty($input['medi_company_contact_id']) || $input['medi_company_contact_id'] == null) {
 
-		$check = DB::table('company_contacts')->where('medi_company_contact_id', $id)->first();
+		}
 
-		
+		$check = DB::table('company_contacts')->where('medi_company_contact_id', $input['medi_company_contact_id'])->first();
+
+		if(!$check) {
+			return ['status' => false, 'message' => 'Company Contact does not exist'];
+		}
+
 		$contact = new CorporateCompanyContacts();
-
 		$data = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'email'							=> !empty($input['email']) ? $input['email'] : $check->email,
@@ -18029,9 +18067,8 @@ public function createHrLocation ()
 			'company_name' 							=> $business->company_name,
 			'postal_code'							=> $business->postal_code,
 			'company_address'						=> $business->company_address,
-			'street_address'						=> $address[0] ?? null,
-			'unit'									=> $address[1] ?? null,
-			'building'								=> $address[2] ?? null,
+			'unit_number'							=> $business->unit_number,
+			'building_name'							=> $business->building_name,
 			'account_name'							=> $info->account_name,
 			'currency_type'							=> $info->currency_type
 		);
@@ -18212,6 +18249,11 @@ public function createHrLocation ()
 			if(empty($input['phone_no']) || $input['phone_no'] == null) {
 				return ['status' => false, 'message' => 'phone no is required'];
 			}
+
+			if(empty($input['email']) || $input['email'] == null) {
+				return ['status' => false, 'message' => 'email address is required.'];
+			}
+
 			// check if email is already got it
 			$checkEmail =  \DB::table('user')->where('email', $input['email'])->where('Active', 1)->where('member_activated', 1)->where('UserType', 6)->first();
 
@@ -18375,12 +18417,10 @@ public function createHrLocation ()
     	$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
-	
-		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->select('hr_dashboard_id', 'fullname', 'email')->first();
 		
 		// get permissions;
-		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, $result->user_type);
-		
+		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, 'hr_admin');
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
 			'fullname'										=> $hr->fullname,
@@ -18449,13 +18489,22 @@ public function createHrLocation ()
 				}
 			}
 			
+			$email = null;
+			
+			if($detail->member_id) {
+				$memberAccount = DB::table('user')->where('UserID', $detail->member_id)->select('Email')->first();
+
+				if($memberAccount) {
+					$email = $memberAccount->Email;
+				}
+			}
 			$container [] = array(
 				'id'											=> $detail->id,
 				'member_id'										=> $detail->member_id,
 				'hr_id'											=> $detail->hr_id,
 				'is_mednefits_employee'							=> $detail->is_mednefits_employee,
 				'fullname'										=> $detail->fullname,
-				'email'											=> $detail->email,
+				'email'											=> $email ? $email : $detail->email,
 				'phone_code'									=> $detail->phone_code,
 				'phone_no'										=> $detail->phone_no,
 				'edit_employee_dependent'						=> $permissions->edit_employee_dependent,
@@ -18578,18 +18627,18 @@ public function createHrLocation ()
 	public function exportFilterMemberDetails()
 	{
 		$input = Input::all();
-        $result = StringHelper::getJwtHrSession();
-		$customer_id = $result->customer_buy_start_id;
-
+		$result = StringHelper::getJwtHrSession();
 
 		if(empty($input['token']) || $input['token'] == null) {
 			return ['status' => false, 'message' => 'token is required'];
 		}
-		$token = self::checkToken($input['token']);
 
-		if(!$token) {
+		if(!$result) {
 			return array('status' => FALSE, 'message' => 'Invalid Token.');
 		}
+
+		$customer_id = $result->customer_buy_start_id;
+
 		$data = [
 			'message'	=> null,
 			'status'	=> true 

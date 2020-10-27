@@ -192,6 +192,7 @@ class StringHelper{
                         $hr->customer_id = $result->customer_buy_start_id ? $result->customer_buy_start_id : $hr->customer_buy_start_id;
                         $hr->user_type = isset($result->user_type) ? $result->user_type : 'hr_admin';
                         $hr->id = $result->hr_dashboard_id;
+                        $hr->with_account_link = $result->with_account_link ?? null;
                         if($hr->customer_buy_start_id == null) {
                             // get only company
                             $companyLinked = DB::table('company_link_accounts')->where('hr_id', $hr->hr_dashboard_id)->where('status', 1)->select('customer_id')->first();
@@ -226,16 +227,18 @@ class StringHelper{
                     return false;
                 }
 
-                $customer_id = \PlanHelper::getCustomerId($member->UserID);
+                // $customer_id = \PlanHelper::getCustomerId($member->UserID);
+                $adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->select('id', 'member_id', 'customer_id')->first();
+                $customer_id = $adminRole->customer_id;
                 $member->customer_buy_start_id = $customer_id;
                 $member->customer_id = $customer_id;
                 $member->user_type = $result->user_type;
+                $member->with_account_link = $result->with_account_link ?? null;
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('customer_buy_start_id', $customer_id)
                             ->first();
 
                 if(!$hr) {
-                    $adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->select('id', 'member_id', 'customer_id')->first();
                     $hr = DB::table('company_link_accounts')
                             ->where('customer_id', $adminRole->customer_id)
                             ->where('status', 1)
@@ -305,6 +308,8 @@ class StringHelper{
  
             if(isset($getRequestHeader['Authorization'])) {
                 return $getRequestHeader['Authorization'];
+            } elseif(isset($_GET['token']) && $_GET['token'] != null) {
+                return $_GET['token'];
             } else {
                 return self::requestHeader();
             }

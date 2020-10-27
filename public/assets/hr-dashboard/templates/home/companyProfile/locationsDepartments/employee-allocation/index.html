@@ -32,18 +32,18 @@
                                         </svg>
                                         <input
                                             class="form-input pl-5 text-gray-600" type="text"
-                                            placeholder="Search by name" ng-model="filters.search">
+                                            placeholder="Search by name" ng-model="$ctrl.filtersSearch">
                                     </div>
                                     <div>
                                         <label class="section-title text-sm mb-1">
                                             Enrolled Employee Names
                                         </label>
                                         <div class="flex flex-col h-56 overflow-y-scroll">
-                                            <label ng-repeat="employee in $ctrl.employees">
+                                            <label ng-repeat="employee in $ctrl.get_employee_names | filter: $ctrl.filtersSearch == '' ? undefined : $ctrl.filtersSearch">
                                                 <input class="mr-2 leading-tight ui-checkbox" type="checkbox"
-                                                    ng-checked="employeeChecked(employee)" ng-click="onCheck(employee)">
+                                                ng-click="$ctrl.selectProperty(employee, employee.selected)" ng-model="employee.selected">
                                                 <span class="pl-2 text-sm text-gray-900">
-                                                    {{ employee.name }}
+                                                    {{ employee.Name }}
                                                 </span>
                                             </label>
                                         </div>
@@ -54,9 +54,9 @@
                                             class="ui-btn ui-btn-primary-outline">
                                             Cancel
                                         </button>
-                                        <button type="button" ng-disabled="selectedEmployees.length <= 0"
-                                            class="ui-btn {{ selectedEmployees.length > 0 ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-48"
-                                            ng-click="saveAllocation()">
+                                        <button type="button" ng-disabled="$ctrl.selectedEnrolledEmpArr.length <= 0"
+                                            class="ui-btn {{ $ctrl.selectedEnrolledEmpArr.length > 0 ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-48"
+                                            ng-click="$ctrl.saveAllocation( type )">
                                             Allocate Employees
                                         </button>
                                     </div>
@@ -66,15 +66,16 @@
                                 </div>
                                 <div class="w-1/2">
                                     <label class="section-title text-sm mb-1">
-                                        Selected Employees ({{ selectedEmployees.length }})
+                                        Selected Employees 
+                                        <!-- ({{ selectedEmployees.length }}) -->
                                     </label>
                                     <div class="flex flex-col h-64 pr-4 overflow-y-scroll"
-                                        ng-if="selectedEmployees.length > 0">
-                                        <div ng-repeat="selectedEmployee in selectedEmployees"
+                                        ng-if="$ctrl.selectedEnrolledEmpArr.length > 0">
+                                        <div ng-repeat="selectedEmployee in $ctrl.selectedEnrolledEmpArr"
                                             class="flex items-center justify-between w-full border border-solid border-color-1 bg-gray-contrast text-sm rounded text-gray-900 py-1 px-3 w-full mb-2">
-                                            {{ selectedEmployee.name }}
+                                            {{ selectedEmployee.Name }}
                                             <a class="ui-btn ui-btn-link-dark px-0"
-                                                ng-click="removeSelectedEmployee(selectedEmployee)">
+                                                ng-click="$ctrl.selectProperty(selectedEmployee, false)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                     class="w-4 h-4" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -83,11 +84,11 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="grid grid-cols-1 gap-2" ng-if="selectedEmployees.length <= 0">
+                                    <!-- <div class="grid grid-cols-1 gap-2" ng-if="selectedEmployees.length <= 0">
                                         <p class="text-gray-500 text-sm">
                                             No selected employees yet
                                         </p>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </form>

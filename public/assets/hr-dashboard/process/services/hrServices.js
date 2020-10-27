@@ -120,11 +120,13 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   hrFactory.getEmployees = function(page,limit,status,location,department) {
     var url = serverUrl.url + "/hr/employee/list"+ "?page=" + page +  "&limit=" + limit;
-    status.map((res,index) => {
-      if(res.active){
-        url += ("&status[]=" + res.name.toLowerCase());
-      }
-    });
+    if(status){
+      status.map((res,index) => {
+        if(res.active){
+          url += ("&status[]=" + res.name.toLowerCase());
+        }
+      });
+    }
     if(location.length > 0){
       url += ("&location_id=[" + location + "]");
     }
@@ -156,6 +158,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
 
   hrFactory.updateBusinessContact = function(data) {
     return $http.post(serverUrl.url + "/hr/update/business_contact", data);
+  };
+
+  hrFactory.updateCompanyContact = function(data) {
+    return $http.post(serverUrl.url + "/hr/update_company_contact", data);
   };
 
   hrFactory.updateBillingContact = function(data) {
@@ -628,6 +634,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   
   hrFactory.updateUnlinkAccount = function ( data ) {
     return $http.post( serverUrl.url + "/hr/unlink/company_account",data );
+  }
+  
+
+
+  hrFactory.updateUnlinkAccount = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/unlink/company_account", data );
   }
 
   return hrFactory;

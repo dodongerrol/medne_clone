@@ -7,6 +7,8 @@
   --gray-light: rgba(239, 242, 244, 0.5);
   --label-color: #2E4057;
   --bg-gray-contrast: #F2F2F2;
+  --primary-font: 'Helvetica Light';
+  --secondary-font: 'Helvetica Medium';
 }
 
 .container {
@@ -125,7 +127,7 @@
 }
 
 .ui-label {
-  font-family: Helvetica Neue;
+  font-family: var(--primary-font);
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
@@ -133,7 +135,7 @@
 }
 
 .ui-label-lg {
-  font-family: Helvetica Neue;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: bold;
   font-size: 18px;
@@ -142,7 +144,7 @@
 }
 
 .ui-label-md {
-  font-family: Helvetica Neue;
+  font-family: var(--primary-font);
   font-style: normal;
   font-weight: 600;
   font-size: 15px;
@@ -159,6 +161,7 @@
   --bg-opacity: 1;
   background-color: #fff;
   background-color: rgba(255, 255, 255, var(--bg-opacity));
+  border-width: 2px;
 }
 
 .ui-card-header {
@@ -177,7 +180,7 @@
 }
 
 .ui-card-inner {
-  padding: 1.5rem;
+  padding: 15px;
 }
 
 .ui-btn {
@@ -243,7 +246,7 @@
 }
 
 .ui-btn-link {
-  font-family: Helvetica Neue;
+  font-family: var(--primary-font);
   font-weight: 500;
   border: none !important;
   color: var(--primary) !important;
@@ -252,7 +255,7 @@
 }
 
 .ui-btn-link-secondary {
-  font-family: Helvetica Neue;
+  font-family: var(--primary-font);
   font-weight: 500;
   border: none !important;
   text-decoration: none;
@@ -277,7 +280,7 @@
 }
 
 .ui-btn-link-dark {
-  font-family: Helvetica Neue;
+  font-family: var(--primary-font);
   font-weight: 500;
   border: none !important;
   background-color: transparent;
@@ -1303,4 +1306,9 @@
   .xl\:mt-64 {
     margin-top: 16rem;
   }
+}
+
+
+.font-helvetica-medium{
+  font-family: var(--secondary-font);
 }

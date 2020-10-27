@@ -32,7 +32,7 @@
         Bulk Update Member Details
       </button>
       <exportmembers selected_employee_data="{
-        isExportAll: isClickExportAll,
+        isExportAll: isSelectOverallEmployees,
         empFiltersObj: empFiltersObj,
         selectedEmpArr: selectedEmpArr,
       }"></exportmembers>
@@ -202,33 +202,6 @@
                 </th>
               </tr>
             </thead>
-            <!-- <tbody> -->
-              <!-- <tr class="select-all-wrapper">
-                <td colspan="12">
-                  <span>All <span>20 </span> employees on this page are selected. <span class="select-all-container">Select all <span>70 </span> employees.</span> </span>
-                </td>
-              </tr> -->
-              <!-- <tr ng-repeat="emp in employees.data" ng-click="goToMemberInfo(emp, $index)">
-                <td>
-                  <div class="custom-checkbox-container">
-                    <label class="checkbox-input">
-                      <span></span>
-                      <input ng-click="_selectMemberList_(list, $index, 'select-member-block')" ng-model="list.selected" type="checkbox"/>
-                      <span class="checkbox-mark"></span>
-                    </label>
-                  </div>
-                </th>
-                <th>
-                  <span><span>20 </span> selected.</span>
-                </th>
-                <th colspan="11">
-                  <span>
-                    <img src="../assets/hr-dashboard/img/new-download-icon.png">
-                    <span>Export Selected Member Details</span>
-                  </span>
-                </th>
-              </tr> -->
-            <!-- </thead> -->
             <tbody>
               <tr ng-if="isAllEmpCheckboxSelected" class="select-all-wrapper">
                 <td colspan="13">

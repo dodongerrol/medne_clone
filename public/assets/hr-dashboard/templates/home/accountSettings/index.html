@@ -16,7 +16,7 @@
             </div>
             <div class="account-card-row-info">
               <div>Mobile number: </div>
-              <span>+<span ng-bind="global_hrData.phone">6587671541</span></span>
+              <span><span ng-bind="global_hrData.phone_code"></span><span ng-bind="global_hrData.phone">6587671541</span></span>
             </div>
             <div class="btn-edit-container">
               <button ng-click="_editDetailsBtn_( global_hrData )" data-toggle="modal" data-target="#edit_details"
@@ -900,7 +900,7 @@
             <div>
               <img src="../assets/images/success-circle.png">
             </div>
-            <span ng-bind="updatedLinkData.message">The Med has been successfully unlinked from Linked Accounts under Chris Teo.</span>
+            <span>The Med has been successfully unlinked from Linked Accounts under Chris Teo.</span>
           </div>
           <div class="modal-footer">
             <button ng-if="!unlinkSuccessfullyUpdated" data-dismiss="modal"

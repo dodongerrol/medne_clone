@@ -152,32 +152,56 @@ app.directive("companyProfileDirective", [
           });
         }
 
-        scope.editPrimaryBusinessContact = async function ( data ) {
+        scope.editPrimaryBusinessContact = async function ( data, type ) {
           console.log(data);
-          scope.get_primary_contact_data = data; 
+          scope.get_primary_contact_data = data;
+          scope.get_primary_contact_data.type = type;
           scope.activeBusinessUpdate = false;
           await scope.initializeEditBusinessContactCountryCode();
         }
 
         scope.updatePrimaryBusinessContact = async function ( primary_data ) {
-          let data = {
-            first_name: primary_data.first_name,
-            work_email: primary_data.email,
-            phone: primary_data.phone,
-            customer_business_contact_id: primary_data.customer_business_contact_id,
+          if(primary_data.type == "primary") {
+            let data = {
+              first_name: primary_data.first_name,
+              work_email: primary_data.email,
+              phone: primary_data.phone,
+              phone_code: primary_data.mobile_code,
+              customer_business_contact_id: primary_data.customer_business_contact_id,
+            }
+            scope.showLoading();
+            await hrSettings.updateBusinessContact( data )
+            .then(async function (response) {
+              console.log(response);
+  
+              scope.hideLoading();
+              await scope.getBusinessContacts();
+              
+              $("#business-contact-modal").modal('hide');
+  
+              swal('Success', response.data.message, 'success');
+            });
+          } else {
+            let data = {
+              first_name: primary_data.first_name,
+              work_email: primary_data.email,
+              phone: primary_data.phone,
+              phone_code: primary_data.mobile_code,
+              medi_company_contact_id: primary_data.medi_company_contact_id,
+            }
+            scope.showLoading();
+            await hrSettings.updateCompanyContact( data )
+            .then(async function (response) {
+              console.log(response);
+  
+              scope.hideLoading();
+              await scope.getBusinessContacts();
+              
+              $("#business-contact-modal").modal('hide');
+  
+              swal('Success', response.data.message, 'success');
+            });
           }
-          scope.showLoading();
-          await hrSettings.updateBusinessContact( data )
-          .then(async function (response) {
-            console.log(response);
-
-            scope.hideLoading();
-            await scope.getBusinessContacts();
-            
-            $("#business-contact-modal").modal('hide');
-
-            swal('Success', response.data.message, 'success');
-          });
         }
 
         scope.editBusinessInformation = async function ( data ) {
@@ -206,6 +230,8 @@ app.directive("companyProfileDirective", [
             currency_type: business_info.currency_type, 
             company_name: business_info.company_name,
             company_address: business_info.company_address,
+            unit_number: business_info.unit_number,
+            building_name: business_info.building_name
           }
 
           console.log(data);

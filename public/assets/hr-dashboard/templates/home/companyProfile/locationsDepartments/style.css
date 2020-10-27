@@ -57,3 +57,25 @@
     background-color: #718096;
     opacity: .75;
 }
+#export-members-modal .btn-cancel{
+    background: #FFFFFF;
+    border: 1px solid #0392CF;
+    border-radius: 3px;
+    width: 110px;
+    height: 33px;
+    font-size: 14px;
+    color: #0392CF;
+    text-align: center;
+    padding: 0;
+  }
+  #export-members-modal .btn-submit{
+    width: 179px;
+    height: 33px;
+    text-align: center;
+    border: 1px solid #0392CF;
+    background: #0392CF;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #FFFFFF;
+    margin-left: 20px;
+  }
