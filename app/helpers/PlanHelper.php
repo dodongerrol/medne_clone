@@ -1837,20 +1837,20 @@ class PlanHelper
 						);
 
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
+					}
 
-						if($top_up_credits) {
-							// create top up data
-							$toTopUp = array(
-								'customer_id' 	=> $customer_id,
-								'credits'		=> $credits,
-								'member_id'		=> $user_id,
-								'created_at'	=> date('Y-m-d H:i:s'),
-								'updated_at'	=> date('Y-m-d H:i:s'),
-								'status'		=> 0
-							);
+					if($customer_spending['with_mednefits_credits'] == true) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s'),
+							'status'		=> 0
+						);
 
-							DB::table('top_up_credits')->insert($toTopUp);
-						}
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
@@ -1993,20 +1993,20 @@ class PlanHelper
 						);
 
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
+					}
 
-						if($top_up_credits) {
-							// create top up data
-							$toTopUp = array(
-								'customer_id' 	=> $customer_id,
-								'credits'		=> $credits,
-								'member_id'		=> $user_id,
-								'created_at'	=> date('Y-m-d H:i:s'),
-								'updated_at'	=> date('Y-m-d H:i:s'),
-								'status'		=> 0
-							);
+					if($customer_spending['with_mednefits_credits'] == true) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s'),
+							'status'		=> 0
+						);
 
-							DB::table('top_up_credits')->insert($toTopUp);
-						}
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
