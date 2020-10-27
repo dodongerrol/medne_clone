@@ -255,7 +255,13 @@ class DependentController extends \BaseController {
 				$user['cap_per_visit'] = !isset($user['cap_per_visit']) ? 0 : $user['cap_per_visit'];
 				$user['bank_name'] = !isset($user['bank_name']) ? null : $user['bank_name'];
 				$user['bank_account_number'] = !isset($user['bank_account_number']) ? null : $user['bank_account_number'];
-				$user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
+				// $user['passport'] = isset($user['passport_number']) ? trim($user['passport_number']) : null;
+				if (isset($user['passport_number'])) {
+					$user['passport'] = trim($user['passport_number']);
+				} 
+				if (isset($user['passport'])) {
+					$user['passport'] = isset($user['passport']) ? trim($user['passport']) : null;
+				}
 				$user['fullname'] = isset($user['full_name']) ? $user['full_name'] : $user['fullname'];
 				$error_member_logs = PlanHelper::enrollmentEmployeeValidation($user, false);
 				$mobile = preg_replace('/\s+/', '', $user['mobile']);
