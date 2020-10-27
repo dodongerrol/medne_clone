@@ -5495,7 +5495,7 @@ public function getHrActivity( )
 	// );
 
 	if($plan->account_type == "out_of_pocket") {
-		$total_spent = $total_cash_spent;
+		$total_spent = $total_cash_spent + $e_claim_spent;
 	}
 
 	$paginate['data'] = array(
