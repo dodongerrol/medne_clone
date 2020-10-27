@@ -76,13 +76,13 @@
                 <td ng-click="invoiceAccordion( list,$index )"><span class="currency-type" ng-bind="list.currency_type"></span> <span ng-bind="list.amount_due"></span></td>
                 <td ng-click="invoiceAccordion( list,$index )">
                   <span ng-if="list.type == 'panel'">Mednefits Panel</span> 
-                  <span ng-if="list.type == 'non_panel'">Mednefits Non-Panel</span> 
+                  <span ng-if="list.type == 'non_panel'">Non-Panel</span> 
                 </td>
                 <td class="download-dot-container">
                   <img ng-click="downloadAction( list,$index )" class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png">
                   <div ng-if="list.isActionShow" class="download-dp-container">
                     <div ng-disabled="!list.isEnableInvoices" ng-class="{'disabled' : !list.isEnableInvoices}" ng-click="downloadViewInvoice(list.id)">View Invoice</div>
-                    <!-- <div ng-disabled="!list.isEnableInvoices" ng-class="{'disabled' : !list.isEnableInvoices}" ng-if="list.category_type == 'spending'" ng-click="downloadViewTransactions(list.id)">View Transactions</div> -->
+                    <div ng-disabled="!list.isEnableInvoices" ng-class="{'disabled' : !list.isEnableInvoices}" ng-if="list.category_type == 'spending'" ng-click="downloadViewTransactions(list.id, list.type)">View Transactions</div>
                   </div>
                 </td>
               </tr>
