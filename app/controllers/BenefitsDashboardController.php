@@ -18803,9 +18803,9 @@ public function createHrLocation ()
 				'updated_at'				=> $users->updated_at
 			]);
 			}
-		} elseif ($transfer_option == 0){
+		} elseif ($transfer_option == 1){
 			if($assign == 0)
-			DB::table('company_department_members')->insert([
+			DB::table('company_department_members')->update([
 				'company_department_id'		=> $department['id'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
@@ -18828,21 +18828,26 @@ public function createHrLocation ()
 								->where('status', 1)
 								->get();
 				}
-				DB::table('company_link_accounts')->update([
-					'company_location_id'		=> $location['LocationID'],
-					'member_id'					=> $users->UserID,
-					'status'					=> 1,
-					'created_at'				=> $users->created_at,
-					'updated_at'				=> $users->updated_at
-				]);
 
+					$customer = DB::table('customer_buy_start')
+					->join('company_link_accounts', 'company_link_accounts.customer_id', '=', 'customer_buy_start.customer_buy_start_id')
+					->where('customer_buy_start_id', $link_accounts->customer_id)
+					->select('customer_buy_start.')
+					->first();
+					$info = DB::table('customer_business_information')->where('customer_buy_start_id', $account->customer_id)->first();
+		
 
+					DB::table('company_link_accounts')->update([
+						'customer_id'				=> $customer['LocationID'],
+						'hr_id'						=> $users->UserID,
+						'status'					=> 1,
+						'created_at'				=> $users->created_at,
+						'updated_at'				=> $users->updated_at
+					]);
 			}
 			
 
 		}
-
-		$data['message'] = 'Successfully transfer employee.'; 
 
 		$data['message'] = 'Successfully transfer employee.'; 
 
