@@ -2958,6 +2958,21 @@ app.directive("employeeOverviewDirective", [
               scope.showBulkEntitlement = true;
             }
           }
+
+          if(
+            (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.medical_enabled)) ||
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.medical_enabled))
+          ){
+            scope.isMedicalShow = true;
+          }
+          if(
+            (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.wellness_enabled)) ||
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'myr' && scope.spending_account_status.wellness_enabled) || 
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.wellness_enabled)) ||
+            (scope.spending_account_status.account_type == 'out_of_pocket' && (scope.spending_account_status.wellness_reimbursement && scope.spending_account_status.wellness_enabled))
+          ){
+            scope.isWellnessShow = true;
+          }
         }
 
         scope.onLoad = function () {

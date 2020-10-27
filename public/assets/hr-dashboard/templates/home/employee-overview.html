@@ -793,7 +793,7 @@
 						</div>
 
 						<div class="entitlement-information-details">
-							<div ng-if="selectedEmployee.account_type != 'enterprise_plan' && selectedEmployee.medical_wallet">
+							<div ng-if="isMedicalShow">
 								<h4 class="weight-700 medical-entitlement">Medical Wallet | {{ selectedEmployee.medical_spending_account_validity}}</h4>
 								<!-- <h4 class="weight-700 medical-entitlement">Medical {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.medical_spending_account_validity}}</h4> -->
 								<div class="col-md-12 medical-entitlement-container">
@@ -880,7 +880,7 @@
 							</div>
 
 							<!-- class="weight-700 wellness-entitlement" -->
-							<div ng-if="selectedEmployee.wellness_wallet">
+							<div ng-if="isWellnessShow">
 								<h4 class="weight-700 wellness-entitlement">Wellness Wallet | {{ selectedEmployee.wellness_spending_account_validity}}</h4>
 								<!-- <h4 class="weight-700 wellness-entitlement">Wellness {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Allocated Credits' : 'Allocation' }} | {{ selectedEmployee.wellness_spending_account_validity}}</h4> -->
 								<!-- <h4 class="weight-700 wellness-entitlement">Wellness Entitlement</h4> -->
