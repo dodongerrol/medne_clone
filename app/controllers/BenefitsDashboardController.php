@@ -18844,22 +18844,10 @@ public function createHrLocation ()
 						'created_at'				=> $users->created_at,
 						'updated_at'				=> $users->updated_at
 					]);
-
-				DB::table('company_link_accounts')->update([
-					'company_location_id'		=> $location['LocationID'],
-					'member_id'					=> $users->UserID,
-					'status'					=> 1,
-					'created_at'				=> $users->created_at,
-					'updated_at'				=> $users->updated_at
-				]);
-
-
 			}
 			
 
 		}
-
-		$data['message'] = 'Successfully transfer employee.'; 
 
 		$data['message'] = 'Successfully transfer employee.'; 
 
