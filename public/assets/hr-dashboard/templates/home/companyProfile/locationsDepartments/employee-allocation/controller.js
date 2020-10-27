@@ -12,12 +12,32 @@
             this.get_permission_data = {};
             this.get_employee_names = [];
             this.selectEmployeeId = [];
-            
+            this.state = {
+                id: null,
+                type: null,
+            }
+            this.selectedEnrolledEmpArr = [];
         }
         $onInit() {
+            this.get();
             this.permission();
             this.getEnrolledEmployee();
-            console.log(this.type);
+        }
+        $onChanges( type ) {
+            console.log( type );
+            this.globalData = type;
+            this.sample = angular.copy(type);
+            console.log(this.sample);
+            // this.state = {
+            //     id: this.globalData.id.currentValue,
+            //     type: this.globalData.type.currentValue,
+            // }
+            // console.log(this.state);
+            // if ( this.state.type.currentValue == 'location' ) {
+            //     console.log('loc');
+            // } else {
+            //     console.log('dep');
+            // }
         }
         get() {
             this.api.getEmployeesLocation().then(response => {
@@ -34,9 +54,9 @@
             });
         }
         open() {
+            console.log(this.sample);
             console.log(this.id);
             console.log(this.type);
-            this.selectedEnrolledEmpArr = [];
             this.get_employee_names.map((res) => {
                 res.selected = false;
                 console.log(res.selected);
@@ -69,11 +89,13 @@
         }
         selectProperty(prop, opt){
             // console.log(scope.selectedEmpArr);
+            console.log(prop);
             prop.selected = opt;
             if(opt){
                 this.selectedEnrolledEmpArr.push(prop);
                 this.selectEmployeeId.push(prop.user_id);
                 console.log(this.selectEmployeeId);
+                console.log(this.selectedEnrolledEmpArr);
             }else{
                 var index = $.inArray(prop, this.selectedEnrolledEmpArr);
                 this.selectedEnrolledEmpArr.splice(index, 1);
@@ -83,18 +105,11 @@
                 console.log( this.selectEmployeeId );
             }
         }
-        saveAllocation() {
-            console.log(this.type);
-            // if ( this.type == 'location' ) {
-            //     console.log('location ni siya');
-            //     this.saveLocation();
-            // } else {
-            //     console.log('department ni siya');
-            //     this.saveDepartment();
-            // }
+        // saveAllocation() {
             
-        }
-        saveLocation() {
+            
+        // }
+        saveAllocation() {
             let data = {
                 employee_ids: this.selectEmployeeId,
                 location_id: this.id,
@@ -111,23 +126,7 @@
                 this.get(); 
             })    
         }
-        saveDepartment() {
-            let data = {
-                employee_ids: this.selectEmployeeId,
-                location_id: this.id,
-            }
-
-            const request = this.api.saveAllocateDepartment(data);
-            
-            $(".circle-loader").fadeIn();
-            console.log(data);
-
-            request.then((response) => {
-                $(".circle-loader").fadeOut();
-                presentModal(this.modal.id, 'hide');
-                this.getDepartment(); 
-            })    
-        }
+        
     }
     angular.module('app')
         .component('allocation', {

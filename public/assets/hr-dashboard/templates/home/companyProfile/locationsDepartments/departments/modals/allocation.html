@@ -1,16 +1,5 @@
-<div>
-    <button
-        type="button"
-        ng-click="$ctrl.open()"
-        class="ui-btn ui-btn-link text-blue-500 hover:bg-blue-100 w-full h-10">
-        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-            </path>
-        </svg>
-        Allocate Employees
-    </button>
-    <div class="modal fade px-32" id="{{ $ctrl.modal.id }}" tabindex="-1" role="dialog"
+
+<div class="modal fade px-32" id="allocate-employees-department-modal" tabindex="-1" role="dialog"
         aria-labelledby="{{ $ctrl.modal.id }}" aria-hidden="true">
         <div class="modal-dialog w-full bg-transparent mt-32" rolPe="document">
             <div class="modal-content">
@@ -63,9 +52,9 @@
                                             class="ui-btn ui-btn-primary-outline">
                                             Cancel
                                         </button>
-                                        <button type="button" ng-disabled="$ctrl.selectedEnrolledEmpArr.length <= 0"
-                                            class="ui-btn {{ $ctrl.selectedEnrolledEmpArr.length > 0 ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-48"
-                                            ng-click="$ctrl.saveAllocation()">
+                                        <button type="button" ng-disabled="$ctrl.selectedDepartmentEmpArr.length <= 0"
+                                            class="ui-btn {{ $ctrl.selectedDepartmentEmpArr.length > 0 ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-48"
+                                            ng-click="$ctrl.saveDepartment( )">
                                             Allocate Employees
                                         </button>
                                     </div>
@@ -79,8 +68,8 @@
                                         <!-- ({{ selectedEmployees.length }}) -->
                                     </label>
                                     <div class="enrolled-employee-names-container flex flex-col h-64 pr-4 overflow-y-scroll"
-                                        ng-if="$ctrl.selectedEnrolledEmpArr.length > 0">
-                                        <div ng-repeat="selectedEmployee in $ctrl.selectedEnrolledEmpArr"
+                                        ng-if="$ctrl.selectedDepartmentEmpArr.length > 0">
+                                        <div ng-repeat="selectedEmployee in $ctrl.selectedDepartmentEmpArr"
                                             class="flex items-center justify-between w-full border border-solid border-color-1 bg-gray-contrast text-sm rounded text-gray-900 py-1 px-3 w-full mb-2">
                                             {{ selectedEmployee.Name }}
                                             <a class="ui-btn ui-btn-link-dark px-0"
@@ -106,4 +95,3 @@
             </div>
         </div>
     </div>
-</div>
