@@ -11,9 +11,7 @@
                     'Location',
                     'Department'
                 ],
-                form: {
-                    selected_location_department: 'Location' // location or Department
-                }
+                form: {}
             }
         }
         $onInit() {
@@ -28,10 +26,7 @@
         open() {
             presentModal('transfer-employee-modal');
             console.log(this.employee);
-            
-            this.states.form = {
-                
-            };
+            this.states.form = this.employee;
         }
         dismiss() {
             presentModal('transfer-employee-modal', 'hide')

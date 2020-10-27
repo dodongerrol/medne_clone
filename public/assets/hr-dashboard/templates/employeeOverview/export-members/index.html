@@ -78,7 +78,7 @@
 												
 												<div class="btn-container flex justify-center w-full">
 													<button class="btn-cancel" ng-click="$ctrl.dismiss()">Cancel</button>
-													<button class="btn-submit" ng-click="$ctrl.downloadMemberDetails()">Download</button>
+													<button ng-disabled="$ctrl.state.selectedPropertiesArr.length == 0" class="btn-submit" ng-click="$ctrl.downloadMemberDetails()">Download</button>
 												</div>
                     </div>
                 </div>

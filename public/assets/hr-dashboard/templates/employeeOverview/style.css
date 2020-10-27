@@ -17,6 +17,10 @@
   background-color: #E6F7FF;
 }
 
+button:disabled{
+  opacity: .3;
+}
+
 /* ------------ CUSTOM CHECBOX ------------ */
 .custom-checkbox-container .checkbox-input {
   display: block;

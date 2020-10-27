@@ -18628,6 +18628,8 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
 
 		if(empty($input['token']) || $input['token'] == null) {
 			return ['status' => false, 'message' => 'token is required'];

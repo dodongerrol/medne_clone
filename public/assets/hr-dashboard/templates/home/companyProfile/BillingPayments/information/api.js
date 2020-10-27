@@ -9,7 +9,8 @@
         get() {
             return this.$http.get(`${this.serverUrl}/hr/get_billing_information`).then((response) => response.data);
         }
-        update () {
+        update ( data ) {
+            return this.$http.post(`${this.serverUrl}/hr/update/billing_information`, data).then((response) => response.data);
         }
     }
 

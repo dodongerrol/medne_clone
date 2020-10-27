@@ -1,5 +1,5 @@
 <div>
-    <p class="ui-label-lg mb-4"> Billing Information </p>
+    <p class="ui-label-lg mb-4 font-helvetica-medium"> Billing Information </p>
     <div class="ui-card border-color border-solid">
         <div class="grid grid-cols-1">
             <div class="flex item-center flex-wrap ui-card-inner">
@@ -10,7 +10,7 @@
                 </div>
                 <div class="w-3/4">
                     <p class="ui-label">
-                        {{ informationLabels.billing_name }}
+                        {{ $ctrl.states.billingInformationData.billing_name }}
                     </p>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                 </div>
                 <div class="w-3/4">
                     <p class="ui-label">
-                        {{ informationLabels.billing_address }}
+                        {{ $ctrl.states.billingInformationData.billing_address }}
                     </p>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="w-3/4">
                     <p class="ui-label">
-                        {{ informationLabels.country }}
+                        {{ $ctrl.states.billingInformationData.country }}
                     </p>
                 </div>
             </div>

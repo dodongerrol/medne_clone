@@ -1,10 +1,16 @@
 (function (angular) {
     'use strict';
     class ExportMembersController {
-				constructor($http, serverUrl) {
-						this.$http = $http;
-						this.serverUrl = serverUrl.url;
+        constructor($http, serverUrl) {
+            this.$http = $http;
+            this.serverUrl = serverUrl.url;
             this.exportMembersAPI = null;
+            this.state = {};
+        }
+        $onInit() {
+            
+        }
+        open() {
             this.state = {
                 properties: [
                     {
@@ -103,10 +109,8 @@
                 selectedPropertiesArr: [],
                 filterProps: '',
             }
-        }
-        $onInit() {
-        }
-        open() {
+
+            
             this.state.selectedPropertiesArr = [];
             angular.forEach(this.state.properties, (value, key) => {
                 if(value.selected){
@@ -129,28 +133,28 @@
             }
         }
         async downloadMemberDetails(){
-					console.log( this.selectedEmployeeData );
-					console.log( this.state.selectedPropertiesArr );
+            console.log( this.selectedEmployeeData );
+            console.log( this.state.selectedPropertiesArr );
 
-					var url = `${this.serverUrl}/hr/export_selected_member_details`;
-					let columns	=	[];
-					await this.state.selectedPropertiesArr.map(async (value, key)	=>	{
-						if(value.selected){
-							await columns.push(value.name);
-						}
-					});
+            var url = `${this.serverUrl}/hr/export_selected_member_details`;
+            let columns	=	[];
+            await this.state.selectedPropertiesArr.map(async (value, key)	=>	{
+                if(value.selected){
+                    await columns.push(value.name);
+                }
+            });
 
-					let data = {
-						type: this.selectedEmployeeData.selectedEmpArr.length == 0 || this.selectedEmployeeData.isExportAll ? 'all' : 'by_id',
-						columns: columns,
-						employee_ids: this.selectedEmployeeData.selectedEmpArr,
-						token: localStorage.getItem('token'),
-					}
-					console.log(data);
+            let data = {
+                type: this.selectedEmployeeData.selectedEmpArr.length == 0 || this.selectedEmployeeData.isExportAll ? 'all' : 'by_id',
+                columns: columns,
+                employee_ids: this.selectedEmployeeData.selectedEmpArr.length == 0 ? [1] : this.selectedEmployeeData.selectedEmpArr,
+                token: localStorage.getItem('token'),
+            }
+            console.log(data);
 
-					let params = $.param(data);
+            let params = $.param(data);
 
-					window.open(url + '?' + params);
+            window.open(url + '?' + params);
         }
     }
 

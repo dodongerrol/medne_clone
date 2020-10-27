@@ -16,7 +16,7 @@
                     <input
                         class="form-input"
                         required
-                        ng-model="workLocationFields.location_name"
+                        ng-model="$ctrl.states.billingInformationData.billing_name"
                         type="text"
                     >
                     </div>
@@ -29,7 +29,7 @@
                         class="form-input"
                         required
                         placeholder="Address"
-                        ng-model="informationFields.billing_address"
+                        ng-model="$ctrl.states.billingInformationData.billing_address"
                         type="text"
                         >
                     </div>
@@ -37,9 +37,8 @@
                         <input
                         class="form-input"
                         type="text"
-                        required
                         placeholder="Unit"
-                        ng-model="informationFields.unit"
+                        ng-model="$ctrl.states.billingInformationData.unit"
                         >
                     </div>
                     <div class="form-input-group">
@@ -47,8 +46,7 @@
                         class="form-input"
                         type="text"
                         placeholder="Building"
-                        required
-                        ng-model="informationFields.building"
+                        ng-model="$ctrl.states.billingInformationData.building"
                         >
                     </div>
                     </div>
@@ -65,19 +63,19 @@
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false">
-                        {{ informationFields.country }}
+                        {{ $ctrl.states.billingInformationData.country }}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="w-4 text-gray-600" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
                         </button>
                         <input
-                        ng-model="informationFields.country"
+                        ng-model="$ctrl.states.billingInformationData.country"
                         class="hidden"
                         required
                         readonly
                         >
                         <ul class="dropdown-menu">
-                        <li ng-repeat="country in countries">
+                        <li ng-repeat="country in $ctrl.countries">
                             <a
                             ng-click="setField('country', country.name)"
                             class="flex items-center space-x-2">
@@ -117,7 +115,7 @@
                     type="button"
                     ng-disabled="!informationModal.$dirty && informationModal.$invalid"
                     class="ui-btn {{ informationModal.$dirty && informationModal.$valid ? 'ui-btn-primary ' : 'ui-btn-disabled' }} w-40"
-                    ng-click="submit()">
+                    ng-click="$ctrl.submit()">
                     Update
                 </button>
                 </div>

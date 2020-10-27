@@ -544,6 +544,11 @@ app.directive("employeeOverviewDirective", [
         }
 
 
+        $('.modal').on('hidden.bs.modal', function (e) {
+          scope.isSelectOverallEmployees = false;
+        })
+
+
         // CUSTOM REUSABLE FUNCTIONS
         scope.startIndex = function () {
           if (scope.page_active > ((scope.pagesToDisplay / 2) + 1)) {
@@ -575,6 +580,7 @@ app.directive("employeeOverviewDirective", [
             $(".circle-loader").fadeOut();
           }, 10);
         };
+        
 
         scope.onLoad  = async function(){
           await scope.getSession();
