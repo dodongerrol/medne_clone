@@ -1141,8 +1141,8 @@ class SpendingInvoiceController extends \BaseController {
 				$data['wellness_credit_bonus'] = $spendingPurchase->wellness_credit_bonus;
 				$data['wellness_total_credits']  = $spendingPurchase->wellness_purchase_credits + $spendingPurchase->wellness_credit_bonus;
 				
-				$totalCredits = $data['medical_credits_purchase'] + $data['wellness_credits_purchase'];
-				$totalBalance = $totalCredits - $spendingPurchase->payment_amount;
+				$totalCredits = round($data['medical_credits_purchase'] + $data['wellness_credits_purchase'], 2);
+				$totalBalance = $totalCredits <= $spendingPurchase->payment_amount ? 0 : round($totalCredits - $spendingPurchase->payment_amount, 2);
 				
 				$temp = array(
 					'id'		=> $data['spending_purchase_invoice_id'],
