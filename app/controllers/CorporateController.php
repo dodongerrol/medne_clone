@@ -277,7 +277,6 @@ class CorporateController extends BaseController {
 	{
 		$data = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		// $customer_id = $result->customer_buy_start_id;
 
 		if(empty($data['customer_id']) || $data['customer_id'] == null) {
 			return ['status' => false, 'message' => 'customer_id is required'];
