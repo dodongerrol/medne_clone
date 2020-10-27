@@ -18249,6 +18249,11 @@ public function createHrLocation ()
 			if(empty($input['phone_no']) || $input['phone_no'] == null) {
 				return ['status' => false, 'message' => 'phone no is required'];
 			}
+
+			if(empty($input['email']) || $input['email'] == null) {
+				return ['status' => false, 'message' => 'email address is required.'];
+			}
+
 			// check if email is already got it
 			$checkEmail =  \DB::table('user')->where('email', $input['email'])->where('Active', 1)->where('member_activated', 1)->where('UserType', 6)->first();
 
@@ -18484,13 +18489,22 @@ public function createHrLocation ()
 				}
 			}
 			
+			$email = null;
+			
+			if($detail->member_id) {
+				$memberAccount = DB::table('user')->where('UserID', $detail->member_id)->select('Email')->first();
+
+				if($memberAccount) {
+					$email = $memberAccount->Email;
+				}
+			}
 			$container [] = array(
 				'id'											=> $detail->id,
 				'member_id'										=> $detail->member_id,
 				'hr_id'											=> $detail->hr_id,
 				'is_mednefits_employee'							=> $detail->is_mednefits_employee,
 				'fullname'										=> $detail->fullname,
-				'email'											=> $detail->email,
+				'email'											=> $email ? $email : $detail->email,
 				'phone_code'									=> $detail->phone_code,
 				'phone_no'										=> $detail->phone_no,
 				'edit_employee_dependent'						=> $permissions->edit_employee_dependent,
