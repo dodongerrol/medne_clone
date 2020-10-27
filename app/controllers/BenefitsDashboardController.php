@@ -80,6 +80,7 @@ const USER_COLUMNS = [
 			}
 			
 			$result->user_type = "hr_admin";
+			$result->with_account_link = true;
 			$token = $jwt->encode($result, $secret);
 
 			$hr = new HRDashboard();
@@ -120,7 +121,7 @@ const USER_COLUMNS = [
 		
 		if($member) {
 			// check if member is an admin type
-			$adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->where('status', 1)->select('id')->first();
+			$adminRole = DB::table('customer_admin_roles')->where('member_id', $member->UserID)->where('status', 1)->select('id', 'customer_id', 'hr_id')->first();
 
 			if($adminRole) {
 				// check if member has dependents
@@ -151,6 +152,8 @@ const USER_COLUMNS = [
 				$jwt = new JWT();
 				$secret = Config::get('config.secret_key');
 				$member->user_type = "member_admin";
+				$member->with_account_link = false;
+				$member->customer_buy_start_id = $adminRole->customer_id;
 				if(isset($input['signed_in']) && $input['signed_in'] == true) {
 					$member->signed_in = TRUE;
 				} else {
@@ -18613,17 +18616,17 @@ public function createHrLocation ()
 	{
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$customer_id = $result->customer_buy_start_id;
-
 
 		if(empty($input['token']) || $input['token'] == null) {
 			return ['status' => false, 'message' => 'token is required'];
 		}
-		$token = self::checkToken($input['token']);
 
-		if(!$token) {
+		if(!$result) {
 			return array('status' => FALSE, 'message' => 'Invalid Token.');
 		}
+
+		$customer_id = $result->customer_buy_start_id;
+
 		$data = [
 			'message'	=> null,
 			'status'	=> true 

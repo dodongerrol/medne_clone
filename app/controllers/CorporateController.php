@@ -519,12 +519,14 @@ class CorporateController extends BaseController {
 
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
+		$with_account_link = $result->with_account_link;
 		$customer_id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
 		$limit = !empty($input['limit']) ? $input['limit'] : 5;
 		$search = !empty($input['search']) ? $input['search'] : null;
 		$except_current = isset($input['except_current']) && $input['except_current'] == "enable" ? true : false;
-		
+		$format = [];
+
 		if($search) {
 			$link_accounts = DB::table('company_link_accounts')
 							->join('customer_business_information', 'customer_business_information.customer_buy_start_id', '=', 'company_link_accounts.customer_id')
@@ -548,72 +550,78 @@ class CorporateController extends BaseController {
 							->where('status', 1)
 							->paginate($limit);
 			} else {
-				$link_accounts = DB::table('company_link_accounts')
+				if($with_account_link) {
+					$link_accounts = DB::table('company_link_accounts')
 							->where('hr_id', $hr_id)
 							->where('status', 1)
 							->paginate($limit);
+				} else {
+					$link_accounts = false;
+				}
+				
 			}
 		}
 		
+		if($link_accounts) {
+			$total_enrolled_employee_status = !empty($input['total_enrolled_employee_status']) && $input['total_enrolled_employee_status'] === "true" || !empty($input['total_enrolled_employee_status']) && $input['total_enrolled_employee_status'] === true ? true : false;
+			$total_enrolled_dependent_status = !empty($input['total_enrolled_dependent_status']) && $input['total_enrolled_dependent_status'] === "true" || !empty($input['total_enrolled_dependent_status']) && $input['total_enrolled_dependent_status'] === true ? true : false;
 
-		$total_enrolled_employee_status = !empty($input['total_enrolled_employee_status']) && $input['total_enrolled_employee_status'] === "true" || !empty($input['total_enrolled_employee_status']) && $input['total_enrolled_employee_status'] === true ? true : false;
-		$total_enrolled_dependent_status = !empty($input['total_enrolled_dependent_status']) && $input['total_enrolled_dependent_status'] === "true" || !empty($input['total_enrolled_dependent_status']) && $input['total_enrolled_dependent_status'] === true ? true : false;
-
-		if(!$search) {
-			$pagination['last_page'] = $link_accounts->getLastPage();
-			$pagination['current_page'] = $link_accounts->getCurrentPage();
-			$pagination['total_data'] = $link_accounts->getTotal();
-			$pagination['from'] = $link_accounts->getFrom();
-			$pagination['to'] = $link_accounts->getTo();
-			$pagination['count'] = $link_accounts->count();
-		}
-
-		$format = [];
-		foreach($link_accounts as $key => $account) {
-			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $account->customer_id)->first();
-			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $account->customer_id)->first();
-			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $account->customer_id)->orderBy('created_at', 'desc')->first();
-			$hrAccount = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $account->hr_id)->first();
-
-			$temp = array(
-				'id'	=> $account->id,
-				'hr_id'	=> $account->hr_id,
-				'email' => $hrAccount->email,
-				'company_id' => $account->customer_id,
-				'account_name' => $customer->account_name ? ucwords($customer->account_name) : ucwords($info->company_name),
-				'link_date' => date('d/m/Y', strtotime($customer->created_at)),
-				'plan_type' => \PlanHelper::getAccountType($plan->account_type)
-			);
-
-			if($total_enrolled_employee_status == true || $total_enrolled_dependent_status == true) {
-				if($total_enrolled_employee_status == true) {
-					$employee_status = DB::table('customer_plan_status')
-											->where('customer_plan_id', $plan->customer_plan_id)
-											->orderBy('created_at', 'desc')
-											->first();
-					
-					if($employee_status) {
-						$temp['total_enrolled_employee_status'] = $employee_status->enrolled_employees;
-					} else {
-						$temp['total_enrolled_employee_status'] = 0;
-					}
-				}
-
-				if($total_enrolled_dependent_status == true) {
-					$dependent_status = DB::table('dependent_plan_status')
-											->where('customer_plan_id', $plan->customer_plan_id)
-											->orderBy('created_at', 'desc')
-											->first();
-					
-					if($employee_status) {
-						$temp['total_enrolled_dependent_status'] = $dependent_status->total_enrolled_dependents;
-					} else {
-						$temp['total_enrolled_dependent_status'] = 0;
-					}
-				}
+			if(!$search) {
+				$pagination['last_page'] = $link_accounts->getLastPage();
+				$pagination['current_page'] = $link_accounts->getCurrentPage();
+				$pagination['total_data'] = $link_accounts->getTotal();
+				$pagination['from'] = $link_accounts->getFrom();
+				$pagination['to'] = $link_accounts->getTo();
+				$pagination['count'] = $link_accounts->count();
 			}
 
-			$format[] = $temp;
+			
+			foreach($link_accounts as $key => $account) {
+				$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $account->customer_id)->first();
+				$info = DB::table('customer_business_information')->where('customer_buy_start_id', $account->customer_id)->first();
+				$plan = DB::table('customer_plan')->where('customer_buy_start_id', $account->customer_id)->orderBy('created_at', 'desc')->first();
+				$hrAccount = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $account->hr_id)->first();
+
+				$temp = array(
+					'id'	=> $account->id,
+					'hr_id'	=> $account->hr_id,
+					'email' => $hrAccount->email,
+					'company_id' => $account->customer_id,
+					'account_name' => $customer->account_name ? ucwords($customer->account_name) : ucwords($info->company_name),
+					'link_date' => date('d/m/Y', strtotime($customer->created_at)),
+					'plan_type' => \PlanHelper::getAccountType($plan->account_type)
+				);
+
+				if($total_enrolled_employee_status == true || $total_enrolled_dependent_status == true) {
+					if($total_enrolled_employee_status == true) {
+						$employee_status = DB::table('customer_plan_status')
+												->where('customer_plan_id', $plan->customer_plan_id)
+												->orderBy('created_at', 'desc')
+												->first();
+						
+						if($employee_status) {
+							$temp['total_enrolled_employee_status'] = $employee_status->enrolled_employees;
+						} else {
+							$temp['total_enrolled_employee_status'] = 0;
+						}
+					}
+
+					if($total_enrolled_dependent_status == true) {
+						$dependent_status = DB::table('dependent_plan_status')
+												->where('customer_plan_id', $plan->customer_plan_id)
+												->orderBy('created_at', 'desc')
+												->first();
+						
+						if($employee_status) {
+							$temp['total_enrolled_dependent_status'] = $dependent_status->total_enrolled_dependents;
+						} else {
+							$temp['total_enrolled_dependent_status'] = 0;
+						}
+					}
+				}
+
+				$format[] = $temp;
+			}
 		}
 
 		$pagination['status'] = true;
