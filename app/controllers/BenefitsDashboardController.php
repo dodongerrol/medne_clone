@@ -18412,12 +18412,10 @@ public function createHrLocation ()
     	$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		$hr_id = $result->hr_dashboard_id;
-	
-		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr_id)->select('hr_dashboard_id', 'fullname', 'email')->first();
 		
 		// get permissions;
-		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, $result->user_type);
-		
+		$permission = \UserPermissionsHelper::getUserPemissions($hr_id, 'hr_admin');
 		$data = array (
 			'hr_dashboard_id'								=> $hr->hr_dashboard_id,
 			'fullname'										=> $hr->fullname,
