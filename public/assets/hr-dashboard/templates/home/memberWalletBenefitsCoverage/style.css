@@ -8,7 +8,7 @@
   padding: 0 50px;
 }
 .member-wallet-benefits-wrapper >div:last-child {
-  padding: 100px 0 0;
+  /* padding: 100px 0 0; */
   height: 100%;
   min-height: 100vh;
 }
@@ -25,7 +25,8 @@
 .member-wallet-body-info-container >div:first-child {
   background-color: #F2F2F2;
   width: 25%;
-  padding: 60px 0 0;
+  /* padding: 60px 0 0; */
+  padding: 40px 0 0;
 }
 .member-wallet-body-info-container >div:last-child {
   padding: 40px 60px;
@@ -498,4 +499,12 @@
   color: #848484;
   font-weight: 700;
   margin: 15px 0;
+}
+.member-side-menu-title.back-to-company-profile {
+  color: #0392CF;
+  font-size: 14px;
+  cursor: pointer;
+}
+.member-side-menu-title.back-to-company-profile i {
+  margin: 0 10px 0 0;
 }
