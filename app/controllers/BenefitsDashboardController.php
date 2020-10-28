@@ -15300,7 +15300,7 @@ class BenefitsDashboardController extends \BaseController {
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
 		// $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-		$members = \CustomerHelper::getActivePlanUsers($customer_id);
+		$members = PlanHelper::getActivePlanUsers($customer_id);
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
 		$pending = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where('payment_status', 0)->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
