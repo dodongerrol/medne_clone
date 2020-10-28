@@ -204,12 +204,7 @@
                     <span>Prev</span>
                   </span>
                   <div class="pages-list">
-                      
-                    <!-- <span class="page-num active">1</span>	 -->
-                    <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
-
-                    <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
-                    
+                    <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page}">1</span>
                   </div>
                   <span ng-click="_nextPageList_('activity')" class="prev-next-container">  
                     <span>Next</span>
@@ -218,8 +213,7 @@
                 </div>
               </div>
               <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
-              <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
-                <span><span>10</span> per page</span>
+                <span><span ng-bind="per_page">10</span> per page</span>
                 <span>  
                   <i class="fa fa-caret-down"></i>
                 </span>
