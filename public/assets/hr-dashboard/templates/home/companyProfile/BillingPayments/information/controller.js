@@ -8,7 +8,7 @@
             this.element = 'information-form';
             this.states =   {
                 billingInformationData: {},
-            }
+            };
         }
         $onInit() {
             this.hydrate();
@@ -25,7 +25,7 @@
             presentModal('edit-information-modal');
         }
         dismiss() {
-            presentModal('edit-information-modal', false);
+            presentModal('edit-information-modal', 'hide');
         }
         submit() {
             let data = {

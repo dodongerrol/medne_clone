@@ -12,7 +12,7 @@
                 <div class="grid grid-cols-1 gap-4">
                     <div>
                         <label class="form-label">
-                            Cost Centre
+                            Cost centre will be linked with
                         </label>
                         <div class="btn-group dropdown w-full">
                             <button
@@ -21,28 +21,28 @@
                                 data-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="false">
-                                {{ costCentre }}
+                                {{ $ctrl.state.selectedCentre }}
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="w-4 text-gray-600" fill="currentColor">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </button>
                             <input
-                                ng-model="costCentre"
+                                ng-model="$ctrl.state.selectedCentre"
                                 class="hidden"
                                 required
                                 readonly
                             >
-                            <ul class="dropdown-menu w-full">
+                            <ul ng-if="$ctrl.state.isShowAllDropdownList" class="dropdown-menu w-full">
                                 <li>
                                     <a
-                                        ng-click="setCostCentre('Locations')"
+                                        ng-click="$ctrl.setCostCentre('Locations')"
                                         class="flex items-center space-x-2">
                                         Locations
                                     </a>
                                 </li>
                                 <li>
                                     <a
-                                        ng-click="setCostCentre('Departments')"
+                                        ng-click="$ctrl.setCostCentre('Departments')"
                                         class="flex items-center space-x-2">
                                         Departments
                                     </a>
@@ -54,7 +54,7 @@
             </div>
             <div class="flex items-center justify-between w-full pb-8">
                 <div class="flex items-center justify-end space-x-4 w-full">
-                <button ng-click="presentModal(modals.centre, false)" type="button" class="ui-btn ui-btn-primary-outline">
+                <button ng-click="$ctrl.dismiss()" type="button" class="ui-btn ui-btn-primary-outline">
                     Cancel
                 </button>
                 <button

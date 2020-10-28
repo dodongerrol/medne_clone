@@ -18078,6 +18078,7 @@ public function createHrLocation ()
 
 		$business = CorporateBusinessInformation::where('customer_buy_start_id', $id)->first();
 		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $id)->first();
 		$corporate_members = DB::table('corporate_members')
 		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 		->where('corporate_members.corporate_id', $account_link->corporate_id)
