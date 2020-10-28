@@ -18218,8 +18218,6 @@ public function createHrLocation ()
 			->where('user.member_activated', 1)
 			->select('user.UserID', 'user.Name')
 			->get();
-			
-			return $users;
 		}
 
 		if((int)$is_mednefits_employee == 1) {
