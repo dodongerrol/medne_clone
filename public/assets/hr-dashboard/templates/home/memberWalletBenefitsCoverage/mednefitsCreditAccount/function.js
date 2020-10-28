@@ -120,7 +120,7 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.showLoading();
           await hrSettings.fetchMednefitsActivitiesData( scope.currentTermStartDate, scope.currentTermEndDate, scope.page, scope.per_page )
             .then(function(response){
-              // console.log(response);
+              console.log(response);
               scope.hideLoading();
               scope.mednefitsActivitiesData = response.data.data.data;
               scope.spending_activity = response.data.data

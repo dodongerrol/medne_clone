@@ -189,7 +189,7 @@
                   <span ng-bind="formatTableDate(list.created_at)">01 Jan 2020</span>
                 </td>
                 <td>
-                  <span ng-if="list.label">Bonus Credits</span>
+                  <span ng-bind="list.label">Bonus Credits</span>
                 </td>
                 <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td>
               </tr>

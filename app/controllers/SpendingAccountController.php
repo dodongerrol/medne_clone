@@ -802,6 +802,12 @@ class SpendingAccountController extends \BaseController {
 				} else if($activity->type == "new_bonus_credits") {
 					$activity->label = 'New Bonus Credits';
 					$activity->type_status = "added";
+				}  else if($activity->type == "added_purchase_credits_top_up") {
+					$activity->label = 'Top-up Purchased Credits';
+					$activity->type_status = "added";
+				} else if($activity->type == "added_bonus_credits_top_up") {
+					$activity->label = 'Top-up Bonus Credits';
+					$activity->type_status = "added";
 				}
 				$activity->credit = number_format($activity->credit, 2);
 				$format[] = $activity;
