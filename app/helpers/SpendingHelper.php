@@ -330,8 +330,8 @@ class SpendingHelper {
 			$trans = DB::table('e_claim')
 							->where('status', 1)
 							->whereIn('user_id', $ids)
-							->where('date', '>=', $start)
-							->where('date', '<=', $end)
+							->where('created_at', '>=', $start)
+							->where('created_at', '<=', $end)
 							->orderBy('created_at', 'desc')
 							->pluck('e_claim_id');
 			if(sizeof($trans) > 0) {
@@ -409,9 +409,8 @@ class SpendingHelper {
 			$trans = DB::table('e_claim')
 							->where('status', 1)
 							->whereIn('user_id', $ids)
-							->where('date', '>=', $start)
-							->where('date', '<=', $end)
-							->orderBy('created_at', 'desc')
+							->where('created_at', '>=', $start)
+							->where('created_at', '<=', $end)
 							->pluck('e_claim_id');
 
 			if(sizeof($trans) > 0) {
