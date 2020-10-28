@@ -255,7 +255,8 @@
   line-height: normal;
   margin: 0 0 20px;
 }
-.mwbc-card-box-container.pending {
+.mwbc-card-box-container.pending .available-credits,
+.mwbc-card-box-container.pending .credits-info-details-container{
   pointer-events: none;
   opacity: 0.4;
 }
