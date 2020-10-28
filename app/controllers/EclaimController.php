@@ -6822,6 +6822,8 @@ public function updateEclaimStatus( )
 					EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 					// create non panel invoice
 					try {
+						$start = date('Y-m-d', strtotime($e_claim_details->created_at));
+						$end = PlanHelper::endDate($start);
 						EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
 					} catch(Exception $e) {
 						$email = [];
