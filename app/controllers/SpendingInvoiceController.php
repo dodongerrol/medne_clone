@@ -573,9 +573,19 @@ class SpendingInvoiceController extends \BaseController {
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-			$all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
-			$credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
-
+			// $all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
+			$all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->get();
+			// $credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
+			$credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
+			// get spending settings status
+			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+			$spendingPurchasePayment = true;
+			if($spending['spending_purchase']) {
+				if((int)$spending['spending_purchase']->payment_status == 0) {
+					$spendingPurchasePayment = false;
+				}
+			}
+			
 			$pagination['current_page'] = $credits_statements->getCurrentPage();
 			$pagination['last_page'] = $credits_statements->getLastPage();
 			$pagination['total'] = $credits_statements->getTotal();
@@ -601,31 +611,14 @@ class SpendingInvoiceController extends \BaseController {
 						$lite_plan = true;
 					}
 
-					// if($lite_plan == true) {
-					// 	$consultation_amount_due_temp = DB::table('transaction_history')
-					// 	->join('spending_invoice_transactions', 'spending_invoice_transactions.transaction_id', '=', 'transaction_history.transaction_id')
-					// 	->where('spending_invoice_transactions.invoice_id', $data->statement_id)
-					// 	->where('transaction_history.deleted', 0)
-					// 	->where('transaction_history.paid', 1)
-					// 	->where('transaction_history.lite_plan_enabled', 1)
-					// 	->sum('transaction_history.co_paid_amount');
-					// 	$consultation_amount_due = $results['total_consultation'] - $consultation_amount_due_temp;
-					// }
+					$total = !$spendingPurchasePayment && $data->plan_method == "pre_paid" ? round($results['total_pre_paid_spent'], 2) : round($results['total_post_paid_spent'], 2);
+					$amount_due = (float)$total - (float)$data->paid_amount;
 
-					// if((int)$data->statement_status == 1) {
-						$total = round($results['total_post_paid_spent'], 2);
-						$amount_due = (float)$total - (float)$data->paid_amount;
-					// } else {
-					// 	$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
-					// 	$total = $amount_due;
-					// }
-
-
-					if($results['with_post_paid'] == true) {
+					// if($results['with_post_paid'] == true) {
 						$amount_due = $amount_due < 0 ? 0 : $amount_due;
-					} else {
-						$amount_due = 0;
-					}
+					// } else {
+					// 	$amount_due = 0;
+					// }
 
 					$total_due += $amount_due;
 				}
@@ -658,7 +651,7 @@ class SpendingInvoiceController extends \BaseController {
 					// }
 
 					// if((int)$data->statement_status == 1) {
-						$total = round($results['total_post_paid_spent'], 2);
+						$total = !$spendingPurchasePayment && $data->plan_method == "pre_paid" ? round($results['total_pre_paid_spent'], 2) : round($results['total_post_paid_spent'], 2);
 						$amount_due = (float)$total - (float)$data->paid_amount;
 					// } else {
 					// 	$amount_due = (float)$results['credits'] + (float)$results['total_consultation'];
@@ -690,7 +683,7 @@ class SpendingInvoiceController extends \BaseController {
 						'company_name' 			=> $data->statement_company_name,
 						'type'					=> $data->type,
 						'with_post_paid'		=> $results['with_post_paid'],
-						'payment_method'		=> $data->payment_method,
+						'payment_method'		=> !$spendingPurchasePayment && $data->plan_method == "pre_paid" ? 'bank_transfer' : $data->payment_method,
 						'payment_remarks'		=> $data->payment_remarks,
 						'total_pre_paid_spent'	=> $results['total_pre_paid_spent'],
 						'total_post_paid_spent'	=> $results['total_post_paid_spent'],
