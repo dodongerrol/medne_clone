@@ -373,24 +373,24 @@
             <div class="company-account-input-wrapper">
               <label>Full Name</label>
               <div class="custom-input-wrapper">
-                <input ng-model="global_hrData.full_name" type="text">
+                <input ng-model="global_hrData.full_name" type="text" ng-change="isChanged()">
               </div>
             </div>
             <div class="company-account-input-wrapper">
               <label>Email</label>
               <div class="custom-input-wrapper">
-                <input ng-model="global_hrData.email" type="text">
+                <input ng-model="global_hrData.email" type="text" ng-change="isChanged()">
               </div>
             </div>
             <div class="company-account-input-wrapper number">
               <label></span>Phone Number</label>
               <div>
                 <div class="custom-input-wrapper">
-                  <input ng-model="global_hrData.phone_code" type="tel" id="phone_number">
+                  <input ng-model="global_hrData.phone_code" type="tel" id="phone_number" ng-change="isChanged()">
                   <i class="fa fa-angle-down"></i>
                 </div>
                 <div class="custom-input-wrapper">
-                  <input ng-model="global_hrData.phone" type="text">
+                  <input ng-model="global_hrData.phone" type="text" ng-change="isChanged()">
                 </div>
               </div>
             </div>
@@ -404,7 +404,7 @@
           <div class="modal-footer">
             <button ng-if="!editHrSuccessfullyUpdated" data-dismiss="modal"
               class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="!editHrSuccessfullyUpdated" ng-click="_updateHrDetails_( global_hrData )"
+            <button ng-if="!editHrSuccessfullyUpdated" ng-disabled="!isChangedInput" ng-click="_updateHrDetails_( global_hrData )"
               class="btn-update">Update</button>
             <button ng-if="editHrSuccessfullyUpdated" data-dismiss="modal"
               class="btn-edit-cancel btn-close">Close</button>

@@ -76,7 +76,7 @@ return array(
             'host' => '127.0.0.1'
     ),
     // 'database'  => 'root',
-    'database'  => 'godsview_db',
+    'database'  => 'medicloud_v3',
     'username'  => 'root',
     'password'  => '',
             'charset'   => 'utf8',
