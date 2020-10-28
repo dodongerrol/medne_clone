@@ -10497,9 +10497,20 @@ const DEPENDENT_COLUMNS = [
 	public function getCompanyMembers( )
 	{
 		$session = self::checkSession();
+		$search = !empty($input['search']) ? $input['search'] : null;
 
 		// get all hr employees, spouse and dependents
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
+
+		if($search) {
+			$users = DB::table('user')
+			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+			->where('corporate_members.corporate_id', $account->corporate_id)
+			->where('user.Name', 'like', '%'.$search.'%')
+			->where('user.member_activated', 1)
+			->select('user.UserID', 'user.Name')
+			->get();
+		}
 
 		$corporate_members = DB::table('corporate_members')
 		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
