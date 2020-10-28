@@ -205,7 +205,6 @@ class EclaimHelper
     // check if non-panel transactions exist
     $transactions = \SpendingHelper::checkTotalCreditsNonPanelTransactions($customer_id, $start, $end, 'post_paid');
     $temp = [];
-    
     if($transactions['credits'] > 0) {
       // check if non-panel invoice exist
       $statement_check = DB::table('company_credits_statement')
@@ -214,6 +213,7 @@ class EclaimHelper
         ->where('type', 'non_panel')
         // ->where('plan_method', 'post_paid')
         ->count();
+      
       $statement = null;
       if($statement_check == 0) {
         // $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
