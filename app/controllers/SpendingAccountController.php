@@ -767,7 +767,7 @@ class SpendingAccountController extends \BaseController {
 			}
 		} else {
 			// get spending account activity
-			$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->paginate($limit);
+			$activites = DB::table('spending_account_activity')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->paginate($limit);
 			$pagination['current_page'] = $activites->getCurrentPage();
 			$pagination['last_page'] = $activites->getLastPage();
 			$pagination['total'] = $activites->getTotal();
