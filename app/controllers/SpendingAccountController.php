@@ -1003,15 +1003,15 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		// check if there is payment false
-		$account_credits = DB::table('mednefits_credits')
-							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
-							->where('mednefits_credits.customer_id', $customer_id)
-							->where('spending_purchase_invoice.payment_status', 0)
-							->first();
+		// $account_credits = DB::table('mednefits_credits')
+		// 					->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+		// 					->where('mednefits_credits.customer_id', $customer_id)
+		// 					->where('spending_purchase_invoice.payment_status', 0)
+		// 					->first();
 
-		if($account_credits) {
-			return ['status' => false, 'message' => 'Unable to create top up because there is pending payment for medenfits credits account.'];
-		}
+		// if($account_credits) {
+		// 	return ['status' => false, 'message' => 'Unable to create top up because there is pending payment for medenfits credits account.'];
+		// }
 
 		$spending_account_settings = DB::table('spending_account_settings')
 										->where('customer_id', $customer_id)
