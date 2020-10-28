@@ -15,6 +15,25 @@ const USER_COLUMNS = [
 		
 ];
 
+const EMPLOYEE_COLUMNS = [
+		'Full Name'							=> 'user.Name',
+		'Work Email'						=> 'user.Email',
+		'Employee ID'						=> 'user.emp_no',
+		'Mobile Number'						=> 'user.PhoneNo',
+		'Date of Birth'						=> 'user.DOB',
+		'Benefits Start Date'				=> 'user_plan_type.plan_start',
+		'Postal Code'						=> 'user.Zip_Code',
+		'For Communication'					=> 'user.communication_type',
+		'Bank Name'							=> 'user.bank_name',
+		'Bank Account Number'				=> 'user.bank_account',
+];
+
+const DEPENDENT_COLUMNS = [
+	'Full Name'								=> 'user.Name',
+	'Date of Birth'							=> 'user.DOB',
+	'Relationship'							=> 'employee_family_coverage_sub_accounts.relationship',
+];
+
 	public function getDownloadToken( )
 	{
 		$hr = self::checkSession();
@@ -18059,6 +18078,13 @@ public function createHrLocation ()
 
 		$business = CorporateBusinessInformation::where('customer_buy_start_id', $id)->first();
 		$info = DB::table('customer_buy_start')->where('customer_buy_start_id', $id)->first();
+		$corporate_members = DB::table('corporate_members')
+		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+		->where('corporate_members.corporate_id', $account_link->corporate_id)
+		->where('user.Active', 1)
+		->get();
+
+		$total_active_members = sizeof($corporate_members);
 
 		$address = explode(',', $business->company_address);
 
@@ -18070,7 +18096,8 @@ public function createHrLocation ()
 			'unit_number'							=> $business->unit_number,
 			'building_name'							=> $business->building_name,
 			'account_name'							=> $info->account_name,
-			'currency_type'							=> $info->currency_type
+			'currency_type'							=> $info->currency_type,
+			'current_employees'						=> $total_active_members
 		);
 
 		return array('data' => $data);
@@ -18856,4 +18883,114 @@ public function createHrLocation ()
 		return $data;
 	}
 
+	public function bulkUpdateDetails()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+
+			if(empty($input['token']) || $input['token'] == null) {
+				return ['status' => false, 'message' => 'token is required'];
+			}
+	
+			if(!$result) {
+				return array('status' => FALSE, 'message' => 'Invalid Token.');
+			}
+	
+			$data = [
+				'message'	=> null,
+				'status'	=> true 
+			];
+	
+			$selected_columns = $input['employee_columns'] ?? [];
+			$user_id = $input['user_id'] ?? [];
+			$selected_dependent = $input['dependent_columns'] ?? [];
+			$container = array();
+			$customers = array();
+	
+			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+			$select_account = $input['select_account'] ?? null;
+			
+			if($select_account == 1){
+				$container = array();
+				$employee = DB::table('user')
+					->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+					->join('user_plan_type', 'user_plan_type.user_id', '=', 'user.UserID')
+					// ->join('company_location_members', 'company_location_members.member_id', 'user.UserID')
+					->where('corporate_members.corporate_id', $account_link->corporate_id)
+					->select('user.Name', 'user.emp_no', 'user.UserID', 'user.member_activated', 'user_plan_type.plan_start', 'user.Active', 'user.PhoneCode', 'user.PhoneNo', 'user.PhoneCode', 'user.Zip_Code', 'user.Email', 'user.DOB', 'user.communication_type'
+					, 'user.bank_name', 'user.bank_account')
+					->get();
+	
+				
+					$employee_columns = array_merge(
+						self::EMPLOYEE_COLUMNS,
+						[
+							  'Locations'                         =>  'Locations',
+							  'Departments'                       =>  'Departments'
+						]
+				  );
+	
+				  $keys = array_keys($employee_columns);
+				  $extracted_columns = array_filter($keys, function($column) use($selected_columns) {
+				  return in_array($column, $selected_columns);
+				  });
+				
+				  $user_columns = array_filter($extracted_columns, function($column) {
+					return in_array($column, array_keys(self::EMPLOYEE_COLUMNS));
+					
+				  });
+
+				  $user_db_colums = [];
+				  $dependent_db_columns = [];
+				  //   $temp = [];
+			  
+					foreach ($user_columns as $user_column)	{
+						$user_db_columns[] = $employee_columns[$user_column];
+					}
+					  $employee = DB::table('user')
+							  ->select($user_db_columns)
+							  ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+							  ->join('user_plan_type', 'user_plan_type.user_id', '=', 'user.UserID')
+							  ->where('corporate_members.corporate_id', $account_link->corporate_id)
+							  ->get();
+					// $container[] = $employee_columns;
+			} 
+			// else if($select_account == 0) {
+			// 	$dependents = DB::table('employee_family_coverage_sub_accounts')
+			// 			->select($dependent_db_columns)
+			// 			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+			// 			->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
+			// 		    ->where('access_type', 2)
+			// 			->where('corporate_members.corporate_id', $account_link->corporate_id)
+			// 			// ->where('user.UserID', $user_id)
+			// 			->get();
+
+			// 	$dependent_columns = array_merge(
+			// 	self::DEPENDENT_COLUMNS,[
+
+			// 	]
+			// 	);
+
+			// 	$dependent_keys = array_keys($dependent_columns);
+			// 	  $dependent_extracted_columns = array_filter($keys, function($column) use($selected_dependent) {
+			// 	  return in_array($column, $selected_dependent);
+			// 	  });
+
+			// 	  $dependent_user_columns = array_filter($dependent_extracted_columns, function($column) {
+			// 		return in_array($column, array_keys(self::DEPENDENT_COLUMNS));
+			// 	  });
+				  
+			// 	  foreach ($dependent_user_columns as $dependent_user_column)	{
+			// 		$dependent_db_columns[] = $dependent_columns[$dependent_user_column];
+			// 	}
+			// }
+
+					$excel = Excel::create('Employee Information', function($excel) use($employee) {
+						$excel->sheet('Sheetname', function($sheet) use($employee) {
+							$sheet->fromArray( $employee );
+						});
+					})->export('xls');
+					return $excel;
+	}
 }

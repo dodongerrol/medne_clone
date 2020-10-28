@@ -253,6 +253,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/remove_location', 'BenefitsDashboardController@deleteHrLocation');
 	Route::get('hr/get_allocate_employee_list', 'BenefitsDashboardController@allocateEmployeeLocationList');
 	Route::post('hr/allocate_employee_location', 'BenefitsDashboardController@allocateEmployeeLocation');
+	Route::get('hr/get_primart_location', 'BenefitsDashboardController@getPrimaryLocation');
 
 	// business contact
 	Route::post('hr/add_more_business_contact', 'BenefitsDashboardController@addMoreBusinessContact');
@@ -275,6 +276,9 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 
 	// transfer employee
 	Route::post('hr/transfer_employee', 'BenefitsDashboardController@transferEmployee');
+
+	// bulk update
+	Route::post('hr/bulk_update_employee', 'BenefitsDashboardController@bulkUpdateDetails');
 
 	// Administrator
 	Route::post('hr/add_employee_admin', 'BenefitsDashboardController@addAdministrator');
