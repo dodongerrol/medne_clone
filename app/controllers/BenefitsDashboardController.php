@@ -17767,8 +17767,8 @@ public function createHrLocation ()
 		$id = $result->customer_buy_start_id;
 		
 
-		if(empty($input['LocationID']) || $input['LocationID'] == null) {
-			return ['status' => false, 'message' => 'id is required'];
+		if(empty($input['location_id']) || $input['location_id'] == null) {
+			return ['status' => false, 'message' => 'location_id is required'];
 		}
 
 		$check = DB::table('company_locations')->where('LocationID', $id)->first();
@@ -17778,13 +17778,11 @@ public function createHrLocation ()
 		$data = array(
 			'location'					=> !empty($input['location']) ? $input['location'] : $check->location,
 			'business_address'			=> !empty($input['business_address']) ? $input['business_address'] : $check->business_address,
-			'unit_number'				=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
-			'building_name'				=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 			'postal_code'				=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
 			'country'					=> !empty($input['country']) ? $input['country'] : $check->country,
 		);
 		if($id) {
-			$update = $company_location->updateCorporateHrLocations($input['LocationID'], $data);
+			$update = $company_location->updateCorporateHrLocations($input['location_id'], $data);
 		} 
 		return array('status' => TRUE, 'message' => 'Successfully updated Department.');
 	}
