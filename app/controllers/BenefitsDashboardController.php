@@ -18163,15 +18163,15 @@ public function createHrLocation ()
 
 		$billing = new CorporateBillingContact;
 
-		$street_address = $input['street_address'];
+		$company_address = $input['company_address'];
 		$unit_number = $input['unit_number'];
 		$building_name = $input['building_name'];
 
-		$company_address = "{$street_address},{$unit_number},{$building_name}";
+		$final_address = "{$company_address},{$unit_number},{$building_name}";
 
 		$data = array(
 			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
-			'billing_address'		=> $company_address,
+			'billing_address'		=> $final_address,
 			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal,
 		);
 
