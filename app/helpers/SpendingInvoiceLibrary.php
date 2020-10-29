@@ -1110,6 +1110,7 @@ class SpendingInvoiceLibrary
 			$e_claim = DB::table('e_claim')->where('e_claim_id', $transaction->e_claim_id)->where('status', 1)->first();
 
 			if($e_claim) {
+				$spending_method = "post_paid";
 				if($e_claim->spending_type == "medical") {
 					$table_wallet_history = 'wallet_history';
 				} else {
@@ -1121,6 +1122,7 @@ class SpendingInvoiceLibrary
 						->where('id',  $e_claim->e_claim_id)
 						->first();
 				if($logs) {
+					$spending_method = $logs->spending_method;
 					$credits = $logs->credit;
 					$e_claim->amount = $logs->credit;
 					if($logs->spending_method == "post_paid") {
@@ -1224,7 +1226,8 @@ class SpendingInvoiceLibrary
 					'email_address'		=> $member->Email,
 					'employee_name'		=> $employee_name,
 					'remarks'			=> $e_claim->rejected_reason,
-					'files'				=> $temp_docs
+					'files'				=> $temp_docs,
+					'spending_method'	=> $spending_method
 				);
 
 				array_push($transaction_data, $temp);
