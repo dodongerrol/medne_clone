@@ -65,7 +65,7 @@
 
 				<div x-show="!showMoreAccounts" ng-if="navCtr.allLinkedAccountsArr.length > 0" class="linked-accounts-wrapper">
 
-					<div ng-if="$index > 0" ng-repeat="list in navCtr.allLinkedAccountsArr" class="linked-account" ng-click="navCtr._switchAccount_(list)">
+					<div ng-if="$index > 0 && $index < 6" ng-repeat="list in navCtr.allLinkedAccountsArr" class="linked-account" ng-click="navCtr._switchAccount_(list)">
 						<div class="comp-name">
 							<p class="company" ng-bind="list.account_name">Medicloud</p>
 							<p class="comp-id">Company ID: {{ list.company_id }}</p>
