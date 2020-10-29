@@ -5282,7 +5282,6 @@ const DEPENDENT_COLUMNS = [
 		$details = array(
 			'first_name'					=> !empty($input['first_name']) ? $input['first_name'] : $check->first_name,
 			'billing_email'					=> !empty($input['billing_email']) ? $input['billing_email'] : $check->billing_email,
-			'phone_code'					=> !empty($input['phone_code']) ? $input['phone_code'] : $check->phone_code,
 			'phone'							=> !empty($input['phone']) ? $input['phone'] : $check->phone,
 			'updated_at'					=> date('Y-m-d H:i:s')
 		);
