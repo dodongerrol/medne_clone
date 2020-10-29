@@ -10025,23 +10025,25 @@ public function downloadEclaimCsv( )
 		$container = array();
 
 		foreach($transaction_data['transactions'] as $key => $transaction) {
-			$container[] = array(
-				'Member'				=> $transaction['member'],
-				'Email Address'			=> $transaction['email_address'],
-				'Claim Member Type'		=> $transaction['claim_member_type'],
-				'Employee'				=> $transaction['employee_name'],
-				'Claim Date'			=> $transaction['claim_date'],
-				'Visited Date'			=> $transaction['visit_date'],
-				'Transaction#'			=> $transaction['transaction_id'],
-				'Claim Type'			=> $transaction['service'],
-				'Provider'				=> $transaction['merchant'],
-				'Member Wallet'			=> strtoupper($transaction['spending_type']),
-				'Claim Amount'			=> $transaction['claim_amount'],
-				'Total Amount'			=> $transaction['amount'],
-				'Remarks'				=> $transaction['remarks'],
-				'Bank Name'				=> $transaction['bank_name'],
-				'Bank Account Number'	=> $transaction['bank_account_number']
-			);
+			if($transaction['spending_method'] == "post_paid") {
+				$container[] = array(
+					'Member'				=> $transaction['member'],
+					'Email Address'			=> $transaction['email_address'],
+					'Claim Member Type'		=> $transaction['claim_member_type'],
+					'Employee'				=> $transaction['employee_name'],
+					'Claim Date'			=> $transaction['claim_date'],
+					'Visited Date'			=> $transaction['visit_date'],
+					'Transaction#'			=> $transaction['transaction_id'],
+					'Claim Type'			=> $transaction['service'],
+					'Provider'				=> $transaction['merchant'],
+					'Member Wallet'			=> strtoupper($transaction['spending_type']),
+					'Claim Amount'			=> $transaction['claim_amount'],
+					'Total Amount'			=> $transaction['amount'],
+					'Remarks'				=> $transaction['remarks'],
+					'Bank Name'				=> $transaction['bank_name'],
+					'Bank Account Number'	=> $transaction['bank_account_number']
+				);
+			}
 		}
 
 		return \Excel::create('Reimbursement CSV', function($excel) use($container) {
