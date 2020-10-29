@@ -5084,7 +5084,7 @@ const DEPENDENT_COLUMNS = [
 		$building_name = $input['building_name'];
 
 
-		$final_address = "{$street_address},{$unit_number},{$building_name}";
+		$final_address = "{$company_address},{$unit_number},{$building_name}";
 
 		$data = array(
 			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
