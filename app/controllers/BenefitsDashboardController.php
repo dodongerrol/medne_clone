@@ -5299,7 +5299,7 @@ const DEPENDENT_COLUMNS = [
 				SystemLogLibrary::createAdminLog($admin_logs);
 			} else {
 				$admin_logs = array(
-					'admin_id'  => $hr_id,
+					'admin_id'  => $id,
 					'admin_type' => 'hr',
 					'type'      => 'admin_hr_updated_company_billing_contact',
 					'data'      => SystemLogLibrary::serializeData($input)
