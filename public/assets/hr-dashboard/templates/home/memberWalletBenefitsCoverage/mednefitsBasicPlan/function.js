@@ -132,7 +132,7 @@ app.directive('mednefitsBasicPlanDirective', [
 
           await hrSettings.fetchMemberWallet( data.start, data.end, 'wellness' )
           .then(function(response){
-            // console.log(response);
+            console.log(response);
             scope.wellness_wallet_details = response.data.data;
             console.log(scope.wellness_wallet_details);
           

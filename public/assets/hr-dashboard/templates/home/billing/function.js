@@ -170,8 +170,12 @@ app.directive('spendingBillingDirective', [
             window.open(serverUrl.url + '/hr/spending_desposit?id=' + id + '&token=' + window.localStorage.getItem('token'));
           }
         }
-        scope.downloadViewTransactions = function ( id ) {
-          window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+        scope.downloadViewTransactions = function ( id, type ) {
+          if(type == "panel") {
+            window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+          } else {
+            window.open(serverUrl.url + '/hr/download_non_panel_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
+          }
         }
 
         scope._selectNumList_ = function ( num ) {

@@ -483,8 +483,8 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.fetchMednefitsCreditsAccountData = function ( start,end ) {
     return $http.get( serverUrl.url + "/hr/get_mednefits_credits_account/?start=" + start + "&end=" + end  ); 
   }
-  hrFactory.fetchDateTerms = function (  ) {
-    return $http.get( serverUrl.url + "/hr/get_company_date_terms" );
+  hrFactory.fetchDateTerms = function ( type ) {
+    return $http.get( serverUrl.url + "/hr/get_company_date_terms?type=" + type );
   }
 
   // Member Wallet

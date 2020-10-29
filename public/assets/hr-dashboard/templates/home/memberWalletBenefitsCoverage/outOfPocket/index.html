@@ -26,7 +26,7 @@
       <div class="available-credits-container">
         <div class="available-credits">
           <span class="available-credits-container dp-flex-ai">
-            <div class="available-credits-text member-bold-text">Total Member Transaction</div>
+            <div class="available-credits-text member-bold-text">Total Employee Transaction</div>
             <span class="credits-tooltip-wrapper">
               <img ng-click="toggleTransaction()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
               <div class="credits-tooltip-container total-member-transaction">
@@ -58,23 +58,19 @@
     </div>
     <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel) || (benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)">
       <div>
-        <span ng-if="medical_wallet_details.panel_payment_method == 'giro'">Mednefits Credits</span>
-        <span ng-if="medical_wallet_details.panel_payment_method == 'bank_transfer'">Mednefits Credits</span>
-        <span ng-if="medical_wallet_details.panel_payment_method == 'mednefits_credits'">Mednefits Credits</span>
-         is currently used in:
-        </div>
+        Mednefits Credits is currently used in:
+      </div>
       <div>
-        <div class="wallet-container medical-wallet-container display-flex">
-            <div ng-if="benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel" class="member-bold-text">Medical Wallet:</div>
-            <div class="display-flex wallet-panel-container">
-              <div ng-if="benefitsCoverageData.medical.panel">Mednefits Panel</div>
-              <div ng-if="benefitsCoverageData.medical.non_panel">Non Panel</div>
-            </div>
+        <div ng-if="medical_wallet_details.benefits_coverage == 'out_of_pocket'" class="wallet-container medical-wallet-container display-flex">
+          <div ng-if="benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel" class="member-bold-text">Medical Wallet:</div>
+          <div class="display-flex wallet-panel-container">
+            <div ng-if="benefitsCoverageData.medical.panel">Mednefits Panel</div>
+            <div ng-if="benefitsCoverageData.medical.non_panel">Non Panel</div>
+          </div>
         </div>
-        <div class="wallet-container wellness-wallet-container display-flex">
+        <div ng-if="wellness_wallet_details.benefits_coverage == 'out_of_pocket'" class="wallet-container wellness-wallet-container display-flex">
           <div ng-if="benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel" class="member-bold-text">Wellness Wallet:</div>
           <div class="display-flex wallet-panel-container">
-            <!-- <div ng-if="benefitsCoverageData.wellness.panel">Mednefits Panel</div> -->
             <div ng-if="benefitsCoverageData.wellness.non_panel">Non Panel</div>
           </div>
         </div>
@@ -95,7 +91,8 @@
             <tr>
               <td>{{formatTableDate(list.created_at)}}</td>
               <td>{{list.label || 'N/A'}}</td>
-              <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td>
+              <!-- <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td> -->
+              <td class="amount-value""><span class="currency-type color-black">{{list.currency_type}}</span> {{list.credit}}</td>
             </tr>
           </tbody>
         </table>

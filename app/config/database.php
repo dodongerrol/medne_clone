@@ -73,7 +73,11 @@ return array(
     ),
     'write' => array(
             // 'host' => 'root'
+<<<<<<< HEAD
             'host' => '127.0.0.1'
+=======
+            'host' => '127.0.0.1',
+>>>>>>> 1c1c488468033dd246420ec9c9e2a6c1c4f52e5a
     ),
     // 'database'  => 'root',
     'database'  => 'medicloud_v3',

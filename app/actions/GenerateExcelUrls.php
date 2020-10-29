@@ -43,7 +43,7 @@ class GenerateExcelUrls
     {
         if (
             ($this->status['medical_enabled'] && $this->status['wellness_enabled']) &&
-            ($this->status['medicak_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
+            ($this->status['medical_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
         ) {
             return [
                 'employee' => "{$this->baseUrl}/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx",
@@ -66,6 +66,15 @@ class GenerateExcelUrls
             return [
                 'employee' => "{$this->baseUrl}/excel/v5/myr/enterprise/employee/Employee+R-Wellness.xlsx",
                 'dependent'	=> "{$this->baseUrl}/excel/v5/myr/enterprise/dependent/Employees-and-Dependents+R-Wellness+.xlsx"
+            ];
+        }
+
+        if (
+            ($this->status['wellness_enabled'])
+         ) {
+            return [
+                'employee' => "{$this->baseUrl}/excel/v5/myr/enterprise/employee/Employee-Wellness.xlsx",
+                'dependent'	=> "{$this->baseUrl}/excel/v5/myr/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx"
             ];
         }
 

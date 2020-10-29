@@ -300,7 +300,7 @@ class CustomerHelper
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
-		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where("payment_status", 0)->count();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->first();
 		// check if there is an mendnefit
 		$mednefits_credits = DB::table('mednefits_credits')
 							->where('customer_plan_id', $spending->customer_plan_id)
@@ -331,7 +331,9 @@ class CustomerHelper
 			'wellness_payment_method_non_panel'		=> $spending->wellness_payment_method_non_panel,
 			'medical_start'		=> $spending->medical_spending_start_date,
 			'medical_end'		=> $spending->medical_spending_end_date,
-			'paid_status'		=> true
+			'paid_status'		=> true,
+			'spending_purchase_payment' => $spendingPurchase && (int)$spendingPurchase->payment_status == 0 ? false : true,
+			'spending_purchase'	=> $spendingPurchase
 		);
 	}
 

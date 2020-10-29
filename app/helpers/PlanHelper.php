@@ -811,9 +811,8 @@ class PlanHelper
 		}
 
 		if($active_plan->account_type == "out_of_pocket") {
-			return [];
-		}
-		if($active_plan->account_type == "insurance_bundle") {
+			$account_type = $active_plan->account_type;
+		} else if($active_plan->account_type == "insurance_bundle") {
 			if($active_plan->secondary_account_type == null) {
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $active_plan->plan_id)->first();
 				if ($plan->secondary_account_type == null) {
@@ -851,12 +850,16 @@ class PlanHelper
 			$wallet = 1;
 		}
 
+		if ($account_type == "out_of_pocket") {
+			$wallet = 0;
+		}
+		
 		$package_group = DB::table('package_group')
 			->where('account_type', $account_type)
 			->where('secondary_account_type', $secondary_account_type)
 			->where('wallet', $wallet)
 			->first();
-
+		
 		// update user package plan
 		if ((int)$user_plan->package_group_id !== (int)$package_group->package_group_id) {
 			\UserPlanType::where('user_plan_type_id', $user_plan->user_plan_type_id)->update(['package_group_id' => $package_group->package_group_id]);
@@ -1762,6 +1765,19 @@ class PlanHelper
 					);
 
 					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+					if($customer_spending['with_mednefits_credits'] == true) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s'),
+							'status'		=> 0
+						);
+
+						DB::table('top_up_credits')->insert($toTopUp);
+					}
 				} else if($credits > 0 && $customer_spending['medical_payment_method_panel'] == "mednefits_credits") {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
 					if ($result_customer_active_plan) {
@@ -1834,20 +1850,20 @@ class PlanHelper
 						);
 
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
+					}
 
-						if($top_up_credits) {
-							// create top up data
-							$toTopUp = array(
-								'customer_id' 	=> $customer_id,
-								'credits'		=> $credits,
-								'member_id'		=> $user_id,
-								'created_at'	=> date('Y-m-d H:i:s'),
-								'updated_at'	=> date('Y-m-d H:i:s'),
-								'status'		=> 0
-							);
+					if($customer_spending['with_mednefits_credits'] == true) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s'),
+							'status'		=> 0
+						);
 
-							DB::table('top_up_credits')->insert($toTopUp);
-						}
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}
@@ -1929,6 +1945,19 @@ class PlanHelper
 					);
 
 					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+					if($customer_spending['with_mednefits_credits'] == true) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s'),
+							'status'		=> 0
+						);
+
+						DB::table('top_up_credits')->insert($toTopUp);
+					}
 				} else if($credits > 0 && $customer_spending['wellness_payment_method_panel'] == "mednefits_credits") {
 					$wallet_class = new Wallet();
 					$update_wallet = $wallet_class->addWellnessCredits($user_id, $credits);
@@ -1990,20 +2019,20 @@ class PlanHelper
 						);
 
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
+					}
 
-						if($top_up_credits) {
-							// create top up data
-							$toTopUp = array(
-								'customer_id' 	=> $customer_id,
-								'credits'		=> $credits,
-								'member_id'		=> $user_id,
-								'created_at'	=> date('Y-m-d H:i:s'),
-								'updated_at'	=> date('Y-m-d H:i:s'),
-								'status'		=> 0
-							);
+					if($customer_spending['with_mednefits_credits'] == true) {
+						// create top up data
+						$toTopUp = array(
+							'customer_id' 	=> $customer_id,
+							'credits'		=> $credits,
+							'member_id'		=> $user_id,
+							'created_at'	=> date('Y-m-d H:i:s'),
+							'updated_at'	=> date('Y-m-d H:i:s'),
+							'status'		=> 0
+						);
 
-							DB::table('top_up_credits')->insert($toTopUp);
-						}
+						DB::table('top_up_credits')->insert($toTopUp);
 					}
 				}
 			}

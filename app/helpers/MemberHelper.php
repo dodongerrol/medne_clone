@@ -1114,7 +1114,7 @@ class MemberHelper
 			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 
 			if($type == "non_panel") {
-				if($spending['medical_non_panel_submission'] == false) {
+				if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
 					return true;
 				}
 			}
@@ -1125,7 +1125,7 @@ class MemberHelper
 			// check if account is active
 			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
 
-			if(($accountStatus != "active") && ($accountStatus != "login")) {
+			if($accountStatus == "expired" || $accountStatus == "deactivated") {
 				return true;
 			}
 
@@ -2624,7 +2624,7 @@ class MemberHelper
 	{
 		$today = date('Y-m-d');
 		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
-
+		$valid = false;
 		if(!$user_plan_history) {
 			return false;
 		}
@@ -2632,19 +2632,33 @@ class MemberHelper
 		$customer_id = PlanHelper::getCustomerId($member_id);
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$start = date('Y-m-d', strtotime($user_plan_history->date));
-
-		if($spending_type == "medical") {
+		// return ['start' => $start, 'medical_spending_end_date' => $spending->medical_spending_end_date, 'wellness_spending_end_date' => $spending->wellness_spending_end_date];
+		// if($spending_type == "medical") {
 			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
-		} else {
-			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		// } else {
+			// $end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		// }
+
+		if($spending->medical_benefits_coverage == "out_of_pocket") {
+			$start = date('Y-m-d', strtotime($spending->medical_spending_start_date));
+		}
+
+		if($spending->wellness_benefits_coverage == "out_of_pocket") {
+			$start = date('Y-m-d', strtotime($spending->wellness_spending_start_date));
 		}
 
 		$end = PlanHelper::endDate($end);
 		if($start <= $today && $end >= $today) {
-			return true;
+			$valid = true;
 		}
 		
-		return false;
+		$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		$end = PlanHelper::endDate($end);
+		if($start <= $today && $end >= $today) {
+			$valid = true;
+		}
+
+		return $valid;
 	}
 
 	public static function getMemberWalletStatus($member_id, $spending_type)
