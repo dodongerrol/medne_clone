@@ -228,7 +228,8 @@ app.directive('mednefitsCreditAccountDirective', [
               scope.hideLoading();
               if(response.data.status){
                 scope.isTopUpSuccess = true;
-                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData)
+                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
+                scope.getMednefitsCreditActivities();
               }else{
                 swal('Error!', response.data.message, 'error');
               }
