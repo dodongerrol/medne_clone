@@ -35,6 +35,7 @@
       "app/tests/TestCase.php",
       "app/helpers",
       "app/libraries",
+      "app/services",
       "public/twilio-php/Twilio",
       "app/helpers/EclaimFileUploadQueue.php"
     ]
