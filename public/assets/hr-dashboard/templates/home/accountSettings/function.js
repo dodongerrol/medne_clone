@@ -63,6 +63,7 @@ app.directive("accountSettingsDirective", [
         scope.unlinkData = {
           phone_code: ''
         }
+        scope.isChangedInput = false;
 
         scope.setPhoneCode = () => {
           alert('asdasds');
@@ -96,6 +97,10 @@ app.directive("accountSettingsDirective", [
           }
           
         };
+
+        scope.isChanged = function(){
+          scope.isChangedInput = true;
+        }
 
         scope.changeAdmin = () => {
           scope.presentModal(

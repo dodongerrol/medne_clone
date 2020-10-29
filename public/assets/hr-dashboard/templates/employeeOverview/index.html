@@ -287,7 +287,7 @@
                     <span class="bold-text">Entitlement:</span>
                     <span>
                       <span class="currency-type" ng-bind="list.spending_account.currency_type"></span> 
-                      <span ng-bind="list.spending_account.wellness.credits_allocation">1,000.00</span>
+                      <span ng-bind="list.spending_account.wellness.credits_allocation_wellness">1,000.00</span>
                     </span>
                   </div>
                   <div>
@@ -469,8 +469,8 @@
                     <i class="fa fa-angle-down"></i>
                   </div>
                   <div ng-if="permissionSelector" class="permission-selector-dp-wrapper location-department-container">
-                    <div ng-click="permissionSelectorData('locations')">Locations</div>
-                    <div ng-click="permissionSelectorData('departments')">Department</div>
+                    <div ng-disabled="locations_data.length == 0" ng-click="permissionSelectorData('locations')">Locations</div>
+                    <div ng-disabled="departments_data.length == 0" ng-click="permissionSelectorData('departments')">Department</div>
                   </div>
                 </div>
                 <div ng-if="showLocationSelector" class="choose-selector-container">
@@ -635,8 +635,8 @@
                     <i class="fa fa-angle-down"></i>
                   </div>
                   <div ng-if="permissionSelector" class="permission-selector-dp-wrapper location-department-container">
-                    <div ng-click="permissionSelectorData('locations')">Locations</div>
-                    <div ng-click="permissionSelectorData('departments')">Department</div>
+                    <div ng-disabled="locations_data.length == 0" ng-click="permissionSelectorData('locations')">Locations</div>
+                    <div ng-disabled="departments_data.length == 0" ng-click="permissionSelectorData('departments')">Department</div>
                   </div>
                 </div>
                 <div ng-if="showLocationSelector" class="choose-selector-container">

@@ -51,11 +51,11 @@
 												id="{{ transfer }}"
 												type="checkbox"
 												class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out m-0"
-												value="{{ transfer }}"
-												ng-click="$ctrl.attemptCheck($event)"
+												value="{{ transfer.item }}"
+												ng-click="$ctrl.attemptCheck($event, transfer)"
 											>
 											<p for="remember_me" class="block ml-1 text-sm mb-0 text-gray-900">
-												{{ transfer }}
+												{{ transfer.item }}
 											</p>
 										</div>
 									</div>
@@ -70,7 +70,31 @@
 												<button type="button"
 													class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
 													data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-													{{ $ctrl.states.form.selected_location_department }}
+													{{ $ctrl.states.form.selected_location_department || 'Select' }}
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+															class="w-4 text-gray-600" fill="currentColor">
+															<path fill-rule="evenodd"
+																	d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+																	clip-rule="evenodd" />
+													</svg>
+												</button>
+												<input ng-model="$ctrl.states.form.selected_location_department" class="hidden" required readonly>
+												<ul class="dropdown-menu">
+													<li ng-repeat="location_department in $ctrl.states.location_department_selector">
+														<a ng-click="$ctrl.setField('selected_location_department', location_department)"
+																class="flex items-center space-x-2">
+																{{ location_department }}
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<div>
+											<div class="btn-group dropup w-full">
+												<button type="button"
+													class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
+													data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													{{ $ctrl.states.form.selected_location_department || 'Select' }}
 													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
 															class="w-4 text-gray-600" fill="currentColor">
 															<path fill-rule="evenodd"
