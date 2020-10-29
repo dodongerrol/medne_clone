@@ -411,10 +411,13 @@ class SpendingHelper {
 							->whereIn('user_id', $ids)
 							->where('created_at', '>=', $start)
 							->where('created_at', '<=', $end)
-							->pluck('e_claim_id');
+							->lists('e_claim_id');
 
 			if(sizeof($trans) > 0) {
-				$transactions[] = $trans;
+                foreach($trans as $tran) {
+                    array_push($transactions, $tran);
+                }
+                
 			}
 		}
 		
