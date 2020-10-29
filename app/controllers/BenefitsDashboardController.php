@@ -5079,9 +5079,16 @@ const DEPENDENT_COLUMNS = [
 		
 		$business_information = new CorporateBusinessInformation;
 
+		$street_address = $input['street_address'];
+		$unit_number = $input['unit_number'];
+		$building_name = $input['building_name'];
+
+
+		$company_address = "{$street_address},{$unit_number},{$building_name}";
+
 		$data = array(
 			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
-			'company_address'		=> !empty($input['company_address']) ? $input['company_address'] : $check->company_address,
+			'company_address'		=> $company_address,
 			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
 		);
 
@@ -18156,9 +18163,15 @@ public function createHrLocation ()
 
 		$billing = new CorporateBillingContact;
 
+		$street_address = $input['street_address'];
+		$unit_number = $input['unit_number'];
+		$building_name = $input['building_name'];
+
+		$company_address = "{$street_address},{$unit_number},{$building_name}";
+
 		$data = array(
 			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
-			'billing_address'		=> !empty($input['billing_address']) ? $input['billing_address'] : $check->billing_address,
+			'billing_address'		=> $company_address,
 			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal,
 		);
 
