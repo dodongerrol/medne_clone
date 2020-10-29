@@ -182,8 +182,12 @@ class SpendingAccountController extends \BaseController {
 		$pendingInvoice = DB::table('spending_purchase_invoice')
 		->join('mednefits_credits', 'mednefits_credits.id', '=', 'spending_purchase_invoice.mednefits_credits_id')
 		->where('spending_purchase_invoice.customer_id', $customer_id)
-		->where('spending_purchase_invoice.payment_status', 0)
+		// ->where('spending_purchase_invoice.payment_status', 0)
 		->first();
+
+		if($pendingInvoice && (int)$pendingInvoice->payment_status == 1) {
+			$pendingInvoice = false;
+		}
 
 		if($input['type'] == "medical") {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'medical', true);
