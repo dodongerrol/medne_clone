@@ -1107,7 +1107,10 @@ class SpendingInvoiceLibrary
 		$total_pre_paid_spent = 0;
 
 		foreach($transactions as $key => $transaction) {
-			$e_claim = DB::table('e_claim')->where('e_claim_id', $transaction->e_claim_id)->where('status', 1)->first();
+			$e_claim = DB::table('e_claim')
+						->where('e_claim_id', $transaction->e_claim_id)
+						->where('status', 1)
+						->first();
 
 			if($e_claim) {
 				$spending_method = "post_paid";
@@ -1121,116 +1124,118 @@ class SpendingInvoiceLibrary
 						->where('where_spend', 'e_claim_transaction')
 						->where('id',  $e_claim->e_claim_id)
 						->first();
-				if($logs) {
-					$spending_method = $logs->spending_method;
-					$credits = $logs->credit;
-					$e_claim->amount = $logs->credit;
-					if($logs->spending_method == "post_paid") {
-						$total_post_paid_spent += $credits;
-						$with_post_paid = true;
+				if($logs && $logs->spending_method == "post_paid") {
+					if($logs) {
+						$spending_method = $logs->spending_method;
+						$credits = $logs->credit;
+						$e_claim->amount = $logs->credit;
+						if($logs->spending_method == "post_paid") {
+							$total_post_paid_spent += $credits;
+							$with_post_paid = true;
+						} else {
+							$total_pre_paid_spent += $credits;
+						}
 					} else {
-						$total_pre_paid_spent += $credits;
+						$credits = $e_claim->amount;
+						$e_claim->amount = $logs->credit;
 					}
-				} else {
-					$credits = $e_claim->amount;
-					$e_claim->amount = $logs->credit;
-				}
-
-				if($e_claim->spending_type == "medical") {
-					$total_medical += $credits;
-				} else {
-					$total_wellness += $credits;
-				}
-
-				$member = DB::table('user')->where('UserID', $e_claim->user_id)->first();
-
-				  // check user if it is spouse or dependent
-				$claim_member_type = "Employee";
-				$employee_name = $member->Name;
-				if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
-					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
-					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
-					$sub_account = ucwords($temp_account->Name);
-					$sub_account_type = $temp_sub->user_type;
-					$owner_id = $temp_sub->owner_id;
-					$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
-					$relationship = FALSE;
-					$bank_account_number = $temp_account->bank_account;
-					$bank_name = $temp_account->bank_name;
-					$bank_code = $temp_account->bank_code;
-					$bank_brh = $temp_account->bank_brh;
-					$claim_member_type = "Dependent";
-				} else {
-					$sub_account = FALSE;
-					$sub_account_type = FALSE;
-					$owner_id = $member->UserID;
-					$dependent_relationship = FALSE;
-					$bank_account_number = $member->bank_account;
-					$bank_name = $member->bank_name;
-					$bank_code = $member->bank_code;
-					$bank_brh = $member->bank_brh;
-				}
-
-				$id = str_pad($e_claim->e_claim_id, 6, "0", STR_PAD_LEFT);
-
-				if($e_claim->currency_type == "myr" && $e_claim->default_currency == "myr") {
-					$e_claim->default_currency = "MYR";
-				} else if($e_claim->default_currency == "myr"){
-					$e_claim->default_currency = "MYR";
-				} else {
-					$e_claim->default_currency = "SGD";
-				}
-
-				$temp_docs = DB::table('e_claim_docs')
-                      ->where('e_claim_id', $e_claim->e_claim_id)
-					  ->get();
-					  
-				foreach ($temp_docs as $key => $doc) {
-					if($doc->file_type == "pdf" || $doc->file_type == "xls" || $doc->file_type == "xlsx") {
-						$doc->file = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
-					} else if($doc->file_type == "image") {
-						$doc->file = $doc->doc_file;
+	
+					if($e_claim->spending_type == "medical") {
+						$total_medical += $credits;
+					} else {
+						$total_wellness += $credits;
 					}
+	
+					$member = DB::table('user')->where('UserID', $e_claim->user_id)->first();
+	
+					  // check user if it is spouse or dependent
+					$claim_member_type = "Employee";
+					$employee_name = $member->Name;
+					if($member->UserType == 5 && $member->access_type == 2 || $member->UserType == 5 && $member->access_type == 3) {
+						$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $member->UserID)->first();
+						$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
+						$sub_account = ucwords($temp_account->Name);
+						$sub_account_type = $temp_sub->user_type;
+						$owner_id = $temp_sub->owner_id;
+						$dependent_relationship = $temp_sub->relationship ? ucwords($temp_sub->relationship) : 'Dependent';
+						$relationship = FALSE;
+						$bank_account_number = $temp_account->bank_account;
+						$bank_name = $temp_account->bank_name;
+						$bank_code = $temp_account->bank_code;
+						$bank_brh = $temp_account->bank_brh;
+						$claim_member_type = "Dependent";
+					} else {
+						$sub_account = FALSE;
+						$sub_account_type = FALSE;
+						$owner_id = $member->UserID;
+						$dependent_relationship = FALSE;
+						$bank_account_number = $member->bank_account;
+						$bank_name = $member->bank_name;
+						$bank_code = $member->bank_code;
+						$bank_brh = $member->bank_brh;
+					}
+	
+					$id = str_pad($e_claim->e_claim_id, 6, "0", STR_PAD_LEFT);
+	
+					if($e_claim->currency_type == "myr" && $e_claim->default_currency == "myr") {
+						$e_claim->default_currency = "MYR";
+					} else if($e_claim->default_currency == "myr"){
+						$e_claim->default_currency = "MYR";
+					} else {
+						$e_claim->default_currency = "SGD";
+					}
+	
+					$temp_docs = DB::table('e_claim_docs')
+						  ->where('e_claim_id', $e_claim->e_claim_id)
+						  ->get();
+						  
+					foreach ($temp_docs as $key => $doc) {
+						if($doc->file_type == "pdf" || $doc->file_type == "xls" || $doc->file_type == "xlsx") {
+							$doc->file = 'https://s3-ap-southeast-1.amazonaws.com/mednefits/receipts/'.$doc->doc_file;
+						} else if($doc->file_type == "image") {
+							$doc->file = $doc->doc_file;
+						}
+					}
+	
+					$temp = array(
+						'status'            => $e_claim->status,
+						'status_text'       => 'Approved',
+						'claim_date'        => date('d F Y h:ia', strtotime($e_claim->created_at)),
+						'approved_date'        => date('d F Y', strtotime($e_claim->approved_date)),
+						'time'              => $e_claim->time,
+						'service'           => $e_claim->service,
+						'merchant'          => $e_claim->merchant,
+						'claim_amount'		=> $e_claim->claim_amount,
+						'amount'            => number_format($e_claim->amount, 2),
+						'member'            => ucwords($member->Name),
+						'employee_dependent_name' => $sub_account ? $sub_account : null,
+						'claim_member_type'       => $dependent_relationship ? 'DEPENDENT' : 'EMPLOYEE',
+						'type'              => 'E-Claim',
+						'transaction_id'    => 'MNF'.$id,
+						'visit_date'        => date('d F Y', strtotime($e_claim->date)).', '.$e_claim->time,
+						'owner_id'          => $owner_id,
+						'sub_account_type'  => $sub_account_type,
+						'sub_account'       => $sub_account,
+						'month'             => date('M', strtotime($e_claim->approved_date)),
+						'day'               => date('d', strtotime($e_claim->approved_date)),
+						'approved_time'              => date('h:ia', strtotime($e_claim->approved_date)),
+						'spending_type'     => $e_claim->spending_type,
+						'dependent_relationship'	=> $dependent_relationship,
+						'bank_account_number' => $bank_account_number,
+						'bank_name'			=> $bank_name,
+						'bank_code'			=> $bank_code,
+						'bank_brh'			=> $bank_brh,
+						'nric'				=> $member->NRIC,
+						'currency_type'		=> $e_claim->default_currency,
+						'email_address'		=> $member->Email,
+						'employee_name'		=> $employee_name,
+						'remarks'			=> $e_claim->rejected_reason,
+						'files'				=> $temp_docs,
+						'spending_method'	=> $spending_method
+					);
+	
+					array_push($transaction_data, $temp);
 				}
-
-				$temp = array(
-					'status'            => $e_claim->status,
-					'status_text'       => 'Approved',
-					'claim_date'        => date('d F Y h:ia', strtotime($e_claim->created_at)),
-					'approved_date'        => date('d F Y', strtotime($e_claim->approved_date)),
-					'time'              => $e_claim->time,
-					'service'           => $e_claim->service,
-					'merchant'          => $e_claim->merchant,
-					'claim_amount'		=> $e_claim->claim_amount,
-					'amount'            => number_format($e_claim->amount, 2),
-					'member'            => ucwords($member->Name),
-					'employee_dependent_name' => $sub_account ? $sub_account : null,
-					'claim_member_type'       => $dependent_relationship ? 'DEPENDENT' : 'EMPLOYEE',
-					'type'              => 'E-Claim',
-					'transaction_id'    => 'MNF'.$id,
-					'visit_date'        => date('d F Y', strtotime($e_claim->date)).', '.$e_claim->time,
-					'owner_id'          => $owner_id,
-					'sub_account_type'  => $sub_account_type,
-					'sub_account'       => $sub_account,
-					'month'             => date('M', strtotime($e_claim->approved_date)),
-					'day'               => date('d', strtotime($e_claim->approved_date)),
-					'approved_time'              => date('h:ia', strtotime($e_claim->approved_date)),
-					'spending_type'     => $e_claim->spending_type,
-					'dependent_relationship'	=> $dependent_relationship,
-					'bank_account_number' => $bank_account_number,
-					'bank_name'			=> $bank_name,
-					'bank_code'			=> $bank_code,
-					'bank_brh'			=> $bank_brh,
-					'nric'				=> $member->NRIC,
-					'currency_type'		=> $e_claim->default_currency,
-					'email_address'		=> $member->Email,
-					'employee_name'		=> $employee_name,
-					'remarks'			=> $e_claim->rejected_reason,
-					'files'				=> $temp_docs,
-					'spending_method'	=> $spending_method
-				);
-
-				array_push($transaction_data, $temp);
 			}
 		}
 
