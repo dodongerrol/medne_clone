@@ -573,10 +573,8 @@ class SpendingInvoiceController extends \BaseController {
 		$type = '';
 		if($input['type'] == 'spending') {
 			$pagination = [];
-			// $all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
-			$all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->get();
-			// $credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
-			$credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->orderBy('statement_date', 'desc')->paginate($limit);
+			$all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
+			$credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
 			// get spending settings status
 			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 			$spendingPurchasePayment = true;
