@@ -5493,26 +5493,30 @@ public function getHrActivity( )
 	// $temp_total_in_network_spent_format_number = array_sum(
 	// 	array_column($transaction_details, 'amount')
 	// );
-
+	
 	if($plan->account_type == "out_of_pocket") {
 		$total_spent = $total_cash_spent + $e_claim_spent;
 	}
 
+	$cash = array_pluck($transaction_details, 'cash');
+	$out_of_pocket_in_network_spent_format_number = sum($cash);
+
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
-		'total_balance'			=> $total_allocation - $total_spent,
+		// 'total_balance'			=> $total_allocation - $total_spent,
+		'total_balance' => $plan->account_type == "out_of_pocket" ? 0 : $total_allocation - $total_spent,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
 		'in_network_spent'  => number_format($in_network_spent + $total_lite_plan_consultation, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		'in_network_transactions' => $transaction_details,
 		'in_network_transactions_size' => sizeof($transaction_details),
-		'in_network_spending_format_number' => $in_network_spent,
+		'in_network_spending_format_number' => $plan->account_type == "out_of_pocket" ? $out_of_pocket_in_network_spent_format_number : $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,
 		'total_in_network_spent'    => number_format($in_network_spent + $total_lite_plan_consultation, 2),
 		// 'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
-		'total_in_network_spent_format_number' => number_format($temp_total_in_network_spent_format_number, 2),
+		'total_in_network_spent_format_number' => $plan->account_type == "out_of_pocket" ? $out_of_pocket_in_network_spent_format_number : $temp_total_in_network_spent_format_number,
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,

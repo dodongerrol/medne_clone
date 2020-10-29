@@ -86,3 +86,10 @@ if (!function_exists('validate_phone')) {
         return $result;
     }
 }
+
+if (!function_exists('sum')) {
+    function sum($values)
+    {
+        return array_sum($values);
+    }
+}
