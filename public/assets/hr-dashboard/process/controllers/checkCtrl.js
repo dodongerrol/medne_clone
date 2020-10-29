@@ -109,7 +109,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 	// }
 
 	vm._getLinkedAccountsWithCurrent_	=	function(){
-		var url = window.location.origin + `/hr/get/corporate_linked_account?limit=5&page=1&total_enrolled_employee_status=true&total_enrolled_dependent_status=true`;
+		var url = window.location.origin + `/hr/get/corporate_linked_account?limit=5&page=1&total_enrolled_employee_status=true&total_enrolled_dependent_status=true&except_current=enable`;
 		$http.get(url)
 		.success(function(response){
 			console.log(response);
