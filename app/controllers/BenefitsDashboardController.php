@@ -18100,16 +18100,16 @@ public function createHrLocation ()
 
 		$total_active_members = sizeof($corporate_members);
 
-		$address = explode(',', $business->company_address);
+		$final_address = explode(',', $business->company_address);
 
 		$data = array (
 			'customer_business_information_id'		=> $business->customer_business_information_id,
 			'company_name' 							=> $business->company_name,
 			'postal_code'							=> $business->postal_code,
 			'company_address'						=> $business->company_address,
-			'street_address'						=> $address[0] ?? null,
-			'unit_number'							=> $address[1] ?? null,
-			'building_name'							=> $address[2] ?? null,
+			'street_address'						=> $final_address[0] ?? null,
+			'unit_number'							=> $final_address[1] ?? null,
+			'building_name'							=> $final_address[2] ?? null,
 			'account_name'							=> $info->account_name,
 			'currency_type'							=> $info->currency_type,
 			'current_employees'						=> $total_active_members
