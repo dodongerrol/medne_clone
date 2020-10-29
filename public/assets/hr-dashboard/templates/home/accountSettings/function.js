@@ -40,6 +40,7 @@ app.directive("accountSettingsDirective", [
         scope.passwordData = {
           newPassword: "",
           confirmPassword: "",
+          currentPassword: "",
         };
         scope.global_passwordSuccess = false;
         scope.passwordCheck = false;
@@ -64,6 +65,8 @@ app.directive("accountSettingsDirective", [
           phone_code: ''
         }
         scope.isChangedInput = false;
+        scope.isPasswordInputChanged = false;
+        scope.updateHrData  = {};
 
         scope.setPhoneCode = () => {
           alert('asdasds');
@@ -101,6 +104,9 @@ app.directive("accountSettingsDirective", [
         scope.isChanged = function(){
           scope.isChangedInput = true;
         }
+        scope.isPasswordChanged = function(){
+          scope.isPasswordInputChanged = true;
+        }
 
         scope.changeAdmin = () => {
           scope.presentModal(
@@ -124,6 +130,7 @@ app.directive("accountSettingsDirective", [
           let params = {
             new_password: data.newPassword,
             confirm_password: data.confirmPassword,
+            current_password: data.currentPassword,
           };
 
           if (data.newPassword == data.confirmPassword) {
@@ -222,10 +229,43 @@ app.directive("accountSettingsDirective", [
         scope._editDetailsBtn_ = function (data) {
           console.log(data);
           scope.editHrSuccessfullyUpdated = false;
-          scope.initializeGeoCode();
+          scope.updateHrData  = {
+            email: data.email,
+            phone: data.phone,
+            full_name: data.full_name,
+            phone_code: data.phone_code,
+          };
+          
+          $("#edit_details").modal('show');
+
+          $timeout(function(){
+            scope.initializeGeoCode();
+          }, 300);
         };
 
+        scope.checkHrForm = function(data){
+          console.log(data);
+          if (data.phone_code == "+65") {
+            console.log(data.phone);
+            console.log(typeof data.phone[0]);
+            data.phone = data.phone.toString();
+            if((data.phone[0] != "8" && data.phone[0] != "9") || data.phone.length != 8) {
+							swal('Error!', 'Invalid mobile format. Please enter mobile in the format 8 digit number and starts with 8 or 9.', 'error');
+							return false;
+						}
+					}
+          if (data.phone_code == "+60") {
+            if(data.phone.length < 9 || data.phone.length > 10) {
+							swal('Error!', 'Invalid mobile format. Please enter mobile in the format of 9-10 digit number without the prefix “0”.', 'error');
+							return false;
+						}
+					}
+        }
+
         scope._updateHrDetails_ = function (data) {
+          if(scope.checkHrForm(data) == false){
+            return false;
+          }
           let params = {
             email: data.email,
             phone_number: data.phone,
@@ -652,55 +692,21 @@ app.directive("accountSettingsDirective", [
           var settings = {
             preferredCountries: [],
             separateDialCode: true,
-            initialCountry: "SG",
+            initialCountry: scope.updateHrData.phone_code == "+60" ? "SG" : "MY",
             autoPlaceholder: "off",
             utilsScript: "../assets/hr-dashboard/js/utils.js",
             onlyCountries: ["sg", "my"],
           };
 
-          var settings2 = {
-            preferredCountries: [],
-            separateDialCode: true,
-            initialCountry: "MY",
-            autoPlaceholder: "off",
-            utilsScript: "../assets/hr-dashboard/js/utils.js",
-            onlyCountries: ["sg", "my"],
-          };
+          var input = document.querySelector("#phone_number");
+          iti1 = intlTelInput(input, settings);
 
-          var settings3 = {
-            preferredCountries: [],
-            separateDialCode: true,
-            initialCountry: false,
-            autoPlaceholder: "off",
-            utilsScript: "../assets/hr-dashboard/js/utils.js",
-            onlyCountries: ["sg", "my"],
-          };
+          input.addEventListener("countrychange", function () {
+            console.log(iti1.getSelectedCountryData());
+            scope.updateHrData.phone_code = "+" + iti1.getSelectedCountryData().dialCode;
+            scope.isChangedInput = true;
+          });
 
-          if (scope.global_hrData.phone_code == "+65") {
-            var input = document.querySelector("#phone_number");
-            iti1 = intlTelInput(input, settings);
-
-            input.addEventListener("countrychange", function () {
-              scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
-            });
-          } else if (scope.global_hrData.phone_code == "+60") {
-            var input2 = document.querySelector("#phone_number");
-            iti1 = intlTelInput(input2, settings2);
-
-            input2.addEventListener("countrychange", function () {
-              scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
-            });
-          } else if (scope.global_hrData.phone_code == "+63" || scope.global_hrData.phone_code == "" || scope.global_hrData.phone_code == null) {
-            $(".iti__selected-dial-code").addClass("empty");
-            var input3 = document.querySelector("#phone_number");
-            iti1 = intlTelInput(input3, settings3);
-
-            input3.addEventListener("countrychange", function () {
-              scope.global_hrData.phone_code = iti1.getSelectedCountryData().dialCode;
-            });
-          }
-
-          
         };
 
         scope.spending_account_status = {};
@@ -811,6 +817,20 @@ app.directive("accountSettingsDirective", [
           });
         }
 
+        scope._switchAccount_	=	function(data){
+          console.log(data);
+          $http.get(window.location.origin + '/hr/login_company_linked?id=' + data.id + '&token=' + localStorage.getItem('token'))
+            .success(function(response){
+              console.log(response);
+              if(response.status){
+                window.localStorage.setItem('token', response.token);
+                window.location.href = window.location.origin + "/company-benefits-dashboard/";
+              }else{
+                swal('Error!', response.message, 'error');
+              }
+            });
+        }
+
         scope._updateLink_ = async function ( ) {
           let data = {
             id: scope.link_account_id,
@@ -864,6 +884,11 @@ app.directive("accountSettingsDirective", [
             $(".circle-loader").fadeOut();
           }, 100);
         };
+
+        $('.modal').on('hidden.bs.modal', function (e) {
+          scope.isChangedInput = false;
+          scope.isPasswordInputChanged = false;
+        })
 
         scope.onLoad = async function () {
           scope.getSpendingAcctStatus();

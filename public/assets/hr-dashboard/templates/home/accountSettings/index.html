@@ -19,7 +19,7 @@
               <span><span ng-bind="global_hrData.phone_code"></span><span ng-bind="global_hrData.phone">6587671541</span></span>
             </div>
             <div class="btn-edit-container">
-              <button ng-click="_editDetailsBtn_( global_hrData )" data-toggle="modal" data-target="#edit_details"
+              <button ng-click="_editDetailsBtn_( global_hrData )"
                 class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
             </div>
           </div>
@@ -39,32 +39,32 @@
     </div>
 
     <!-- Linked Accounts -->
-    <div class="mt-6">
-      <h4>Linked Account</h4>
-      <table class="table-auto w-full">
+    <div class="linked-accounts-wrapper mt-6">
+      <h4 class="mb-1">Linked Account</h4>
+      <table class="table-auto w-full linked-tbl">
         <thead class="border-0">
           <th class="font-semibold text-gray-900 px-4" ng-repeat="(index, value) in linkedAccountHeaders">
             {{ value }}
           </th>
         </thead>
-        <tbody ng-repeat="list in link_account_data.data">
+        <tbody>
           <!-- Replace with real values -->
-          <tr class="">
-            <td ng-bind="list.account_name" class="bg-white px-4 rounded-l-lg text-gray-900"> Medicloud </td>
-            <td ng-bind="list.company_id" class="bg-white px-4 text-gray-900"> 141 </td>
-            <td ng-bind="list.link_date" class="bg-white px-4 text-gray-900"> 28/02/2020 </td>
-            <td ng-bind="list.plan_type" class="bg-white px-4 text-gray-900"> Basic Plan (Post-paid) </td>
-            <td ng-bind="list.email" class="bg-white px-4 text-gray-900"> chris.teo@mednefits.com </td>
+          <tr ng-repeat="list in link_account_data.data" class="">
+            <td ng-bind="list.account_name" class="bg-white px-4 rounded-l-lg text-gray-900" ng-click="_switchAccount_(list)"> Medicloud </td>
+            <td ng-bind="list.company_id" class="bg-white px-4 text-gray-900" ng-click="_switchAccount_(list)"> 141 </td>
+            <td ng-bind="list.link_date" class="bg-white px-4 text-gray-900" ng-click="_switchAccount_(list)"> 28/02/2020 </td>
+            <td ng-bind="list.plan_type" class="bg-white px-4 text-gray-900" ng-click="_switchAccount_(list)"> Basic Plan (Post-paid) </td>
+            <td ng-bind="list.email" class="bg-white px-4 text-gray-900" ng-click="_switchAccount_(list)"> chris.teo@mednefits.com </td>
             <td class="bg-white px-4 rounded-r-lg text-gray-900">
               <div class="relative inline-block text-left unlink-action" x-data="{ open: false }">
-                <button class="ui-btn ui-btn-link-dark" ng-click="linkAction(list,$index)">
+                <button @click="open = true" class="ui-btn ui-btn-link-dark" ng-click="linkAction(list,$index)">
                   <svg viewBox="0 0 20 20" fill="currentColor" class="chevron-down w-6 h-6">
                     <path fill-rule="evenodd"
                       d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                       clip-rule="evenodd"></path>
                   </svg>
                 </button>
-                <div ng-if="list.isUnlinkShow" class="unlink-dp-wrapper">
+                <div x-show="open" @click.away="open = false" class="unlink-dp-wrapper">
                   <div ng-click="unlinkAccount( list )" data-toggle="modal">Unlink Account</div>
                 </div>
               </div>
@@ -373,24 +373,24 @@
             <div class="company-account-input-wrapper">
               <label>Full Name</label>
               <div class="custom-input-wrapper">
-                <input ng-model="global_hrData.full_name" type="text" ng-change="isChanged()">
+                <input ng-model="updateHrData.full_name" type="text" ng-change="isChanged()">
               </div>
             </div>
             <div class="company-account-input-wrapper">
               <label>Email</label>
               <div class="custom-input-wrapper">
-                <input ng-model="global_hrData.email" type="text" ng-change="isChanged()">
+                <input ng-model="updateHrData.email" type="text" ng-change="isChanged()">
               </div>
             </div>
             <div class="company-account-input-wrapper number">
               <label></span>Phone Number</label>
               <div>
                 <div class="custom-input-wrapper">
-                  <input ng-model="global_hrData.phone_code" type="tel" id="phone_number" ng-change="isChanged()">
+                  <input ng-model="updateHrData.phone_code" type="tel" id="phone_number" ng-change="isChanged()">
                   <i class="fa fa-angle-down"></i>
                 </div>
                 <div class="custom-input-wrapper">
-                  <input ng-model="global_hrData.phone" type="text" ng-change="isChanged()">
+                  <input ng-model="updateHrData.phone" type="text" ng-change="isChanged()">
                 </div>
               </div>
             </div>
@@ -404,7 +404,7 @@
           <div class="modal-footer">
             <button ng-if="!editHrSuccessfullyUpdated" data-dismiss="modal"
               class="btn-edit-cancel btn-close">Cancel</button>
-            <button ng-if="!editHrSuccessfullyUpdated" ng-disabled="!isChangedInput" ng-click="_updateHrDetails_( global_hrData )"
+            <button ng-if="!editHrSuccessfullyUpdated" ng-disabled="!isChangedInput" ng-click="_updateHrDetails_( updateHrData )"
               class="btn-update">Update</button>
             <button ng-if="editHrSuccessfullyUpdated" data-dismiss="modal"
               class="btn-edit-cancel btn-close">Close</button>
@@ -532,15 +532,21 @@
           <div class="modal-body">
             <div ng-if="!global_passwordSuccess">
               <div class="company-account-input-wrapper">
+                <label>Current Password</label>
+                <div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
+                  <input type="password" ng-model="passwordData.currentPassword" placeholder="Enter new password">
+                </div>
+              </div>
+              <div class="company-account-input-wrapper">
                 <label>New Password</label>
                 <div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
-                  <input type="text" ng-model="passwordData.newPassword" placeholder="Enter new password">
+                  <input type="password" ng-model="passwordData.newPassword" placeholder="Enter new password">
                 </div>
               </div>
               <div class="company-account-input-wrapper">
                 <label>Confirm Password</label>
                 <div class="custom-input-wrapper password-input" ng-class="{'password-border' :  passwordCheck }">
-                  <input type="text" ng-model="passwordData.confirmPassword" placeholder="Re-type new password">
+                  <input type="password" ng-model="passwordData.confirmPassword" placeholder="Re-type new password">
                 </div>
               </div>
               <div ng-if="passwordCheck" class="password-confirmation-text">
@@ -557,7 +563,7 @@
           <div class="modal-footer">
             <button ng-if="!global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel">Cancel</button>
             <button ng-click="_updatePassword_( passwordData )"
-              ng-disabled="passwordData.newPassword == '' && passwordData.confirmPassword == '' "
+              ng-disabled="passwordData.currentPassword == '' && passwordData.newPassword == '' && passwordData.confirmPassword == '' "
               ng-if="!global_passwordSuccess" class="btn-update">Update</button>
             <button ng-if="global_passwordSuccess" data-dismiss="modal" class="btn-edit-cancel btn-close">Close</button>
           </div>

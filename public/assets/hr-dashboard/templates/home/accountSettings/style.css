@@ -57,3 +57,34 @@
   color: #2E4057;
   font-family: 'Helvetica Light';
 }
+.linked-tbl{
+  border-spacing: 0 10px;
+  border-collapse: separate;
+}
+.linked-tbl tr th{
+  padding: 0;
+}
+.linked-tbl tr td{
+  background-color: #FFF;
+  padding: 5px 0;
+}
+.linked-tbl tr th,
+.linked-tbl tr td{
+  font-size: 14px;
+}
+.linked-tbl tr th:first-child,
+.linked-tbl tr td:first-child{
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  padding-left: 30px;
+}
+.linked-tbl tr th:last-child,
+.linked-tbl tr td:last-child{
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  padding-right: 30px;
+  text-align: center;
+}
+.linked-accounts-wrapper h4{
+  margin-bottom: 10px;
+}
