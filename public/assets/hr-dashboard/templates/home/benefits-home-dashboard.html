@@ -134,11 +134,11 @@
 						style="background-color: #fff; margin-bottom: 20px; height: auto;">
 							<div class="mednefits-header-box"> 
 								<!-- <h5 class="mednefits-header-title weight-700">Company Mednefits Credits</h5> -->
-								<h5 class="mednefits-header-title weight-700">Total Company Credits</h5>
+								<h5 class="mednefits-header-title weight-700">Total Company Allocation</h5>
 							</div>
 
 							<div class="home-spending-type-container">
-								<p class="weight-700" style="color: #333;">Spending Account</p>
+								<p class="weight-700" style="color: #333;">Spending Wallet</p>
 								<button class="btn btn-default btn-medical" ng-class="{'active' : spendingAccountType == 0}" ng-click="selectSpending(0)">Medical</button>
 								<button class="btn btn-default btn-wellness" ng-class="{'active' : spendingAccountType == 1}" ng-click="selectSpending(1)">Wellness</button>
 							</div>
@@ -163,7 +163,7 @@
 												<span class="currency-type" ng-bind="credits.currency">S$</span> <span ng-bind="credits.total_wellness_employee_allocated"></span>
 											</span>
 										</h1>
-										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">ALLOCATED</p>
+										<p class="no-margin credit-text" style="font-size: 12px;font-weight: 700;color: #666;">ALLOCATION</p>
 									</div>
 
 									<div class="col-md-12 credit-allocated-container" ng-if="credits.total_medical_employee_allocated == 'UNLIMITED'">

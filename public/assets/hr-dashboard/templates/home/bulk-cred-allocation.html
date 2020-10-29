@@ -12,12 +12,10 @@
 		
 		<div ng-if="spending_account_status.account_type == 'lite_plan' && (spending_account_status.medical_enabled == true) && (spending_account_status.wellness_enabled == true)" class="bulk-credit-tab-container">
 			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'medical'}" ng-click="selectSpendingTab('medical')">
-				Medical Spending Wallet
-				<!-- Medical Spending Account -->
+				Medical Wallet
 			</div>
 			<div class="tab-box" ng-class="{'active' : spendingTypeTabSelected == 'wellness'}" ng-click="selectSpendingTab('wellness')">
-				Wellness Spending Wallet
-				<!-- Wellness Spending Account -->
+				Wellness Wallet
 			</div>
 		</div>
 	
@@ -52,13 +50,13 @@
 													<th colspan="3" style="text-align: center; width: 666px;">Wellness</th>
 												</tr>
 												<tr>
-													<th style="width: 227px;">Current Entitlement</th>
-													<th style="width: 223px;">New Entitlement</th>
-													<th style="width: 215px;">Effective Date of<br>New Entitlement</th>
+													<th style="width: 227px;">Current Allocation</th>
+													<th style="width: 223px;">New Allocation</th>
+													<th style="width: 215px;">Effective Date of<br>New Allocation</th>
 
-													<th style="width: 227px;">Current Entitlement</th>
-													<th style="width: 223px;">New Entitlement</th>
-													<th style="width: 215px;">Effective Date of<br>New Entitlement</th>
+													<th style="width: 227px;">Current Allocation</th>
+													<th style="width: 223px;">New Allocation</th>
+													<th style="width: 215px;">Effective Date of<br>New Allocation</th>
 												</tr>
 												<!-- <tr>
 													<th style="width: 227px;">Current Allocation</th>
@@ -136,14 +134,14 @@
 									</div>
 									<div class="bulk-cred-footer-right">
 										<div class="total-number-container">
-											<span style="margin-right: 10px;">Company Medical Entitlement</span>
+											<span style="margin-right: 10px;">Company Medical Allocation</span>
 											<div style="width: 120px;" class="total-number-box grayed-out">
 												<span class="items" ng-bind="bulk_credit_values.total_company_medical_allocation | number: 2"></span>
 											</div>
 										</div>
 
 										<div class="total-number-container">
-											<span style="margin-right: 10px;">Company Wellness Entitlement</span>
+											<span style="margin-right: 10px;">Company Wellness Allocation</span>
 											<div style="width: 120px;" class="total-number-box grayed-out">
 												<span class="items" ng-bind="bulk_credit_values.total_company_wellness_allocation | number: 2"></span>
 											</div>
@@ -327,9 +325,9 @@
 													<th colspan="3" style="text-align: center; width: 666px;">{{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }}</th>
 												</tr>
 												<tr>
-													<th style="width: 227px;">Current Entitlement</th>
-													<th style="width: 223px;">New Entitlement</th>
-													<th style="width: 215px;">Effective Date of<br>New Entitlement</th>
+													<th style="width: 227px;">Current Allocation</th>
+													<th style="width: 223px;">New Allocation</th>
+													<th style="width: 215px;">Effective Date of<br>New Allocation</th>
 
 													<!-- <th style="width: 227px;">Current {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
 													<th style="width: 223px;">New {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }}</th>
@@ -393,11 +391,11 @@
 									<div class="bulk-cred-footer-right">
 										<div class="total-number-container">
 											<span style="margin-right: 10px;">
-												Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Entitlement
+												Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} Allocation
 												<!-- Total {{ spendingTypeTabSelected == 'medical' ? 'Medical' : 'Wellness' }} {{ (spendingTypeTabSelected == 'medical' && spending_account_status.medical_method == 'pre_paid') || (spendingTypeTabSelected == 'wellness' && spending_account_status.wellness_method == 'pre_paid') ? 'Allocated Credits': 'Allocation' }} -->
 												<br>
-												<span ng-if="spendingTypeTabSelected == 'medical'">{{ (spending_account_status.medical_method == 'pre_paid') ? '(Pre-paid)' : '(Post-paid)' }}</span>
-												<span ng-if="spendingTypeTabSelected == 'wellness'">{{ (spending_account_status.wellness_method == 'pre_paid') ? '(Pre-paid)' : '(Post-paid)' }}</span>
+												<!-- <span ng-if="spendingTypeTabSelected == 'medical'">{{ (spending_account_status.medical_method == 'pre_paid') ? '(Pre-paid)' : '(Post-paid)' }}</span>
+												<span ng-if="spendingTypeTabSelected == 'wellness'">{{ (spending_account_status.wellness_method == 'pre_paid') ? '(Pre-paid)' : '(Post-paid)' }}</span> -->
 											</span>
 											<div class="total-number-box grayed-out">
 												<span class="items" ng-bind="bulk_credit_values.total_allocated_credits | number: 2"></span>
@@ -451,9 +449,9 @@
 													<th colspan="3" style="text-align: center; width: 666px;">Wellness</th>
 												</tr>
 												<tr>
-													<th style="width: 227px;">Current Entitlement</th>
-													<th style="width: 223px;">New Entitlement</th>
-													<th style="width: 215px;">Effective Date of<br>New Entitlement</th>
+													<th style="width: 227px;">Current Allocation</th>
+													<th style="width: 223px;">New Allocation</th>
+													<th style="width: 215px;">Effective Date of<br>New Allocation</th>
 
 													<!-- <th style="width: 227px;">Current Allocation</th>
 													<th style="width: 223px;">New Allocation</th>
@@ -515,7 +513,7 @@
 									<div class="bulk-cred-footer-right">
 										<div class="total-number-container">
 											<span style="margin-right: 10px;">
-												Company Wellness Entitlement
+												Company Wellness Allocation
 												<!-- Company Wellness Allocation -->
 											</span>
 											<div class="total-number-box grayed-out">
@@ -569,9 +567,9 @@
 													<th colspan="3" style="text-align: center; width: 666px;">Wellness</th>
 												</tr>
 												<tr>
-													<th style="width: 227px;">Current Entitlement</th>
-													<th style="width: 223px;">New Entitlement</th>
-													<th style="width: 215px;">Effective Date of<br>New Entitlement</th>
+													<th style="width: 227px;">Current Allocation</th>
+													<th style="width: 223px;">New Allocation</th>
+													<th style="width: 215px;">Effective Date of<br>New Allocation</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -629,7 +627,7 @@
 									<div class="bulk-cred-footer-right">
 										<div class="total-number-container">
 											<span style="margin-right: 10px;">
-												Company Wellness Entitlement
+												Company Wellness Allocation
 												<!-- Company Wellness Allocation -->
 											</span>
 											<div class="total-number-box grayed-out">
