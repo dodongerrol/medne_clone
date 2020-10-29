@@ -75,7 +75,7 @@
 						</div>
 					</div>
 
-					<div @click="showMoreAccounts = true" class="more-linked">
+					<div ng-if="navCtr.linkedAccountsArr.total_data > 5" @click="showMoreAccounts = true" class="more-linked">
 						<span>More linked account <i class="fa fa-angle-right"></i></span>
 					</div>
 				</div>

@@ -122,7 +122,7 @@ login.directive('loginSection', [
 				}
 				scope.checkLinkedAccounts = async function () {
 					console.log(scope.searchAccountText);
-					var url = serverUrl.url + `/hr/get/corporate_linked_account?limit=${scope.perPage}&page=${scope.pageActive}&total_enrolled_employee_status=true&total_enrolled_dependent_status=true`;
+					var url = serverUrl.url + `/hr/get/corporate_linked_account?limit=${scope.perPage}&page=${scope.pageActive}&total_enrolled_employee_status=true&total_enrolled_dependent_status=true&except_current=enable`;
 					if(scope.searchAccountText != ''){
 						url += `&search=${scope.searchAccountText}`;
 					}

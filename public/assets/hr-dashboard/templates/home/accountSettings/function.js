@@ -138,6 +138,11 @@ app.directive("accountSettingsDirective", [
             hrSettings.updateHrPassword(params).then(function (response) {
               if (response.status) {
                 scope.global_passwordSuccess = true;
+                scope.passwordData = {
+                  newPassword: "",
+                  confirmPassword: "",
+                  currentPassword: "",
+                };
               }
               scope.hideLoading();
             });
@@ -790,7 +795,8 @@ app.directive("accountSettingsDirective", [
             scope.unlinkData = {
               phone_code: '65',
               hr_id: data.hr_id,
-              customer_id: data.company_id
+              customer_id: data.company_id,
+              account_name: data.account_name
             }
             await scope.initializeUnlinkCountryCode();
           } else {
