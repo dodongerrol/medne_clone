@@ -351,3 +351,8 @@
   font-style: italic;
   text-align: right;
 }
+
+.linked-scroll-wrapper{
+  max-height: 400px;
+  overflow-y: auto;
+}
