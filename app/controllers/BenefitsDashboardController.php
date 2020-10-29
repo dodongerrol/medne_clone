@@ -16387,7 +16387,7 @@ const DEPENDENT_COLUMNS = [
 					'fullname'			=> $customer->first_name.' '.$customer->last_name,
 					// 'email'				=> $customer->work_email,
 					'phone_number'		=> $customer->phone,
-					'phone_code'		=> $hr->phone_code
+					'phone_code'		=> "+65"
 				];
 
 				DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr->hr_dashboard_id)->update($hr_acount_details);
