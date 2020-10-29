@@ -5079,16 +5079,16 @@ const DEPENDENT_COLUMNS = [
 		
 		$business_information = new CorporateBusinessInformation;
 
-		$street_address = $input['street_address'];
+		$company_address = $input['company_address'];
 		$unit_number = $input['unit_number'];
 		$building_name = $input['building_name'];
 
 
-		$company_address = "{$street_address},{$unit_number},{$building_name}";
+		$final_address = "{$street_address},{$unit_number},{$building_name}";
 
 		$data = array(
 			'company_name'			=> !empty($input['company_name']) ? $input['company_name'] : $check->company_name,
-			'company_address'		=> $company_address,
+			'company_address'		=> $final_address,
 			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
 		);
 
