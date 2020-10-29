@@ -1048,7 +1048,7 @@ class SpendingAccountController extends \BaseController {
 			'mednefits_credits_id'	=> $mednefitsDataResult,
 			'customer_id'			=> $customer_id,
 			'credit'				=> $input['purchase_credits'],
-			'type'					=> 'added_purchase_credits',
+			'type'					=> 'added_purchase_credits_top_up',
 			'spending_type'			=> 'all',
 			'currency_type'			=> $customer->currency_type,
 			'created_at'				=> date('Y-m-d H:i:s'),
@@ -1057,7 +1057,7 @@ class SpendingAccountController extends \BaseController {
 
 		Db::table('spending_account_activity')->insert($spendingAccountActivityData);
 		$spendingAccountActivityData['credit'] = $input['bonus_credits'];
-		$spendingAccountActivityData['type'] = 'added_bonus_credits';
+		$spendingAccountActivityData['type'] = 'added_bonus_credits_top_up';
 		Db::table('spending_account_activity')->insert($spendingAccountActivityData);
 	
 		// create spending invoice purchase and reuse this one
