@@ -460,3 +460,9 @@ button:disabled{
   pointer-events: none;
   opacity: 0.2;
 }
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

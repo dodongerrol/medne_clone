@@ -387,6 +387,8 @@ app.directive("employeeOverviewDirective", [
         scope.selectTransferBtn = function(data){
           console.log(data);
           scope.selected_employee = data;
+          scope.locationList = scope.locationList;
+          scope.departmentList = scope.departmentList;
 
           $timeout(function(){
             $("#transfer-employee-btn").trigger('click');
