@@ -10572,11 +10572,11 @@ const DEPENDENT_COLUMNS = [
         $admin_id = Session::get('admin-session-id');
         $hr_id = $session->hr_dashboard_id;
 
-        // $checkPassword = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $session->hr_dashboard_id)->where('password', md5($input['current_password']))->count();
+        $checkPassword = DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $session->hr_dashboard_id)->where('password', md5($input['current_password']))->count();
 
-        // if($checkPassword == 0) {
-        //     return array('status' => FALSE, 'message' => 'Current Password is invalid.');
-        // }
+        if($checkPassword == 0) {
+            return array('status' => FALSE, 'message' => 'Current Password is invalid.');
+        }
 
 		$result = \HRDashboard::where('hr_dashboard_id', $session->hr_dashboard_id)->update(['password' => md5($input['new_password']), 'password' => md5($input['confirm_password'])]);
 		
@@ -18160,7 +18160,7 @@ public function createHrLocation ()
 			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
 			'billing_address'		=> !empty($input['billing_address']) ? $input['billing_address'] : $check->billing_address,
 			'street_address'		=> !empty($input['street_address']) ? $input['street_address'] : $check->street_address,
-			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
+			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal,
 			'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
 			'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 		);
@@ -18193,6 +18193,7 @@ public function createHrLocation ()
 		$data = array (
 			'customer_billing_contact_id'			=> $billing_info->customer_billing_contact_id,
 			'billing_name' 							=> $billing_info->billing_name,
+			'postal_code'							=> $billing_info->postal,
 			'billing_address'						=> $billing_info->billing_address,
 			'street_address'						=> $address[0] ?? null,
 			'unit_number'							=> $address[1] ?? null,
