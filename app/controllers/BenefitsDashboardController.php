@@ -17687,8 +17687,8 @@ public function createHrLocation ()
 				'business_address'		=> $input['business_address'],
 				'country'				=> $input['country'],
 				'postal_code'			=> $input['postal_code'],
-				'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : null,
-				'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : null,
+				// 'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : null,
+				// 'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : null,
 			);
 			\CorporateHrLocation::create($data);
 		} 
