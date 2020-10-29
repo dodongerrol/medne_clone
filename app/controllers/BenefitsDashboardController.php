@@ -16387,7 +16387,7 @@ const DEPENDENT_COLUMNS = [
 					'fullname'			=> $customer->first_name.' '.$customer->last_name,
 					// 'email'				=> $customer->work_email,
 					'phone_number'		=> $customer->phone,
-					'phone_code'		=> "+65"
+					'phone_code'		=> $hr->phone_code
 				];
 
 				DB::table('customer_hr_dashboard')->where('hr_dashboard_id', $hr->hr_dashboard_id)->update($hr_acount_details);
@@ -18163,6 +18163,10 @@ public function createHrLocation ()
 		$data = array(
 			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
 			'billing_address'		=> !empty($input['billing_address']) ? $input['billing_address'] : $check->billing_address,
+			'street_address'		=> !empty($input['street_address']) ? $input['street_address'] : $check->street_address,
+			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal_code,
+			'unit_number'			=> !empty($input['unit_number']) ? $input['unit_number'] : $check->unit_number,
+			'building_name'			=> !empty($input['building_name']) ? $input['building_name'] : $check->building_name,
 		);
 
 		$result = $billing
@@ -18195,8 +18199,8 @@ public function createHrLocation ()
 			'billing_name' 							=> $billing_info->billing_name,
 			'billing_address'						=> $billing_info->billing_address,
 			'street_address'						=> $address[0] ?? null,
-			'unit'									=> $address[1] ?? null,
-			'building'								=> $address[2] ?? null,
+			'unit_number'							=> $address[1] ?? null,
+			'building_name'							=> $address[2] ?? null,
 			'currency_type'							=> $customer->currency_type
 		);
 
