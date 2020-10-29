@@ -394,3 +394,8 @@
   background-color: #0392CF;
   pointer-events: initial;
 }
+
+.permission-selector-dp-wrapper >div[disabled] {
+  pointer-events: none;
+  opacity: 0.2;
+}

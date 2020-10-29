@@ -629,7 +629,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   }
   
   hrFactory.searchEmployee = function ( search ) {
-    return $http.post( serverUrl.url + "/hr/add_employee_admin?",search );
+    return $http.get( serverUrl.url + "/hr/employee_lists?search=" + search );
   }
   
   hrFactory.updateUnlinkAccount = function ( data ) {

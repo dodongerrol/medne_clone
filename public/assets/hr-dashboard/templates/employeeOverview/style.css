@@ -456,3 +456,7 @@ button:disabled{
 .administrator-modal-container.employee-overview .emp-name-input-wrapper.emp-overview-employee-input input {
   background-color: #F2F2F2;
 }
+.permission-selector-dp-wrapper >div[disabled] {
+  pointer-events: none;
+  opacity: 0.2;
+}

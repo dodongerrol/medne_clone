@@ -22,6 +22,7 @@ app.directive("administratorsDirective", [
         scope.showLocationSelector = false;
         scope.showEmployeeList = false;
         scope.isShowChangeAdmin = false;
+        scope.add_admin_data = {};
       
         scope.adminPermission = function () {
           console.log('test');
@@ -256,9 +257,11 @@ app.directive("administratorsDirective", [
           scope.chooseSelectorLocation = false;
           scope.activeAdminBtn = false;
           scope.isEmployeePending = false;
-
+          scope.isEmployeeActive = false;
+          
           scope.selected_location_data = [];
           scope.selected_department_data = [];
+          
 
           if ( scope.get_permissions_data.create_remove_edit_admin_unlink_account == 1 ) {
             $('#add-administrator-modal').modal('show');
@@ -274,6 +277,10 @@ app.directive("administratorsDirective", [
             $('#permission-modal').modal('show');
             $('#add-administrator-modal').modal('hide');
           }
+
+          console.log( scope.add_admin_data.employee_name );
+          console.log( scope.activeAdminBtn );
+          console.log( scope.isEmployeePending );
         }
         
 
@@ -395,12 +402,14 @@ app.directive("administratorsDirective", [
         scope.getEmployeeName = function () {
           scope.showLoading();
           hrSettings.fetchEmployeeList().then(function (response) {
+            console.log(response);
             scope.employee_data = response.data.data;
-            // console.log(scope.employee_data);
+            console.log(scope.employee_data);
             scope.hideLoading();
           });
         }
         scope.employeeNameSelector = async function ( data ) {
+          console.log( data );
           scope.add_admin_data.employee_id = data.user_id;
           scope.add_admin_data.employee_name = data.Name;
           scope.showEmployeeList = false;
@@ -547,11 +556,18 @@ app.directive("administratorsDirective", [
           });
         }
         scope.activeAdminBtn = false;
+        scope.editActiveAdminBtn = false;
         scope.changeBtnToActive = function () {
-          scope.activeAdminBtn = true;
-          console.log( scope.activeAdminBtn );
+          if ( scope.add_admin_data.employee_name != '' && scope.isEmployeePending == false ) {
+            scope.activeAdminBtn = true;
+            console.log( scope.activeAdminBtn );
+          }
+        }
+        scope.editChangeBtnActive = function () {
+          scope.editActiveAdminBtn = true;
         }
         scope.isEmployeePending = false;
+        scope.isEmployeeActive = false;
         scope.checkEmployeeName = async function () {
           scope.showLoading();
           await hrSettings.validateEmployeeName( scope.employee_user_id )
@@ -560,18 +576,26 @@ app.directive("administratorsDirective", [
               scope.validate_data = response.data;
               if ( response.data.status == false ) {
                 scope.isEmployeePending = true;
-                console.log(scope.isEmployeePending);
+                scope.isEmployeeActive = false;
+                console.log(scope.isEmployeePending,'pending');
+                console.log( scope.isEmployeeActive );
+                console.log( scope.activeAdminBtn )
                 scope.hideLoading();
               } else {
                 scope.isEmployeePending = false;
+                scope.isEmployeeActive = true;
+                console.log( scope.isEmployeeActive );
+                console.log( scope.activeAdminBtn )
                 scope.hideLoading();
               }
           });
         }
         scope.checkSearchInput = function ( data ) {
+          // scope.activeAdminBtn = false;
           if ( data == '' ) {
             scope.activeAdminBtn = false;
-          }
+            scope.isEmployeeActive = false;
+          } 
         }
         // scope.isSearchEmpty = false;
         scope.searchEmployeeName = async function ( input ) {
@@ -579,24 +603,24 @@ app.directive("administratorsDirective", [
           console.log(scope.isEmployeePending)
           if ( input ) {
             console.log(input);
-            let data = {
-              search: input,
-            }
+            // let data = {
+            //   search: input,
+            // }
+            let data = input;
             scope.showLoading();
             await hrSettings.searchEmployee( data )
               .then( function (response) {
                 console.log(response);
-                scope.employee_data = response.data;
+                scope.employee_data = response.data.data;
                 scope.showEmployeeList = true;
                 scope.activeAdminBtn = false;
+                scope.isEmployeeActive = false;
                 scope.hideLoading();
             });
           } else {
             scope.removeEmployeeSearch();
             scope.showEmployeeList = false;
-            scope.isEmployeePending = false;
-
-            
+            scope.isEmployeePending = false;      
           }
         }
         scope.removeEmployeeSearch = function () {
