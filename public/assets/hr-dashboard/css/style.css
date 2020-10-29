@@ -8959,7 +8959,7 @@ span.dropdown-entitlement.disabled {
 }
 
 .new_spent, .new_breakDown {
-  font-family: Helvetica Neue !important;
+  /* font-family: Helvetica Neue !important; */
   position: relative;
 }
 

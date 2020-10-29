@@ -106,8 +106,13 @@ app.directive('mednefitsCreditAccountDirective', [
                 scope.hideLoading();
               } else {
                 scope.isPrepaidCreditsActivated = response.data.status;
+                scope.mednefitsCreditsData = {
+                  currency_type : localStorage.getItem('currency_type').toUpperCase()
+                }
                 scope.hideLoading();
               }
+
+
              
             })
         }
@@ -116,7 +121,7 @@ app.directive('mednefitsCreditAccountDirective', [
           scope.showLoading();
           await hrSettings.fetchMednefitsActivitiesData( scope.currentTermStartDate, scope.currentTermEndDate, scope.page, scope.per_page )
             .then(function(response){
-              // console.log(response);
+              console.log(response);
               scope.hideLoading();
               scope.mednefitsActivitiesData = response.data.data.data;
               scope.spending_activity = response.data.data
@@ -224,7 +229,8 @@ app.directive('mednefitsCreditAccountDirective', [
               scope.hideLoading();
               if(response.data.status){
                 scope.isTopUpSuccess = true;
-                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData)
+                scope.getMednefitsCreditAccount(scope.defaultDateTerms,scope.planStatusData);
+                scope.getMednefitsCreditActivities();
               }else{
                 swal('Error!', response.data.message, 'error');
               }

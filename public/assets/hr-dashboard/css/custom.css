@@ -159,7 +159,12 @@
 .font-medium{
 }
 
+.font-regular{
+    font-family: 'Helvetica Medium';
+}
+
 .font-medium2{
+    font-family: 'Helvetica Medium';
 }
 
 .font-boldest{

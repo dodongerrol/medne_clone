@@ -1362,7 +1362,7 @@ return Response::json($returnObject);
             $customer_id = PlanHelper::getCustomerId($user_id);
             $wallet_data = array(
               'spending_type'             => $spending_type,
-              'balance'                   => $customer_active_plan->account_type == "out_of_network" ? number_format($out_of_pocket_spent, 2) : $balance,
+              'balance'                   => $balance,
               'in_network_credits_spent'  => number_format($in_network_spent, 2),
               'e_claim_credits_spent'     => number_format($e_claim_spent, 2),
               'e_claim_transactions'      => $e_claim,
@@ -1924,7 +1924,8 @@ public function getEcardDetails( )
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->data = $e_card->newEcardDetails($findUserID);
-                    // return $e_card->newEcardDetails($findUserID);
+    DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
+    // return $e_card->newEcardDetails($findUserID);
     if($returnObject->data == 0) {
      $returnObject->status = FALSE;
      $returnObject->message = 'User does not have a package plan.';
@@ -5578,16 +5579,6 @@ public function createEclaim( )
     }
   }
 
-  // // check if enable to access feature
-  // $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
-
-  // if($transaction_access)	{
-  //   $returnObject->status = FALSE;
-  //   $returnObject->head_message = 'Non-Panel Error';
-  //   $returnObject->message = 'Non-Panel function is disabled for your company.';
-  //   return Response::json($returnObject);
-  // }
-
   $input_amount = 0;
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
     $input_amount = trim($input['amount']);
@@ -6655,7 +6646,7 @@ public function payCreditsNew( )
           $user_id = StringHelper::getUserId($findUserID);
           $customer_id = PlanHelper::getCustomerId($user_id);
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
-          $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+          $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
           $user_type = PlanHelper::getUserAccountType($findUserID);
 
           if($type == "spending") {
@@ -6760,16 +6751,7 @@ public function payCreditsNew( )
               $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
-
-            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-            //   $returnObject->status = FALSE;
-            //   $returnObject->status_type = 'without_e_claim';
-            //   $returnObject->head_message = 'E-Claim Unavailable';
-            //   $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
-            //   return Response::json($returnObject);
-            // }
-
+            
             if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
               if($spending['wellness_enabled'] == false) {
                 $returnObject->status = FALSE;
@@ -6782,16 +6764,16 @@ public function payCreditsNew( )
             }
 
             // check if e-claim platform is enable
-            $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+            // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-            if($customer && (int)$customer->access_e_claim == 0) {
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-Claim Unavailable';
-              $returnObject->message = 'The E-Claim function has been disabled for your company.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
-              return Response::json($returnObject);
-            }
+            // if($customer && (int)$customer->access_e_claim == 0) {
+            //   $returnObject->status = FALSE;
+            //   $returnObject->status_type = 'without_e_claim';
+            //   $returnObject->head_message = 'E-Claim Unavailable';
+            //   $returnObject->message = 'The E-Claim function has been disabled for your company.';
+            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //   return Response::json($returnObject);
+            // }
 
             // check for member transaction
             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
@@ -6831,7 +6813,7 @@ public function payCreditsNew( )
               }
             }
 
-            if($customer_active_plan->account_type == "out_of_pocket")	{
+            if($customer_active_plan->account_type == "out_of_pocket" && $spending['medical_benefits_coverage'] == "out_of_pocket" && $spending['wellness_benefits_coverage'] == "out_of_pocket")	{
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
               $returnObject->head_message = 'E-Claim Unavailable ';
@@ -6842,7 +6824,6 @@ public function payCreditsNew( )
 
             // check member wallet spending validity
             $validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
-
             if(!$validity) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';

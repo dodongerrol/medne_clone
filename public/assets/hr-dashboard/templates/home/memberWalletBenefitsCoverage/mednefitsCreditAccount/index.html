@@ -157,14 +157,14 @@
       <div ng-if="mednefitsCreditsData.payment_status">
         <div>Prepaid Credits is currently used in:</div>
         <div>
-          <div ng-if="account_details.account_type != 'enterprise_plan'" class="wallet-container medical-wallet-container display-flex">
+          <div ng-if="medicalWalletData.benefits_coverage == 'lite_plan' && (medicalWalletData.panel_payment_method == 'mednefits_credits' || medical_wallet_details.non_panel_payment_method == 'mednefits_credits')" class="wallet-container medical-wallet-container display-flex">
             <div class="member-bold-text">Medical Wallet:</div>
             <div class="display-flex wallet-panel-container">
               <div ng-if="medicalWalletData.panel_payment_method">Mednefits Panel</div>
-              <div ng-if="medicalWalletData.non_panel_payment_method">Non Panel</div>
+              <div ng-if="medicalWalletData.non_panel_reimbursement && medicalWalletData.non_panel_payment_method">Non Panel</div>
             </div>
           </div>
-          <div class="wallet-container wellness-wallet-container display-flex">
+          <div ng-if="wellnessWalletData.non_panel_payment_method == 'mednefits_credits'" class="wallet-container wellness-wallet-container display-flex">
             <div class="member-bold-text">Wellness Wallet:</div>
             <div>
               <div ng-if="wellnessWalletData.non_panel_payment_method">Non Panel</div>
@@ -189,8 +189,7 @@
                   <span ng-bind="formatTableDate(list.created_at)">01 Jan 2020</span>
                 </td>
                 <td>
-                  <span ng-if="list.type == 'added_bonus_credits'">Bonus Credits</span>
-                  <span ng-if="list.type == 'added_purchase_credits'">Purchased Credits</span>
+                  <span ng-bind="list.label">Bonus Credits</span>
                 </td>
                 <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td>
               </tr>
@@ -205,12 +204,7 @@
                     <span>Prev</span>
                   </span>
                   <div class="pages-list">
-                      
-                    <!-- <span class="page-num active">1</span>	 -->
-                    <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
-
-                    <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
-                    
+                    <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page}">1</span>
                   </div>
                   <span ng-click="_nextPageList_('activity')" class="prev-next-container">  
                     <span>Next</span>
@@ -219,8 +213,7 @@
                 </div>
               </div>
               <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
-              <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
-                <span><span>10</span> per page</span>
+                <span><span ng-bind="per_page">10</span> per page</span>
                 <span>  
                   <i class="fa fa-caret-down"></i>
                 </span>

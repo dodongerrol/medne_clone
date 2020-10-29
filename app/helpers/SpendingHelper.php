@@ -267,6 +267,166 @@ class SpendingHelper {
             return ['enable' => true];
         }
     }
+
+    public static function checkTotalCreditsNonPanelTransactions($customer_id, $start, $end, $plan_method)
+	{
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
+		$total_transactions = null;
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+		$credits = 0;
+
+		foreach ($corporate_members as $key => $member) {
+			$ids = \StringHelper::getSubAccountsID($member->user_id);
+
+			if(sizeof($ids) > 0) {
+				$total_transactions = DB::table('e_claim')
+										->whereIn('user_id', $ids)
+										->where('created_at', '>=', $start)
+										->where('created_at', '<=', $end)
+										->where('status', 1)
+										->orderBy('created_at', 'desc')
+										->get();
+				
+				foreach($total_transactions as $key => $e_claim) {
+					if($e_claim->spending_type == "medical") {
+						$table_wallet_history = 'wallet_history';
+					} else {
+						$table_wallet_history = 'wellness_wallet_history';
+					}
+		
+					$logs = DB::table($table_wallet_history)
+							->where('where_spend', 'e_claim_transaction')
+							->where('id',  $e_claim->e_claim_id)
+							->first();
+					if($logs) {
+						$credits += $logs->credit;
+					} else {
+						$credits += $res->amount;
+					}
+				}
+			}
+		}
+
+		return ['credits' => $credits, 'total_consultation' => 0, 'transactions' => []];
+    }
+    
+    public static function createNonPanelInvoice($customer_id, $start, $end, $plan_method)
+	{
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$business_contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
+		$billing_contact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $customer_id)->first();
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+		$total_e_claim_amount = 0;
+		$total_in_network_amount = 0;
+		$transactions = [];
+
+		foreach ($corporate_members as $key => $member) {
+			$ids = \StringHelper::getSubAccountsID($member->user_id);
+
+			$trans = DB::table('e_claim')
+							->where('status', 1)
+							->whereIn('user_id', $ids)
+							->where('created_at', '>=', $start)
+							->where('created_at', '<=', $end)
+							->orderBy('created_at', 'desc')
+							->pluck('e_claim_id');
+			if(sizeof($trans) > 0) {
+				$transactions[] = $trans;
+			}
+		}
+		
+		$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
+		$number = \InvoiceLibrary::getInvoiceNuber('company_credits_statement', 3);
+		$spending_invoice_day = $customer->spending_default_invoice_day;
+		$day = date('t', strtotime('+1 month', strtotime($start)));
+		// return $day;
+		if((int)$spending_invoice_day == 31) {
+			if($customer->invoice_step == "before") {
+				if((int)$spending_invoice_day > (int)$day) {
+					$statement_date = date('Y-m-'.$day, strtotime('-1 month', strtotime($start)));
+				} else {
+					$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('-1 month', strtotime($start)));
+				}
+			} else {
+				if((int)$spending_invoice_day > (int)$day) {
+					$statement_date = date('Y-m-'.$day, strtotime('+1 month', strtotime($start)));
+				} else {
+					$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+				}
+			}
+		} else {
+			$statement_date = date('Y-m-'.$spending_invoice_day, strtotime('+1 month', strtotime($start)));
+		}
+
+		$statement_due = date('Y-m-d', strtotime('+15 days', strtotime($statement_date)));
+		$statement_data = array(
+			'statement_customer_id'     => $customer_id,
+			'statement_number'          => $number,
+			'statement_date'            => date('Y-m-d', strtotime($statement_date)),
+			'statement_due'             => date('Y-m-d', strtotime($statement_due)),
+			'statement_start_date'      => $start,
+			'statement_end_date'        => $end,
+			'statement_company_name'    => $company_details->company_name,
+			'statement_company_address'    => $company_details->company_address,
+			'statement_contact_name'    => $billing_contact->first_name.' '.$billing_contact->last_name,
+			'statement_contact_number'  => $billing_contact->phone,
+			'statement_contact_email'   => $billing_contact->billing_email,
+			'statement_in_network_amount'   => $total_in_network_amount,
+			'statement_e_claim_amount'       => $total_e_claim_amount,
+			'currency_type'					=> $customer->currency_type,
+			'type'						=> 'non_panel'
+		);
+
+		// create statement
+		$statement_result = CompanyCreditsStatement::create($statement_data);
+		$statement_id = $statement_result->id;
+		foreach ($transactions as $key => $trans) {
+			$check_transaction = DB::table('statement_e_claim_transactions')->where('e_claim_id', $trans)->first();
+
+			if(!$check_transaction) {
+				// insert to spending invoice transaction
+				DB::table('statement_e_claim_transactions')->insert(['statement_id' => $statement_id, 'e_claim_id' => $trans, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+			}
+		}
+
+		return $statement_result;
+    }
+    
+    public static function checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $invoice_id, $plan_method)
+	{
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
+		$lite_plan = false;
+		$transactions = [];
+
+		foreach ($corporate_members as $key => $member) {
+			$ids = \StringHelper::getSubAccountsID($member->user_id);
+
+			$trans = DB::table('e_claim')
+							->where('status', 1)
+							->whereIn('user_id', $ids)
+							->where('created_at', '>=', $start)
+							->where('created_at', '<=', $end)
+							->pluck('e_claim_id');
+
+			if(sizeof($trans) > 0) {
+				$transactions[] = $trans;
+			}
+		}
+		
+		foreach ($transactions as $key => $trans) {
+			$check_transaction = DB::table('statement_e_claim_transactions')->where('e_claim_id', $trans)->first();
+
+			if(!$check_transaction) {
+				// insert to spending invoice transaction
+				DB::table('statement_e_claim_transactions')->insert(['statement_id' => $invoice_id, 'e_claim_id' => $trans, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+			}
+		}
+	}
 }
 
 ?>
