@@ -13369,7 +13369,7 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
-			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
+			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id, 'medical');
 			if($transaction_access)	{
 				$result['spending_feature_status_type'] = false;
 			}

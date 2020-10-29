@@ -356,8 +356,8 @@
 									<th>Start Date</th>
 									<th>Employee ID</th>
 
-									<th ng-if="isMedicalAllocColShow">Medical Entitlement</th>
-									<th ng-if="isWellnessAllocColShow">Wellness Entitlement</th>
+									<th ng-if="isMedicalAllocColShow">Medical Allocation</th>
+									<th ng-if="isWellnessAllocColShow">Wellness Allocation</th>
 									<th ng-if="isCapVisitColShow">Cap Per Visit</th>
 
 									<th ng-if="isBankNameColShow">Bank Name</th>
@@ -462,7 +462,7 @@
   							<input type="text" ng-model="employee_data.nric" placeholder="E.g. 511321321309">
 							</div>
 							<div ng-if="isMedicalAllocColShow" class="employee-input-wrapper">
-								<label for="fname">Medical Entitlement</label>
+								<label for="fname">Medical Allocation</label>
   							<input type="number" min="0" value="0" ng-model="employee_data.medical_entitlement">
 							</div>
 							<div ng-if="showCurrencyType == 'myr'" class="employee-input-wrapper">
@@ -470,7 +470,7 @@
   							<input type="text" ng-model="employee_data.passport" placeholder="E.g. A12345678">
 							</div>
 							<div ng-if="isWellnessAllocColShow" class="employee-input-wrapper">
-								<label for="fname">Wellness Entitlement</label>
+								<label for="fname">Wellness Allocation</label>
 								<input type="number" min="0" value="0" ng-model="employee_data.wellness_entitlement">
 							</div>
 							<!-- <div class="employee-input-wrapper">
