@@ -752,60 +752,74 @@ class SpendingInvoiceController extends \BaseController {
 			$format = [];
 			$total_due = 0;
 
+			$invoiceHistory = new InvoiceHistoryService([
+				'type' => 'plan',
+				'customer_id' => $customer_id,
+				'per_page' => $limit
+			]);
+			
+			$pagination = $invoiceHistory->getInvoiceHistory();
+	
+			if ($plan && $plan->account_type != "lite_plan") {
+				$pagination['data'] = $pagination['data'] ?? [];
+			} else {
+				$pagination['data'] = [];
+			}
+
 			if($plan && $plan->account_type != "lite_plan") {
-				$all_plan_data = DB::table('customer_active_plan')
-							->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
-							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
-							->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
-							->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-							->where('customer_buy_start.customer_buy_start_id', $customer_id)
-							->get();		
+				// $all_plan_data = DB::table('customer_active_plan')
+				// 			->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+				// 			->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
+				// 			->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
+				// 			->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+				// 			->where('customer_buy_start.customer_buy_start_id', $customer_id)
+				// 			->get();		
 
-				$active_plans = DB::table('customer_active_plan')
-											->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
-											->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
-											->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
-											->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-											->where('customer_buy_start.customer_buy_start_id', $customer_id)
-											->orderBy('corporate_invoice.invoice_date', 'desc')
-											->paginate($limit);
+				// $active_plans = DB::table('customer_active_plan')
+				// 							->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+				// 							->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
+				// 							->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
+				// 							->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+				// 							->where('customer_buy_start.customer_buy_start_id', $customer_id)
+				// 							->orderBy('corporate_invoice.invoice_date', 'desc')
+				// 							->paginate($limit);
 
-				$pagination['current_page'] = $active_plans->getCurrentPage();
-				$pagination['last_page'] = $active_plans->getLastPage();
-				$pagination['total'] = $active_plans->getTotal();
-				$pagination['per_page'] = $active_plans->getPerPage();
-				$pagination['count'] = $active_plans->count();
+				// $pagination['current_page'] = $active_plans->getCurrentPage();
+				// $pagination['last_page'] = $active_plans->getLastPage();
+				// $pagination['total'] = $active_plans->getTotal();
+				// $pagination['per_page'] = $active_plans->getPerPage();
+				// $pagination['count'] = $active_plans->count();
 				
-				foreach ($all_plan_data as $key => $data) {
-					$result = \PlanHelper::getCompanyInvoice($data->corporate_invoice_id);
-					$total_due += $result['amount_due'];
-				}
+				// foreach ($all_plan_data as $key => $data) {
+				// 	$result = \PlanHelper::getCompanyInvoice($data->corporate_invoice_id);
+				// 	$total_due += $result['amount_due'];
+				// }
 				
-				foreach($active_plans as $key => $active) {
-					$result = \PlanHelper::getCompanyInvoice($active->corporate_invoice_id);
-					$result['invoice_id'] = $active->corporate_invoice_id;
-					$result['corporate_invoice_id'] = $active->corporate_invoice_id;
-					$result['customer_id'] = $active->customer_buy_start_id;
+				// foreach($active_plans as $key => $active) {
+				// 	$result = \PlanHelper::getCompanyInvoice($active->corporate_invoice_id);
+				// 	$result['invoice_id'] = $active->corporate_invoice_id;
+				// 	$result['corporate_invoice_id'] = $active->corporate_invoice_id;
+				// 	$result['customer_id'] = $active->customer_buy_start_id;
 
-					$temp = array(
-						'id' => $result['invoice_id'],
-						'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
-						'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
-						'number' => $result['invoice_number'],
-						'status'	=> $result['paid'] ? 1 : 0,
-						'amount_due' => $result['amount_due'],
-						'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
-						'payment_amount' => $result['total'],
-						'type'			=> null,
-						'currency_type' => $result['currency_type'], 
-						'payment_remarks' => $result['payment_remarks'],
-						'payment_method' => null,
-						'company_name' => $result['company'],
-						'category_type'			=> $input['type']
-					);
+				// 	$temp = array(
+				// 		'id' => $result['invoice_id'],
+				// 		'invoice_date' => date('j M Y', strtotime($result['invoice_date'])),
+				// 		'payment_due' => date('j M Y', strtotime($result['invoice_due'])),
+				// 		'number' => $result['invoice_number'],
+				// 		'status'	=> $result['paid'] ? 1 : 0,
+				// 		'amount_due' => $result['amount_due'],
+				// 		'paid_date'	=> $result['paid'] ? date('j M Y', strtotime($result['payment_date'])) : NULL,
+				// 		'payment_amount' => $result['total'],
+				// 		'type'			=> null,
+				// 		'currency_type' => $result['currency_type'], 
+				// 		'payment_remarks' => $result['payment_remarks'],
+				// 		'payment_method' => null,
+				// 		'company_name' => $result['company'],
+				// 		'category_type'			=> $input['type']
+				// 	);
 
-					array_push($format, $temp);
-				}
+				// 	array_push($format, $temp);
+				// }
 
 				if($download) {
 					$date = date('d-m-Y h:i:s');
@@ -852,7 +866,7 @@ class SpendingInvoiceController extends \BaseController {
 				}
 			}
 			
-			$pagination['data'] = $format;
+			// $pagination['data'] = $format;
 			$pagination['total_due'] = number_format($total_due, 2);
 			return $pagination;
 			
