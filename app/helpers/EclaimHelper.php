@@ -207,31 +207,17 @@ class EclaimHelper
     $temp = [];
     if($transactions['credits'] > 0) {
       // check if non-panel invoice exist
-      $statement_check = DB::table('company_credits_statement')
-        ->where('statement_customer_id', $customer_id)
-        ->where('statement_start_date', $start)
-        ->where('type', 'non_panel')
-        // ->where('plan_method', 'post_paid')
-        ->count();
-      
-      $statement = null;
-      if($statement_check == 0) {
-        // $plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
-        $statement = \SpendingHelper::createNonPanelInvoice($customer_id, $start, $end, 'post_paid');
-        if($statement) {
-          $statement_id = $statement->id;
-        } else {
-          $statement_id = false;
-        }
-      } else {
-        $statement = DB::table('company_credits_statement')
+      $statement = DB::table('company_credits_statement')
         ->where('statement_customer_id', $customer_id)
         ->where('statement_start_date', $start)
         ->where('type', 'non_panel')
         ->first();
+
+      if(!$statement) {
+        \SpendingHelper::createNonPanelInvoice($customer_id, $start, $end, 'post_paid');
+      } else {
         // get transaction if there is another transaction
-        $check_invoice_transactions = \SpendingHelper::checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $statement->statement_id, 'post_paid');
-        $statement_id = $statement->statement_id;
+        SpendingHelper::checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $statement->statement_id, 'post_paid');
       }
 
       $temp[] = $statement;
