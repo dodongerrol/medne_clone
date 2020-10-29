@@ -5501,10 +5501,16 @@ public function getHrActivity( )
 	$cash = array_pluck($transaction_details, 'cash');
 	$out_of_pocket_in_network_spent_format_number = sum($cash);
 
+	$total_balance = $plan->account_type == "out_of_pocket" ? 0 : $total_allocation - $total_spent;
+
+	if ($spending_type == 'wellness') {
+		$total_balance = $total_allocation - $total_spent;
+	}
+	
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
 		// 'total_balance'			=> $total_allocation - $total_spent,
-		'total_balance' => $plan->account_type == "out_of_pocket" ? 0 : $total_allocation - $total_spent,
+		'total_balance' => $total_balance,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
 		'in_network_spent'  => number_format($in_network_spent + $total_lite_plan_consultation, 2),
