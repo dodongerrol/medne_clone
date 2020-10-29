@@ -251,3 +251,7 @@
 #business-contact-modal .modal-header {
   position: relative;
 }
+.business-modal-container .modal-footer .btn-update[disabled] {
+  background-color: #D9D9D9;
+  border: 1px solid #D9D9D9;
+}

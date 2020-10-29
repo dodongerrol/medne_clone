@@ -185,7 +185,7 @@
             </div>
           </div>
           <div ng-if="business_ctr != 2">
-            <button ng-disabled="business_data.first_name == null || business_data.email == null || business_data.phone == null " ng-click="addMoreContact( business_data )" class="add-contact-btn">Add more contact</button>
+            <button ng-disabled="business_data.first_name == null || business_data.email == null || business_data.phone == null || business_arr.length == 2" ng-click="addMoreContact( business_data )" class="add-contact-btn">Add more contact</button>
           </div>
           <div class="angle-left-container">
             <i ng-if="business_ctr != 0" ng-click="prevAddContact()" style="cursor: pointer;" class="fa fa-angle-left" aria-hidden="true"></i>
@@ -196,7 +196,7 @@
         </div>
         <div class="modal-footer">
           <button data-dismiss="modal" class="btn-cancel">Cancel</button>
-          <button ng-click="updateAddBusinessContact()" class="btn-update">Update</button>
+          <button ng-disabled="business_data.first_name == null || business_data.email == null || business_data.phone == null" ng-click="updateAddBusinessContact( business_data )" class="btn-update">Update</button>
         </div>
       </div>
     </div>
