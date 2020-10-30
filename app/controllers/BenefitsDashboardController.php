@@ -15990,13 +15990,14 @@ class BenefitsDashboardController extends \BaseController {
 			  }
 			}
 			
+			$amount_due = $total - $payment_data->paid_amount;
 			$pagination['data'][] = [
 				'invoice_id'      => $invoice ? $invoice->corporate_invoice_id : null,
 				'invoice_date'    => $invoice ? date('Y-m-d', strtotime($invoice->invoice_date)) : null,
 				'invoice_due'    => $invoice ? date('Y-m-d', strtotime($invoice->invoice_due)) : null,
 				'invoice_number'  => $invoice ? $invoice->invoice_number : null,
 				'total'           => DecimalHelper::formatDecimal($total),
-        		'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($total - $payment_data->paid_amount) : $total,
+        		'amount_due'      => $amount_due <= 0 ? "0.00" : DecimalHelper::formatDecimal($amount_due),
 				'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
 				'payment_date'    => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
 				'payment_remarks' => $payment_data ? $payment_data->remarks : null,
