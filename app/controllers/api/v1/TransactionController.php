@@ -90,7 +90,9 @@ class Api_V1_TransactionController extends \BaseController
 
 					$customerID = PlanHelper::getCustomerId($user_id);
 					$spending = CustomerHelper::getAccountSpendingStatus($customerID);
-					$spending_method = $spending['medical_payment_method_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
+					$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'medical');
+					$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 					// get clinic info and type
 					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
@@ -651,8 +653,8 @@ class Api_V1_TransactionController extends \BaseController
 											
 											// if($spending['medical_method'] == "post_paid") {
 												// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
-												$plan_method = MemberHelper::getMemberWalletPaymentMethod($user_id);
-												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+												// $plan_method = MemberHelper::getMemberWalletPaymentMethod($user_id);
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $spending_method);
 											// }
 										} catch(Exception $e) {
 											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
