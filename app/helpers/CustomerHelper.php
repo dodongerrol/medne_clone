@@ -1597,7 +1597,12 @@ class CustomerHelper
 	public static function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
 	{
 		$paid = false;
-		$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+		if($pendingInvoice) {
+			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+		} else {
+			$amount_due = 0;
+		}
+		
 
 		if($amount_due <= 0) {
 			$paid = true;
