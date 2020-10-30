@@ -653,8 +653,8 @@ class Api_V1_TransactionController extends \BaseController
 											
 											// if($spending['medical_method'] == "post_paid") {
 												// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
-												$plan_method = MemberHelper::getMemberWalletPaymentMethod($user_id);
-												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+												// $plan_method = MemberHelper::getMemberWalletPaymentMethod($user_id);
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $spending_method);
 											// }
 										} catch(Exception $e) {
 											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
