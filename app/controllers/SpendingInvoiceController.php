@@ -148,7 +148,7 @@ class SpendingInvoiceController extends \BaseController {
        	$statement['statement_in_network_amount'] = $statement['total_in_network_amount'];
         $statement['sub_total'] = number_format(floatval($statement['total_in_network_amount']) + floatval($statement['total_consultation']), 2);
         $statement['statement_in_network_amount'] = number_format($statement['statement_in_network_amount'], 2);
-		return View::make('pdf-download.globalTemplates.plan_invoice', $statement);
+		// return View::make('pdf-download.globalTemplates.plan_invoice', $statement);
 		$pdf = PDF::loadView('pdf-download.globalTemplates.plan_invoice', $statement);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
