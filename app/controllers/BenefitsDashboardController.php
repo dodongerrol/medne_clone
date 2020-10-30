@@ -18821,7 +18821,6 @@ public function createHrLocation ()
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
 
-
 		$data = [
 			'message'	=> null,
 			'status'	=> true 
@@ -18832,6 +18831,7 @@ public function createHrLocation ()
 
 		$assign = $input['assign'] ?? null;
 
+		
 		$except_current = isset($input['except_current']) && $input['except_current'] == "enable" ? true : false;
 
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
@@ -18852,6 +18852,9 @@ public function createHrLocation ()
 		
 		$location = \CorporateHrLocation::where('LocationID', $input['location_id'] ?? null)->first();
 		$department = \CorporateHrDepartment::where('id', $input['department_id'] ?? null)->first();
+		$link_accounts = DB::table('company_link_accounts')
+			->where('id', $input['link_id'] ?? null)
+			->first();
 
 
 		// $data = array(
@@ -18859,7 +18862,6 @@ public function createHrLocation ()
 		// 	'Current Location'		=> $location->location,
 		// 	'Current Department'	=> $department->department_name
 		// );
-		
 		if($transfer_option == 1){
 			if($assign == 1) {
 			DB::table('company_location_members')->update([
@@ -18867,12 +18869,15 @@ public function createHrLocation ()
 				'company_location_id'		=> $location['LocationID'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
-				'created_at'				=> $users->created_at,
-				'updated_at'				=> $users->updated_at
+				'created_at'				=> date('Y-m-d H:i:s'),
+				'updated_at'				=> date('Y-m-d H:i:s')
 			]);
 			}
-		} elseif ($transfer_option == 1){
-			if($assign == 0)
+			$data = [
+				'message' => 'Successfully transfer employee to location.',
+				'status'  => TRUE
+			];
+		} else {
 			DB::table('company_department_members')->update([
 				'company_department_id'		=> $department['id'],
 				'member_id'					=> $users->UserID,
@@ -18880,8 +18885,17 @@ public function createHrLocation ()
 				'created_at'				=> $users->created_at,
 				'updated_at'				=> $users->updated_at
 			]);
+			$data = [
+				'message' => 'Successfully transfer employee to department.',
+				'status'  => TRUE
+			];
 		}
 		if($transfer_option == 0){
+
+			$link_accounts = DB::table('company_link_accounts')
+			->where('hr_id', $customer_id)
+			->where('company_link_accounts.status', 1)
+			->get();
 			if($assign == 1){
 				if($except_current) {
 					$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
@@ -18916,8 +18930,6 @@ public function createHrLocation ()
 			
 
 		}
-
-		$data['message'] = 'Successfully transfer employee.'; 
 
 		return $data;
 	}
