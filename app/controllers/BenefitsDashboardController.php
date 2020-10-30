@@ -17915,7 +17915,7 @@ public function createHrLocation ()
 		foreach ($employees as $employee)
 		{
 			// check if already exist
-			$checkDepartmentMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
+			$checkLocationMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
 
 			if(!$checkLocationMember) {
 				DB::table('company_location_members')->insert([
