@@ -31,8 +31,9 @@
             let data = {
                 billing_name: this.states.billingInformationData.billing_name,
                 billing_address: this.states.billingInformationData.billing_address,
-                unit: this.states.billingInformationData.unit,
-                building: this.states.billingInformationData.building,
+                company_address: this.states.billingInformationData.street_address,
+                unit_number: this.states.billingInformationData.unit_number,
+                building_name: this.states.billingInformationData.building_name,
                 customer_billing_contact_id: this.states.billingInformationData.customer_billing_contact_id,
                 currency_type: this.states.billingInformationData.country == 'Singapore' ? 'sgd' : 'myr',
                 postal_code: this.states.billingInformationData.postal_code

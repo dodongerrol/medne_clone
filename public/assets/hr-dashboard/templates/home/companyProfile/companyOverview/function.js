@@ -142,6 +142,7 @@ app.directive("companyProfileDirective", [
           input.addEventListener("countrychange", function () {
           scope.get_business_info_data.country = primaryAdminCountry.getSelectedCountryData().name;
           console.log(primaryAdminCountry.getSelectedCountryData());
+          scope.activeBusinessUpdate = true;
           });
         }
 

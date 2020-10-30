@@ -18190,7 +18190,7 @@ public function createHrLocation ()
 		$data = array(
 			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
 			'billing_address'		=> $final_address,
-			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal,
+			'postal'			=> !empty($input['postal']) ? $input['postal'] : $check->postal,
 		);
 
 		$result = $billing
