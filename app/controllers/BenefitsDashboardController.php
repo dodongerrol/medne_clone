@@ -16002,7 +16002,7 @@ class BenefitsDashboardController extends \BaseController {
 				'payment_date'    => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
 				'payment_remarks' => $payment_data ? $payment_data->remarks : null,
 				'currency_type'   => $invoice ? $invoice->currency_type : null,
-				'payment_status'  => $active->paid == "true" ? true : false
+				'payment_status'  => $amount_due <= 0 ? true : false
 			];
 		}
 		
