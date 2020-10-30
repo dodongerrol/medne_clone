@@ -229,7 +229,7 @@ class SpendingInvoiceController extends \BaseController {
 				'total_post_paid_spent'	=> number_format($results['total_post_paid_spent'], 2)
 			);
 
-    		return View::make('pdf-download.globalTemplates.panel-invoice', $temp);
+    		// return View::make('pdf-download.globalTemplates.panel-invoice', $temp);
 			$pdf = \PDF::loadView('pdf-download.globalTemplates.panel-invoice', $temp);
 			$pdf->getDomPDF()->get_option('enable_html5_parser');
 			$pdf->setPaper('A4', 'portrait');
