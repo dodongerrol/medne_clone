@@ -1150,7 +1150,7 @@ class MemberHelper
 					return false;
 				}
 			}
-			 
+			
 			if(!$accessTransaction['enable']) {
 				return true;
 			}
