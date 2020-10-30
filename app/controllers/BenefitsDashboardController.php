@@ -17538,50 +17538,27 @@ const DEPENDENT_COLUMNS = [
 	{	
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$customer_id = $result->customer_buy_start_id;
 		$format = [];
-
-		$departments = CorporateHrDepartment::where('customer_id', $id)->get();
 		
-		if(sizeof($departments) == 0) {
 
-			// create new work locations for empty work locations
-			$info = DB::table('customer_business_information')->where('customer_buy_start_id', $customer_id)->first();
-			$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$corporate_members = DB::table('corporate_members')
+		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+		->where('corporate_members.corporate_id', $account_link->corporate_id)
+		->where('user.Active', 1)
+		->get();
 
-			$data = array(
-				'customer_id'		=> $customer_id,
-				'location'			=> $info->company_address,
-				'business_address'	=> $info->unit_number && $info->building_name ? $info->unit_number.' '.$info->building_name : $info->company_address,
-				'country'			=> $customer->currency_type == "myr" ? 'Malaysia' : 'Singapore',
-				'postal_code'		=> $info->postal_code,
-			);
+		$total_active_members = sizeof($corporate_members);
 
-			$departmentData = \CorporateHrDepartment::create($data);
+		$departments = DB::table('company_departments')
+		->where('customer_id', $customer_id)
+		->get();
 
-			// create location with member count
-			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-			$corporate_members = DB::table('corporate_members')
-			->join('user', 'user.UserID', '=', 'corporate_members.user_id')
-			->where('corporate_members.corporate_id', $account_link->corporate_id)
-			->where('user.Active', 1)
-			->lists('user.UserID');
-
-			// save lists of member for location
-			foreach($corporate_members as $member) {
-				$checkMemberDepartment = DB::table('company_department_members')->where('company_department_id', $locationData->id)->where('member_id', $member)->select('id')->first();
-
-				if(!$checkMemberDepartment) {
-					DB::table('company_department_members')->insert(['company_department_id' => $departmentData->id, 'member_id' => $member, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
-				}
-			}
-
-			$departments = \CorporateHrDepartment::where('customer_id', $customer_id)->get();
-		}
+		$locations = \CorporateHrLocation::where('customer_id', $customer_id)->get();
 
 		$container = array();
 		foreach ($departments as $key => $department) {
-			$address = explode(',', $department->business_address);
 			$container[] = array(
 				'id'					=> $department->id,
 				'customer_id'			=> $department->customer_id,
@@ -17591,7 +17568,6 @@ const DEPENDENT_COLUMNS = [
 		  }
 
 		return $container;
-
 	}
 
 	public function createHrDepartment ()
@@ -17915,7 +17891,7 @@ public function createHrLocation ()
 		foreach ($employees as $employee)
 		{
 			// check if already exist
-			$checkLocationMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
+			$checkDepartmentMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
 
 			if(!$checkLocationMember) {
 				DB::table('company_location_members')->insert([
@@ -17990,8 +17966,8 @@ public function createHrLocation ()
 					'company_department_id'		=> $department['id'],
 					'member_id'					=> $employee->UserID,
 					'status'					=> 1,
-					'created_at'				=> $employee->created_at,
-					'updated_at'				=> $employee->updated_at
+					'created_at'				=> date('Y-m-d H:i:s'),
+					'updated_at'				=> date('Y-m-d H:i:s')
 				]);
 			}
 			
