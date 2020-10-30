@@ -41,6 +41,7 @@
   border-right: .5px solid #BFBFBF;
   margin: 0 10px;
   height: 25px;
+  align-self: flex-start;
 }
 .mednefits-credits-pending {
   margin: 20px 0 0;
@@ -299,4 +300,23 @@
   color: #848484;
   font-weight: 700;
   margin: 15px 0;
+}
+
+.pending-top-up-available{
+  margin-left: 10px;
+  font-family: 'Helvetica Medium';
+  font-size: 20px;
+  color: rgba(46, 64, 87, 0.3);
+}
+.top-up-values-pending{
+  font-family: 'Helvetica Medium';
+  font-size: 15px;
+  color: rgba(46, 64, 87, 0.3);
+  margin-top: 10px;
+}
+.pending-top-up-text{
+  color: #EB635D;
+  font-size: 15px;
+  padding: 0 20px;
+  margin-top: 0;
 }

@@ -49,8 +49,11 @@
                 </div> 
               </span>
             </span>
-            <span>
+            <span class="display-flex">
               <div class="available-credits-amount member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.available_credits }}</div>
+              <div ng-if="mednefitsCreditsData.top_up_pending"  class="pending-top-up-available">
+                + <span style="text-transform: uppercase">{{mednefitsCreditsData.currency_type}}</span> <span ng-bind="mednefitsCreditsData.top_up_total_available_credits"></span>
+              </div>
             </span>
           </div>
           <div>
@@ -78,6 +81,9 @@
               <span>
                 <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.total_credits }}</div>
               </span>
+              <div ng-if="mednefitsCreditsData.top_up_pending" class="top-up-values-pending">
+                + <span ng-bind="mednefitsCreditsData.currency_type | uppercase"></span> <span ng-bind="mednefitsCreditsData.top_up_total_credits"></span>
+              </div>
             </div>
             <div class="credits-border-container"></div>
           </div>
@@ -99,6 +105,9 @@
               <span>
                 <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.purchased_credits }}</div>
               </span>
+              <div ng-if="mednefitsCreditsData.top_up_pending" class="top-up-values-pending">
+                + <span ng-bind="mednefitsCreditsData.currency_type | uppercase"></span> <span ng-bind="mednefitsCreditsData.top_up_total_purchased_credits"></span>
+              </div>
             </div>
             <div class="credits-border-container"></div>
           </div>
@@ -120,6 +129,9 @@
               <span>
                 <div class="member-bold-text">{{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.bonus_credits }}</div>
               </span>
+              <div ng-if="mednefitsCreditsData.top_up_pending" class="top-up-values-pending">
+                + <span ng-bind="mednefitsCreditsData.currency_type | uppercase"></span> <span ng-bind="mednefitsCreditsData.top_up_total_bonus_credits"></span>
+              </div>
             </div>
             <div class="credits-border-container"></div>
           </div>
@@ -142,6 +154,8 @@
             </span>
           </div>
         </div>
+
+        <p ng-if="mednefitsCreditsData.top_up_pending" class="error-text pending-top-up-text">*Top-up credits are on hold due to pending Prepaid Credits Account invoice</p>
       </div>
     </div>
     <div class="mwbc-box-container">

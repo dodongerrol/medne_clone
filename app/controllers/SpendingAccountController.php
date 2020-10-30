@@ -127,10 +127,10 @@ class SpendingAccountController extends \BaseController {
 			'currency_type'			    => strtoupper($customer->currency_type),
 			'refund_amount'         => $refund_amount,
 			'top_up_pending'        => $top_up_data ? true : false,
-			'top_up_total_credits'  => $top_up_total_credits,
-			'top_up_total_purchased_credits'  => $top_up_total_purchased_credits,
-			'top_up_total_bonus_credits'  => $top_up_total_bonus_credits,
-			'top_up_total_available_credits'  => $top_up_total_available_credits,
+			'top_up_total_credits'  => DecimalHelper::formatDecimal($top_up_total_credits),
+			'top_up_total_purchased_credits'  => DecimalHelper::formatDecimal($top_up_total_purchased_credits),
+			'top_up_total_bonus_credits'  => DecimalHelper::formatDecimal($top_up_total_bonus_credits),
+			'top_up_total_available_credits'  => DecimalHelper::formatDecimal($top_up_total_available_credits),
 		);
 		return ['status' => true, 'data' => $format];
 	}
