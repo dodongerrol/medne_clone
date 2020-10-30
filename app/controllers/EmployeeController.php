@@ -2407,7 +2407,14 @@ class EmployeeController extends \BaseController {
                     'created_at'                => date('Y-m-d H:i:s'),
                     'updated_at'                => date('Y-m-d H:i:s')
                 );
+                $topUp = [
+                  'customer_id' => $customer_id,
+                  'credits' => $credits,
+                  'member_id' => $input['member_id'],
+                  'status' => 0
+                ];
 
+                MednefitsToUpCredits::create($topUp);
             } else {
                 if($new_usage_date > $spending_account_company->wellness_spending_end_date) {
                     return array('status' => false, 'message' => 'New Wellness Entitlement Usage Date exceeded the Spending End Date.');
@@ -2444,6 +2451,21 @@ class EmployeeController extends \BaseController {
                     'created_at'                => date('Y-m-d H:i:s'),
                     'updated_at'                => date('Y-m-d H:i:s')
                 );
+
+                $topUp = [
+                  'customer_id' => $customer_id,
+                  'credits' => $credits,
+                  'member_id' => $input['member_id']
+                ];
+                
+                $topUp = [
+                  'customer_id' => $customer_id,
+                  'credits' => $credits,
+                  'member_id' => $input['member_id'],
+                  'status' => 0
+                ];
+
+                MednefitsToUpCredits::create($topUp);
             }
             $new_entitlment = new NewEmployeeEntitlementSchedule();
             $result = $new_entitlment->createData($data);
