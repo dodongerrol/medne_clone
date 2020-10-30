@@ -6755,7 +6755,6 @@ public function updateEclaimStatus( )
 		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && (int)$spending_accounts->wellness_enable == 1 && $check->spending_type == "wellness") {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 			$balance = EclaimHelper::getSpendingBalance($employee, $date, $e_claim_details->spending_type);
-			$spending_method = $balance['spending_method'];
 			if($check->spending_type == "medical") {
 				$balance_medical = round($balance['balance'], 2);
 				if($amount > $balance_medical) {
@@ -6776,6 +6775,8 @@ public function updateEclaimStatus( )
 		$history = new WalletHistory( );
     	// check what type of spending wallet the e-claim is
 		if($check->spending_type == "medical") {
+			$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'medical');
+			$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
       		// create wallet logs
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
@@ -6888,6 +6889,8 @@ public function updateEclaimStatus( )
 				return array('status' => FALSE, 'message' => 'E-Claim failed to update.');
 			}
 		} else if($check->spending_type == "wellness") {
+			$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'wellness');
+			$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
