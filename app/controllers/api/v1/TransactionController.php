@@ -90,7 +90,7 @@ class Api_V1_TransactionController extends \BaseController
 
 					$customerID = PlanHelper::getCustomerId($user_id);
 					$spending = CustomerHelper::getAccountSpendingStatus($customerID);
-					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
+					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customerID)->first();
 					$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'medical');
 					$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 					// get clinic info and type
