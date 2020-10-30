@@ -238,7 +238,7 @@
 								<div class="col-md-6">
 									<div class="benefit-box">
 										<div>
-											<p class="color-black3 weight-500 font-16">Total Medical Allocation: <span
+											<p class="color-black3 weight-500 font-16">Total {{ activitySpendingType == 0 ? 'Medical' : 'Wellness' }} Allocation: <span
 													class="weight-500 color-blue-custom currency-type"
 													ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span class="weight-500 color-blue-custom"
@@ -862,7 +862,7 @@
 								<div class="col-md-6">
 									<div class="benefit-box">
 										<div>
-											<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+											<p class="color-black3 weight-500 font-16">Total {{ activitySpendingType == 0 ? 'Medical' : 'Wellness' }} Credits: <span
 													class="weight-500 color-blue-custom currency-type"
 													ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span class="weight-500 color-blue-custom"
