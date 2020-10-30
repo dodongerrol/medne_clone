@@ -17888,7 +17888,7 @@ public function createHrLocation ()
 		foreach ($employees as $employee)
 		{
 			// check if already exist
-			$checkLocationMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
+			$checkDepartmentMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
 
 			if(!$checkLocationMember) {
 				DB::table('company_location_members')->insert([
@@ -17912,6 +17912,10 @@ public function createHrLocation ()
 		$result = StringHelper::getJwtHrSession();
 		$id = $result->customer_buy_start_id;
 		
+		if(empty($input['department_id']) || $input['department_id'] == null) {
+			return ['status' => false, 'message' => 'department_id is requuired.'];
+		}
+
 		$department = \CorporateHrDepartment::where('id', $input['department_id'] ?? null)->first();
 
 		$data = [
@@ -17934,7 +17938,7 @@ public function createHrLocation ()
 
 		return $data;
 		}
-		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->get();
+		$employees = DB::table('user')->whereIn('UserID', $employee_ids)->select('UserID')->get();
 		
 		if(count($employees) <= 0)
 		{
@@ -17946,13 +17950,24 @@ public function createHrLocation ()
 
 		foreach ($employees as $employee)
 		{
-			DB::table('company_department_members')->insert([
-				'company_department_id'		=> $department['id'],
-				'member_id'					=> $employee->UserID,
-				'status'					=> 1,
-				'created_at'				=> $employee->created_at,
-				'updated_at'				=> $employee->updated_at
-			]);
+			// check if already exist
+			$checkLocationMember = DB::table('company_department_members')
+			->where('company_department_id', $department['id'])
+			->where('member_id', $employee->UserID)
+			->where('status', 1)
+			->select('id')
+			->first();
+
+			if(!$checkLocationMember) {
+				DB::table('company_department_members')->insert([
+					'company_department_id'		=> $department['id'],
+					'member_id'					=> $employee->UserID,
+					'status'					=> 1,
+					'created_at'				=> $employee->created_at,
+					'updated_at'				=> $employee->updated_at
+				]);
+			}
+			
 		}
 		$data['message'] = 'Successfully allocated member.'; 
 
