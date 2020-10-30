@@ -1591,7 +1591,44 @@ class CustomerHelper
 				return $spending_account_settings->wellness_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel_previous;
 			}
 			return $spending_account_settings->wellness_payment_method_panel;
-		}		
+		}
+		
+		
+		$paid = false;
+		if($pendingInvoice) {
+			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+		} else {
+			$amount_due = 0;
+		}
+		
+
+		if($amount_due <= 0) {
+			$paid = true;
+		}
+		
+		if($type == "medical") {
+			if (
+				$pendingInvoice && $paid == true &&
+				$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
+			) {
+				return $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->medical_payment_method_panel_previous;
+			} else if($pendingInvoice && $paid == false) {
+				return $spending_account_settings->medical_payment_method_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+			}
+			return $spending_account_settings->medical_payment_method_panel_previous;
+		} else {
+			if (
+				$pendingInvoice && $paid == true &&
+				$spending_account_settings->wellness_payment_method_panel == 'mednefits_credits'
+				) {
+					return $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->wellness_payment_method_panel_previous;
+				} else if($pendingInvoice && $paid == false &&
+					$spending_account_settings->wellness_payment_method_panel == 'mednefits_credits') {
+					return $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel;
+				}
+			return $spending_account_settings->wellness_payment_method_panel;
+		}
+
 	}
 
 	public static function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
