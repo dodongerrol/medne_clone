@@ -72,6 +72,40 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="custom-pagination-container flex-1">
+        <div class="custom-pagination">
+          <div class="page-wrapper">
+            <div class="page-scroll-container">
+              <span ng-click="prevLinkedPage()"class="prev-next-container">
+                <i class="fa fa-angle-left"></i>
+                <span>Prev</span>
+              </span>
+              <div class="pages-list">
+                <span ng-repeat="list in range( link_account_data.last_page ) " ng-bind="list + 1" class="page-num"
+                  ng-click="setLinkedPage(list + 1)"
+                  ng-class="{'active' : list + 1 == page_link}">1</span>
+              </div>
+              <span ng-click="nextLinkedPage()" class="prev-next-container">
+                <span>Next</span>
+                <i class="fa fa-angle-right"></i>
+              </span>
+            </div>
+          </div>
+          <div x-data="{open: false}" class="custom-list-per-page">
+            <span @click="open = true"><span ng-bind="limit_link">10</span> per page</span>
+            <span @click="open = true">
+              <i class="fa fa-caret-down"></i>
+            </span>
+            <div x-show="open" @click.away="open = false" class="opened-per-page-scroll">
+              <span ng-click="setLinkedPerPage( 10 )" @click="open = false">10 per page</span>
+              <span ng-click="setLinkedPerPage( 25 )" @click="open = false">20 per page</span>
+              <span ng-click="setLinkedPerPage( 50 )" @click="open = false">50 per page</span>
+              <span ng-click="setLinkedPerPage( 100 )" @click="open = false">100 per page</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="plan-details-container">

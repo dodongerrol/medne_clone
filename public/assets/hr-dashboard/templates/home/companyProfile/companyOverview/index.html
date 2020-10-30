@@ -16,7 +16,9 @@
       <div class="display-flex business-info-row">
         <div class="business-bold-text">Business Legal Address</div>
         <span>
-          <span ng-bind="business_info_data.company_address">7 Temasek Boulevard #18-02 Suntec Tower One, Singapore 038987</span>
+          <span ng-bind="business_info_data.company_address">7 Temasek Boulevard #18-02 Suntec Tower One</span>,
+
+          <span>{{ business_info_data.currency_type == 'myr' ? 'Malaysia' : 'Singapore' }} {{ business_info_data.postal_code }}</span>
         </span>
       </div>
       <div class="display-flex business-info-row">
