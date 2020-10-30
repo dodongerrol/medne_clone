@@ -479,6 +479,7 @@ class TransactionHelper
 				$statement = DB::table('company_credits_statement')
 						->where('statement_customer_id', $customer_id)
 						->where('statement_start_date', $start)
+						->where('type', 'panel')
 						// ->where('plan_method', $plan_method)
 						->first();
 
