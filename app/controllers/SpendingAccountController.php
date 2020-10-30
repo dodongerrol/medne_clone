@@ -25,7 +25,8 @@ class SpendingAccountController extends \BaseController {
                         ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
                         ->where('mednefits_credits.customer_id', $customer_id)
                         ->where('mednefits_credits.start_term', $input['start'])
-                        // ->where('mednefits_credits.end_term', $input['end'])
+                        // ->where('mednefits_credits.end_term', $request->get('end'))
+                        // ->where('mednefits_credits.top_up', 0)
                         ->get();
 
 		if(sizeof($account_credits) == 0) {
@@ -33,10 +34,10 @@ class SpendingAccountController extends \BaseController {
 		}
 
 		// get spending settings
-		$spending_account_settings = DB::table('spending_account_settings')
-								->where('customer_id', $customer_id)
-								->orderBy('created_at', 'desc')
-								->first();
+			$spending_account_settings = DB::table('spending_account_settings')
+		->where('customer_id', $customer_id)
+		->orderBy('created_at', 'desc')
+		->first();
 
 		$total_credits = 0;
 		$purchased_credits = 0;
@@ -46,59 +47,84 @@ class SpendingAccountController extends \BaseController {
 		$top_up_purchase = 0;
 		$top_up_total_credits = 0;
 		$top_up_bonus_credits = 0;
-	
+
 		// check for to top-up
 		$toTopUp = DB::table('top_up_credits')
 					->where('customer_id', $customer_id)
 					->where('status', 0)
 					->sum('credits');
-
+		
+		$pending_count = 0;
+		$top_up_data = null;
 		foreach($account_credits as $key => $credits) {
 			if((int)$credits->payment_status == 1) {
 				$payment_status = true;
 			} else {
 				$payment_status = false;
+				$pending_count ++;
 			}
-		
+
 			$purchased_credits += $credits->credits;
-		
+
 			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
 				$top_up_purchase += $credits->credits;
+				$top_up_data = $credits;
 			}
 		}
-	
+
 		foreach($account_credits as $key => $credits) {
 			$bonus_credits += $credits->bonus_credits;
 			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
 				$top_up_bonus_credits += $credits->credits;
 			}
 		}
-	
+
 		$total_credits = $purchased_credits + $bonus_credits;
+
 		// get utilised credits both medical and wellness
 		$creditAccount = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
-	
+
 		$utilised_credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'all', false);
 		$refund_amount  = ($total_credits - $utilised_credits['credits']) - $bonus_credits;
+		$total_entitlement = \SpendingHelper::getTotalEntitlements(
+			$customer_id,
+			$input['start'],
+			$input['end']
+		);
 
+		$top_up_bonus_status = sum(array_values($total_entitlement)) > $total_credits ? true : false;
+
+		$mednefit_credit = $account_credits[0];
+
+		// get pending topup
+		$account_credits = DB::table('mednefits_credits')
+							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+							->where('mednefits_credits.customer_id', $customer_id)
+							->where('mednefits_credits.top_up', 1)
+							->first();
 		$format = array(
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
-			// 'mednefits_credits_id'  => $account_credits->id,
-			'total_credits'         => number_format($total_credits, 2),
-			'available_credits'     => number_format($total_credits - $utilised_credits['credits'], 2),
-			'purchased_credits'     => number_format($purchased_credits, 2),
-			'bonus_credits'         => number_format($bonus_credits, 2),
-			'total_utilised_credits'  => number_format($utilised_credits['credits'], 2),
-			'top_up_total_credits'  => number_format($toTopUp, 2),
-			'top_up_purchase'       => number_format($toTopUp, 2),
-			'top_up_bonus_credits'  => number_format($top_up_bonus_credits, 2),
-			'payment_status'        =>  $payment_status,
-			'to_top_up_status'      => $toTopUp > 0 ? true : false,
+			'mednefits_credits_id'  => $mednefit_credit->id,
+			'total_credits'         => $total_credits,
+			'available_credits'     => $total_credits - $utilised_credits['credits'],
+			'purchased_credits'     => $purchased_credits,
+			'bonus_credits'         => $bonus_credits,
+			'total_utilised_credits'  => $utilised_credits['credits'],
+			'top_up_total_credits'  => $toTopUp,
+			'top_up_purchase'       => $toTopUp,
+			'top_up_bonus_credits'  => $top_up_bonus_credits,
+			'payment_status'        =>  $pending_count > 0 ? false : true,
+			'to_top_up_status'      => $toTopUp ? true : false,
 			'to_top_value'          => $toTopUp,
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
 			'currency_type'			    => strtoupper($customer->currency_type),
-			'refund_amount'					=> number_format($refund_amount, 2),
+			'refund_amount'         => $refund_amount,
+			'top_up_pending'        => $top_up_data ? true : false,
+			'top_up_total_credits'  => $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0,
+			'top_up_total_purchased_credits'  => $top_up_data ? $top_up_data->credits : 0,
+			'top_up_total_bonus_credits'  => $top_up_data ? $top_up_data->bonus_credits : 0,
+			'top_up_total_available_credits'  => $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0,
 		);
 		return ['status' => true, 'data' => $format];
 	}
