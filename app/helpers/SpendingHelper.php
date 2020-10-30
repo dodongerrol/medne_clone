@@ -429,7 +429,33 @@ class SpendingHelper {
 				DB::table('statement_e_claim_transactions')->insert(['statement_id' => $invoice_id, 'e_claim_id' => $trans, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
 			}
 		}
-	}
+    }
+    
+    public static function getTotalEntitlements($customer_id, $start, $end)
+    {
+        $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id, $start, $end);
+        $total_medical_entitlement = 0;
+        $total_wellness_entitlement = 0;
+        $spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+        $spending_method_medical = $spending['medical_payment_method_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+        $spending_method_wellness = $spending['wellness_payment_method_non_panel'] == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+
+        foreach($user_allocated as $key => $user) {
+            $medical_credit = \MemberHelper::memberMedicalPrepaid(
+                $user, $start, $end, $spending_method_medical
+            );
+            $wellness_credit = \MemberHelper::memberWellnessPrepaid(
+                $user, $start, $end, $spending_method_wellness
+            );
+            $total_medical_entitlement += $medical_credit['allocation'];
+            $total_wellness_entitlement += $wellness_credit['allocation'];
+        }
+
+        return [
+            'total_medical_entitlement' => $total_medical_entitlement,
+            'total_wellness_entitlment' => $total_wellness_entitlement
+        ];
+    }
 }
 
 ?>
