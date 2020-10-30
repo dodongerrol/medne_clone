@@ -102,14 +102,20 @@ class SpendingAccountController extends \BaseController {
 							->where('mednefits_credits.customer_id', $customer_id)
 							->where('mednefits_credits.top_up', 1)
 							->first();
+
+		$top_up_total_credits = $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0;
+		$top_up_total_purchased_credits = $top_up_data ? $top_up_data->credits : 0;
+		$top_up_total_bonus_credits = $top_up_data ? $top_up_data->bonus_credits : 0;
+		$top_up_total_available_credits = $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0;
+
 		$format = array(
 			'customer_id'           => $customer_id,
 			'id'                    => $spending_account_settings->spending_account_setting_id,
 			'mednefits_credits_id'  => $mednefit_credit->id,
-			'total_credits'         => $total_credits,
-			'available_credits'     => $total_credits - $utilised_credits['credits'],
-			'purchased_credits'     => $purchased_credits,
-			'bonus_credits'         => $bonus_credits,
+			'total_credits'         => $total_credits - $top_up_total_credits,
+			'available_credits'     => ($total_credits - $utilised_credits['credits']) - $top_up_total_available_credits,
+			'purchased_credits'     => $purchased_credits - $top_up_total_purchased_credits,
+			'bonus_credits'         => $bonus_credits - $top_up_total_bonus_credits,
 			'total_utilised_credits'  => $utilised_credits['credits'],
 			'top_up_total_credits'  => $toTopUp,
 			'top_up_purchase'       => $toTopUp,
@@ -121,10 +127,10 @@ class SpendingAccountController extends \BaseController {
 			'currency_type'			    => strtoupper($customer->currency_type),
 			'refund_amount'         => $refund_amount,
 			'top_up_pending'        => $top_up_data ? true : false,
-			'top_up_total_credits'  => $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0,
-			'top_up_total_purchased_credits'  => $top_up_data ? $top_up_data->credits : 0,
-			'top_up_total_bonus_credits'  => $top_up_data ? $top_up_data->bonus_credits : 0,
-			'top_up_total_available_credits'  => $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0,
+			'top_up_total_credits'  => $top_up_total_credits,
+			'top_up_total_purchased_credits'  => $top_up_total_purchased_credits,
+			'top_up_total_bonus_credits'  => $top_up_total_bonus_credits,
+			'top_up_total_available_credits'  => $top_up_total_available_credits,
 		);
 		return ['status' => true, 'data' => $format];
 	}
