@@ -1572,5 +1572,49 @@ class CustomerHelper
 									->lists('corporate_members.user_id');
 		return $users;
 	}
+
+	public static function getPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
+	{
+		if($type == "medical") {
+			if (
+				$pendingInvoice &&
+				$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
+			) {
+				return $spending_account_settings->medical_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+			}
+			return $spending_account_settings->medical_payment_method_panel;
+		} else {
+			if (
+				$pendingInvoice &&
+				$spending_account_settings->wellness_payment_method_panel == 'mednefits_credits'
+			) {
+				return $spending_account_settings->wellness_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel_previous;
+			}
+			return $spending_account_settings->wellness_payment_method_panel;
+		}		
+	}
+
+	public static function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
+	{
+		if($type == "medical") {
+			if (
+				$pendingInvoice &&
+				$spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits'
+			) {
+				return $spending_account_settings->medical_payment_method_non_panel_previous == 'mednefits_credits' ? 					'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel_previous;
+			}
+			return $spending_account_settings->medical_payment_method_non_panel_previous;
+		} else {
+			if (
+				$pendingInvoice &&
+				$spending_account_settings->wellness_payment_method_non_panel == 'mednefits_credits'
+				) {
+					return $spending_account_settings->wellness_payment_method_non_panel_previous == 'mednefits_credits' ? 					'bank_transfer' : $spending_account_settings->wellness_payment_method_non_panel_previous;
+				}
+			return $spending_account_settings->wellness_payment_method_non_panel;
+		}
+
+		
+	}
 }
 ?>
