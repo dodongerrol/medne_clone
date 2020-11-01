@@ -227,6 +227,7 @@ app.directive("accountSettingsDirective", [
 
         scope._getHrDetails_ = async function () {
           await hrSettings.fecthHrDetails().then(function (response) {
+            console.log(response);
             scope.global_hrData = response.data.hr_account_details;
           });
         };
@@ -772,9 +773,11 @@ app.directive("accountSettingsDirective", [
         scope.page_link = 1;
         
         scope.getLinkedAccount = async function () {
+          scope.showLoading();
           await hrSettings.fetchLinkAccount( scope.limit_link,scope.page_link,'enable' ).then(function (response) {
             console.log(response);
             scope.link_account_data = response.data;
+            scope.hideLoading();
           });
         }
 
@@ -896,6 +899,23 @@ app.directive("accountSettingsDirective", [
           });
         }
 
+        scope.getCompanyIntroMessage = async function () {
+					await hrSettings.getIntroMessage()
+						.then(function (response) {
+							if (response.data.status) {
+								scope.companyInformation = response.data.data;
+							}
+						});
+        }
+        
+        scope._getAccountDetails	= async	function(){
+          await $http.get(window.location.origin + "/hr/get_business_information")
+            .success(function(response){
+              console.log(response);
+              scope.accountDetails	=	response.data;
+            });
+        }
+
         scope.range = function (num) {
           var arr = [];
           for (var i = 0; i < num; i++) {
@@ -922,6 +942,8 @@ app.directive("accountSettingsDirective", [
         scope.onLoad = async function () {
           scope.getSpendingAcctStatus();
           await scope._getHrDetails_();
+          // await scope.getCompanyIntroMessage();
+          await scope._getAccountDetails();
           await scope.getOldPlansList();
           await scope.getPlanDetails();
           await scope.getLinkedAccount();

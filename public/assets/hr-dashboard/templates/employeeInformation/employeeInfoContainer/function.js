@@ -119,7 +119,7 @@ app.directive('employeeInfoContainerDirective', [
         scope.getEmployeeList = async function (page,per_page) {
           await hrSettings.getEmployees(page,per_page)
             .then(function (response) {
-              // console.log(response);
+              console.log(response);
               scope.employees = response.data;
             });
         };
@@ -127,6 +127,7 @@ app.directive('employeeInfoContainerDirective', [
         scope.searchEmployee = async function (input) {
           await hrSettings.searchMemberList(1,5,input)
             .then(function (response) {
+              console.log(response);
               scope.employees = response.data;
             });
         };

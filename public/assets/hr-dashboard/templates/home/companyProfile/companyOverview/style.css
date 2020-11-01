@@ -255,3 +255,13 @@
   background-color: #D9D9D9;
   border: 1px solid #D9D9D9;
 }
+
+
+#business-information-modal .country-postal-container .country-drop .iti__flag-container,
+#business-information-modal .country-postal-container .country-drop .iti__flag-container:hover{
+  width: 100%;
+  background: transparent;
+}
+#business-information-modal .country-postal-container .country-drop .iti__flag-container:hover  .iti__selected-flag{
+  background: transparent;
+}

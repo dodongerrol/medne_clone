@@ -104,9 +104,9 @@
             </div>
           </div>
           <div class="country-postal-container display-flex">
-            <div class="business-input-wrapper">
+            <div class="business-input-wrapper country-drop">
               <label>Country Incorporated</label>
-              <input ng-model="get_business_info_data.country" id="business_info_country">
+              <input ng-model="get_business_info_data.country" id="business_info_country" readonly>
             </div>
             <div class="business-input-wrapper">
               <label>Postal Code</label>
@@ -127,12 +127,12 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5>Edit Business Contact</h5>
-          <span class="primary-admin-text">Primary Admin</span>
+          <span ng-if="get_primary_contact_data.type == 'primary'" class="primary-admin-text">Primary Admin</span>
         </div>
         <div class="modal-body">
           <div class="business-input-wrapper">
             <label>Full Name</label>
-            <input ng-change="removeDisable()" ng-model="get_primary_contact_data.first_name" type="text">
+            <input ng-change="removeDisable()" ng-model="get_primary_contact_data.first_name" type="text" ng-class="{'disabled-pointer-events' : get_primary_contact_data.type == 'primary', 'gray-div' : get_primary_contact_data.type == 'primary'}">
           </div>
           <div class="business-input-wrapper">
             <label>Email Address</label>

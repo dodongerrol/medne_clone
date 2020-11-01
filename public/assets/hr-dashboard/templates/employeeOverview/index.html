@@ -235,7 +235,7 @@
                   </div>
                 </td>
                 <td class="admin">
-                  <img class="three-dot-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png">
+                  <img ng-if="list.administrator" class="three-dot-icon" src="../assets/hr-dashboard/img/admin-blue-icon.png">
                 </td>
                 <td ng-click="goToMemberInfo(list, $index)" ng-bind="list.employee_id">001</td>
                 <td ng-click="goToMemberInfo(list, $index)" ng-bind="list.name">Employee 1</td>

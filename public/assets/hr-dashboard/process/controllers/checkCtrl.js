@@ -79,6 +79,7 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 			await $http.get(window.location.origin + '/get-hr-session')
 				.then(async function(result){
 					// console.log(result);
+					vm.companySession = result.data;
 					// get config for realtime notification
 					await $http.get(window.location.origin + '/config/notification')
 					.then(async function(response){
@@ -146,10 +147,30 @@ checkCtrl.controller('checkCtrls', function( $scope, $http, $stateParams, $state
 				vm.primaryHrDetails	=	response[0];
 			});
 	}
+
+	vm.getCompanyIntroMessage = async function () {
+		await hrSettings.getIntroMessage()
+			.then(function (response) {
+				if (response.data.status) {
+					console.log(response);
+					vm.companyInformation = response.data.data;
+				}
+			});
+	}
+
+
+	vm.getSession	=	async function(){
+		await $http.get(window.location.origin + '/get-hr-session')
+			.then(async function(response){
+				vm.companySession = response.data;
+			});
+	}
 	
 
 	vm.onLoad = async function(){
+		await vm.getSession();
 		await vm._getAccountDetails();
+		await vm.getCompanyIntroMessage();
 		// await vm._getLinkedAccounts_();
 		await vm._getLinkedAccountsWithCurrent_();
 		await vm._getPrimaryHrDetails_();

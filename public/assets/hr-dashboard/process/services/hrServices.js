@@ -127,10 +127,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
         }
       });
     }
-    if(location.length > 0){
+    if(location && location.length > 0){
       url += ("&location_id=[" + location + "]");
     }
-    if(department.length > 0){
+    if(department && department.length > 0){
       url += ("&department_id[" + department + "]");
     }
     return $http.get(url);

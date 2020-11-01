@@ -6957,6 +6957,7 @@ span.dropdown-entitlement.disabled {
   border: 1px solid #cbcbcb;
   padding: 10px 40px;
   position: fixed;
+  left: 0;
   bottom: 0;
   width: 100%;
   font-weight: 600;
