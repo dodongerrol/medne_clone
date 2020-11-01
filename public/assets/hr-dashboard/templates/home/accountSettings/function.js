@@ -768,7 +768,7 @@ app.directive("accountSettingsDirective", [
               }
             });
         }
-        scope.limit_link = 10;
+        scope.limit_link = 5;
         scope.page_link = 1;
         
         scope.getLinkedAccount = async function () {
@@ -780,18 +780,18 @@ app.directive("accountSettingsDirective", [
 
         scope.setLinkedPage  = function(num){
           scope.page_link = num;
-          scope.getLinkedAccount
+          scope.getLinkedAccount();
         }
         scope.prevLinkedPage  = function(){
           if(scope.page_link != 1){
             scope.page_link -= 1;
-            scope.getLinkedAccount
+            scope.getLinkedAccount();
           }
         }
         scope.nextLinkedPage  = function(){
           if(scope.link_account_data.last_page != scope.page_link){
             scope.page_link += 1;
-            scope.getLinkedAccount
+            scope.getLinkedAccount();
           }
           
         }

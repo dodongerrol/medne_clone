@@ -98,6 +98,7 @@
               <i class="fa fa-caret-down"></i>
             </span>
             <div x-show="open" @click.away="open = false" class="opened-per-page-scroll">
+              <span ng-click="setLinkedPerPage( 5 )" @click="open = false">5 per page</span>
               <span ng-click="setLinkedPerPage( 10 )" @click="open = false">10 per page</span>
               <span ng-click="setLinkedPerPage( 25 )" @click="open = false">20 per page</span>
               <span ng-click="setLinkedPerPage( 50 )" @click="open = false">50 per page</span>
@@ -406,7 +407,7 @@
           <div ng-if="!editHrSuccessfullyUpdated" class="modal-body">
             <div class="company-account-input-wrapper">
               <label>Full Name</label>
-              <div class="custom-input-wrapper">
+              <div class="custom-input-wrapper disabled-pointer-events gray-div">
                 <input ng-model="updateHrData.full_name" type="text" ng-change="isChanged()">
               </div>
             </div>
