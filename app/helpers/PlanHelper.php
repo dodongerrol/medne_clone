@@ -1766,17 +1766,19 @@ class PlanHelper
 
 					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
 					if($customer_spending['with_mednefits_credits'] == true) {
-						// create top up data
-						$toTopUp = array(
-							'customer_id' 	=> $customer_id,
-							'credits'		=> $credits,
-							'member_id'		=> $user_id,
-							'created_at'	=> date('Y-m-d H:i:s'),
-							'updated_at'	=> date('Y-m-d H:i:s'),
-							'status'		=> 0
-						);
+						// check if needs to create top up or update top up invoice
+						$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $credits);
 
-						DB::table('top_up_credits')->insert($toTopUp);
+						if(!$checkTopUp) {
+							$toTopUp = array(
+								'customer_id' 	=> $customer_id,
+								'credits'		=> $credits,
+								'member_id'		=> $user_id,
+								'status'		=> 0
+							);
+
+							MednefitsToUpCredits::create($toTopUp);
+						}
 					}
 				} else if($credits > 0 && $customer_spending['medical_payment_method_panel'] == "mednefits_credits") {
 					$result_customer_active_plan = self::allocateCreditBaseInActivePlan($customer_id, $credits, "medical");
@@ -1853,17 +1855,19 @@ class PlanHelper
 					}
 
 					if($customer_spending['with_mednefits_credits'] == true) {
-						// create top up data
-						$toTopUp = array(
-							'customer_id' 	=> $customer_id,
-							'credits'		=> $credits,
-							'member_id'		=> $user_id,
-							'created_at'	=> date('Y-m-d H:i:s'),
-							'updated_at'	=> date('Y-m-d H:i:s'),
-							'status'		=> 0
-						);
+						// check if needs to create top up or update top up invoice
+						$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $credits);
 
-						DB::table('top_up_credits')->insert($toTopUp);
+						if(!$checkTopUp) {
+							$toTopUp = array(
+								'customer_id' 	=> $customer_id,
+								'credits'		=> $credits,
+								'member_id'		=> $user_id,
+								'status' 		=> 0
+							);
+
+							MednefitsToUpCredits::create($toTopUp);
+						}
 					}
 				}
 			}
@@ -1946,17 +1950,19 @@ class PlanHelper
 
 					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
 					if($customer_spending['with_mednefits_credits'] == true) {
-						// create top up data
-						$toTopUp = array(
-							'customer_id' 	=> $customer_id,
-							'credits'		=> $credits,
-							'member_id'		=> $user_id,
-							'created_at'	=> date('Y-m-d H:i:s'),
-							'updated_at'	=> date('Y-m-d H:i:s'),
-							'status'		=> 0
-						);
+						// check if needs to create top up or update top up invoice
+						$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $credits);
 
-						DB::table('top_up_credits')->insert($toTopUp);
+						if(!$checkTopUp) {
+							$toTopUp = array(
+								'customer_id' 	=> $customer_id,
+								'credits'		=> $credits,
+								'member_id'		=> $user_id,
+								'status'		=> 0
+							);
+
+							MednefitsToUpCredits::create($toTopUp);
+						}
 					}
 				} else if($credits > 0 && $customer_spending['wellness_payment_method_panel'] == "mednefits_credits") {
 					$wallet_class = new Wallet();
@@ -2022,17 +2028,19 @@ class PlanHelper
 					}
 
 					if($customer_spending['with_mednefits_credits'] == true) {
-						// create top up data
-						$toTopUp = array(
-							'customer_id' 	=> $customer_id,
-							'credits'		=> $credits,
-							'member_id'		=> $user_id,
-							'created_at'	=> date('Y-m-d H:i:s'),
-							'updated_at'	=> date('Y-m-d H:i:s'),
-							'status'		=> 0
-						);
+						// check if needs to create top up or update top up invoice
+						$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $credits);
 
-						DB::table('top_up_credits')->insert($toTopUp);
+						if(!$checkTopUp) {
+							$toTopUp = array(
+								'customer_id' 	=> $customer_id,
+								'credits'		=> $credits,
+								'member_id'		=> $user_id,
+								'status' 		=> 0
+							);
+
+							MednefitsToUpCredits::create($toTopUp);
+						}
 					}
 				}
 			}
