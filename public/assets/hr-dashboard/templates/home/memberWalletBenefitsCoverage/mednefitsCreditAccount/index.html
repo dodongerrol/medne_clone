@@ -26,8 +26,8 @@
       <h4 class="member-bold-text"> Prepaid Credits Account</h4>
       <p class="prepaid-subtext">Prepaid Credits Account stores prepaid credits. Prepaid credits can be used to pay for employee benefits charges.</p>
       <!-- add class "pending" if the account is still pending -->
-      <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : (mednefitsCreditsData.payment_status == false || mednefitsCreditsData.disable) && && !mednefitsCreditsData.top_up_pending}">
-        <span ng-if="mednefitsCreditsData.payment_status == false && !mednefitsCreditsData.disable && !mednefitsCreditsData.top_up_pending" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
+      <div class="mwbc-card-box-container mednefits-credits-account" ng-class="{'pending' : (mednefitsCreditsData.payment_status == false || mednefitsCreditsData.disable)}">
+        <span ng-if="mednefitsCreditsData.payment_status == false && !mednefitsCreditsData.disable" class="credits-on-hold-text">Credits amounts are on hold due to Pending Prepaid Credits Account Invoice</span>
         <span ng-if="mednefitsCreditsData.disable && !mednefitsCreditsData.top_up_pending" class="credits-on-hold-text deactivated-text">
           Credits amounts are on hold as this account has been deactivated.<br>
           Credits amount of {{ mednefitsCreditsData.currency_type }} {{ mednefitsCreditsData.refund_amount }} will be refunded on {{ formatMomentDate(selectedTerm.end, 'YYYY-MM-DD', 'DD/MM/YYYY') }}.
