@@ -48,6 +48,11 @@ class SpendingAccountController extends \BaseController {
 		$top_up_total_credits = 0;
 		$top_up_bonus_credits = 0;
 
+		$top_up_total_credits = 0;
+		$top_up_total_purchased_credits = 0;
+		$top_up_total_bonus_credits = 0;
+		$top_up_total_available_credits = 0;
+
 		// check for to top-up
 		$toTopUp = DB::table('top_up_credits')
 					->where('customer_id', $customer_id)
@@ -55,7 +60,6 @@ class SpendingAccountController extends \BaseController {
 					->sum('credits');
 		
 		$pending_count = 0;
-		$top_up_data = null;
 		foreach($account_credits as $key => $credits) {
 			if((int)$credits->payment_status == 1) {
 				$payment_status = true;
@@ -65,11 +69,6 @@ class SpendingAccountController extends \BaseController {
 			}
 
 			$purchased_credits += $credits->credits;
-
-			if($credits->top_up == 1 && (int)$credits->payment_status == 0) {
-				$top_up_purchase += $credits->credits;
-				$top_up_data = $credits;
-			}
 		}
 
 		foreach($account_credits as $key => $credits) {
@@ -111,10 +110,23 @@ class SpendingAccountController extends \BaseController {
 			}
 		}
 
-		$top_up_total_credits = $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0;
-		$top_up_total_purchased_credits = $top_up_data ? $top_up_data->credits : 0;
-		$top_up_total_bonus_credits = $top_up_data ? $top_up_data->bonus_credits : 0;
-		$top_up_total_available_credits = $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0;
+		$topUpData = DB::table('mednefits_credits')
+                      ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+                      ->where('mednefits_credits.customer_id', $customer_id)
+                      ->where('mednefits_credits.start_term', $input['start'])
+                      ->where('mednefits_credits.top_up', 1)
+                      ->get();
+
+		// get top up
+		foreach($topUpData as $topUp) {
+			$amount_due = ($topUp->medical_purchase_credits + $topUp->wellness_purchase_credits) - $topUp->payment_amount;
+			if($amount_due > 0) {
+				$top_up_total_credits += $topUp->credits + $topUp->bonus_credits;
+				$top_up_total_purchased_credits += $topUp->credits;
+				$top_up_total_bonus_credits += $topUp->bonus_credits;
+				$top_up_total_available_credits += $topUp->credits + $topUp->bonus_credits;
+			}
+		}
 
 		$format = array(
 			'customer_id'           => $customer_id,
@@ -134,11 +146,11 @@ class SpendingAccountController extends \BaseController {
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
 			'currency_type'			    => strtoupper($customer->currency_type),
 			'refund_amount'         => $refund_amount,
-			'top_up_pending'        => $top_up_data && $payment_status ? true : false,
-			'top_up_total_credits'  => DecimalHelper::formatDecimal($top_up_total_credits),
-			'top_up_total_purchased_credits'  => DecimalHelper::formatDecimal($top_up_total_purchased_credits),
-			'top_up_total_bonus_credits'  => DecimalHelper::formatDecimal($top_up_total_bonus_credits),
-			'top_up_total_available_credits'  => DecimalHelper::formatDecimal($top_up_total_available_credits),
+			'top_up_pending'        => $top_up_total_credits > 0 && $payment_status ? true : false,
+			'top_up_total_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_credits) : 0,
+			'top_up_total_purchased_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_purchased_credits) : 0,
+			'top_up_total_bonus_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_bonus_credits) : 0,
+			'top_up_total_available_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_credits) : 0,
 		);
 		return ['status' => true, 'data' => $format];
 	}
