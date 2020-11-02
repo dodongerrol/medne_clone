@@ -649,7 +649,7 @@ class Api_V1_TransactionController extends \BaseController
 										}
 										try {
 											// $customer_id = PlanHelper::getCustomerId($user_id);
-											$spending = CustomerHelper::getAccountSpendingStatus($customerID);
+											// $spending = CustomerHelper::getAccountSpendingStatus($customerID);
 											
 											// if($spending['medical_method'] == "post_paid") {
 												// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";

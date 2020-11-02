@@ -1574,33 +1574,13 @@ class CustomerHelper
 	}
 
 	public static function getPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
-	{
-		if($type == "medical") {
-			if (
-				$pendingInvoice &&
-				$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
-			) {
-				return $spending_account_settings->medical_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
-			}
-			return $spending_account_settings->medical_payment_method_panel;
-		} else {
-			if (
-				$pendingInvoice &&
-				$spending_account_settings->wellness_payment_method_panel == 'mednefits_credits'
-			) {
-				return $spending_account_settings->wellness_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel_previous;
-			}
-			return $spending_account_settings->wellness_payment_method_panel;
-		}
-		
-		
+	{		
 		$paid = false;
 		if($pendingInvoice) {
 			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
 		} else {
 			$amount_due = 0;
 		}
-		
 
 		if($amount_due <= 0) {
 			$paid = true;
