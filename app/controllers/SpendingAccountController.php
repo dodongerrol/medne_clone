@@ -146,7 +146,7 @@ class SpendingAccountController extends \BaseController {
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
 			'currency_type'			    => strtoupper($customer->currency_type),
 			'refund_amount'         => $refund_amount,
-			'top_up_pending'        => $top_up_total_credits > 0 && $payment_status ? true : false,
+			'top_up_pending'        => $top_up_total_credits > 0 ? true : false,
 			'top_up_total_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_credits) : 0,
 			'top_up_total_purchased_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_purchased_credits) : 0,
 			'top_up_total_bonus_credits'  => $top_up_total_credits > 0 ? \DecimalHelper::formatDecimal($top_up_total_bonus_credits) : 0,
