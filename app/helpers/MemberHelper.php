@@ -373,6 +373,24 @@ class MemberHelper
 
 						DB::table('medical_credits')->insert($medicalCreditsHistory);
 					}
+
+					if($spending['with_mednefits_credits'] == true) {
+						// check if needs to create top up or update top up invoice
+						$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $new_medical_allocation);
+
+						if(!$checkTopUp) {
+							$toTopUp = array(
+								'customer_id' 	=> $customer_id,
+								'credits'		=> $new_medical_allocation,
+								'member_id'		=> $member_id,
+								'created_at'	=> date('Y-m-d H:i:s'),
+								'updated_at'	=> date('Y-m-d H:i:s'),
+								'status'		=> 0
+							);
+
+							DB::table('top_up_credits')->insert($toTopUp);
+						}
+					}
 				} else {
 					$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->decrement('balance', $new_medical_allocation);
 					$employee_credit_logs = array(
@@ -528,6 +546,23 @@ class MemberHelper
 							);
 
 							DB::table('wellness_credits')->insert($wellnessCreditsHistory);
+						}
+						if($spending['with_mednefits_credits'] == true) {
+							// check if needs to create top up or update top up invoice
+							$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $new_wellness_allocation);
+	
+							if(!$checkTopUp) {
+								$toTopUp = array(
+									'customer_id' 	=> $customer_id,
+									'credits'		=> $new_wellness_allocation,
+									'member_id'		=> $member_id,
+									'created_at'	=> date('Y-m-d H:i:s'),
+									'updated_at'	=> date('Y-m-d H:i:s'),
+									'status'		=> 0
+								);
+	
+								DB::table('top_up_credits')->insert($toTopUp);
+							}
 						}
 					} else {
 						$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->decrement('wellness_balance', $new_wellness_allocation);

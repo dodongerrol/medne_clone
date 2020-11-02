@@ -456,6 +456,46 @@ class SpendingHelper {
             'total_wellness_entitlment' => $total_wellness_entitlement
         ];
     }
+
+    public static function checkPendingTopUpInvoice($customer_id, $credits) 
+    {
+        $spendingAccountSettings = DB::table('spending_account_settings')
+                                            ->where('customer_id', $customer_id)
+                                            ->orderBy('created_at', 'desc')
+                                            ->select('spending_account_setting_id', 'customer_id', 'medical_spending_start_date')
+                                            ->first();
+
+        $topUpData = DB::table('mednefits_credits')
+                      ->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
+                      ->where('mednefits_credits.customer_id', $customer_id)
+                      ->where('mednefits_credits.start_term', $spendingAccountSettings->medical_spending_start_date)
+                      ->where('mednefits_credits.top_up', 1)
+                      ->get();
+
+        foreach($topUpData as $topUp) {
+            $amount_due = ($topUp->medical_purchase_credits + $topUp->wellness_purchase_credits) - $topUp->payment_amount;
+			if($amount_due > 0) {
+                // update
+                $purchaseCredits = $credits;
+                $bonusCredits = $credits * 0.20;
+                DB::table('spending_purchase_invoice')
+                    ->where('spending_purchase_invoice_id', $topUp->spending_purchase_invoice_id)
+                    ->increment('medical_purchase_credits', $purchaseCredits);
+                DB::table('spending_purchase_invoice')
+                    ->where('spending_purchase_invoice_id', $topUp->spending_purchase_invoice_id)
+                    ->increment('medical_credit_bonus', $bonusCredits);
+                DB::table('mednefits_credits')
+                    ->where('id', $topUp->id)
+                    ->increment('credits', $purchaseCredits);
+                DB::table('mednefits_credits')
+                    ->where('id', $topUp->id)
+                    ->increment('bonus_credits', $bonusCredits);
+                return true;
+			}
+        }
+
+        return false;
+    }
 }
 
 ?>
