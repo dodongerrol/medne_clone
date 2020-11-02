@@ -358,10 +358,10 @@ class SpendingInvoiceLibrary
 						->first();
 
 					if($history && $history->spending_method == "pre_paid") {
-						$total_pre_paid_spent += $history->credit;
+						$total_pre_paid_spent += $trans->default_currency == "myr" ? $history->credit * $trans->currency_amount : $history->credit;
 					} else {
 						$with_post_paid = true;
-						$total_post_paid_spent += $trans['credit_cost'];
+						$total_post_paid_spent += $trans->default_currency == "myr" ? (float)$trans['credit_cost'] * $trans->currency_amount : (float)$trans['credit_cost'];
 					}
 
 					if((int)$trans['lite_plan_enabled'] == 1) {
@@ -373,29 +373,53 @@ class SpendingInvoiceLibrary
 						->first();
 
 						if($logs_lite_plan && (int)$trans['credit_cost'] >= 0 && (int)$trans['lite_plan_use_credits'] == 0) {
-							$total_consultation += floatval($logs_lite_plan->credit);
-							$mednefits_credits = floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
-							$total_gp_consultation += floatval($logs_lite_plan->credit);
-							if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
-								$total_pre_paid_spent += $logs_lite_plan->credit;
+							
+							if($trans->default_currency == "myr") {
+								$total_consultation += floatval($logs_lite_plan->credit) * $trans->currency_amount;
+								$mednefits_credits = floatval($logs_lite_plan->credit) * $trans->currency_amount;
+								$total_gp_consultation += floatval($logs_lite_plan->credit) * $trans->currency_amount;
+								if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
+									$total_pre_paid_spent += $logs_lite_plan->credit * $trans->currency_amount;
+								} else {
+									$total_post_paid_spent += $logs_lite_plan->credit * $trans->currency_amount;
+								}
 							} else {
-								$total_post_paid_spent += $logs_lite_plan->credit;
-							}	
+								$total_consultation += floatval($logs_lite_plan->credit);
+								$mednefits_credits = floatval($logs_lite_plan->credit);
+								$total_gp_consultation += floatval($logs_lite_plan->credit);
+								if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
+									$total_pre_paid_spent += $logs_lite_plan->credit;
+								} else {
+									$total_post_paid_spent += $logs_lite_plan->credit;
+								}
+							}
+							
 						} else if($logs_lite_plan && $trans['procedure_cost'] >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
-							$total_consultation += floatval($logs_lite_plan->credit);
-							$mednefits_credits = floatval($logs_lite_plan->credit);
 							$consultation_credits = true;
 							$service_credits = true;
-							$total_gp_consultation += floatval($logs_lite_plan->credit);
-							if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
-								$total_pre_paid_spent += $logs_lite_plan->credit;
+							if($trans->default_currency == "myr") {
+								$total_consultation += floatval($logs_lite_plan->credit) * $trans->currency_amount;
+								$mednefits_credits = floatval($logs_lite_plan->credit) * $trans->currency_amount;
+								$total_gp_consultation += floatval($logs_lite_plan->credit);
+								if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
+									$total_pre_paid_spent += $logs_lite_plan->credit * $trans->currency_amount;
+								} else {
+									$total_post_paid_spent += $logs_lite_plan->credit * $trans->currency_amount;
+								}
 							} else {
-								$total_post_paid_spent += $logs_lite_plan->credit;
-							}	
+								$total_consultation += floatval($logs_lite_plan->credit);
+								$mednefits_credits = floatval($logs_lite_plan->credit);
+								$total_gp_consultation += floatval($logs_lite_plan->credit);
+								if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
+									$total_pre_paid_spent += $logs_lite_plan->credit;
+								} else {
+									$total_post_paid_spent += $logs_lite_plan->credit;
+								}
+							}
 						} else if($trans['procedure_cost'] >= 0 && $trans['lite_plan_use_credits'] === 0 || $trans['procedure_cost'] >= 0 && $trans['lite_plan_use_credits'] === "0"){
-							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+							if($trans->default_currency == "myr") {
 								$total_consultation += floatval($trans['consultation_fees']) * $trans->currency_amount;
 								$total_gp_consultation + floatval($trans['consultation_fees']) * $trans->currency_amount;
 							} else {
