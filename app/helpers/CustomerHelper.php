@@ -1608,7 +1608,6 @@ class CustomerHelper
 				}
 			return $spending_account_settings->wellness_payment_method_panel;
 		}
-
 	}
 
 	public static function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)

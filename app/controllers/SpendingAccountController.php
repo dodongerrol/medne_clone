@@ -97,11 +97,19 @@ class SpendingAccountController extends \BaseController {
 		$mednefit_credit = $account_credits[0];
 
 		// get pending topup
-		$account_credits = DB::table('mednefits_credits')
+		$pendingInvoice = DB::table('mednefits_credits')
 							->join('spending_purchase_invoice', 'spending_purchase_invoice.mednefits_credits_id', '=', 'mednefits_credits.id')
 							->where('mednefits_credits.customer_id', $customer_id)
-							->where('mednefits_credits.top_up', 1)
+							->select('spending_purchase_invoice.medical_purchase_credits', 'spending_purchase_invoice.wellness_purchase_credits', 'spending_purchase_invoice.payment_amount')
 							->first();
+
+		$payment_status = true;
+		if($pendingInvoice) {
+			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+			if($amount_due > 0) {
+				$payment_status = false;
+			}
+		}
 
 		$top_up_total_credits = $top_up_data ? $top_up_data->credits + $top_up_data->bonus_credits : 0;
 		$top_up_total_purchased_credits = $top_up_data ? $top_up_data->credits : 0;
@@ -120,13 +128,13 @@ class SpendingAccountController extends \BaseController {
 			'top_up_total_credits'  => $toTopUp,
 			'top_up_purchase'       => $toTopUp,
 			'top_up_bonus_credits'  => $top_up_bonus_credits,
-			'payment_status'        =>  $pending_count > 0 ? false : true,
+			'payment_status'        => $payment_status,
 			'to_top_up_status'      => $toTopUp ? true : false,
 			'to_top_value'          => $toTopUp,
 			'disable'               => (int)$spending_account_settings->activate_mednefits_credit_account == 0 ? true : false,
 			'currency_type'			    => strtoupper($customer->currency_type),
 			'refund_amount'         => $refund_amount,
-			'top_up_pending'        => $top_up_data ? true : false,
+			'top_up_pending'        => $top_up_data && $payment_status ? true : false,
 			'top_up_total_credits'  => DecimalHelper::formatDecimal($top_up_total_credits),
 			'top_up_total_purchased_credits'  => DecimalHelper::formatDecimal($top_up_total_purchased_credits),
 			'top_up_total_bonus_credits'  => DecimalHelper::formatDecimal($top_up_total_bonus_credits),
