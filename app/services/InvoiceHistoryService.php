@@ -107,7 +107,7 @@ class InvoiceHistoryService
             }
             
             $payment_data = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
-            $amount_due = $payment_data ? \DecimalHelper::formatDecimal($total - $payment_data->paid_amount) : $total;
+            $amount_due = $payment_data ? \DecimalHelper::formatDecimal(round($total - $payment_data->paid_amount, 2)) : round($total, 2);
             $pagination['data'][] = [
                 'id' => $invoice->corporate_invoice_id,
                 'invoice_date' => date('Y-m-d', strtotime($invoice->invoice_date)),
