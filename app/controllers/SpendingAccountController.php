@@ -645,16 +645,16 @@ class SpendingAccountController extends \BaseController {
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		
 		// get wallet use
-    $medical = array(
-      'panel'     => $spending_account_settings->medical_payment_method_panel == "mednefits_credits" || $spending_account_settings->medical_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->medical_enable == 1 ? true : false,
-      'non_panel' => $spending_account_settings->medical_payment_method_non_panel == "mednefits_credits" || $spending_account_settings->medical_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->medical_enable == 1 ? true : false
-    );
+		$medical = array(
+			'panel'     => $spending_account_settings->medical_payment_method_panel == "mednefits_credits" || $spending_account_settings->medical_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->medical_enable == 1 ? true : false,
+			'non_panel' => $spending_account_settings->medical_payment_method_non_panel == "mednefits_credits" || $spending_account_settings->medical_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->medical_enable == 1 ? true : false
+		);
 
-    // get wallet use
-    $wellness = array(
-      'panel'     => $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" || $spending_account_settings->wellness_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->wellness_enable == 1 ? true : false,
-      'non_panel' => $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" || $spending_account_settings->wellness_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->wellness_enable == 1 ? true : false
-    );
+		// get wallet use
+		$wellness = array(
+			'panel'     => $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" || $spending_account_settings->wellness_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->wellness_enable == 1 ? true : false,
+			'non_panel' => $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" || $spending_account_settings->wellness_benefits_coverage == "out_of_pocket" && (int)$spending_account_settings->wellness_enable == 1 ? true : false
+		);
 	
 		if($input['type'] == "enterprise_plan") {
 			if($plan->account_type == "out_of_pocket") {
@@ -666,18 +666,23 @@ class SpendingAccountController extends \BaseController {
 			$total = 0;
 			$panel = 0;
 			$non_panel = 0;
-	  
+			$depdents_count = 0;
+			
 			foreach ($user_allocated as $key => $user) {
+			  $depdents_count += DB::table('employee_family_coverage_sub_accounts')->where('owner_id', $user)->where('deleted', 0)->count();
 			  $data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
 			  $total += $data['total'];
 			  $panel += $data['panels'];
 			  $non_panel += $data['non_panels'];
 			}
 			
+			$member_counts = sizeof($user_allocated) + $depdents_count;
 			return [
+			  'total'           => $total,
 			  'total_panel'     => $panel,
 			  'total_non_panel' => $non_panel,
-			  'average' => sizeof($user_allocated) > 0 && $total > 0 ? sizeof($user_allocated) / $total : 0,
+			  'member_counts'   => $member_counts,
+        	  'average' => $member_counts > 0 && $total > 0 ? round(($total / $member_counts), 2) : "0.00",
 			  'id'			=> $spending_account_settings->spending_account_setting_id,
 			  'customer_id'	=> $customer_id,
 			  'medical'         => $medical,
