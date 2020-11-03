@@ -30,14 +30,18 @@ class InvoiceHistoryService
     {
         $pagination = [];
 
-        $invoices = DB::table('customer_active_plan')
-        ->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
-        ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
-        ->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
-        ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-        ->where('customer_buy_start.customer_buy_start_id', $this->options['customer_id'])
-        ->orderBy('corporate_invoice.invoice_date', 'desc')
-        ->paginate($this->options['per_page']);
+        // $invoices = DB::table('customer_active_plan')
+        // ->join('corporate_invoice', 'corporate_invoice.customer_active_plan_id', '=', 'customer_active_plan.customer_active_plan_id')
+        // ->join('customer_buy_start', 'customer_buy_start.customer_buy_start_id', '=', 'customer_active_plan.customer_start_buy_id')
+        // ->join('customer_link_customer_buy', 'customer_link_customer_buy.customer_buy_start_id', '=', 'customer_buy_start.customer_buy_start_id')
+        // ->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
+        // ->where('customer_buy_start.customer_buy_start_id', $this->options['customer_id'])
+        // ->orderBy('corporate_invoice.invoice_date', 'desc')
+        // ->paginate($this->options['per_page']);
+        $invoices = DB::table('corporate_invoice')
+                        ->where('corporate_invoice.customer_id', $this->options['customer_id'])
+                        ->orderBy('corporate_invoice.invoice_date', 'desc')
+                        ->paginate($this->options['per_page']);
 
         $plan = DB::table('customer_plan')
             ->where('customer_buy_start_id', $this->options['customer_id'])
@@ -114,12 +118,12 @@ class InvoiceHistoryService
                 'payment_due' => date('Y-m-d', strtotime($invoice->invoice_due)),
                 'number' => $invoice->invoice_number,
                 // 'total'  => $total,
-                'amount_due' => $amount_due,
-                'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
+                'amount_due' => $amount_due <= 0 ? "0.00" : \DecimalHelper::formatDecimal($amount_due),
+                'payment_amount'  => $payment_data ? \DecimalHelper::formatDecimal($payment_data->paid_amount) : "0.00",
                 'paid_date'  => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
                 'type' => null,
                 'payment_method' => null,
-                'payment_remarks' => $payment_data ? $payment_data->remarks ?? '' : '',
+                'payment_remarks' => $payment_data ? $payment_data->remarks : null,
                 'cheque_logs_id'  => $payment_data ? $payment_data->cheque_logs_id : null,
                 'currency_type'   => $invoice->currency_type,
                 'status'  => $amount_due <= 0 ? true : false,
