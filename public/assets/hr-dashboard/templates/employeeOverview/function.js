@@ -582,6 +582,10 @@ app.directive("employeeOverviewDirective", [
             $(".circle-loader").fadeOut();
           }, 10);
         };
+
+        scope.testClick = function () {
+          console.log('test click');
+        }
         
 
         scope.onLoad  = async function(){

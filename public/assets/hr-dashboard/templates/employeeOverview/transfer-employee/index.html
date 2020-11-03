@@ -51,9 +51,10 @@
 												id="{{ transfer.item }}"
 												type="radio"
 												class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out m-0"
-												value="{{ transfer.selected }}"
+												value="{{ transfer.transfer_option }}"
 												name="radio"
 												ng-checked = "transfer.selected"
+												ng-model = "$ctrl.states.form.transfer_option"
 												ng-click="$ctrl.attemptCheck($event, transfer)"
 											>
 											<p for="remember_me" class="block ml-1 text-sm mb-0 text-gray-900">
@@ -66,7 +67,7 @@
 									<label class="form-label text-sm font-medium">
 										Transfer this employee to
 									</label>
-									<div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+									<div ng-if="$ctrl.states.form.transfer_option == 0" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
 										<div class="left-dropdown">
 											<div class="btn-group dropup w-full">
 												<button type="button"
@@ -80,10 +81,10 @@
 																	clip-rule="evenodd" />
 													</svg>
 												</button>
-												<input ng-model="$ctrl.states.form.selected_location_department" class="hidden" required readonly>
+												<input ng-model="$ctrl.states.form.selected_location_department.name" class="hidden" required readonly>
 												<ul class="dropdown-menu">
 													<li ng-repeat="location_department in $ctrl.states.location_department_selector">
-														<a ng-click="$ctrl.setField('selected_location_department', location_department)"
+														<a ng-click="$ctrl.setField('selected_location_department', location_department); $ctrl.setField('selected_location_department_data', {})"
 																class="flex items-center space-x-2">
 																{{ location_department.name }}
 														</a>
@@ -105,7 +106,93 @@
 																	clip-rule="evenodd" />
 													</svg>
 												</button>
-												<input ng-model="$ctrl.states.form.selected_location" class="hidden" required readonly>
+												<input ng-model="$ctrl.states.form.selected_location_department_data.location" class="hidden" required readonly>
+												<ul ng-if="$ctrl.states.form.selected_location_department.transfer_option == 1" class="dropdown-menu">
+													<li ng-repeat="list in $ctrl.states.location_list">
+														<a ng-click="$ctrl.setField('selected_location_department_data', list)"
+																class="flex items-center space-x-2">
+																{{ list.location }}
+														</a>
+													</li>
+												</ul>
+												<ul ng-if="$ctrl.states.form.selected_location_department.transfer_option == 2" class="dropdown-menu">
+													<li ng-repeat="list in $ctrl.states.department_list">
+														<a ng-click="$ctrl.setField('selected_location_department_data', list)"
+																class="flex items-center space-x-2">
+																{{ list.location }}
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+
+									<div ng-if="$ctrl.states.form.transfer_option == 1" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+										<div class="left-dropdown">
+											<div class="btn-group dropup w-full">
+												<button type="button"
+													class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
+													data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													{{ $ctrl.states.form.selected_location_department.name || 'Select' }}
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+															class="w-4 text-gray-600" fill="currentColor">
+															<path fill-rule="evenodd"
+																	d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+																	clip-rule="evenodd" />
+													</svg>
+												</button>
+												<input ng-model="$ctrl.states.form.selected_location_department.name" class="hidden" required readonly>
+												<ul class="dropdown-menu">
+													<li ng-repeat="location_department in $ctrl.states.location_department_selector">
+														<a ng-click="$ctrl.setField('selected_location_department', location_department); $ctrl.setField('selected_location_department_data', {})"
+																class="flex items-center space-x-2">
+																{{ location_department.name }}
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+									<div ng-if="$ctrl.states.form.transfer_option == 1 && false" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+										<div class="left-dropdown">
+											<div class="btn-group dropup w-full">
+												<button type="button"
+													class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
+													data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													{{ $ctrl.states.form.selected_location_department.name || 'Select' }}
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+															class="w-4 text-gray-600" fill="currentColor">
+															<path fill-rule="evenodd"
+																	d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+																	clip-rule="evenodd" />
+													</svg>
+												</button>
+												<input ng-model="$ctrl.states.form.selected_location_department.name" class="hidden" required readonly>
+												<ul class="dropdown-menu">
+													<li ng-repeat="location_department in $ctrl.states.location_department_selector">
+														<a ng-click="$ctrl.setField('selected_location_department', location_department); $ctrl.setField('selected_location_department_data', {})"
+																class="flex items-center space-x-2">
+																{{ location_department.name }}
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<div class="right-dropdown">
+											<div class="btn-group dropup w-full">
+												<button type="button"
+													class="ui-btn ui-btn-white dropdown-toggle w-full justify-between"
+													data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													<span ng-if="$ctrl.states.form.selected_location_department.transfer_option == 1" class="text-ellipsis">{{ $ctrl.states.form.selected_location_department_data.location || 'Choose a location' }}</span>
+													<span ng-if="$ctrl.states.form.selected_location_department.transfer_option == 2" class="text-ellipsis">{{ $ctrl.states.form.selected_location_department_data.location || 'Choose a department' }}</span>
+													<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+															class="w-4 text-gray-600" fill="currentColor">
+															<path fill-rule="evenodd"
+																	d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+																	clip-rule="evenodd" />
+													</svg>
+												</button>
+												<input ng-model="$ctrl.states.form.selected_location_department_data.location" class="hidden" required readonly>
 												<ul ng-if="$ctrl.states.form.selected_location_department.transfer_option == 1" class="dropdown-menu">
 													<li ng-repeat="list in $ctrl.states.location_list">
 														<a ng-click="$ctrl.setField('selected_location_department_data', list)"
@@ -129,6 +216,7 @@
 							</div>
 						</div>
 							<div class="flex items-center justify-end space-x-4 w-full pb-8">
+									<!-- ng-click="$ctrl.dismiss()" -->
 								<button
 								ng-click="$ctrl.dismiss()"
 								type="button"
@@ -139,7 +227,7 @@
 										type="button"
 										ng-disabled="form.$invalid"
 										class="ui-btn {{ form.$invalid ? 'ui-btn-disabled' : 'ui-btn-primary' }} w-48"
-										ng-click="$ctrl.store()">
+										ng-click="$ctrl.transferEmployee($ctrl.states.form)">
 										Transfer
 								</button>
 							</div>

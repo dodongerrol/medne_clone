@@ -646,6 +646,10 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
     return $http.post( serverUrl.url + "/hr/unlink/company_account", data );
   }
 
+  hrFactory.updateUnlinkAccount = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/transfer_employee", data );
+  }
+
   return hrFactory;
 });
 
