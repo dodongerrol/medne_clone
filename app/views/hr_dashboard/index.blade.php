@@ -275,6 +275,7 @@
 	<!-- Company activation -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyActivation/createPassword/function.js?_={{ $date->format('U') }}"></script>
 
+
 	<!-- REMOVE EMPLOYEE DIRECTIVES -->
 		<!-- <script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php // echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
