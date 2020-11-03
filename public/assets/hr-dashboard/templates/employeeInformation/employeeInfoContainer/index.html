@@ -258,8 +258,7 @@
     <div ng-if="$state.current.name != 'member.health-partner-access'" class="right-panel-header-wrapper">
       <div class="employee-dependent-selection">
         <div class="employee-selection" ui-sref-active="active" ui-sref="member.emp-details">Employee</div>
-        <!-- ng-if="selected_emp_dependents.length > 0" -->
-        <div class="dependent-selection" ui-sref-active="active" ui-sref="member.dep-details">Dependent</div>
+        <div ng-if="selected_emp_dependents.length > 0" class="dependent-selection" ui-sref-active="active" ui-sref="member.dep-details">Dependent</div>
         <!-- ng-if="(selectedEmployee.account_type != 'enterprise_plan' && (selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet)) || (selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.wellness_wallet == true)"  -->
         <div class="settings-selection" ui-sref-active="active" ui-sref="member.credit-allocation">Entitlement</div>
         <div class="settings-selection" ui-sref-active="active" ui-sref="member.emp-settings">Settings</div>

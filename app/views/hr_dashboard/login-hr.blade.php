@@ -91,10 +91,13 @@
 			<h2 class="text-center text-below-image">for business</h2>
 			<!-- <span ng-if="!showPassword" class="no-account">Don't have an account? <a href="#">Sign up</a>.</span> -->
 			<form class="med-form" ng-if="!showAccounts">
-				<div ng-if="!showPassword" class="form-group">
+				<div ng-if="!showPassword" class="form-group form-loading-icon">
 					<label for="email" class="font-greycliff">Email</label>
 					<input type="email" name="email" class="form-control med-input font-greycliff" ng-class="{'not-activated': login_details.status == 'not activated' || login_details.status == 'not-exist'}" placeholder="Enter Email Address"
 						ng-model="login_details.email" ng-model-options="{debounce: 1000}" ng-change="enableContinue(login_details.email)" required>
+					<div ng-if="isCheckingEmail" class="icon-spin">
+						<i class="fa fa-circle-o-notch fa-spin"></i>
+					</div>
 				</div>
 				<div ng-if="showPassword" class="form-group">
 					<label for="password" class="font-greycliff">Password</label>

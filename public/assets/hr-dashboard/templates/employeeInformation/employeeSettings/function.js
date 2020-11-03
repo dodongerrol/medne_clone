@@ -5,13 +5,14 @@ app.directive('employeeSettingsDirective', [
   '$state',
   'employeeFactory',
   'hrSettings',
-  function directive($http, serverUrl, $timeout, $state, employeeFactory, hrSettings) {
+  '$stateParams',
+  function directive($http, serverUrl, $timeout, $state, employeeFactory, hrSettings, $stateParams) {
     return {
       restrict: "A",
       scope: true,
       link: function link(scope, element, attributeSet) {
         console.log('employeeSettingsDirective running!');
-        scope.selected_member_id = localStorage.getItem('selected_member_id');
+        scope.selected_member_id = $stateParams.member_id;
         scope.add_admin_data = {
           is_mednefits_emp : 1,
           view_employee_dependent: true,

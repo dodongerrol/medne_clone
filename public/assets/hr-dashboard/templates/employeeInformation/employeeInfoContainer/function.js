@@ -15,7 +15,7 @@ app.directive('employeeInfoContainerDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
         console.log('running employeeInfoContainerDirective!');
-        scope.selected_member_id = localStorage.getItem('selected_member_id');
+        scope.selected_member_id = $stateParams.member_id;
         scope.selected_member_index = Number(localStorage.getItem('selected_member_index'));
         scope.empOverviewData = JSON.parse( localStorage.getItem('empOverviewData') );
         scope.selectedEmployee = {};
@@ -23,8 +23,6 @@ app.directive('employeeInfoContainerDirective', [
         scope.isTierDetailsShow = false;
         scope.isMedicalUsageShow = false;
         scope.isWellnessUsageShow = false;
-
-
 
         scope.getEmployeeDetails  = async function(isRefresh){
           scope.selectedEmployee = await employeeFactory.getEmployeeDetails();
@@ -155,7 +153,6 @@ app.directive('employeeInfoContainerDirective', [
           } else {
             $('#permission-modal').modal('show');
           }
-          
         }
         scope.goToHealthAccountSummary  = function(){
           $state.go('member.health-spending-account-summary');

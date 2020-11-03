@@ -10813,3 +10813,15 @@ span.dropdown-entitlement.disabled {
 .gray-div *{
   background: #ddd !important;
 }
+
+.form-loading-icon{
+  position: relative;
+}
+.icon-spin{
+  position: absolute;
+  right: -30px;
+  top: 42px;
+}
+.icon-spin i{
+  font-size: 25px;
+}

@@ -2,13 +2,15 @@ app.directive('dependentDetailsDirective', [
   '$timeout',
   'dependentsSettings',
   'hrSettings',
-  function directive($timeout, dependentsSettings, hrSettings) {
+  '$stateParams',
+  '$state',
+  function directive($timeout, dependentsSettings, hrSettings, $stateParams, $state) {
     return {
       restrict: "A",
       scope: true,
       link: function link(scope, element, attributeSet) {
         console.log('dependentDetailsDirectiveasdasd as running!');
-        scope.selected_member_id = localStorage.getItem('selected_member_id');
+        scope.selected_member_id = $stateParams.member_id;
         scope.selected_emp_dependents = [];
         scope.selectedDependent = {};
 
@@ -78,9 +80,10 @@ app.directive('dependentDetailsDirective', [
             });
         }
 
-        scope.removeDependentBtn = function () {
+        scope.removeDependentBtn = function (data) {
+          console.log(data);
           if ( scope.get_permissions_data.enroll_terminate_employee == 1 ) {
-
+            $state.go('member-remove.remove-emp-inputs', { member_id : data.UserID });
           } else {
             $('#permission-modal').modal('show');
           }

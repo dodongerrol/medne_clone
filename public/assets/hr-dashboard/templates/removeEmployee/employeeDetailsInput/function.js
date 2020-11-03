@@ -8,12 +8,21 @@ app.directive('employeeDetailsInputDirective', [
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log( 'employeeDetailsInputDirective running!' );
+				scope.selected_member_id = $stateParams.member_id;
+
+        scope.fetchEmployeeDetails  = async function(){
+          await $http.get(serverUrl.url + "/hr/employee/" + scope.selected_member_id)
+            .then(function(response){
+              console.log(response);
+              scope.selectedEmployee = response.data.data;
+              // employeeFactory.setEmployeeDetails(scope.selectedEmployee);
+              // scope.setEmployeeValues();
+            });
+        }
 
 				
 				scope.backBtn	=	function(){
-					// scope.isEmployeeShow = true;
 					$state.go('employee-overview');
-					// $('.employee-information-wrapper').fadeIn();
 					scope.removeBackBtn();
 				}
 				scope.nextBtn	=	function(){
@@ -89,7 +98,9 @@ app.directive('employeeDetailsInputDirective', [
           $('.employee-information-wrapper').fadeIn();
 				}
 
-				scope.onLoad	=	function(){
+				scope.onLoad	= async	function(){
+					scope.showLoading();
+					await scope.fetchEmployeeDetails();
 					scope.hideLoading();
 				}
 				scope.onLoad();

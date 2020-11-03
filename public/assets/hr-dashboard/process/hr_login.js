@@ -39,6 +39,7 @@ login.directive('loginSection', [
 				scope.linkedAccounts = [];
 				scope.linkedAccountsPagi = {};
 				scope.isSearchActive	=	false;
+				scope.isCheckingEmail = false;
 
 				scope.checkUserLogin = function( ) {
 					var token = window.localStorage.getItem('token');
@@ -81,6 +82,7 @@ login.directive('loginSection', [
 				}
 				scope.enableContinue = function (email) {
 					// let emailFromDb = 'example@email.com';
+					scope.isCheckingEmail = true;
 					let account_status;
 
 					$http.get(serverUrl.url + `/employee/check_email_validation?email=${email}`)
@@ -89,6 +91,7 @@ login.directive('loginSection', [
 						scope.hr_id = response.hr_id;
 						account_status = response.status;
 						console.log(account_status);
+						scope.isCheckingEmail = false;
 						if( account_status == 1) {
 							// check if email exist in db.
 							scope.login_details.status = 'activated';

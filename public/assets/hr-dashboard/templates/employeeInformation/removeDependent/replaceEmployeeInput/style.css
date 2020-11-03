@@ -1,0 +1,46 @@
+.employee-input-wrapper md-select-value{
+  font-size: 14px;
+  height: 29px;
+  padding: 0;
+}
+.employee-input-wrapper md-select-value span:first-child{
+  width: 100%;
+}
+
+.errorCreditsModal{
+  text-align: left;
+  border-radius: 1px;
+  padding: 30px 40px 30px 40px;
+  width: 520px;
+}
+.errorCreditsModal .sa-icon{
+  display: none !important;
+}
+.errorCreditsModal > h2{
+  text-align: left;
+  color: #D6534F;
+  font-size: 20px;
+  font-weight: 300;
+  font-family: 'Helvetica Medium';
+  margin: 0;
+  line-height: 1.3;
+}
+.errorCreditsModal > p{
+  color: #000;
+  line-height: 1.3;
+  font-size: 17px;
+}
+.errorCreditsModal > p b{
+  font-family: 'Helvetica Medium';
+}
+.errorCreditsModal .sa-button-container{
+  text-align: center;
+}
+.errorCreditsModal .sa-button-container .confirm{
+  padding: 4px 25px;
+  font-size: 14px;
+  font-family: "Helvetica Light";
+  font-weight: 700;
+  border-radius: 2px;
+  margin: 10px 0 0 0px;
+}

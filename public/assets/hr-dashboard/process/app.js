@@ -1,7 +1,6 @@
 var app = angular.module('app', ['ui.router', 'ngCacheBuster', 'LocalStorageModule','authService', 'hrService', 'dependentsService', 'checkCtrl', 'bootstrap3-typeahead', 'ngJsonExportExcel', 'ngFileUpload','cp.ng.fix-image-orientation']);
-
-app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window',
-function ($rootScope, $state, $stateParams, $templateCache, $window) {
+app.run([ '$rootScope', '$state', '$stateParams', '$templateCache', '$window', '$location',
+function ($rootScope, $state, $stateParams, $templateCache, $window, $location) {
 
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
@@ -15,14 +14,14 @@ function ($rootScope, $state, $stateParams, $templateCache, $window) {
    });
 
   $rootScope.$on('$locationChangeSuccess', function() {
-     if ($window.Appcues) {
-        $window.Appcues.page();
-      }
-   });
-
+    if ($window.Appcues) {
+      $window.Appcues.page();
+    }
+  });
 
   $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) {
     // console.log( toState );
+
     if( toState.url != '/e-claim' ){
       $('.download-receipt-message').hide();
     }
@@ -364,7 +363,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       .state('member', {
         url: '/member/:member_id',
         params: {
-          member_id: localStorage.getItem('selected_member_id')
+          // member_id: localStorage.getItem('selected_member_id')
         },
         views: {
           'navigation': {
@@ -484,6 +483,70 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         views: {
           'remove-content@member-remove': {
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeEmployee/refundSummary/index.blade.php'
+          },
+        },
+      })
+
+
+      .state('dependent-remove', {
+        url: '/dependent-opt/:dependent_id',
+        params: {
+          // dependent_id: localStorage.getItem('selected_dependent_id')
+        },
+        views: {
+          'navigation': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
+          },
+          'main': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeEmployee/container/index.blade.php'
+          },
+        },
+      })
+      .state('dependent-remove.remove-emp-inputs', {
+        url: '/remove/details',
+        views: {
+          'remove-content@dependent-remove': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/employeeDetailsInput/index.blade.php'
+          },
+        },
+      })
+      .state('dependent-remove.remove-emp-checkboxes', {
+        url: '/remove/option',
+        views: {
+          'remove-content@dependent-remove': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/removeCheckboxOptions/index.blade.php'
+          },
+        },
+      })
+      .state('dependent-remove.remove-replace-emp', {
+        url: '/remove/replace',
+        views: {
+          'remove-content@dependent-remove': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/replaceEmployeeInput/index.blade.php'
+          },
+        },
+      })
+      .state('dependent-remove.health-spending-account-summary', {
+        url: '/remove/health-spending-account-summary',
+        views: {
+          'remove-content@dependent-remove': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/healthSpendingAccountSummary/index.blade.php'
+          },
+        },
+      })
+      .state('dependent-remove.health-spending-account-confirm', {
+        url: '/remove/health-spending-account-confirm',
+        views: {
+          'remove-content@dependent-remove': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/healthSpendingAccountConfirm/index.blade.php'
+          },
+        },
+      })
+      .state('dependent-remove.refund-summary', {
+        url: '/remove/refund-summary',
+        views: {
+          'remove-content@dependent-remove': {
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/refundSummary/index.blade.php'
           },
         },
       })
@@ -1021,7 +1084,8 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
       }
     })
 
-
+    // ======================================================== //    
+    
     $urlRouterProvider.otherwise('/benefits-dashboard');
     // $urlRouterProvider.otherwise('/introduction');
     // $locationProvider.html5Mode(true);

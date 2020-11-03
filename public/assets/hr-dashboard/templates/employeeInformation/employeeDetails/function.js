@@ -8,13 +8,14 @@ app.directive('employeeDetailsDirective', [
   'hrActivity',
   'dependentsSettings',
   'hrSettings',
-  function directive($http, serverUrl, $timeout, $state, employeeFactory, $rootScope, hrActivity, dependentsSettings, hrSettings) {
+  '$stateParams',
+  function directive($http, serverUrl, $timeout, $state, employeeFactory, $rootScope, hrActivity, dependentsSettings, hrSettings, $stateParams) {
     return {
       restrict: "A",
       scope: true,
       link: function link(scope, element, attributeSet) {
         console.log('employeeDetailsDirective running!');
-        scope.selected_member_id = localStorage.getItem('selected_member_id');
+        scope.selected_member_id = $stateParams.member_id;
         var phoneNumTel = null;
         scope.dropdownEntitlement = {
           medical: false,

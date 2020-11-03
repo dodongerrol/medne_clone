@@ -6,13 +6,14 @@ app.directive('employeeHealthProviderAccessDirective', [
   'employeeFactory',
   '$rootScope',
   'hrActivity',
-  function directive($http, serverUrl, $timeout, $state, employeeFactory, $rootScope, hrActivity) {
+  '$stateParams',
+  function directive($http, serverUrl, $timeout, $state, employeeFactory, $rootScope, hrActivity, $stateParams) {
     return {
       restrict: "A",
       scope: true,
       link: function link(scope, element, attributeSet) {
         console.log('employeeHealthProviderAccessDirective running!');
-        scope.selected_member_id = localStorage.getItem('selected_member_id');
+        scope.selected_member_id = $stateParams.member_id;
         scope.showBlockHealthProviders = false;
         scope.search = {
           clinic_open_search_text: '',
