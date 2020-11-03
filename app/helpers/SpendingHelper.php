@@ -148,8 +148,10 @@ class SpendingHelper {
             $start = $spending_account_settings->medical_spending_start_date;
             $end = $spending_account_settings->medical_spending_end_date;
             foreach($user_allocated as $key => $user) {
-                $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
-                $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                // $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
+                // $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                $medical_credit = \MemberHelper::newMedicalLatestAllocation($user);
+                $wellness_credit = \MemberHelper::newWellnessLatestAllocation($user);
                 $total_medical_entitlment += $medical_credit['allocation'];
                 $total_wellness_entitlment += $wellness_credit['allocation'];
             }
@@ -236,8 +238,10 @@ class SpendingHelper {
             $start = $spending_account_settings->medical_spending_start_date;
             $end = $spending_account_settings->medical_spending_end_date;
             foreach($user_allocated as $key => $user) {
-                $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
-                $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                // $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
+                // $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                $medical_credit = \MemberHelper::newMedicalLatestAllocation($user);
+                $wellness_credit = \MemberHelper::newWellnessLatestAllocation($user);
                 $total_medical_entitlment += $medical_credit['allocation'];
                 $total_wellness_entitlment += $wellness_credit['allocation'];
             }
