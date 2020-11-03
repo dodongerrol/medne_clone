@@ -18877,13 +18877,13 @@ public function createHrLocation ()
 				'message' => 'Successfully transfer employee to location.',
 				'status'  => TRUE
 			];
-		} else {
+		} else if($assign == 0) {
 			DB::table('company_department_members')->update([
 				'company_department_id'		=> $department['id'],
 				'member_id'					=> $users->UserID,
 				'status'					=> 1,
-				'created_at'				=> $users->created_at,
-				'updated_at'				=> $users->updated_at
+				'created_at'				=> date('Y-m-d H:i:s'),
+				'updated_at'				=> date('Y-m-d H:i:s')
 			]);
 			$data = [
 				'message' => 'Successfully transfer employee to department.',
@@ -18891,7 +18891,7 @@ public function createHrLocation ()
 			];
 		}
 		if($transfer_option == 0){
-			
+
 			$link_accounts = DB::table('company_link_accounts')
 			->where('hr_id', $customer_id)
 			->where('company_link_accounts.status', 1)
