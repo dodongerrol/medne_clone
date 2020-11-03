@@ -1148,7 +1148,7 @@ class SpendingInvoiceLibrary
 						->where('where_spend', 'e_claim_transaction')
 						->where('id',  $e_claim->e_claim_id)
 						->first();
-				if($logs && $logs->spending_method == "post_paid") {
+				// if($logs && $logs->spending_method == "post_paid") {
 					if($logs) {
 						$spending_method = $logs->spending_method;
 						$credits = $logs->credit;
@@ -1259,7 +1259,7 @@ class SpendingInvoiceLibrary
 					);
 	
 					array_push($transaction_data, $temp);
-				}
+				// }
 			}
 		}
 

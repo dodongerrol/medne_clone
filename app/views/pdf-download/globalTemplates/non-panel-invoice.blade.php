@@ -94,6 +94,7 @@
         <td style="width: 12%;font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;">Tax</td>
         <td style="width: 18%;font-size: 14px;border-bottom: 2px solid #000;padding-bottom: 5px;font-weight: 700;text-align: right;">Amount {{$currency_type}}</td>
       </tr>
+      @if($spending == 'medical')
       <tr>
         <td style="padding: 10px 0 5px 0;">
           <p style="font-size: 14px;line-height: 14px;margin: 0;">Non-Panel Claim (Medical)</p>
@@ -117,6 +118,8 @@
         </td>
         <td colspan="4" style="border-bottom: 1px solid #BFBFBF;"></td>
       </tr>
+      @endif
+      @if($spending == 'wellness')
       <tr>
         <td style="padding: 10px 0 5px 0;">
           <p style="font-size: 14px;line-height: 14px;margin: 0;">Non-Panel Claim (Wellness)</p>
@@ -140,7 +143,7 @@
         </td>
         <td colspan="4" style="border-bottom: 1px solid #BFBFBF;"></td>
       </tr>
-    
+      @endif
 
       <tr>
         <td colspan="2"></td>

@@ -9995,9 +9995,11 @@ public function downloadEclaimCsv( )
 			'currency_type'	=> strtoupper($statement->currency_type),
 			'postal'		=> null,
 			'medical'		=> number_format($transaction_data['total_medical'], 2),
-			'wellness'		=> number_format($transaction_data['total_wellness'], 2)
+			'wellness'		=> number_format($transaction_data['total_wellness'], 2),
+			'spending'		=> $statement->spending
 		);
 
+		// return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
