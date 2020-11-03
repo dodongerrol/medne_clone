@@ -2814,5 +2814,95 @@ class MemberHelper
 			
 		return $medical_payment_method;
 	}
+
+	public static function newMedicalLatestAllocation($user_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->select('wallet_id')->first();
+		$wallet_id = $wallet->wallet_id;
+		$employee_credit_reset_medical = DB::table('credit_reset')
+										->where('id', $user_id)
+										->where('spending_type', 'medical')
+										->where('user_type', 'employee')
+										->orderBy('created_at', 'desc')
+										->select('date_resetted')
+										->first();
+		// return $employee_credit_reset_medical;
+		if($employee_credit_reset_medical) {
+			$start = $employee_credit_reset_medical->date_resetted;
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,totalReturnedSpent,proAllocation from 
+			(select sum(credit) as totalAddedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr' and created_at >= '".$start."') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr' and created_at >= '".$start."') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction' and created_at >= '".$start."') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction' and created_at >= '".$start."') as totalNonPanelSpentCreditTable, 
+			(select sum(credit) as totalReturnedSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network' and created_at >= '".$start."') as totalReturnedSpentCreditTable, 
+			(select sum(credit) as proAllocation from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		} else {
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,proAllocation,totalReturnedSpent from (select sum(credit) as totalAddedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction') as totalNonPanelSpentCreditTable,
+			(select sum(credit) as totalReturnedSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network') as totalReturnedSpentCreditTable,  
+			(select sum(credit) as proAllocation from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		}
+		
+		$wallet_history = DB::select($statement);
+		$wallet_history = $wallet_history[0];
+		
+		$totalAddedCredits = $wallet_history ? $wallet_history->totalAddedCredits : 0;
+		$totaldeductedCredits = $wallet_history ? $wallet_history->totaldeductedCredits : 0;
+		$totalPanelSpent = $wallet_history ? $wallet_history->totalPanelSpent : 0;
+		$totalNonPanelSpent = $wallet_history ? $wallet_history->totalNonPanelSpent : 0;
+		$totalReturnedSpent = $wallet_history ? $wallet_history->totalReturnedSpent : 0;
+		$proAllocation = $wallet_history ? $wallet_history->proAllocation : 0;
+		$total_allocation = $totalAddedCredits - $totaldeductedCredits;
+		$total_spent = ($totalPanelSpent + $totalNonPanelSpent) - $totalReturnedSpent;
+		$balance = $total_allocation - $total_spent;
+		return ['allocation' => $total_allocation, 'total_allocation' => $total_allocation, 'tota_spent' => $total_spent, 'balance' => $balance];
+	}
+
+	public static function newWellnessLatestAllocation($user_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->select('wallet_id')->first();
+		$wallet_id = $wallet->wallet_id;
+		$employee_credit_reset_medical = DB::table('credit_reset')
+										->where('id', $user_id)
+										->where('spending_type', 'wellness')
+										->where('user_type', 'employee')
+										->orderBy('created_at', 'desc')
+										->select('date_resetted')
+										->first();
+		// return $employee_credit_reset_medical;
+		if($employee_credit_reset_medical) {
+			$start = $employee_credit_reset_medical->date_resetted;
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,totalReturnedSpent,proAllocation from 
+			(select sum(credit) as totalAddedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr' and created_at >= '".$start."') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr' and created_at >= '".$start."') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction' and created_at >= '".$start."') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction' and created_at >= '".$start."') as totalNonPanelSpentCreditTable, 
+			(select sum(credit) as totalReturnedSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network' and created_at >= '".$start."') as totalReturnedSpentCreditTable, 
+			(select sum(credit) as proAllocation from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		} else {
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,proAllocation,totalReturnedSpent from (select sum(credit) as totalAddedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction') as totalNonPanelSpentCreditTable, 
+			(select sum(credit) as totalReturnedSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network') as totalReturnedSpentCreditTable,  
+			(select sum(credit) as proAllocation from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		}
+		
+		$wallet_history = DB::select($statement);
+		$wallet_history = $wallet_history[0];
+		
+		$totalAddedCredits = $wallet_history ? $wallet_history->totaldeductedCredits : 0;
+		$totaldeductedCredits = $wallet_history ? $wallet_history->totaldeductedCredits : 0;
+		$totalPanelSpent = $wallet_history ? $wallet_history->totalPanelSpent : 0;
+		$totalNonPanelSpent = $wallet_history ? $wallet_history->totalNonPanelSpent : 0;
+		$totalReturnedSpent = $wallet_history ? $wallet_history->totalReturnedSpent : 0;
+		$proAllocation = $wallet_history ? $wallet_history->proAllocation : 0;
+		$total_allocation = $totalAddedCredits - $totaldeductedCredits;
+		$total_spent = ($totalPanelSpent + $totalNonPanelSpent) - $totalReturnedSpent;
+		$balance = $total_allocation - $total_spent;
+		return ['allocation' => $total_allocation, 'total_allocation' => $total_allocation, 'tota_spent' => $total_spent, 'balance' => $balance];
+	}
 }
 ?>
