@@ -18190,7 +18190,7 @@ public function createHrLocation ()
 		$data = array(
 			'billing_name'			=> !empty($input['billing_name']) ? $input['billing_name'] : $check->billing_name,
 			'billing_address'		=> $final_address,
-			'postal'			=> !empty($input['postal']) ? $input['postal'] : $check->postal,
+			'postal_code'			=> !empty($input['postal_code']) ? $input['postal_code'] : $check->postal,
 		);
 
 		$result = $billing
@@ -18891,7 +18891,7 @@ public function createHrLocation ()
 			];
 		}
 		if($transfer_option == 0){
-
+			
 			$link_accounts = DB::table('company_link_accounts')
 			->where('hr_id', $customer_id)
 			->where('company_link_accounts.status', 1)
@@ -18907,7 +18907,7 @@ public function createHrLocation ()
 				} else {
 					$link_accounts = DB::table('company_link_accounts')
 								->where('hr_id', $hr_id)
-								->where('status	', 1)
+								->where('status', 1)
 								->get();
 				}
 
