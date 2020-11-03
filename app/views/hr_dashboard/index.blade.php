@@ -41,7 +41,7 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/custom.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/tailwind.css?_={{ $date->format('U') }}">
-	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/style.css?_={{ $date->format('U') }}">
+	<!-- <link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/style.css?_={{ $date->format('U') }}"> -->
 
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/header-navigation.css?_={{ $date->format('U') }}">
 
@@ -331,6 +331,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/companyOverview/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/Administrators/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/function.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/activityHistory/function.js?_={{ $date->format('U') }}"></script>
 

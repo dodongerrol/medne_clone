@@ -18907,7 +18907,7 @@ public function createHrLocation ()
 				} else {
 					$link_accounts = DB::table('company_link_accounts')
 								->where('hr_id', $hr_id)
-								->where('status', 1)
+								->where('status	', 1)
 								->get();
 				}
 
