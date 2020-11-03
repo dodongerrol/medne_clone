@@ -19,7 +19,7 @@
                 .then(response => response.data)
         }
         saveAllocateLocation( data ) {
-            return this.$http.post(`${this.serverUrl}/hr/allocate_employee_location`,{data})
+            return this.$http.post(`${this.serverUrl}/hr/allocate_employee_location`,{...data})
         }
         saveAllocateDepartment( data ) {
             return this.$http.post(`${this.serverUrl}/hr/allocate_employee_department`,{data})

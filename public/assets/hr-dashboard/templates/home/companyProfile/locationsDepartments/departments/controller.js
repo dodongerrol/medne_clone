@@ -26,10 +26,12 @@
       this.departmentAPI.get().then((response) => {
         this.departments = response;
         // console.log(this.departments);
-        this.departments.map((res) => {
+        this.departments.map((res,key) => {
           // res.selected = false;
+          // this.index = key;
           this.department_id = res.id;
           console.log(res);
+          // console.log(this.index);
         });
       });
     }
@@ -56,6 +58,7 @@
       if ( this.get_permission_data.add_location_departments == 1 ) {
         this.state.department = department;
         this.presentModal("edit-department-modal", true);
+        console.log( this.state.department );
       } else {
         this.presentModal('permission-modal', true);
       }
@@ -128,7 +131,7 @@
     saveDepartment() {
       let data = {
           employee_ids: this.selectEmployeeId,
-          location_id: this.department_id,
+          department_id: this.department_id,
       }
 
       const request = this.departmentAPI.saveAllocateDepartment(data);
@@ -141,7 +144,8 @@
           if (response.data.status) {
             $(".circle-loader").fadeOut();
             this.presentModal("allocate-employees-department-modal", false); 
-            this.get(); 
+            this.get();
+            return swal('Success!', response.data.message, 'success');
           } else {
             $(".circle-loader").fadeOut();
             return swal('Error!', response.data.message, 'error');

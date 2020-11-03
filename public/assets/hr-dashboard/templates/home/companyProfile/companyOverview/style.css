@@ -265,3 +265,6 @@
 #business-information-modal .country-postal-container .country-drop .iti__flag-container:hover  .iti__selected-flag{
   background: transparent;
 }
+#business-information-modal .country-postal-container .iti__country-list {
+  width: 100%;
+}

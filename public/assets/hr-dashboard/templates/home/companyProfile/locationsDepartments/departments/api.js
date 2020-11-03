@@ -34,7 +34,7 @@
           .then(response => response.data)
     }
     saveAllocateDepartment( data ) {
-      return this.$http.post(`${this.serverUrl}/hr/allocate_employee_department`,{data})
+      return this.$http.post(`${this.serverUrl}/hr/allocate_employee_department`,{...data})
   }
   }
 

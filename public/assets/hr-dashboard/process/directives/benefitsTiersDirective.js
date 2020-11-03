@@ -607,8 +607,10 @@ app.directive('benefitsTiersDirective', [
 						} else {
 							if (scope.overall_dep_count <= scope.dependents.total_number_of_seats) {
 								scope.overall_dep_count += 1;
+								console.log('console test 1 ');
 							}
 						}
+						console.log('console test 2');
 						scope.dependent_ctr += 1;
 						scope.dependent_data = {};
 						scope.showLoading();

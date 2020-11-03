@@ -18,6 +18,7 @@
                 },
             }
             this.get_permission_data = {};
+            this.isShowRemove = true;
         }
         $onInit() {
             this.get();
@@ -55,10 +56,18 @@
                 this.reset();
             });
         }
-        edit(location) {
+        edit(location,index) {
+            console.log(location);
+            console.log(index);
             if ( this.get_permission_data.add_location_departments == 1 ) { 
                 this.state.form = { ...location };
                 presentModal('edit-location-modal');
+                if ( index == 0 ) {
+                    this.isShowRemove = false;
+                    console.log(this.isShowRemove, 'isShowRemove');
+                } else {
+                    this.isShowRemove = true;
+                }
             } else {
                 this.presentModal('permission-modal', true);
             }

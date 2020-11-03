@@ -80,7 +80,7 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2">
                             <div>
-                                <button ng-click="$ctrl.attemptDelete()" class="ui-btn ui-btn-danger-outline">
+                                <button ng-if="$ctrl.isShowRemove == true" ng-click="$ctrl.attemptDelete()" class="ui-btn ui-btn-danger-outline">
                                     Remove
                                 </button>
                             </div>

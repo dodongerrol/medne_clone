@@ -11,7 +11,7 @@ aria-labelledby="remove-department-confirm-modal" aria-hidden="true">
                         </h4>
                         <div class="grid grid-cols-1">
                             <p class="helvetica-medium text-sm font-medium text-gray-900 mb-6">
-                                Are you sure you want to remove your Product department? If you do, the 5 current employees in Product won’t be assigned to a department.
+                                Are you sure you want to remove your {{ $ctrl.state.department.department_name }} department? If you do, the {{ $ctrl.state.department.total_employees }} current employees in {{ $ctrl.state.department.department_name }} won’t be assigned to a department.
                             </p>
                             <p class="helvetica-medium text-sm font-medium text-gray-900 mb-8">
                                 Please confirm to proceed.

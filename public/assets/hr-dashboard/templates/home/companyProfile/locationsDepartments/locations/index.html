@@ -19,7 +19,7 @@
             </div>
             <div>
                 <div class="grid grid-cols-1 gap-2">
-                    <div ng-repeat="location in $ctrl.locations">
+                    <div ng-repeat="location in $ctrl.locations track by $index">
                         <div class="ui-card-inner bottom-border">
                             <div class="flex items-center justify-between">
                                 <div class="w-40">
@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="flex flex-col items-end justify-between space-y-8">
                                     <button type="button" class="ui-btn ui-btn-primary-outline w-24"
-                                        ng-click="$ctrl.edit(location)">
+                                        ng-click="$ctrl.edit(location,$index)">
                                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-2">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
@@ -48,7 +48,7 @@
                                         </svg>
                                         Edit
                                     </button>
-                                    <allocation ng-if="$index != 0" id="location.id" id="location.LocationID" type="location"></allocation>
+                                    <allocation ng-if="$index != 0" id="location.LocationID" on-save="$ctrl.get()" type="location"></allocation>
                                 </div>
                             </div>
                         </div>

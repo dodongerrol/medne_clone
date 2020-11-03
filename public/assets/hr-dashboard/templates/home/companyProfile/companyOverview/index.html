@@ -70,7 +70,7 @@
         </div>
       </div>
       <div class="footer-btn">
-        <button ng-disabled="addMoreContactDisabled" ng-click="addBusinessContact()" data-toggle="modal" data-target="#business-add-contact-modal" class="add-contact-btn">Add more contact</button>
+        <button ng-disabled="addMoreContactDisabled" ng-click="addBusinessContact(1)" data-toggle="modal" data-target="#business-add-contact-modal" class="add-contact-btn">Add more contact</button>
       </div>
     </div>
   </div>
@@ -106,7 +106,9 @@
           <div class="country-postal-container display-flex">
             <div class="business-input-wrapper country-drop">
               <label>Country Incorporated</label>
-              <input ng-model="get_business_info_data.country" id="business_info_country" readonly>
+              <div>
+                <input ng-model="get_business_info_data.country" id="business_info_country">
+              </div>
             </div>
             <div class="business-input-wrapper">
               <label>Postal Code</label>
