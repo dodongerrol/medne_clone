@@ -6835,7 +6835,9 @@ public function updateEclaimStatus( )
 					try {
 						$start = date('Y-m-01', strtotime($e_claim_details->created_at));
 						$end = PlanHelper::getEndDate($start);
-						EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
+						if($spending['medical_reimbursement'] == true) {
+							EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
+						}
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
@@ -6943,7 +6945,9 @@ public function updateEclaimStatus( )
 						$start = date('Y-m-01', strtotime($e_claim_details->created_at));
 						$end = PlanHelper::getEndDate($start);
 						try {
-							EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
+							if($spending['wellness_reimbursement'] == true) {
+								EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
+							}
 						} catch(Exception $e) {
 							$email = [];
 							$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
@@ -9956,13 +9960,11 @@ public function downloadEclaimCsv( )
 		}
 
 		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
-
-		if((int)$statement->statement_status == 1) {
-			$total = round($transaction_data['credits'], 2);
-			$amount_due = (float)$total - (float)$statement->paid_amount;
-		} else {
-			$amount_due = (float)$transaction_data['credits'];
-			$total = $amount_due;
+		$total = round($transaction_data['credits'], 2);
+		$amount_due = (float)$total - (float)$statement->paid_amount;
+		
+		if($statement->payment_method == "mednefits_credits") {
+			$amount_due = 0;
 		}
 
 		$data = array(
@@ -9981,7 +9983,7 @@ public function downloadEclaimCsv( )
 			'end_date'	=> date('j M Y', strtotime($statement->statement_end_date)),
 			'statement_id'	=> $statement->statement_id,
 			'statement_number' => $statement->statement_number,
-			'statement_status'	=> $statement->statement_status,
+			'statement_status'	=> $amount_due <= 0 ? true : false,
 			'statement_total_amount' => number_format($total, 2),
 			'total_in_network_amount'		=> number_format($transaction_data['credits'], 2),
 			'statement_amount_due' => $amount_due < 0 ? "0.00" : number_format($amount_due, 2),
@@ -9996,8 +9998,21 @@ public function downloadEclaimCsv( )
 			'postal'		=> null,
 			'medical'		=> number_format($transaction_data['total_medical'], 2),
 			'wellness'		=> number_format($transaction_data['total_wellness'], 2),
-			'spending'		=> $statement->spending
+			'spending'		=> $statement->spending,
+			'payment_method' => $statement->payment_method
 		);
+
+		if($statement->payment_method == "mednefits_credits") {
+			$data['payment_method'] = "Prepaid Credits Account";
+		}
+	
+		if($statement->payment_method == "bank_transfer") {
+			$data['payment_method'] = "Bank Transfer";
+		}
+	
+		if($statement->payment_method == "giro") {
+			$data['payment_method'] = "Giro";
+		}
 
 		// return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);

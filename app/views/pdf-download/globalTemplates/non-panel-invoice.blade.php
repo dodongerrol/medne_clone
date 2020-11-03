@@ -163,6 +163,26 @@
           {{$statement_total_amount}}
         </td>
       </tr>
+      @if($statement_status == true)
+        <tr>
+          <td></td>
+          <td colspan="3" style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
+            Less Amount Paid<br>
+            (via {{ $payment_method }})
+          </td>
+          <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
+            {{$statement_total_amount}}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" style="text-align: right;padding: 10px 0;">
+            AMOUNT DUE {{$currency_type}}
+          </td>
+          <td style="text-align: right;font-weight: 700;padding: 10px 0;">
+            {{$statement_amount_due}}
+          </td>
+        </tr>
+      @endif
     </table>
 
     <table border="0" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0 40px;" width="100%">
