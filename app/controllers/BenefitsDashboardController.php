@@ -18867,10 +18867,10 @@ public function createHrLocation ()
 			DB::table('company_location_members')->update([
 
 				'company_location_id'		=> $location['LocationID'],
-				'member_id'					=> $users->UserID,
-				'status'					=> 1,
-				'created_at'				=> date('Y-m-d H:i:s'),
-				'updated_at'				=> date('Y-m-d H:i:s')
+				'member_id'							=> $users->UserID,
+				'status'								=> 1,
+				'created_at'						=> date('Y-m-d H:i:s'),
+				'updated_at'						=> date('Y-m-d H:i:s')
 			]);
 			}
 			$data = [
