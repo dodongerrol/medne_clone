@@ -6835,7 +6835,7 @@ public function updateEclaimStatus( )
 					try {
 						$start = date('Y-m-01', strtotime($e_claim_details->created_at));
 						$end = PlanHelper::getEndDate($start);
-						EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
+						EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
@@ -6943,7 +6943,7 @@ public function updateEclaimStatus( )
 						$start = date('Y-m-01', strtotime($e_claim_details->created_at));
 						$end = PlanHelper::getEndDate($start);
 						try {
-							EclaimHelper::createNonPanelInvoice($customer_id, $start, $end);
+							EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
 						} catch(Exception $e) {
 							$email = [];
 							$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
