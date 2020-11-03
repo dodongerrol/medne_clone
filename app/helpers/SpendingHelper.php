@@ -238,14 +238,14 @@ class SpendingHelper {
             $start = $spending_account_settings->medical_spending_start_date;
             $end = $spending_account_settings->medical_spending_end_date;
             foreach($user_allocated as $key => $user) {
-                // $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
-                // $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
-                $medical_credit = \MemberHelper::newMedicalLatestAllocation($user);
-                $wellness_credit = \MemberHelper::newWellnessLatestAllocation($user);
+                $medical_credit = \MemberHelper::memberMedicalPrepaid($user, $start, $end, 'post_paid');
+                $wellness_credit = \MemberHelper::memberWellnessPrepaid($user, $start, $end, 'post_paid');
+                // $medical_credit = \MemberHelper::newMedicalLatestAllocation($user);
+                // $wellness_credit = \MemberHelper::newWellnessLatestAllocation($user);
                 $total_medical_entitlment += $medical_credit['allocation'];
                 $total_wellness_entitlment += $wellness_credit['allocation'];
             }
-
+            
             $total_company_entitlement = $total_medical_entitlment + $total_wellness_entitlment;
             $total_balance = $total_credits - $total_company_entitlement;
 
@@ -272,7 +272,7 @@ class SpendingHelper {
         }
     }
 
-    public static function checkTotalCreditsNonPanelTransactions($customer_id, $start, $end, $plan_method)
+    public static function checkTotalCreditsNonPanelTransactions($customer_id, $start, $end, $plan_method, $spending_type)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
@@ -287,7 +287,8 @@ class SpendingHelper {
 				$total_transactions = DB::table('e_claim')
 										->whereIn('user_id', $ids)
 										->where('created_at', '>=', $start)
-										->where('created_at', '<=', $end)
+                                        ->where('created_at', '<=', $end)
+                                        ->where('spending_type', $spending_type)
 										->where('status', 1)
 										->orderBy('created_at', 'desc')
 										->get();
@@ -315,7 +316,7 @@ class SpendingHelper {
 		return ['credits' => $credits, 'total_consultation' => 0, 'transactions' => []];
     }
     
-    public static function createNonPanelInvoice($customer_id, $start, $end, $plan_method)
+    public static function createNonPanelInvoice($customer_id, $start, $end, $plan_method, $spending_type)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
@@ -335,7 +336,8 @@ class SpendingHelper {
 							->where('status', 1)
 							->whereIn('user_id', $ids)
 							->where('created_at', '>=', $start)
-							->where('created_at', '<=', $end)
+                            ->where('created_at', '<=', $end)
+                            ->where('spending_type', $spending_type)
 							->orderBy('created_at', 'desc')
 							->pluck('e_claim_id');
 			if(sizeof($trans) > 0) {
@@ -382,7 +384,9 @@ class SpendingHelper {
 			'statement_in_network_amount'   => $total_in_network_amount,
 			'statement_e_claim_amount'       => $total_e_claim_amount,
 			'currency_type'					=> $customer->currency_type,
-			'type'						=> 'non_panel'
+            'type'						=> 'non_panel',
+            'spending'                  => $spending_type,
+            'payment_method'            => $spending_type == "medical" ? $spending['medical_payment_method_non_panel'] : $spending['wellness_payment_method_non_panel']
 		);
 
 		// create statement
@@ -400,7 +404,7 @@ class SpendingHelper {
 		return $statement_result;
     }
     
-    public static function checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $invoice_id, $plan_method)
+    public static function checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $invoice_id, $plan_method, $spending_type)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
@@ -414,7 +418,8 @@ class SpendingHelper {
 							->where('status', 1)
 							->whereIn('user_id', $ids)
 							->where('created_at', '>=', $start)
-							->where('created_at', '<=', $end)
+                            ->where('created_at', '<=', $end)
+                            ->where('spending_type', $spending_type)
 							->lists('e_claim_id');
 
 			if(sizeof($trans) > 0) {

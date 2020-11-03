@@ -200,10 +200,10 @@ class EclaimHelper
     }
   }
 
-  public static function createNonPanelInvoice($customer_id, $start, $end)
+  public static function createNonPanelInvoice($customer_id, $start, $end, $spending_type)
   {
     // check if non-panel transactions exist
-    $transactions = \SpendingHelper::checkTotalCreditsNonPanelTransactions($customer_id, $start, $end, 'post_paid');
+    $transactions = \SpendingHelper::checkTotalCreditsNonPanelTransactions($customer_id, $start, $end, 'post_paid', $spending_type);
     $temp = [];
     if($transactions['credits'] > 0) {
       // check if non-panel invoice exist
@@ -211,13 +211,14 @@ class EclaimHelper
         ->where('statement_customer_id', $customer_id)
         ->where('statement_start_date', $start)
         ->where('type', 'non_panel')
+        ->where('spending', $spending_type)
         ->first();
 
       if(!$statement) {
-        \SpendingHelper::createNonPanelInvoice($customer_id, $start, $end, 'post_paid');
+        \SpendingHelper::createNonPanelInvoice($customer_id, $start, $end, 'post_paid', $spending_type);
       } else {
         // get transaction if there is another transaction
-        SpendingHelper::checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $statement->statement_id, 'post_paid');
+        SpendingHelper::checkSpendingInvoiceNonPanelTransactions($customer_id, $start, $end, $statement->statement_id, 'post_paid', $spending_type);
       }
 
       $temp[] = $statement;

@@ -1175,7 +1175,6 @@ class MemberHelper
 			}
 
 			$accessTransaction = $type == "panel" ? \SpendingHelper::checkSpendingCreditsAccess($customer_id) : \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
-			
 			if(!$top_up_user) {
 				// check if first purchase is already paid
 				$account_credits = DB::table('spending_purchase_invoice')

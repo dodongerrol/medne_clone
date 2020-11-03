@@ -680,6 +680,7 @@ class SpendingInvoiceController extends \BaseController {
 						'currency_type' 		=> $data->currency_type,
 						'company_name' 			=> $data->statement_company_name,
 						'type'					=> $data->type,
+						'spending_type'			=> $data->spending,
 						'with_post_paid'		=> $results['with_post_paid'],
 						'payment_method'		=> !$spendingPurchasePayment && $data->plan_method == "pre_paid" ? 'bank_transfer' : $data->payment_method,
 						'payment_remarks'		=> $data->payment_remarks,
