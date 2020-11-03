@@ -1,10 +1,9 @@
 var storage = {
   employeeDetails: null,
   replaceEmployeDetails: null,
-  healthSpendingAccountDetails: null,
 }
 
-app.factory('removeEmployeeFactory', function() {
+app.factory('removeDependentFactory', function() {
   return {
     getEmployeeDetails: getEmployeeDetails,
     setEmployeeDetails: setEmployeeDetails,

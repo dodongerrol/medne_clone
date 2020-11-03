@@ -1,20 +1,34 @@
-app.directive('removeEmpContainerDirective', [
+app.directive('removeDepContainerDirective', [
 	'$state',
-	'removeEmployeeFactory',
+	'removeDependentFactory',
+	'$stateParams',
 	'hrSettings',
-	'dependentsSettings',
-	function directive( $state, removeEmployeeFactory, hrSettings, dependentsSettings ) {
+	function directive( $state, removeDependentFactory, $stateParams, hrSettings) {
 		return {
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
-				console.log( 'removeEmpContainerDirective running!' );
-				scope.emp_details = removeEmployeeFactory.getEmployeeDetails();
+				console.log( 'removeDepContainerDirective running!' );
+				scope.selected_member_id = $stateParams.member_id;
+				scope.emp_details = removeDependentFactory.getEmployeeDetails();
+				console.log(scope.emp_details);
 				
-				
+				scope.getSession = async function () {
+          await hrSettings.getSession()
+            .then(async function (response) {
+              // console.log( response );
+              scope.selected_customer_id = response.data.customer_buy_start_id;
+            });
+        }
+
 				scope.onLoad	=	function(){
-					if($state.current.name != 'member-remove.remove-emp-inputs' || $state.current.name != 'member-remove.health-spending-account-summary'){
-						$state.go('member-remove.remove-emp-inputs');
+					scope.getSession();
+					if(scope.emp_details != null){
+						if($state.current.name != 'dependent-remove.remove-emp-inputs'){
+							$state.go('dependent-remove.remove-emp-inputs');
+						}
+					}else{
+						$state.go('member.dep-details', { member_id : scope.selected_member_id });
 					}
 				}
 				scope.onLoad();

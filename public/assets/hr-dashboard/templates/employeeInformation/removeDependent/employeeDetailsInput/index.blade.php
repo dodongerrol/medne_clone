@@ -1,4 +1,4 @@
-<div employee-details-input-directive>
+<div dependent-details-input-directive>
   <div class="remove-employee-wrapper">
 		<h1 class="text-center weight-700">Remove employee</h1>
 		<form>

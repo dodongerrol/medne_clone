@@ -7,7 +7,7 @@
   padding: 20px 40px;
 }
 .emp-left-panel-container{
-
+  padding-bottom: 150px;;
 }
 .emp-right-panel-container{
   /* background-color: #fff;
@@ -42,4 +42,7 @@
   margin-right: 10px;
   width: 15px;
   height: 15px;
+}
+.emp-right-content{
+  max-height: calc(100% - 50px);
 }

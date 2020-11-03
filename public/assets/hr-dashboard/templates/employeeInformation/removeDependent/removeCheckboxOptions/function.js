@@ -1,15 +1,17 @@
-app.directive('removeCheckboxOptionsDirective', [
+app.directive('removeDependentCheckboxOptionsDirective', [
 	'$state',
 	'$timeout',
-	'removeEmployeeFactory',
-	function directive( $state, $timeout, removeEmployeeFactory ) {
+	'removeDependentFactory',
+	'dependentsSettings',
+	function directive( $state, $timeout, removeDependentFactory, dependentsSettings ) {
 		return {
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
-				console.log( 'removeCheckboxOptionsDirective running!' );
+				console.log( 'removeDependentCheckboxOptionsDirective running!' );
 
-				scope.emp_details = removeEmployeeFactory.getEmployeeDetails();
+				scope.emp_details = removeDependentFactory.getEmployeeDetails();
+				console.log(scope.emp_details);
 				scope.checkboxes_options = {};
 				console.log(scope.emp_details);
 
@@ -30,7 +32,7 @@ app.directive('removeCheckboxOptionsDirective', [
           }
         }
 				scope.backBtn	=	function(){
-					$state.go('member-remove.remove-emp-inputs');
+					$state.go('dependent-remove.remove-emp-inputs');
 				}
 				scope.nextBtn	=	function(){
 					console.log( scope.checkboxes_options );
@@ -41,18 +43,22 @@ app.directive('removeCheckboxOptionsDirective', [
 					if( scope.checkboxes_options.replace == true ){
 						scope.showLoading();
 						scope.emp_details.remove_option = 'replace';
-						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
-						$state.go('member-remove.remove-replace-emp');
+						removeDependentFactory.setEmployeeDetails( scope.emp_details );
+						$state.go('dependent-remove.remove-replace-emp');
 					}
 					if( scope.checkboxes_options.reserve == true ){
-						scope.showLoading();
+						// scope.showLoading();
 						scope.emp_details.remove_option = 'reserve';
-						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
-						$state.go('member-remove.health-spending-account-summary');
+						removeDependentFactory.setEmployeeDetails( scope.emp_details );
+						// $state.go('dependent-remove.health-spending-account-summary');
+						// $("#remove-employee-confirm-modal").modal('show');
+						scope.reserveDependent();
 					}
 					if( scope.checkboxes_options.remove == true ){
 						scope.emp_details.remove_option = 'remove';
-						removeEmployeeFactory.setEmployeeDetails( scope.emp_details );
+						removeDependentFactory.setEmployeeDetails( scope.emp_details );
+
+						$("#remove-employee-confirm-modal").modal('show');
 
 						// if (scope.emp_details.account_type == 'enterprise_plan') {
 						// 	swal({
@@ -69,14 +75,65 @@ app.directive('removeCheckboxOptionsDirective', [
 						// 	function (isConfirm) {
 						// 		if(isConfirm){
 						// 			scope.showLoading();
-						// 			$state.go('member-remove.refund-summary');
+						// 			$state.go('dependent-remove.refund-summary');
 						// 		}
 						// 	});
 						// }else{
-							scope.showLoading();
-							$state.go('member-remove.health-spending-account-summary');
+							// scope.showLoading();
+							// $state.go('dependent-remove.health-spending-account-summary');
 						// }
 					}
+				}
+
+				scope.reserveDependent = function () {
+          var data = {
+            user_id: scope.emp_details.user_id,
+            // date_enrollment: moment(scope.reserve_emp_date, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            last_date_of_coverage: moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+            customer_id: scope.selected_customer_id,
+          }
+          scope.showLoading();
+          dependentsSettings.reserveDependentService(data)
+            .then(function (response) {
+              // console.log( response );
+              if (response.data.status) {
+                scope.hideLoading();
+								scope.isRemoveSuccess = true;
+              } else {
+                scope.hideLoading();
+                swal('Error!', response.data.message, 'error');
+              }
+            });
+        }
+
+				scope.submitRemoveEmployee = function () {
+					var data = {
+						expiry_date: moment(scope.emp_details.last_day_coverage, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+						user_id: scope.emp_details.user_id
+					}
+					scope.showLoading();
+					dependentsSettings.removeDependent(data)
+						.then(function (response) {
+							if (response.data.status) {
+                scope.hideLoading();
+								scope.isRemoveSuccess = true;
+              } else {
+                scope.hideLoading();
+                swal('Error!', response.data.message, 'error');
+              }
+						});
+				}
+
+				scope.closeConfirm = function(){
+          $("#remove-employee-confirm-modal").modal('hide');
+          $('.modal-backdrop').hide();
+				}
+				
+				scope.doneConfirmModal	=	function(){
+					$state.go('employee-overview');
+          // scope.resetRemoveBtn();
+          scope.closeConfirm();
+          $('.employee-information-wrapper').fadeIn();
 				}
 
 				scope.showLoading = function () {

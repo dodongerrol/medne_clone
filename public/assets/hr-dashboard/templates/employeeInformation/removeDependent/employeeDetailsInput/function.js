@@ -1,68 +1,51 @@
-app.directive('employeeDetailsInputDirective', [
+app.directive('dependentDetailsInputDirective', [
 	'$http',
 	'serverUrl',
 	'$state',
-	'removeEmployeeFactory',
+	'removeDependentFactory',
 	'dependentsSettings',
 	'employeeFactory',
 	'$timeout',
 	'$stateParams',
-	function directive( $http, serverUrl, $state, removeEmployeeFactory, dependentsSettings, employeeFactory, $timeout, $stateParams ) {
+	function directive( $http, serverUrl, $state, removeDependentFactory, dependentsSettings, employeeFactory, $timeout, $stateParams ) {
 		return {
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
-				console.log( 'employeeDetailsInputDirective running!' );
+				console.log( 'dependentDetailsInputDirective running!' );
 				scope.selected_member_id = $stateParams.member_id;
 
 
 
 				scope.getEmployeeDetails  = async function(isRefresh){
           scope.selectedEmployee = await employeeFactory.getEmployeeDetails();
-          if( scope.selectedEmployee == null || scope.selectedEmployee.user_id != Number(scope.selected_member_id) || isRefresh ){
-            await scope.fetchEmployeeDetails();
-          }else{
-						// scope.hideLoading();
-						scope.selectedEmployee.last_day_coverage = moment().format('DD/MM/YYYY');
-						scope.emp_details = scope.selectedEmployee;
-          }
-        }
-        scope.fetchEmployeeDetails  = async function(){
-          scope.showLoading();
-          await $http.get(serverUrl.url + "/hr/employee/" + scope.selected_member_id)
-            .then(function(response){
-              console.log(response);
-							scope.selectedEmployee = response.data.data;
-							scope.selectedEmployee.last_day_coverage = moment().format('DD/MM/YYYY');
-							scope.emp_details = scope.selectedEmployee;
-              employeeFactory.setEmployeeDetails(scope.selectedEmployee);
-              // scope.hideLoading();
-            });
+					scope.selectedEmployee.last_day_coverage = moment().format('DD/MM/YYYY');
+					scope.emp_details = scope.selectedEmployee;
         }
 				
 				scope.backBtn	=	function(){
-					$state.go('member.emp-details', { member_id : scope.selected_member_id });
+					$state.go('member.dep-details', { member_id : scope.selected_member_id });
 				}
 				scope.nextBtn	=	function(){
 					scope.emp_details = scope.selectedEmployee;
-					removeEmployeeFactory.setEmployeeDetails( scope.selectedEmployee );
-					if( scope.selectedEmployee.account_type == 'enterprise_plan' ){
-						if( scope.selectedEmployee.wellness_wallet == true ){
-							scope.showLoading();
-							$state.go('member-remove.health-spending-account-summary');
-						}else{
-							scope.showLoading();
-							$state.go('member-remove.refund-summary');
-						}
-					}else if( scope.selectedEmployee.account_type == 'basic_plan' || scope.selectedEmployee.account_type == 'lite_plan' ){
+					removeDependentFactory.setEmployeeDetails( scope.selectedEmployee );
+					// if( scope.selectedEmployee.account_type == 'enterprise_plan' ){
+					// 	if( scope.selectedEmployee.wellness_wallet == true ){
+					// 		scope.showLoading();
+					// 		$state.go('member-remove.health-spending-account-summary');
+					// 	}else{
+					// 		scope.showLoading();
+					// 		$state.go('member-remove.refund-summary');
+					// 	}
+					// }else if( scope.selectedEmployee.account_type == 'basic_plan' || scope.selectedEmployee.account_type == 'lite_plan' ){
+					// 	scope.showLoading();
+					// 	$state.go('member-remove.health-spending-account-summary');
+					// }else if( scope.selectedEmployee.account_type == 'out_of_pocket' || scope.selectedEmployee.account_type == 'out_pocket' ){
+					// 	$("#remove-employee-confirm-modal").modal('show');
+					// }else{
 						scope.showLoading();
-						$state.go('member-remove.health-spending-account-summary');
-					}else if( scope.selectedEmployee.account_type == 'out_of_pocket' || scope.selectedEmployee.account_type == 'out_pocket' ){
-						$("#remove-employee-confirm-modal").modal('show');
-					}else{
-						scope.showLoading();
-						$state.go('member-remove.remove-emp-checkboxes');
-					}
+						$state.go('dependent-remove.remove-emp-checkboxes');
+					// }
 				}
 
 				setTimeout(() => {

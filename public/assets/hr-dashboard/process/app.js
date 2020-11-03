@@ -489,7 +489,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
 
 
       .state('dependent-remove', {
-        url: '/dependent-opt/:dependent_id',
+        url: '/dependent-opt/:member_id',
         params: {
           // dependent_id: localStorage.getItem('selected_dependent_id')
         },
@@ -498,12 +498,12 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/navs/global-header.html'
           },
           'main': {
-            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeEmployee/container/index.blade.php'
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/container/index.blade.php'
           },
         },
       })
       .state('dependent-remove.remove-emp-inputs', {
-        url: '/remove/details',
+        url: '/remove/dep-details',
         views: {
           'remove-content@dependent-remove': {
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/employeeDetailsInput/index.blade.php'
@@ -511,7 +511,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         },
       })
       .state('dependent-remove.remove-emp-checkboxes', {
-        url: '/remove/option',
+        url: '/remove/dep-option',
         views: {
           'remove-content@dependent-remove': {
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/removeCheckboxOptions/index.blade.php'
@@ -519,37 +519,14 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider,  $htt
         },
       })
       .state('dependent-remove.remove-replace-emp', {
-        url: '/remove/replace',
+        url: '/remove/dep-replace',
         views: {
           'remove-content@dependent-remove': {
-            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/replaceEmployeeInput/index.blade.php'
+            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/replaceDependentInput/index.blade.php'
           },
         },
       })
-      .state('dependent-remove.health-spending-account-summary', {
-        url: '/remove/health-spending-account-summary',
-        views: {
-          'remove-content@dependent-remove': {
-            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/healthSpendingAccountSummary/index.blade.php'
-          },
-        },
-      })
-      .state('dependent-remove.health-spending-account-confirm', {
-        url: '/remove/health-spending-account-confirm',
-        views: {
-          'remove-content@dependent-remove': {
-            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/healthSpendingAccountConfirm/index.blade.php'
-          },
-        },
-      })
-      .state('dependent-remove.refund-summary', {
-        url: '/remove/refund-summary',
-        views: {
-          'remove-content@dependent-remove': {
-            templateUrl: window.location.origin + '/assets/hr-dashboard/templates/employeeInformation/removeDependent/refundSummary/index.blade.php'
-          },
-        },
-      })
+      
     // ------------ END OF MEMBER INFORMATION STATES --------------- //
 
     // ----------------------------------------- //

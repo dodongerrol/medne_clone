@@ -316,6 +316,12 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/healthSpendingAccountSummary/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/healthSpendingAccountConfirm/function.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeEmployee/removeEmployeeFactory.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeDependent/container/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeDependent/employeeDetailsInput/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeDependent/removeCheckboxOptions/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeDependent/replaceDependentInput/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeInformation/removeDependent/removeDependentFactory.js?_={{ $date->format('U') }}"></script>
 	<!---------------------------------->
 
 	<!-- ACCOUNT SETTINGS -->
