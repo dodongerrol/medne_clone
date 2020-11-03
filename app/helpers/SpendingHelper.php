@@ -129,9 +129,7 @@ class SpendingHelper {
                 $totalCredits = $credits->medical_purchase_credits + $credits->wellness_purchase_credits;
                 $paidAmount = $credits->payment_amount;
                 $amountDue = $totalCredits - $paidAmount;
-                if($amountDue > 0) {
-                    $payment_status = false;
-                } else {
+                if($amountDue <= 0) {
                     $payment_status = true;
                 }
                 // if((int)$credits->payment_status == 1) {
