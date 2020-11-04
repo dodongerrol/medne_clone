@@ -252,7 +252,7 @@
                     <span class="status-color removed"></span>
                     <span>Removed</span>
                   </div>
-                  <div class="status-details-container" ng-if="list.account_status && list.emp_status == 'activated'">
+                  <div class="status-details-container" ng-if="!list.deletion && list.account_status && list.emp_status == 'activated'">
                     <span class="status-color loggedIn"></span>
                     <span>Logged In</span>
                   </div>
