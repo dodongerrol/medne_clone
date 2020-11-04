@@ -27,11 +27,9 @@
 					<div class="col-lg-12">
 						<div class="task-box-list" ng-repeat="list in task_lists">
 							<div class="mednefits-box task-box-1" style="background-color: #fff;">
-
 								<div class="task-box" ng-if="list.type == 'expiring_plan'">
 									<h5 class="task-title">
-										<span ng-bind="list.message"></span></span>
-										</span>
+										<span ng-bind="list.message"></span>
 									</h5>
 								</div>
 
@@ -104,7 +102,7 @@
 								<br><br>
 							</div>
 						</div> -->
-						<div class="col-lg-12 billing-status-title">
+						<!-- <div class="col-lg-12 billing-status-title">
 							<h4 style="font-size: 15px;font-weight: bold;color: #585858;">BILLING STATUS</h4>
 						</div>
 						<div class="mednefits-box billing-status-box" style="background-color: #fff;">
@@ -123,6 +121,67 @@
 							</div>
 							<div class="view-invoice-button">
 								<button ui-sref="transactions">VIEW INVOICE</button>
+							</div>
+						</div> -->
+
+						<div class="home-billing-status-container">
+							<p class="billing-status-title">Billing Status</p>
+
+							<div class="billing-content-wrapper">
+								<div class="billing-values-div">
+									<div class="label-value">
+										<div class="labels">
+											<p class="mb-0">Statement Balance</p>
+											<p class="color-gray">(1 Jan to 31 Jan 2020)</p>
+										</div>
+										<div class="value">
+											<p><span>SGD</span> 1,500.00</p>
+										</div>
+									</div>
+
+									<div class="label-value">
+										<div class="labels">
+											<p>Recent Payments</p>
+										</div>
+										<div class="value color-green">
+											<p><span class="symbol">-</span><span>SGD</span> 1,500.00</p>
+										</div>
+									</div>
+
+									<div class="label-value">
+										<div class="labels">
+											<p>Latest Transactions</p>
+										</div>
+										<div class="value">
+											<p><span>SGD</span> 1,500.00</p>
+										</div>
+									</div>
+
+									<div class="line-div"></div>
+
+									<div class="label-value">
+										<div class="labels">
+											<p>Outstanding Balance</p>
+										</div>
+										<div class="value">
+											<p><span>SGD</span> 1,500.00</p>
+										</div>
+									</div>
+								</div>
+
+								<div class="billing-outstanding-div">
+									<div class="total-outstanding-div">
+										<p>Total Outstanding</p>
+										<p class="value mb-0"><span>SGD</span> 3,149.73</p>
+									</div>
+									<p class="payment-due-text">Payment due on 15 Mar 2020</p>
+
+									<a class="trans-and-statement-arrow cursor-pointer" ui-sref="statement">
+										Transactions and Statements
+										<img src="../assets/hr-dashboard/img/arrow-right-blue.png" alt="">
+									</a>
+								</div>
+
 							</div>
 						</div>
 					</div>

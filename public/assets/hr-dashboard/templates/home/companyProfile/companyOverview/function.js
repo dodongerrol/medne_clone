@@ -215,9 +215,11 @@ app.directive("companyProfileDirective", [
             account_name: business_info.account_name,
             currency_type: business_info.currency_type, 
             company_name: business_info.company_name,
-            company_address: business_info.company_address,
+            company_address: business_info.street_address,
+            // street_address: business_info.street_address,
             unit_number: business_info.unit_number,
-            building_name: business_info.building_name
+            building_name: business_info.building_name,
+            postal_code: business_info.postal_code
           }
 
           console.log(data);

@@ -9,13 +9,13 @@
                     customer_billing_contact_id: null,
                     first_name: '',
                     phone: '',
-                    work_email: null
+                    billing_email: null
                 },
                 form: {
                     customer_billing_contact_id: null,
                     first_name: '',
                     phone: '',
-                    work_email: null
+                    billing_email: null
                 }
             }
         }
