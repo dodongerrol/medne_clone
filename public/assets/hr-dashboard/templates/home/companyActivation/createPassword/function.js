@@ -3,13 +3,14 @@ app.directive('createCompanyPasswordDirective', [
 	'activationSettings',
 	'activationFactory',
 	'serverUrl',
-	function directive($state, activationSettings, activationFactory, serverUrl) {
+	'$http',
+	function directive($state, activationSettings, activationFactory, serverUrl, $http) {
 		return {
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("createCompanyPasswordDirective Runnning !");
-				// scope.activationDetails = activationFactory.getActivationDetails();
+				scope.activationDetails = activationFactory.getActivationDetails();
 				console.log(scope.activationDetails);
 				let token = localStorage.getItem('activation_token');
 
@@ -29,12 +30,19 @@ app.directive('createCompanyPasswordDirective', [
 					});
 				}
 
+				scope.validateTokenAdmin	=	function(){
+					$http.get( serverUrl.url + 'hr/validate_external_admin_token?token=' + token )
+		      	.then(function(response){
+							console.log('response', response);
+							scope.activationDetails = response.data.data;
+		      	});
+				}
+
 				scope.createPassword	=	function(formData){
 					if(formData.password != formData.confirm_password){
 						swal('Error!', 'Passwords do not match.', 'error');
 						return false;
 					}
-					console.log('ASDFASDFA');
 					scope.showLoading();
 					var data	=	{
 						hr_dashboard_id: scope.activationDetails.hr_dashboard_id,
@@ -56,6 +64,41 @@ app.directive('createCompanyPasswordDirective', [
 
 				}
 
+				scope.createPasswordAdmin	=	function(formData){
+					if(formData.password != formData.confirm_password){
+						swal('Error!', 'Passwords do not match.', 'error');
+						return false;
+					}
+					scope.showLoading();
+					var data	=	{
+						external_user_id: scope.activationDetails.external_user_id,
+						confirm_password: formData.confirm_password,
+						password: formData.password,
+						token: token,
+					}
+					$http.post(serverUrl.url + 'hr/create_external_admin_user_password', data)
+						.then(function(response){
+							console.log(response);
+							if(response.data.status){
+								window.localStorage.setItem('token', response.data.token);
+								localStorage.removeItem('activation_token');
+								window.location.href = window.location.origin + "/company-benefits-dashboard/";
+							}else{
+								swal('Error!', response.data.message, 'error');
+							}
+							scope.hideLoading();
+						});
+
+				}
+
+				scope.submitPassword	=	function(formData){
+					if(scope.activationDetails.external_user_id){
+						scope.createPasswordAdmin(formData);
+					}else{
+						scope.createPassword(formData);
+					}
+				}
+
 				scope.showLoading = function () {
 					$(".circle-loader").fadeIn();
 					loading_trap = true;
@@ -68,7 +111,15 @@ app.directive('createCompanyPasswordDirective', [
 					},10)
 				}
 				
-				scope.validateToken( );
+				scope.onLoad	=	function(){
+					if(scope.activationDetails.isAdmin){
+						scope.validateTokenAdmin();
+					}else{
+						scope.validateToken();
+					}
+				}
+				
+				scope.onLoad();
 			}
 		}
 	}

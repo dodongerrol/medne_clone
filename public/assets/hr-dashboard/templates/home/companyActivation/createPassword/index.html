@@ -43,7 +43,7 @@
         <input type="{{ inputType }}" ng-model="formData.confirm_password" placeholder="Confirm Your Password">
       </div>
 
-      <button class="create-password-btn" ng-disabled="!formData.password || !formData.confirm_password" ng-click="createPassword(formData)">Create password & Sign in</button>
+      <button class="create-password-btn" ng-disabled="!formData.password || !formData.confirm_password" ng-click="submitPassword(formData)">Create password & Sign in</button>
     </form>
   </div>
 </div>

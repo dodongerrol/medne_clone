@@ -48,12 +48,16 @@
             $(".circle-loader").fadeIn();
             const request = this.locationAPI.store(location);
 
-            request.then(() => {
+            request.then((response) => {
+                if(response.data.status){
+                    this.presentModal('create-location-modal', false);
+                    swal('Success', response.data.message, 'success');
+                    this.get();
+                    this.reset();
+                }else{
+                    swal('Error', response.data.message, 'error');
+                }
                 $(".circle-loader").fadeOut();
-                this.presentModal('create-location-modal', false);
-                swal('Success', 'Work Location successfully added!', 'success');
-                this.get();
-                this.reset();
             });
         }
         edit(location,index) {
@@ -75,6 +79,7 @@
         update() {
             const location = {
                 LocationID: this.state.form.LocationID,
+                location_id: this.state.form.LocationID,
                 ...this.getFormData()
             }
 
@@ -82,10 +87,15 @@
             const request = this.locationAPI.update(location);
 
             request.then((response) => {
+                console.log(response);
+                if(response.data.status){
+                    this.presentModal('edit-location-modal', false);
+                    swal('Success', response.data.message, 'success');
+                    this.get();
+                }else{
+                    swal('Error', response.data.message, 'error');
+                }
                 $(".circle-loader").fadeOut();
-                this.presentModal('edit-location-modal', false);
-                swal('Success', 'Changes saved!', 'success');
-                this.get();
             });
         }
         getFormData() {
@@ -108,11 +118,17 @@
             $(".circle-loader").fadeIn();
             const request = this.locationAPI.delete(this.state.form.LocationID);
 
-            request.then(() => {
+            request.then((response) => {
+                if(response.data.status){
+                    // this.presentModal('create-location-modal', false);
+                    this.presentModal('success-department-confirm-modal', true);
+                    // swal('Success', response.data.message, 'success');
+                    this.get();
+                    this.reset();
+                }else{
+                    swal('Error', response.data.message, 'error');
+                }
                 $(".circle-loader").fadeOut();
-                this.reset();
-                this.presentModal('success-department-confirm-modal', true);
-                this.get();
             });
         }
         reset() {

@@ -3,13 +3,16 @@ app.directive('expiredLinkDirective', [
 	'$location',
 	'activationSettings',
 	'activationFactory',
-	function directive($state,$location,activationSettings,activationFactory) {
+	'$http',
+	'serverUrl',
+	function directive($state,$location,activationSettings,activationFactory,$http,serverUrl) {
 		return {
 			restrict: "A",
 			scope: true,
 			link: function link( scope, element, attributeSet ) {
 				console.log("expired link directive Runnning !");
 				console.log($location);
+				console.log($location.search());
 
 
 				scope.validateToken = function () {
@@ -32,6 +35,28 @@ app.directive('expiredLinkDirective', [
 		      			$state.go('T&C');
 		      		}
 		      		if ( scope.validateToken.activated == false && scope.validateToken.expired_token == false && scope.validateToken.t_c == true ) {
+		      			$state.go('company-create-password');
+		      		}
+		      	});
+				}
+
+				scope.validateTokenAdmin	=	function(){
+					let token = $location.search().activation_token;
+					localStorage.setItem('activation_token', token);
+					// console.log(token);
+
+					scope.showLoading();
+					$http.get( serverUrl.url + 'hr/validate_external_admin_token?token=' + token )
+		      	.then(function(response){
+		      		scope.getTokenData = token;
+		      		scope.validateToken = response.data.data;
+		      		console.log(scope.validateToken);
+		      		console.log(scope.getTokenData);
+							scope.hideLoading();
+							scope.validateToken.token = scope.getTokenData;
+							scope.validateToken.isAdmin = true;
+							activationFactory.setActivationDetails(scope.validateToken);
+		      		if ( scope.validateToken.activated == false && scope.validateToken.expired_token == false) {
 		      			$state.go('company-create-password');
 		      		}
 		      	});
@@ -73,8 +98,16 @@ app.directive('expiredLinkDirective', [
 					},10)
 				}
 
-				scope.validateToken();
+				scope.onLoad	=	function(){
+					var url_params = $location.search();
+					if(url_params.user_type && url_params.user_type == 'external_admin'){
+						scope.validateTokenAdmin();
+					}else{
+						scope.validateToken();
+					}
+				}
 				
+				scope.onLoad();
 			}
 		}
 	}

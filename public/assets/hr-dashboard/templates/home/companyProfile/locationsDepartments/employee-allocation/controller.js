@@ -38,6 +38,11 @@
             });
         }
         open() {
+            this.state = {
+                id: this.id,
+                type: this.type
+            }
+            console.log(this.state);
             this.get_employee_names.map((res) => {
                 this.selectedEnrolledEmpArr = [];
                 this.selectEmployeeId = [];
@@ -68,6 +73,7 @@
             });
         }
         selectProperty(prop, opt){
+            console.log(this.id);
             prop.selected = opt;
             if(opt){
                 this.selectedEnrolledEmpArr.push(prop);
@@ -91,11 +97,15 @@
             $(".circle-loader").fadeIn();
 
             request.then((response) => {
+                if(response.data.status){
+                    presentModal(this.modal.id, 'hide');
+                    this.onSave();
+                    this.get(); 
+                    swal('Success', response.data.message, 'success');
+                }else{
+                    swal('Error', response.data.message, 'error');
+                }
                 $(".circle-loader").fadeOut();
-                presentModal(this.modal.id, 'hide');
-                this.onSave();
-                this.get(); 
-                return swal('Success!', response.data.message, 'success');
             })    
         }
         
@@ -105,8 +115,8 @@
             templateUrl: window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/locationsDepartments/employee-allocation/index.html',
             bindings: {
                 id: '<',
+                onSave: '&',
                 type: '@',
-                onSave: '&'
             },
             controller: AllocationController
         });
