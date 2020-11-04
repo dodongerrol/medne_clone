@@ -662,7 +662,7 @@ class SpendingAccountController extends \BaseController {
 			}
 
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-			$user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
+			$user_allocated = \CustomerHelper::getActiveMembersId($customer_id);
 			$total = 0;
 			$panel = 0;
 			$non_panel = 0;

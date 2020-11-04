@@ -1485,6 +1485,17 @@ class CustomerHelper
 		}
 	}
 
+	public static function getActiveMembersId($customer_id)
+	{
+		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$members = DB::table('corporate_members')
+						->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+						->where('corporate_members.corporate_id', $account->corporate_id)
+						->where('corporate_members.removed_status', 0)
+						->lists('user.UserID');
+		return $members;
+	}
+
 	public static function getActivePlanUsers($customer_id)
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();

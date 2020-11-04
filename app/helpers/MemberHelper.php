@@ -2787,8 +2787,11 @@ class MemberHelper
 				->where('type', 'started')
 				->orderBy('created_at', 'desc')
 				->first();
+
+		$dependentsData = \DependentHelper::getDependentVisits($member_id);
+		$total_visit_limit = $dependentsData['total_visit_limit'];
 		
-		return ['visits' => $user_plan_history->total_visit_limit, 'panels' => $panels, 'non_panels' => $non_panels, 'total' => $panels + $non_panels];
+		return ['visits' => $user_plan_history->total_visit_limit + $total_visit_limit, 'panels' => $panels, 'non_panels' => $non_panels, 'total' => $panels + $non_panels];
 	}
 
 	public static function getMemberWalletPaymentMethod($member_id)
