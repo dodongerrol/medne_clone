@@ -40,9 +40,15 @@
             const request = this.billingContactAPI.update(this.states.form);
 
             request.then((response) => {
+                console.log(response);
+                if(response.status){
+                    swal('Success', response.message, 'success');
+                    this.hydrate();
+                    this.dismiss();
+                }else{
+                    swal('Error', response.message, 'error');
+                }
                 $(".circle-loader").fadeOut();
-                presentModal('contact-form', false);
-                this.hydrate();
             });
         }
     }
