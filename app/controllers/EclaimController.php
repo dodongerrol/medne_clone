@@ -35,9 +35,9 @@ class EclaimController extends \BaseController {
 			->first();
 
 			if($check) {
-				if((int)$check->account_update_status == 0) {
-					return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
-				}
+				// if((int)$check->account_update_status == 0) {
+				// 	return array('status' => false, 'message' => 'Please update your user ID by clicking on the link above.', 'to_update' => true);
+				// }
 
 			if($check && (int)$check->member_activated == 0) {
 				return array('status' => FALSE, 'message' => 'Account is not active.');
