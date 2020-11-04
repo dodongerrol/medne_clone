@@ -428,9 +428,9 @@ Route::filter('auth.jwt_employee', function($request, $response)
             return Response::json('You account was deactivated. Please contact Mednefits Team.', 401,  $headers);
         }
 
-        if((int)$user->account_update_status == 0) {
-          return Response::json('You need to update you profile settings for new login method.', 401, $headers);
-        }
+        // if((int)$user->account_update_status == 0) {
+        //   return Response::json('You need to update you profile settings for new login method.', 401, $headers);
+        // }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
