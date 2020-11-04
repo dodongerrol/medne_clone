@@ -56,7 +56,10 @@ app.directive("companyProfileDirective", [
        
         scope.addBusinessContact = async function () {
           scope.business_ctr = 0;
-          console.log(scope.business_ctr);
+          scope.business_data = {
+            phone_code: '65',
+          };
+          scope.business_arr = [];
           // scope.business_data = scope.business_arr[ scope.business_ctr ];
           await scope.initializeAddContactCountryCode();
         }

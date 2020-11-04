@@ -151,7 +151,7 @@ app.directive('employeeInfoContainerDirective', [
           if ( scope.get_permissions_data.enroll_terminate_employee == 1 ) {
             $state.go('member-remove.remove-emp-inputs', { member_id : scope.selected_member_id });
           } else {
-            $('#permission-modal').modal('show');
+            $('.container-permission-modal').modal('show');
           }
         }
         scope.goToHealthAccountSummary  = function(){

@@ -202,10 +202,15 @@ app.directive("administratorsDirective", [
         }
         scope.noMednefitsEmpAddAdmin = false;
         scope.mednefitsEmployee = function ( opt ) {
+          scope.mednefits_selector_emp = opt;
           scope.permission_data = 'All Employees & Dependents';
           scope.showLocationSelector = false;
           scope.showDepartmentSelector = false;
+          scope.activeAdminBtn = false;
+          scope.isEmployeePending = false;
+          scope.isEmployeeActive = false;
           
+
           scope.selected_locaction_data = [];
           scope.locations_data.map((res) => {
             console.log(res);
@@ -258,6 +263,7 @@ app.directive("administratorsDirective", [
           scope.activeAdminBtn = false;
           scope.isEmployeePending = false;
           scope.isEmployeeActive = false;
+          scope.mednefits_selector_emp = 'yes';
           
           scope.selected_location_data = [];
           scope.selected_department_data = [];
@@ -525,7 +531,7 @@ app.directive("administratorsDirective", [
         }
         scope.confirmUpdateAdmin = async function ( edit_data ) {
           let data = {
-            id: edit_data,
+            id: edit_data.id,
             edit_employee_dependent: scope.edit_administrator_data.edit_employee_dependent == true ? 1: 0,
             enroll_terminate_employee: scope.edit_administrator_data.enroll_terminate_employee == true ? 1: 0,
             approve_reject_edit_non_panel_claims: scope.edit_administrator_data.approve_reject_edit_non_panel_claims == true ? 1: 0,

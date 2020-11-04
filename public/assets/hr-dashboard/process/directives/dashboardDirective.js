@@ -37,15 +37,20 @@ app.directive('dashboardDirective', [
 				}
 
 				scope.goToEnroll = function () {
-					localStorage.setItem('fromEmpOverview', false);
+					if ( scope.get_permissions_data.enroll_terminate_employee == 1 ) {
+						localStorage.setItem('fromEmpOverview', false);
 
-					// if(scope.spending_account_status.medical == true || scope.spending_account_status.wellness == true) {
-					// 	$state.go('enrollment-options');
-					// } else {
-					// 	$state.go( 'create-team-benefits-tiers' );
-					// }
+						// if(scope.spending_account_status.medical == true || scope.spending_account_status.wellness == true) {
+						// 	$state.go('enrollment-options');
+						// } else {
+						// 	$state.go( 'create-team-benefits-tiers' );
+						// }
+						
+						$state.go('create-team-benefits-tiers');
+					} else {
+						$('#permission-modal').modal('show');
+					}
 					
-					$state.go('create-team-benefits-tiers');
 				}
 
 				scope.selectSpending = (opt) => {
@@ -237,6 +242,14 @@ app.directive('dashboardDirective', [
 						$('.status-tooltip-wrapper.pending').hide();
 					}
 				}
+				
+				scope.getPermissionsData = async function () {
+          await hrSettings.getPermissions()
+            .then( function (response) {
+              console.log(response);
+              scope.get_permissions_data = response.data.data;
+          });
+        }
 
 				scope.onLoad = function () {
 					scope.showLoading();
@@ -249,6 +262,7 @@ app.directive('dashboardDirective', [
 							scope.getTaskList();
 							scope.getCompanyDetails();
 							scope.getSpendingAccountStatus();
+							scope.getPermissionsData();
 						});
 
 					localStorage.setItem('method', 'input');

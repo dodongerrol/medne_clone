@@ -26,11 +26,19 @@ app.directive('dependentDetailsDirective', [
         }
 
         scope.openUpdateDependentModal = function (data) {
-          scope.initializeDatepickers();
-          scope.selectedDependent = data;
-          scope.selectedDependent.dob = scope.formatMomentDate(data.dob, null, 'DD/MM/YYYY');
-          $("#update-dependent-modal").modal('show');
-          $('.datepicker').datepicker('setDate', scope.selectedDependent.dob);
+          if ( scope.get_permissions_data.edit_employee_dependent == 1 ) { 
+            scope.initializeDatepickers();
+            scope.selectedDependent = data;
+            scope.selectedDependent.dob = scope.formatMomentDate(data.dob, null, 'DD/MM/YYYY');
+            $("#update-dependent-modal").modal('show');
+            $('.datepicker').datepicker('setDate', scope.selectedDependent.dob);
+          } else {
+            scope.edit_emp_text = true;
+            scope.remove_text = false;
+            $("#update-dependent-modal").modal('hide');
+            $("#permission-modal").modal('show');
+          }
+          
         }
 
         scope.initializeDatepickers = function(){
@@ -87,6 +95,8 @@ app.directive('dependentDetailsDirective', [
             removeDependentFactory.setEmployeeDetails(data);
             $state.go('dependent-remove.remove-emp-inputs', { member_id : scope.selected_member_id });
           } else {
+            scope.remove_text = true;
+            scope.edit_emp_text = false;
             $('#permission-modal').modal('show');
           }
         }

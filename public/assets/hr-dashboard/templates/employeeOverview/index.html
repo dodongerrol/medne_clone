@@ -771,7 +771,7 @@
         <div class="modal-body">
           <img src="../assets/hr-dashboard/img/close-circular-button-symbol.png">
           <div>
-            <div>Sorry! You have no permission to manage locations and departments.</div>
+            <div>Sorry! You have no permission to <span ng-if="get_permissions_data.enroll_terminate_employee == 0">enroll and terminate employees and dependents.</span></div>
           </div>
         </div>
         <div class="modal-footer">

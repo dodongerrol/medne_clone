@@ -965,7 +965,7 @@
         <div class="modal-body">
           <img src="../assets/hr-dashboard/img/close-circular-button-symbol.png">
           <div>
-            <div>Sorry! You have no permission to manage locations and departments.</div>
+            <div>Sorry! You have no permission to <span ng-if="get_permissions_data.create_remove_edit_admin_unlink_account == 0">create, remove admins, edit admin's permission and unlink company account.</span></div>
           </div>
         </div>
         <div class="modal-footer">

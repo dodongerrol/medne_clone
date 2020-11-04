@@ -349,7 +349,8 @@
           <button ng-if="!isAddAdministratorSuccess" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
           <!-- <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update disabled" ng-class="{'active': activeAdminBtn && isEmployeePending == false || isSearchEmpty == false}">Add Admin</button> -->
           <!-- <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update" ng-disabled="( isEmployeePending == true ) && ( activeAdminBtn == false || add_admin_data.fullname == '' || add_admin_data.email == '' || add_admin_data.mobile_number == '' ) ">Add Admin</button> -->
-          <button ng-if="!isAddAdministratorConfirm" ng-click="addAdministrator( )" class="btn-update" ng-disabled="( isEmployeePending == true || isEmployeeActive == false && activeAdminBtn == false || isEmployeeActive == false && activeAdminBtn == true ) && ( activeAdminBtn == false || add_admin_data.fullname == '' || add_admin_data.email == '' || add_admin_data.mobile_number == '' ) ">Add Admin</button>
+          <button ng-if="!isAddAdministratorConfirm && mednefits_selector_emp == 'yes'" ng-click="addAdministrator( )" class="btn-update" ng-disabled=" isEmployeePending == true || isEmployeeActive == false && activeAdminBtn == false || isEmployeeActive == false && activeAdminBtn == true">Add Admin</button>
+          <button ng-if="!isAddAdministratorConfirm && mednefits_selector_emp == 'no'" ng-click="addAdministrator( )" class="btn-update" ng-disabled=" add_admin_data.fullname == '' || add_admin_data.email == '' || add_admin_data.mobile_number == '' ">Add Admin</button>
           <button ng-if="isAddAdministratorConfirm && !isAddAdministratorSuccess" ng-click="confirmAdmininistrator( )" class="btn-update confirm">Confirm</button>
           <button ng-if="isAddAdministratorSuccess" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
@@ -535,7 +536,7 @@
         <div class="modal-body">
           <img src="../assets/hr-dashboard/img/close-circular-button-symbol.png">
           <div>
-            <div>Sorry! You have no permission to manage locations and departments.</div>
+            <div>Sorry! You have no permission to <span ng-if="get_permissions_data.create_remove_edit_admin_unlink_account == 0">create, remove admins, edit admin's permission and unlink company account.</span></div>
           </div>
         </div>
         <div class="modal-footer">

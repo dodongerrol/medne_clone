@@ -3033,7 +3033,7 @@ class EmployeeController extends \BaseController {
 						->where('Email', $input['email'])
 						->whereIn('UserType', [5,6])
 						->whereIn('is_hr_admin', [0,1])
-						->select('UserID', 'PhoneNo', 'PhoneCode', 'member_activated', 'created_at', 'ActiveLink', 'Active')
+						->select('UserID', 'PhoneNo', 'PhoneCode', 'member_activated', 'created_at', 'ActiveLink', 'Active', 'updated_at')
             ->first();
       
       if(!$member) {
