@@ -2647,6 +2647,8 @@ class MemberHelper
 					->whereIn('UserID', $ids)
 					->where('procedure_cost', '>', 0)
 					->where('deleted', 0)
+					->where('created_at', '>=', $start)
+                	->where('created_at', '<=', $end)
 					->sum('procedure_cost');
 			}
         }

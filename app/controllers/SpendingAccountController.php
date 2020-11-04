@@ -742,13 +742,13 @@ class SpendingAccountController extends \BaseController {
 										->where('customer_id', $customer_id)
 										->select($selects)
 										->groupBy('medical_spending_start_date')
-                                    	->orderBy('created_at', 'desc')
+                                    	->orderBy('created_at', 'medical_spending_start_date')
                                     	->limit(2)
 										->get();
 		
 		$spending_account_setting = DB::table('spending_account_settings')
 										->where('customer_id', $customer_id)
-										->orderBy('created_at', 'desc')
+										->orderBy('created_at', 'medical_spending_start_date')
 										->first();
 
 		$plan = DB::table('customer_plan')

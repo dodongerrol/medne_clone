@@ -52,7 +52,7 @@ app.directive('mednefitsBasicPlanDirective', [
             // console.log(termLength);
 
             scope.dateTerm.map(function(value,index) {
-              if (index == termLength-1) {
+              if (index == 0) {
                 value.term = `Current term (${moment(value.start).format('DD/MM/YYYY')} - ${moment(value.end).format('DD/MM/YYYY')})`;
                 value.index = index;
                 scope.defaultDateTerms = value;
