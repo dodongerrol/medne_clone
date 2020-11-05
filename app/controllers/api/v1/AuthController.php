@@ -5498,7 +5498,6 @@ public function createEclaim( )
 
   // check if enable to access feature
   $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
-
   if($transaction_access)	{
     $returnObject->status = FALSE;
     $returnObject->status_type = 'access_block';
@@ -5508,22 +5507,12 @@ public function createEclaim( )
   }
 
   $customer_id = PlanHelper::getCustomerId($user_id);
-
-  // $checkSpendingAccessTransaction = \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
-
-  // if($checkSpendingAccessTransaction['enable'] == false) {
-  //   $returnObject->status = FALSE;
-  //   $returnObject->status_type = 'zero_balance';
-  //   $returnObject->head_message = 'E-Claim Unavailable';
-  //   $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
-  //   $returnObject->sub_message = '';
-  //   return Response::json($returnObject);
-  // }
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-  if($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == false || $input['spending_type'] == "wellness" && $spending['wellness_non_panel_submission'] == false) {
+  $disabledClaim = ($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == true) ? false : true;
+  if($disabledClaim) {
     $returnObject->status = FALSE;
-    $returnObject->status_type = 'access_block';
+    $returnObject->status_type = 'access_blocks';
     $returnObject->head_message = 'E-Claim Unavailable';
     $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
     $returnObject->sub_message = '';

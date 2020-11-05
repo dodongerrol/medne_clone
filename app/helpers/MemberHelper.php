@@ -1148,11 +1148,12 @@ class MemberHelper
 			$customer_id = \PlanHelper::getCustomerId($member_id);
 			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 
-			if($type == "non_panel") {
-				if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
-					return true;
-				}
-			}
+			// if($type == "non_panel") {
+			// 	if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
+			// 		return "fuck";
+			// 		return true;
+			// 	}
+			// }
 
 			// check of from top up and pending
 			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
