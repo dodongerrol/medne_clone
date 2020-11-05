@@ -665,21 +665,26 @@ class SpendingAccountController extends \BaseController {
 			}
 
 			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-			$user_allocated = \CustomerHelper::getActiveMembersId($customer_id);
+			$user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
 			$total = 0;
 			$panel = 0;
 			$non_panel = 0;
-			$depdents_count = 0;
-			
+			$dependents_count = 0;
+			$deletedUser = 0;
+
 			foreach ($user_allocated as $key => $user) {
-			  $depdents_count += DB::table('employee_family_coverage_sub_accounts')->where('owner_id', $user)->where('deleted', 0)->count();
+				$member = DB::table('user')->where('UserID', $user)->where('Active', 0)->select('UserID')->first();
+				if($member) {
+					$deletedUser++;
+				}
+			  $dependents_count += DB::table('employee_family_coverage_sub_accounts')->where('owner_id', $user)->where('deleted', 0)->count();
 			  $data = \MemberHelper::getMemberEnterprisePlanTransactionCounts($user, $input['start'], $input['end']);
 			  $total += $data['total'];
 			  $panel += $data['panels'];
 			  $non_panel += $data['non_panels'];
 			}
 			
-			$member_counts = sizeof($user_allocated) + $depdents_count;
+			$member_counts = (sizeof($user_allocated) - $deletedUser) + $dependents_count;
 			return [
 			  'total'           => $total,
 			  'total_panel'     => $panel,
