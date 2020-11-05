@@ -57,7 +57,7 @@
                   <h5 class="flex-1 member-bold-text no-margin" >GIRO</h5>
                 </span>
                 <div ng-if="((medical_wallet_details.panel_payment_method == 'giro' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'giro')) || (wellness_wallet_details.panel_payment_method == 'giro' || wellness_wallet_details.non_panel_payment_method == 'giro'))">
-                  <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'giro')) || (wellness_wallet_details.non_panel_payment_method == 'giro')">This method is currently used in:</div>
+                  <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'giro')) || (wellness_wallet_details.benefits_coverage != 'out_of_pocket' && wellness_wallet_details.non_panel_payment_method == 'giro')">This method is currently used in:</div>
                   <div class="display-flex mednefits-credits-wallet-container">
                     <div ng-if="(medical_wallet_details.panel_payment_method == 'giro' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'giro'))" class="member-bold-text">Medical Wallet:</div>
                     <div class="display-flex m-panel">
@@ -65,7 +65,7 @@
                       <div ng-if="medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'giro'">Non-Panel</div>
                     </div>
                   </div>
-                  <div ng-if="wellness_wallet_details.status && (wellness_wallet_details.non_panel_payment_method == 'giro')" class="display-flex mednefits-credits-wallet-container">
+                  <div ng-if="wellness_wallet_details.benefits_coverage != 'out_of_pocket' && wellness_wallet_details.status && (wellness_wallet_details.non_panel_payment_method == 'giro')" class="display-flex mednefits-credits-wallet-container">
                     <div class="member-bold-text">Wellness Wallet:</div>
                     <div class="display-flex m-panel">
                       <!-- <div ng-if="wellness_wallet_details.panel_payment_method == 'giro'" class="mednefits-panel-text">Mednefits Panel</div> -->
@@ -84,7 +84,7 @@
                 <span class="available-credits-container dp-flex-ai">
                   <h5 class="flex-1 member-bold-text">Bank Transfer/ PayNow</h5>
                 </span>
-                <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'bank_transfer')) || (wellness_wallet_details.non_panel_payment_method == 'bank_transfer')">This method is currently used in:</div>
+                <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'bank_transfer')) || (wellness_wallet_details.benefits_coverage != 'out_of_pocket' && wellness_wallet_details.non_panel_payment_method == 'bank_transfer')">This method is currently used in:</div>
                 <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'bank_transfer')) || (wellness_wallet_details.panel_payment_method == 'bank_transfer' || wellness_wallet_details.non_panel_payment_method == 'bank_transfer')" class="display-flex mednefits-credits-wallet-container">
                   <div ng-if="(medical_wallet_details.panel_payment_method == 'bank_transfer' || (medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'bank_transfer'))" class="member-bold-text">Medical Wallet:</div>
                   <div class="display-flex m-panel">
@@ -92,7 +92,7 @@
                     <div ng-if="medical_wallet_details.non_panel_reimbursement && medical_wallet_details.non_panel_payment_method == 'bank_transfer'">Non-Panel</div>
                   </div>
                 </div>
-                <div ng-if="wellness_wallet_details.status && (wellness_wallet_details.non_panel_payment_method == 'bank_transfer')" class="display-flex mednefits-credits-wallet-container">
+                <div ng-if="wellness_wallet_details.benefits_coverage != 'out_of_pocket' && wellness_wallet_details.status && (wellness_wallet_details.non_panel_payment_method == 'bank_transfer')" class="display-flex mednefits-credits-wallet-container">
                   <div class="member-bold-text">Wellness Wallet:</div>
                   <div class="display-flex m-panel">
                     <!-- <div ng-if="wellness_wallet_details.panel_payment_method == 'bank_transfer'" class="mednefits-panel-text">Mednefits Panel</div> -->
