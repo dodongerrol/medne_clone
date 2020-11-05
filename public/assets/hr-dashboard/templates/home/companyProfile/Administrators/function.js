@@ -637,10 +637,10 @@ app.directive("administratorsDirective", [
 					return regex.test(email);
 				}
         scope.fetchCompanyDetails = async function () {
-          await hrSettings.getCompanyDetails()
+          await hrSettings.fetchBusinessInformation()
             .then( function (response) {
               console.log(response);
-              scope.get_company_details = response.data;
+              scope.get_company_details = response.data.data;
           });
         }
         scope.formatMomentDate  = function(date, from, to){
