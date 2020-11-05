@@ -238,16 +238,19 @@ class SpendingAccountController extends \BaseController {
 		// ->where('spending_purchase_invoice.payment_status', 0)
 		->first();
 
-		if($pendingInvoice && (int)$pendingInvoice->payment_status == 1) {
-			$pendingInvoice = false;
+		$payment_status = true;
+		if($pendingInvoice) {
+			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+
+			if($amount_due > 0) {
+				$payment_status = false;
+			}
 		}
 
 		if($input['type'] == "medical") {
-			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'medical', true);
-			$panel_payment_method = $this->getPanelPaymentMethod($pendingInvoice, $spending_account_settings);
-			$non_panel_payment_method = $this->getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings);
-			// $panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_panel_previous : $spending_account_settings->medical_payment_method_panel;
-      		// $non_panel_payment_method = $pendingInvoice && $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? $spending_account_settings->medical_payment_method_non_panel_previous : $spending_account_settings->medical_payment_method_non_panel;
+			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'wellness', true);
+			$panel_payment_method = $this->getPanelPaymentMethod($pendingInvoice, $spending_account_settings, $input['type']);
+			$non_panel_payment_method = $this->getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings, $input['type']);
 			$format = array(
 				'customer_id'		=> $spending_account_settings->customer_id,
 				'id'            => $spending_account_settings->spending_account_setting_id,
@@ -266,13 +269,13 @@ class SpendingAccountController extends \BaseController {
 				'status'          => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'wallet_status'         => (int)$spending_account_settings->medical_enable == 1 ? true : false,
 				'with_prepaid_credits' => $with_prepaid_credits,
-				'payment_status'  => $pendingInvoice ? false : true,
+				'payment_status'  => $payment_status,
 				'currency_type'	=> strtoupper($customer->currency_type)
 			);
 		} else {
 			$credits = \SpendingHelper::getMednefitsAccountSpending($customer_id, $input['start'], $input['end'], 'wellness', true);
 			$panel_payment_method = $pendingInvoice && $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->wellness_payment_method_panel_previous : $spending_account_settings->wellness_payment_method_panel;
-      		$non_panel_payment_method = $pendingInvoice && $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->wellness_payment_method_panel_previous : $spending_account_settings->wellness_payment_method_non_panel;
+			$non_panel_payment_method = $pendingInvoice && $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? $spending_account_settings->wellness_payment_method_panel_previous : $spending_account_settings->wellness_payment_method_non_panel;
 			// format details
 			$format = array(
 				'customer_id'		  => $spending_account_settings->customer_id,
@@ -1483,27 +1486,78 @@ class SpendingAccountController extends \BaseController {
 		return $pdf->stream($data['invoice_number'].' - '.time().'.pdf');
 	}
 
-	private function getPanelPaymentMethod($pendingInvoice, $spending_account_settings)
-	{
-		if (
-			$pendingInvoice &&
-			$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
-		) {
-			return $spending_account_settings->medical_payment_method_panel_previous == 'mednefits_credits' ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+	private function getPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
+	{		
+		$paid = false;
+		if($pendingInvoice) {
+			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+		} else {
+			$amount_due = 0;
 		}
 
-		return $spending_account_settings->medical_payment_method_panel;
-	}
-
-	private function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings)
-	{
-		if (
-		$pendingInvoice &&
-		$spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits'
-		) {
-			return $spending_account_settings->medical_payment_method_non_panel_previous == 'mednefits_credits' ? 					'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel_previous;
+		if($amount_due <= 0) {
+			$paid = true;
 		}
-
-		return $spending_account_settings->medical_payment_method_non_panel;
+		
+		if($type == "medical") {
+			if (
+				$pendingInvoice && $paid == true &&
+				$spending_account_settings->medical_payment_method_panel == 'mednefits_credits'
+			) {
+				return $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->medical_payment_method_panel_previous;
+			} else if($pendingInvoice && $paid == false) {
+				return $spending_account_settings->medical_payment_method_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+			}
+			return $spending_account_settings->medical_payment_method_panel_previous;
+		} else {
+			if (
+				$pendingInvoice && $paid == true &&
+				$spending_account_settings->wellness_payment_method_panel == 'mednefits_credits'
+				) {
+					return $spending_account_settings->wellness_payment_method_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->wellness_payment_method_panel_previous;
+				} else if($pendingInvoice && $paid == false &&
+					$spending_account_settings->wellness_payment_method_panel == 'mednefits_credits') {
+					return $spending_account_settings->wellness_payment_method_panel == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_panel;
+				}
+			return $spending_account_settings->wellness_payment_method_panel;
+		}
 	}
+
+  	private function getNonPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
+	{
+		$paid = false;
+		if($pendingInvoice) {
+			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
+		} else {
+			$amount_due = 0;
+		}
+		
+
+		if($amount_due <= 0) {
+			$paid = true;
+		}
+		
+		if($type == "medical") {
+			if (
+				$pendingInvoice && $paid == true &&
+				$spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits'
+			) {
+				return $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->medical_payment_method_non_panel_previous;
+			} else if($pendingInvoice && $paid == false) {
+				return $spending_account_settings->medical_payment_method_non_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel_previous;
+			}
+			return $spending_account_settings->medical_payment_method_non_panel_previous;
+		} else {
+			if (
+				$pendingInvoice && $paid == true &&
+				$spending_account_settings->wellness_payment_method_non_panel == 'mednefits_credits'
+				) {
+					return $spending_account_settings->wellness_payment_method_non_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->wellness_payment_method_non_panel_previous;
+				} else if($pendingInvoice && $paid == false &&
+					$spending_account_settings->wellness_payment_method_non_panel == 'mednefits_credits') {
+					return $spending_account_settings->wellness_payment_method_non_panel == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->wellness_payment_method_non_panel;
+				}
+			return $spending_account_settings->wellness_payment_method_non_panel;
+		}
+  	}
 }

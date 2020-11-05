@@ -3198,7 +3198,7 @@ public function getActivityInNetworkTransactions( )
 			$transactions = [];
 		}
 	}
-
+	
 	if(sizeof($transactions) > 0) {
 		$paginate['current_page'] = $transactions->getCurrentPage();
 		$paginate['from'] = $transactions->getFrom();
@@ -3223,8 +3223,8 @@ public function getActivityInNetworkTransactions( )
 
 		if($trans) {
 
-			if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
-				if($trans->deleted == 0 || $trans->deleted == "0") {
+			if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
+				if((int)$trans->deleted == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 					} else {
@@ -3233,8 +3233,6 @@ public function getActivityInNetworkTransactions( )
 					$total_in_network_transactions++;
 
 					if($trans->lite_plan_enabled == 1) {
-
-
 						$logs_lite_plan = DB::table($table_wallet_history)
 						->where('logs', 'deducted_from_mobile_payment')
 						->where('lite_plan_enabled', 1)
