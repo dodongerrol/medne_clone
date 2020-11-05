@@ -1214,15 +1214,17 @@ class SpendingAccountController extends \BaseController {
 										->first();
 		$updateData = array(
 			'medical_benefits_coverage'           => 'lite_plan',
-			'medical_payment_method_panel'        => 'giro',
-			'medical_payment_method_non_panel'    => 'giro',
+			'medical_payment_method_panel'        => $spending_account_settings->medical_payment_method_panel ? $spending_account_settings->medical_payment_method_panel : 'giro',
+			'medical_payment_method_non_panel'    => $spending_account_settings->medical_payment_method_non_panel ? $spending_account_settings->medical_payment_method_non_panel : 'giro',
+			'medical_enable'                      => 1,
+			'medical_activate_allocation'         => 1,
 			'wellness_benefits_coverage'          => 'lite_plan',
-			'wellness_payment_method_panel'       => 'giro',
-			'wellness_payment_method_non_panel'   => 'giro',
-			'medical_spending_start_date'         => date('Y-m-d'),
-			'medical_spending_end_date'           => date('Y-m-d', strtotime('+12 months')),
-			'wellness_spending_start_date'        => date('Y-m-d'),
-			'wellness_spending_end_date'          => date('Y-m-d', strtotime('+12 months')),
+			'wellness_payment_method_panel'       => $spending_account_settings->wellness_payment_method_panel ? $spending_account_settings->wellness_payment_method_panel : 'giro',
+			'wellness_payment_method_non_panel'   => $spending_account_settings->wellness_payment_method_non_panel ? $spending_account_settings->wellness_payment_method_non_panel : 'giro',
+			'medical_spending_start_date'         => $spending_account_settings->medical_spending_start_date ? $spending_account_settings->medical_spending_start_date : date('Y-m-d'),
+			'medical_spending_end_date'           => $spending_account_settings->medical_spending_end_date ? $spending_account_settings->medical_spending_end_date : carbon()->addYear(1)->subDays(1),
+			'wellness_spending_start_date'        => $spending_account_settings->wellness_spending_start_date ? $spending_account_settings->wellness_spending_start_date : date('Y-m-d'),
+			'wellness_spending_end_date'          => $spending_account_settings->wellness_spending_end_date ? $spending_account_settings->wellness_spending_end_date : carbon()->addYear(1)->subDays(1),
 			'updated_at'                          => date('Y-m-d H:i:s')
 		);
 		

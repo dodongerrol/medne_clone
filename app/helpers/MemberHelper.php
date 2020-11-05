@@ -1146,7 +1146,7 @@ class MemberHelper
 			// get member account settings
 			// check for spending transaction access
 			$customer_id = \PlanHelper::getCustomerId($member_id);
-			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+			// $spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 
 			// if($type == "non_panel") {
 			// 	if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
