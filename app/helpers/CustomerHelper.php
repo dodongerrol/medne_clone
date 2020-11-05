@@ -300,7 +300,7 @@ class CustomerHelper
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
 		$planData = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
-		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->first();
+		$spendingPurchase = DB::table('spending_purchase_invoice')->where('customer_id', $customer_id)->first();
 		// check if there is an mendnefit
 		$mednefits_credits = DB::table('mednefits_credits')
 							->where('customer_plan_id', $spending->customer_plan_id)
@@ -1584,7 +1584,7 @@ class CustomerHelper
 	}
 
 	public static function getPanelPaymentMethod($pendingInvoice, $spending_account_settings, $type)
-	{		
+	{	
 		$paid = false;
 		if($pendingInvoice) {
 			$amount_due = ($pendingInvoice->medical_purchase_credits + $pendingInvoice->wellness_purchase_credits) - $pendingInvoice->payment_amount;
@@ -1603,7 +1603,7 @@ class CustomerHelper
 			) {
 				return $spending_account_settings->medical_payment_method_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->medical_payment_method_panel_previous;
 			} else if($pendingInvoice && $paid == false) {
-				return $spending_account_settings->medical_payment_method_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel_previous;
+				return $spending_account_settings->medical_payment_method_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_panel;
 			}
 			return $spending_account_settings->medical_payment_method_panel_previous;
 		} else {
