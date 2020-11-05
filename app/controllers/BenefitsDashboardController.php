@@ -17541,7 +17541,6 @@ const DEPENDENT_COLUMNS = [
 		$customer_id = $result->customer_buy_start_id;
 		$format = [];
 		
-
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 		$corporate_members = DB::table('corporate_members')
 		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
@@ -17574,7 +17573,7 @@ const DEPENDENT_COLUMNS = [
 	{
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 
 		if($id) {
 			$data = array (
@@ -17590,7 +17589,7 @@ const DEPENDENT_COLUMNS = [
 	{
 		$input = Input::all();
 		$result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 
 		if(empty($input['id']) || $input['id'] == null) {
 			return ['status' => false, 'message' => 'id is required'];
@@ -17670,7 +17669,7 @@ const DEPENDENT_COLUMNS = [
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
-		$id = $result->hr_dashboard_id;
+		$id = $result->customer_buy_start_id;
 		
 		if(empty($input['id']) || $input['id'] == null) {
             return ['status' => false, 'message' => 'id is required'];

@@ -16,6 +16,7 @@
       this.get_permission_data = {};
       this.selectedDepartmentEmpArr =[];
       this.selectEmployeeId = [];
+      this.selectedDepId = null;
     }
     $onInit() {
       this.get();
@@ -25,14 +26,6 @@
     get() {
       this.departmentAPI.get().then((response) => {
         this.departments = response;
-        // console.log(this.departments);
-        this.departments.map((res,key) => {
-          // res.selected = false;
-          // this.index = key;
-          this.department_id = res.id;
-          console.log(res);
-          // console.log(this.index);
-        });
       });
     }
     add() {
@@ -50,19 +43,29 @@
 
       request.then((response) => {
         $(".circle-loader").fadeOut();
-        this.presentModal("create-department-modal", false);
-        this.get();
+        if(response.data.status){
+          this.reset();
+          this.presentModal("create-department-modal", false);
+          this.get();
+          return swal('Success!', response.data.message, 'success');
+        }else{
+          return swal('Error!', response.data.message, 'error');
+        }
+        
       });
     }
     edit(department) {
       if ( this.get_permission_data.add_location_departments == 1 ) {
-        this.state.department = department;
+        this.state.department = {
+          id: department.id,
+          department_name: department.department_name,
+          total_employees: department.total_employees
+        };
         this.presentModal("edit-department-modal", true);
         console.log( this.state.department );
       } else {
         this.presentModal('permission-modal', true);
       }
-      
     }
     update() {
       $(".circle-loader").fadeIn();
@@ -70,8 +73,14 @@
 
       request.then((response) => {
         $(".circle-loader").fadeOut();
-        this.presentModal("edit-department-modal", false);
-        this.get();
+        if(response.data.status){
+          this.reset();
+          this.presentModal("edit-department-modal", false);
+          this.get();
+          return swal('Success!', response.data.message, 'success');
+        }else{
+          return swal('Error!', response.data.message, 'error');
+        }
       });
     }
     attemptDelete() {
@@ -84,11 +93,15 @@
 
       const request = this.departmentAPI.remove(this.state.department.id);
 
-      request.then(() => {
+      request.then((response) => {
         $(".circle-loader").fadeOut();
-        this.reset();
-        this.presentModal("success-department-confirm-modal", true);
-        this.get();
+        if(response.data.status){
+          this.reset();
+          this.presentModal("success-department-confirm-modal", true);
+          this.get();
+        }else{
+          return swal('Error!', response.data.message, 'error');
+        }
       });
     }
     buttonState() {
@@ -131,7 +144,7 @@
     saveDepartment() {
       let data = {
           employee_ids: this.selectEmployeeId,
-          department_id: this.department_id,
+          department_id: this.selectedDepId,
       }
 
       const request = this.departmentAPI.saveAllocateDepartment(data);
@@ -153,7 +166,8 @@
           
       })    
     }
-    employeeAllocate() {
+    employeeAllocate(id) {
+      this.selectedDepId = id;
       this.get_employee_names.map((res) => {
         res.selected = false;
         console.log(res.selected);
