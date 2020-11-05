@@ -247,12 +247,12 @@ Route::filter('auth.v2', function($request, $response)
         $auto = Config::get('config.enable_auto_logout');
         if($auto) {
             if((int)$user->UserType == 5 && (int)$user->access_type == 0 || (int)$user->UserType == 5 && (int)$user->access_type == 1) {
-                if((int)$user->account_update_status == 0) {
-                  $returnObject->status = FALSE;
-                  $returnObject->expired = true;
-                  $returnObject->message = 'You need to update you profile settings for new login method.';
-                  return Response::json($returnObject, 200);
-                }
+                // if((int)$user->account_update_status == 0) {
+                //   $returnObject->status = FALSE;
+                //   $returnObject->expired = true;
+                //   $returnObject->message = 'You need to update you profile settings for new login method.';
+                //   return Response::json($returnObject, 200);
+                // }
             }
         }
 
