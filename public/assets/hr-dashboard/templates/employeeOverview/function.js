@@ -544,7 +544,13 @@ app.directive("employeeOverviewDirective", [
           scope.selected_location_data = [];
           scope.selected_department_data = [];
         }
-
+        scope.fetchCompanyDetails = async function () {
+          await hrSettings.fetchBusinessInformation()
+            .then( function (response) {
+              console.log(response);
+              scope.get_company_details = response.data.data;
+          });
+        }
 
         $('.modal').on('hidden.bs.modal', function (e) {
           scope.isSelectOverallEmployees = false;
@@ -599,6 +605,7 @@ app.directive("employeeOverviewDirective", [
           await scope.getPermissionsData();
           // await scope.getLocationData();
           // await scope.getDepartmentData()
+          await scope.fetchCompanyDetails();
 
           localStorage.setItem('selected_member_id', null);
           localStorage.setItem('selected_member_index', null);

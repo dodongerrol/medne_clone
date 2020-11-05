@@ -563,11 +563,15 @@ app.directive("administratorsDirective", [
         }
         scope.activeAdminBtn = false;
         scope.editActiveAdminBtn = false;
+        scope.activeHrBtn = false;
         scope.changeBtnToActive = function () {
           if ( scope.add_admin_data.employee_name != '' && scope.isEmployeePending == false ) {
             scope.activeAdminBtn = true;
             console.log( scope.activeAdminBtn );
           }
+        }
+        scope.changeHrBtnActive = function() {
+          scope.activeHrBtn = true;
         }
         scope.editChangeBtnActive = function () {
           scope.editActiveAdminBtn = true;

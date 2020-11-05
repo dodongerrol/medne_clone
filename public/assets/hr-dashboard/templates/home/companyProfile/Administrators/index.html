@@ -98,19 +98,19 @@
         <div ng-if="isShowNoteAdmin && !isShowChangeAdmin" class="modal-body">
           <div class="admin-input-wrapper">
             <label>Full Name</label>
-            <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.fullname" type="text" placeholder="Enter new Primary Admin's full name">
+            <input ng-change="changeHrBtnActive()" ng-model="changePrimaryData.fullname" type="text" placeholder="Enter new Primary Admin's full name">
           </div>
           <div class="admin-input-wrapper">
             <label>Email</label>
-            <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.email" type="text" placeholder="Enter new Primary Admin's work email address">
+            <input ng-change="changeHrBtnActive()" ng-model="changePrimaryData.email" type="text" placeholder="Enter new Primary Admin's work email address">
           </div>
           <div class="admin-input-wrapper mobile-number">
             <label>Mobile Number</label>
             <div class="display-flex">
               <div>
-                <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.phone_code" id="phone_number_primary_admin" type="tel">
+                <input ng-change="changeHrBtnActive()" ng-model="changePrimaryData.phone_code" id="phone_number_primary_admin" type="tel">
               </div>
-              <input ng-change="changeBtnToActive()" ng-model="changePrimaryData.phone_no" type="number" placeholder="Enter new Primary Admin's mobile number">
+              <input ng-change="changeHrBtnActive()" ng-model="changePrimaryData.phone_no" type="number" placeholder="Enter new Primary Admin's mobile number">
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@
         </div>
         <div class="modal-footer">
           <button ng-if="!isShowChangeAdmin" data-dismiss="modal" class="btn-cancel-admin">Cancel</button>
-          <button ng-if="isShowNoteAdmin && !isShowChangeAdmin" class="btn-update disabled" ng-class="{'active': activeBusinessUpdate }" ng-click="updateHrAdmin()">Confirm Change</button>
+          <button ng-if="isShowNoteAdmin && !isShowChangeAdmin" class="btn-update disabled" ng-class="{'active': activeHrBtn }" ng-click="updateHrAdmin()">Confirm Change</button>
           <button ng-if="!isShowNoteAdmin" ng-click="continuePrimAdmin()" class="btn-update confirm">Continue</button>
           <button ng-if="isShowChangeAdmin" data-dismiss="modal" class="btn-update btn-close">Close</button>
         </div>
