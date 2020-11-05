@@ -385,7 +385,13 @@ class SpendingHelper {
             'type'						=> 'non_panel',
             'spending'                  => $spending_type,
             'payment_method'            => $spending_type == "medical" ? $spending['medical_payment_method_non_panel'] : $spending['wellness_payment_method_non_panel']
-		);
+        );
+        
+        if($spending_type == "medical" && $spending['medical_payment_method_non_panel'] == "mednefits_credits") {
+            $statement_data['plan_method'] = "pre_paid";
+        } else if($spending_type == "wellness" && $spending['wellness_payment_method_non_panel'] == "mednefits_credits") {
+            $statement_data['plan_method'] = "pre_paid";
+        }
 
 		// create statement
 		$statement_result = CompanyCreditsStatement::create($statement_data);

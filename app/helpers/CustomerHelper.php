@@ -1641,7 +1641,7 @@ class CustomerHelper
 			) {
 				return $spending_account_settings->medical_payment_method_non_panel == 'mednefits_credits' ? 'mednefits_credits' : $spending_account_settings->medical_payment_method_non_panel_previous;
 			} else if($pendingInvoice && $paid == false) {
-				return $spending_account_settings->medical_payment_method_non_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel_previous;
+				return $spending_account_settings->medical_payment_method_non_panel_previous == "mednefits_credits" ? 'bank_transfer' : $spending_account_settings->medical_payment_method_non_panel;
 			}
 			return $spending_account_settings->medical_payment_method_non_panel_previous;
 		} else {

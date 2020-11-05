@@ -6721,7 +6721,7 @@ public function updateEclaimStatus( )
 
 	if((int)$input['status'] == 1) {
 		$customer_id = PlanHelper::getCustomerId($employee);
-		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
+		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$amount = !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount;
 		$amount = TransactionHelper::floatvalue($amount);
@@ -6775,7 +6775,7 @@ public function updateEclaimStatus( )
 		if($check->spending_type == "medical") {
 			$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'medical');
 			$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
-      		// create wallet logs
+			// create wallet logs
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
