@@ -17891,11 +17891,37 @@ public function createHrLocation ()
 
 		foreach ($employees as $employee)
 		{
+			$isInsertData = false;
 			// check if already exist
-			// $checkDepartmentMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
-			$checkLocationMember = DB::table('company_location_members')->where('company_location_id', $location['LocationID'])->where('member_id', $employee->UserID)->where('status', 1)->select('id')->first();
+			$checkLocationMember = DB::table('company_location_members')
+				// ->where('company_location_id', $location['LocationID'])
+				->where('member_id', $employee->UserID)
+				->where('status', 1)
+				->select('id')
+				->first();
 
-			if(!$checkLocationMember) {
+			if($checkLocationMember) {
+				$countLocationMembers = DB::table('company_location_members')
+					->where('member_id', $employee->UserID)
+					->where('status', 1)
+					->select('id')
+					->count();
+				if($countLocationMembers > 1){
+					$temp_employees = DB::table('company_location_members')
+						->where('member_id', $employee->UserID)
+						->delete();
+
+					$isInsertData = true;
+				}else{
+					DB::table('company_location_members')
+						->where('member_id', $employee->UserID)
+						->update([
+							'company_location_id'		=> $location['LocationID'],
+						]);
+				}
+			}
+
+			if(!$checkLocationMember || $isInsertData) {
 				DB::table('company_location_members')->insert([
 					'company_location_id'		=> $location['LocationID'],
 					'member_id'					=> $employee->UserID,
@@ -17954,16 +17980,37 @@ public function createHrLocation ()
 		}
 
 		foreach ($employees as $employee)
-		{
+		{	
+			$isInsertData = false;
 			// check if already exist
-			$checkLocationMember = DB::table('company_department_members')
-			->where('company_department_id', $department['id'])
-			->where('member_id', $employee->UserID)
-			->where('status', 1)
-			->select('id')
-			->first();
+			$checkDepartmentMember = DB::table('company_department_members')
+				->where('member_id', $employee->UserID)
+				->where('status', 1)
+				->select('id')
+				->first();
 
-			if(!$checkLocationMember) {
+			if($checkDepartmentMember) {
+				$countDepartmentMembers = DB::table('company_department_members')
+					->where('member_id', $employee->UserID)
+					->where('status', 1)
+					->select('id')
+					->count();
+				if($countDepartmentMembers > 1){
+					$temp_employees = DB::table('company_department_members')
+						->where('member_id', $employee->UserID)
+						->delete();
+
+					$isInsertData = true;
+				}else{
+					DB::table('company_department_members')
+						->where('member_id', $employee->UserID)
+						->update([
+							'company_department_id'		=> $department['id'],
+						]);
+				}
+			}
+
+			if(!$checkDepartmentMember || $isInsertData) {
 				DB::table('company_department_members')->insert([
 					'company_department_id'		=> $department['id'],
 					'member_id'					=> $employee->UserID,
