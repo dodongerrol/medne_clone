@@ -164,7 +164,7 @@
         </div>
         <div ng-if="!isAddAdministratorConfirm && !isAddAdministratorSuccess" class="modal-body">
           <div class="mednefits-employee-selector-container">
-            <label class="bold-text">Is this name a Mednefits employee?</label>
+            <label class="bold-text">Is this admin a <span ng-bind="get_company_details.data"></span> employee?</label>
             <div class="display-flex">
               <div class="custom-checkbox-container active">
                 <label class="checkbox-input">

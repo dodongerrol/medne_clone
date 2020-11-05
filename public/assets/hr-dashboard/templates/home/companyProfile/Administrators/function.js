@@ -636,7 +636,13 @@ app.directive("administratorsDirective", [
 					var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 					return regex.test(email);
 				}
-
+        scope.fetchCompanyDetails = async function () {
+          await hrSettings.getCompanyDetails()
+            .then( function (response) {
+              console.log(response);
+              scope.get_company_details = response.data;
+          });
+        }
         scope.formatMomentDate  = function(date, from, to){
           return moment(date, from).format(to);
         }
@@ -662,6 +668,7 @@ app.directive("administratorsDirective", [
           await scope.getLocationData();
           await scope.getDepartmentData();
           await scope.getPermissionsData();
+          await scope.fetchCompanyDetails();
         }
         scope.onLoad();
       }
