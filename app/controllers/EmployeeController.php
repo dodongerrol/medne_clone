@@ -3050,14 +3050,29 @@ class EmployeeController extends \BaseController {
     
     foreach($members as $key => $member)  {
       // check if member already login base on admin logs
-      $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
-      if(!$check_active_state || $check_active_state && (int)$member->Status == 0)  {
-        $pending++;
-      } else {
-        // check if already create a transaction
+      // $check_active_state = DB::table('admin_logs')->where('admin_id', $member->user_id)->where('admin_type', 'member')->where('type', 'member_active_state')->first();
+      
+      // if(!$check_active_state || $check_active_state && (int)$member->Status == 0)  {
+      //   $pending++;
+      // } else {
+      //   // check if already create a transaction
+      //   $panel = DB::table('transaction_history')->where('UserID', $member->user_id)->first();
+      //   $non_panel = DB::table('e_claim')->where('user_id', $member->user_id)->first();
+
+      //   if($panel || $non_panel) {
+      //     $active++;
+      //   } else {
+      //     $login++;
+      //   }
+      // }
+      // check if already create a transaction
+      $get_employee_plan = DB::table('user_plan_type')->where('user_id', $member->UserID)->orderBy('created_at', 'desc')->first();
+      
+      if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$member->member_activated == 0 || (int)$member->member_activated == 1 && (int)$member->Status == 0)  {
+				$pending++;
+			} else {
         $panel = DB::table('transaction_history')->where('UserID', $member->user_id)->first();
         $non_panel = DB::table('e_claim')->where('user_id', $member->user_id)->first();
-
         if($panel || $non_panel) {
           $active++;
         } else {

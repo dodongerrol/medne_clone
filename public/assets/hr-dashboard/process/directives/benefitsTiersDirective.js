@@ -1084,7 +1084,8 @@ app.directive('benefitsTiersDirective', [
 						}
 						if ( scope.employee_data.passport ) {
 							if (!scope.checkPassport(scope.employee_data.passport)) {
-								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
+								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
 									return false;
 							}
 						}
@@ -1244,6 +1245,7 @@ app.directive('benefitsTiersDirective', [
 												mobile_area_code: '65',
 												mobile_area_code_country: 'sg'
 											};
+											scope.employee_arr = [];
 										} else {
 											swal('Error!', response.data.message, 'error');
 										}
@@ -1340,7 +1342,7 @@ app.directive('benefitsTiersDirective', [
 				scope.updateEnrolleEmp = function (emp) {
 					console.log(emp);
 
-					// if ( scope.showCurrencyType == 'myr' ) {
+					if ( scope.showCurrencyType == 'myr' ) {
 					// 	if ( emp.employee.nric == '' && emp.employee.mobile == '' && emp.employee.passport == '' ) {
 					// 		sweetAlert("Error!", "Please key in Mobile No., NRIC, or Passport Number.", "error");
 					// 		return false;
@@ -1350,7 +1352,14 @@ app.directive('benefitsTiersDirective', [
 					// 		swal("Error!", "Email Address or Mobile Number is required.", 'error');
 					// 		return false;
 					// 	}
-					// }
+						if ( emp.employee.passport ) {
+							if (!scope.checkPassport(emp.employee.passport)) {
+								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
+								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
+									return false;
+							}
+						}
+					}
 
 					// if( !emp.employee.mobile_area_code ) {
 					// 	swal("Error!", "Please prvoide a Mobile Area Code is required.", 'error');
@@ -1401,7 +1410,8 @@ app.directive('benefitsTiersDirective', [
 													// last_name : value.enrollee.last_name,
 													// nric : value.enrollee.nric,
 													dob: moment(value.enrollee.dob, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-													plan_start: moment(value.enrollee.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+													// plan_start: moment(value.enrollee.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+													plan_start: moment(data.plan_start, 'DD/MM/YYYY').format('YYYY-MM-DD'),
 													relationship: value.enrollee.relationship,
 												}
 												dependentsSettings.updateTempDependent(dep_data)
@@ -1426,7 +1436,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.removeManyEmp = function () {
 					swal({
-						title: "Cornfirm",
+						title: "Confirm",
 						text: "are you sure you want to delete these employees?",
 						type: "warning",
 						showCancelButton: true,
@@ -1459,7 +1469,7 @@ app.directive('benefitsTiersDirective', [
 
 				scope.removeTempEmp = function (data) {
 					swal({
-						title: "Cornfirm",
+						title: "Confirm",
 						text: "are you sure you want to delete this employee?",
 						type: "warning",
 						showCancelButton: true,
@@ -1847,7 +1857,8 @@ app.directive('benefitsTiersDirective', [
 				scope.checkPassport = function (value) {
           let passport_pattern = null;
           if (value) {
-            passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
+						passport_pattern = new RegExp("^[a-zA-Z0-9]+$");
+            // passport_pattern = new RegExp("^[a-zA-Z][a-zA-Z0-9.,$;]+$");
           } else {
             return false;
           }

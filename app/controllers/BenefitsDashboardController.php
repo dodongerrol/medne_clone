@@ -137,7 +137,8 @@ class BenefitsDashboardController extends \BaseController {
 			'accessibility'					=> $accessibility,
 			'expire_in'						=> $hr->expire_in,
 			'signed_in'						=> $hr->signed_in,
-			'account_type'					=> $plan->account_type
+			'account_type'					=> $plan->account_type,
+			'currency_type'					=> strtoupper($settings->currency_type)
 		);
 		return $session;
 	}
@@ -11703,8 +11704,6 @@ class BenefitsDashboardController extends \BaseController {
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 	    // get user plan
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-		$spending = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->first();
 		$final_user = [];
 
@@ -11713,7 +11712,11 @@ class BenefitsDashboardController extends \BaseController {
 		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 		->where('corporate.corporate_id', $account_link->corporate_id)
 		->where('corporate_members.removed_status', 0)
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.PhoneCode', 'user.PhoneNo', 'user.Job_Title', 'user.DOB', 'user.created_at', 
+				'corporate.company_name', 'corporate_members.removed_status', 'user.Active', 'user.emp_no', 'user.member_activated', 'user.Zip_Code', 
+				'user.bank_name', 'user.bank_account', 'user.NRIC', 'user.Status')
 		->get();
+
 		$users_count = sizeOf($users);
 		$last_term_credits = false;
 		for($x = 0; $x < $users_count; $x++) {
@@ -11757,14 +11760,49 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
-							->where('owner_id', $users[$x]->UserID)
-							->where('deleted', 0)
-							->count();
+							->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
+							->where('employee_family_coverage_sub_accounts.owner_id', $users[$x]->UserID)
+							->where('employee_family_coverage_sub_accounts.deleted', 0)
+							->where('user.access_type', 2)
+							->where('user.Active', 1)
+							->select('user.Name', 'user.DOB')
+							->groupBy('user.Name')
+							->get();
+			
+			if ( count($dependents) > 0 ) {
+				foreach ($dependents as $key => $item) {
+					$temp = array(
+						'Status'	=> $status,
+						'Name'		=> ucwords( $users[$x]->Name),
+						'NRIC'		=>	 $users[$x]->NRIC,
+						'Family Coverage'	=> count($dependents),
+						'Mobile No'		=>  $users[$x]->PhoneCode. $users[$x]->PhoneNo,
+						'Email'		=>  $users[$x]->Email,
+						'Date of Birth'		=>  $users[$x]->DOB,
+						'Postal'	=> $users[$x]->Zip_Code,
+						'Employee ID' => $users[$x]->emp_no,
+						'Bank Name'			=>  $users[$x]->bank_name,
+						'Bank Account'		=>  $users[$x]->bank_account,
+						'Plan Type' => \PlanHelper::getAccountType($plan->account_type)." (Corporate)",
+						'Start Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
+						'End Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
+						'Medical Allocation' => number_format($medical_credit_data['allocation'], 2),
+						'Medical Usage' => number_format($medical_credit_data['get_allocation_spent'], 2),
+						'Medical Balance' => number_format($medical_credit_data['balance'], 2),
+						'Wellness Allocation' => number_format($wellness_credit_data['allocation'], 2),
+						'Wellness Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
+						'Wellness Balance' => number_format($wellness_credit_data['balance'], 2),
+						'Dependent Name' => $item->Name,
+						'Dependent DOB' => $item->DOB,
+					);
+					$final_user[] = $temp;	
+				}
+			} 
 
 			$temp = array(
 				'Status'	=> $status,
 				'Name'		=> ucwords($users[$x]->Name),
-				'Family Coverage'	=> $dependents,
+				'Family Coverage'	=> count($dependents),
 				'Mobile No'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
 				'Date of Birth'		=> $users[$x]->DOB,
@@ -11781,7 +11819,8 @@ class BenefitsDashboardController extends \BaseController {
 				'Wellness Allocation' => number_format($wellness_credit_data['allocation'], 2),
 				'Wellness Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
 				'Wellness Balance' => number_format($wellness_credit_data['balance'], 2),
-				
+				'Dependent Name' => null,
+				'Dependent DOB' => null,
 			);
 
 			// if((int)$spending_accounts->wellness_enable == 1) {
@@ -13452,10 +13491,11 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $customer_id)->first();
+		$hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $customer_id)->first();
 
 		$data = [];
 		$data['company_name'] = ucwords($company->company_name);
-		$data['contact_name'] = ucwords($contact->first_name).' '.ucwords($contact->last_name);
+		$data['contact_name'] = ucwords($hr->fullname);
 
 		$plan = DB::table('customer_plan')
 		->where('customer_buy_start_id', $customer_id)
@@ -15298,7 +15338,7 @@ class BenefitsDashboardController extends \BaseController {
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderby('created_at', 'desc')->first();
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $spending->customer_id)->first();
 		// $members = DB::table('corporate_members')->where('corporate_id', $account->corporate_id)->get();
-		$members = \CustomerHelper::getActivePlanUsers($customer_id);
+		$members = PlanHelper::getActivePlanUsers($customer_id);
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $spending->customer_id)->first();
 		$pending = DB::table('spending_purchase_invoice')->where('customer_plan_id', $spending->customer_plan_id)->where('payment_status', 0)->count();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $spending->customer_plan_id)->first();
