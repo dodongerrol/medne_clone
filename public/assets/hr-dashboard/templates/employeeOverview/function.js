@@ -597,8 +597,8 @@ app.directive("employeeOverviewDirective", [
           // await scope.getProgress();
 
           await scope.getPermissionsData();
-          await scope.getLocationData();
-          await scope.getDepartmentData()
+          // await scope.getLocationData();
+          // await scope.getDepartmentData()
 
           localStorage.setItem('selected_member_id', null);
           localStorage.setItem('selected_member_index', null);

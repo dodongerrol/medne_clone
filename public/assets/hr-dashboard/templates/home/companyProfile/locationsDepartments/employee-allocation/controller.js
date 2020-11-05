@@ -38,11 +38,7 @@
             });
         }
         open() {
-            this.state = {
-                id: this.id,
-                type: this.type
-            }
-            console.log(this.state);
+            console.log(this.id);
             this.get_employee_names.map((res) => {
                 this.selectedEnrolledEmpArr = [];
                 this.selectEmployeeId = [];

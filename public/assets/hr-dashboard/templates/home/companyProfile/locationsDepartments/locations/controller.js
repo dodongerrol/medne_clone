@@ -19,6 +19,7 @@
             }
             this.get_permission_data = {};
             this.isShowRemove = true;
+            this.selectedLocationID = null;
         }
         $onInit() {
             this.get();
@@ -149,6 +150,12 @@
                 this.get_permission_data = response.data;
                 console.log(this.get_permission_data);
             });
+        }
+        allocateEmpClickk(id){
+            this.selectedLocationID = id;
+            setTimeout(() => {
+                $("#allocate-employees-btn").trigger('click');
+            },200);
         }
     }
 
