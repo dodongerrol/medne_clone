@@ -3605,6 +3605,10 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
+				if($consultation_credits == false) {
+					$total_amount = $trans->procedure_cost;
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 					$total_amount = $total_amount * $trans->currency_amount;
