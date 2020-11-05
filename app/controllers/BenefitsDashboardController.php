@@ -6469,9 +6469,9 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
 				}
-				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
+				$calculated_prices = \DecimalHelper::formatWithNoCommas($calculated_prices);
 				$duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 
 				$data['price']          = number_format($calculated_prices, 2);

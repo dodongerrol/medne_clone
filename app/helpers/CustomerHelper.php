@@ -1413,7 +1413,7 @@ class CustomerHelper
 	{
 		$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
 		$days = $diff->format('%a');
-		$total_days = date("z", mktime(0,0,0,12,31,date('Y'))) + 1;
+		$total_days = date("z", mktime(0,0,0,12,31,date('Y')));
 		$remaining_days = $days;
 
 		$cost_plan_and_days = ($remaining_days / $total_days);

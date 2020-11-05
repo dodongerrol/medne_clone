@@ -760,7 +760,7 @@ class SpendingInvoiceController extends \BaseController {
 			]);
 			
 			$pagination = $invoiceHistory->getInvoiceHistory();
-	
+			return $pagination;
 			if ($plan && $plan->account_type != "lite_plan") {
 				$pagination['data'] = $pagination['data'] ?? [];
 			} else {
