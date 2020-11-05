@@ -21,6 +21,7 @@
         }
         $onInit() {
             this.hydrate();
+            this.getPermission();
         }
         hydrate() {
             this.billingContactAPI.get()
@@ -30,7 +31,11 @@
                 } );
         }
         open() {
-            presentModal('contact-form')
+            if ( this.get_permissions_data.manage_billing_and_payments == 1 ) {
+                presentModal('contact-form')
+            } else {
+                $('#permission-modal').modal('show');
+            }     
         }
         dismiss() {
             presentModal('contact-form', 'hide')
@@ -50,6 +55,13 @@
                 }
                 $(".circle-loader").fadeOut();
             });
+        }
+        getPermission() {
+            this.billingContactAPI.getPermission()
+                .then((response) => {
+                    this.get_permissions_data = response.data;
+                    console.log(this.get_permissions_data);
+                });
         }
     }
 

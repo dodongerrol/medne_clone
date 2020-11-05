@@ -117,32 +117,41 @@ app.directive("billingPaymentsDirective", [
                 };
 
                 scope.downloadViewInvoice = function ( id ) {
-                    if(scope.invoiceSelectorValue == 'spending'){
-                      if(scope.download_token.live == true) {
-                        window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + id + '&token=' + scope.download_token.token);
-                      } else {
-                        window.open(serverUrl.url + '/hr/statement_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                    if ( scope.get_permissions_data.manage_billing_and_payments == 1 ) {
+                      if(scope.invoiceSelectorValue == 'spending'){
+                        if(scope.download_token.live == true) {
+                          window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + id + '&token=' + scope.download_token.token);
+                        } else {
+                          window.open(serverUrl.url + '/hr/statement_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                        }
                       }
-                    }
-                    if(scope.invoiceSelectorValue == 'spending_purchase'){
-                      window.open(serverUrl.url + '/hr/download_spending_purchase_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
-                    }
-                    if(scope.invoiceSelectorValue == 'plan'){
-                      window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + id + '&token=' + window.localStorage.getItem('token'));
-                    }
-                    if(scope.invoiceSelectorValue == 'plan_withdrawal'){
-                      window.open(serverUrl.url + '/hr/get_cancellation_details/' + id + '&token=' + window.localStorage.getItem('token'));
-                    }
-                    if(scope.invoiceSelectorValue == 'deposit'){
-                      window.open(serverUrl.url + '/hr/spending_desposit?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      if(scope.invoiceSelectorValue == 'spending_purchase'){
+                        window.open(serverUrl.url + '/hr/download_spending_purchase_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      }
+                      if(scope.invoiceSelectorValue == 'plan'){
+                        window.open(serverUrl.url + '/benefits/invoice?invoice_id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      }
+                      if(scope.invoiceSelectorValue == 'plan_withdrawal'){
+                        window.open(serverUrl.url + '/hr/get_cancellation_details/' + id + '&token=' + window.localStorage.getItem('token'));
+                      }
+                      if(scope.invoiceSelectorValue == 'deposit'){
+                        window.open(serverUrl.url + '/hr/spending_desposit?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      }
+                    } else {
+                      $('#permission-modal').modal('show');
                     }
                   }
                   scope.downloadViewTransactions = function ( id, type ) {
-                    if(type == "panel") {
-                      window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                    if ( scope.get_permissions_data.manage_billing_and_payments == 1 ) {
+                      if(type == "panel") {
+                        window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      } else {
+                        window.open(serverUrl.url + '/hr/download_non_panel_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      }
                     } else {
-                      window.open(serverUrl.url + '/hr/download_non_panel_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
+                      $('#permission-modal').modal('show');
                     }
+                    
                   }
                   scope.getDownloadToken = async function( ) {
                     await hrSettings.getDownloadToken( )
@@ -172,6 +181,14 @@ app.directive("billingPaymentsDirective", [
                     scope.getBillingInvoiceHistory( scope.invoiceSelectorValue );
                   }
 
+                  scope.getPermissionsData = async function () {
+                    await hrSettings.getPermissions()
+                      .then( function (response) {
+                        console.log(response);
+                        scope.get_permissions_data = response.data.data;
+                    });
+                  }
+
                   scope.range = function (num) {
                     var arr = [];
                     for (var i = 0; i < num; i++) {
@@ -191,10 +208,11 @@ app.directive("billingPaymentsDirective", [
                       loading_trap = false;
                     }, 10);
                   };
-
+                  
                 scope.onload = async () =>{
                     await scope.getDownloadToken();
                     await scope.getBillingInvoiceHistory(scope.invoiceSelectorValue);
+                    await scope.getPermissionsData();
                 };
                 scope.onload();
 

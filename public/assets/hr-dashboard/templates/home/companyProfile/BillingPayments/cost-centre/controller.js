@@ -1,11 +1,12 @@
 (function (angular) {
     'use strict';
     class CostCentreController {
-        constructor(locationAPI, departmentAPI) {
+        constructor(locationAPI, departmentAPI, costCentreAPI) {
             this.views = window.location.origin + '/assets/hr-dashboard/templates/home/companyProfile/BillingPayments/cost-centre';
             this.element = 'cost-centre-form';
             this.locationAPI = locationAPI;
             this.departmentAPI = departmentAPI;
+            this.costCentreAPI = costCentreAPI;
             this.state = {
                 selectedCentre: 'Click to select options',
                 isShowAllDropdownList: false
@@ -16,6 +17,7 @@
             await this.getLocationData();
             await this.getDepartmentData();
             await this.checkLocDepStatus();
+            await this.getPermission();
             
         }
         async checkLocDepStatus(){
@@ -39,7 +41,12 @@
             });
         }
         open() {
-            presentModal('cost-centre-form')
+            if ( this.get_permissions_data.manage_billing_and_payments == 1 ) { 
+                presentModal('cost-centre-form')
+            } else {
+                $('#permission-modal').modal('show');
+            }
+            
         }
         dismiss() {
             presentModal('cost-centre-form', 'hide')
@@ -48,6 +55,13 @@
         }
         setCostCentre(opt){
             this.state.selectedCentre = opt;
+        }
+        getPermission() {
+            this.costCentreAPI.getPermission()
+                .then((response) => {
+                    this.get_permissions_data = response.data;
+                    console.log(this.get_permissions_data);
+                });
         }
     }
 

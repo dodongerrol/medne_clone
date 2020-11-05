@@ -538,7 +538,7 @@
         <div class="modal-body">
           <img src="../assets/hr-dashboard/img/close-circular-button-symbol.png">
           <div>
-            <div>Sorry! You have no permission to manage locations and departments.</div>
+            <div>Sorry! You have no permission to <span ng-if="get_permissions_data.approve_reject_edit_non_panel_claims == 0">approve, reject and edit non-panel claims.</span></div>
           </div>
         </div>
         <div class="modal-footer">

@@ -12,6 +12,7 @@
         }
         $onInit() {
             this.hydrate();
+            this.getPermission();
         }
         hydrate() {
             this.billingInformationAPI.get()
@@ -22,7 +23,11 @@
                 });
         }
         open() {
-            presentModal('edit-information-modal');
+            if ( this.get_permissions_data.manage_billing_and_payments == 1 ) {
+                presentModal('edit-information-modal');
+            } else {
+                $('#permission-modal').modal('show');
+            }
         }
         dismiss() {
             presentModal('edit-information-modal', 'hide');
@@ -55,6 +60,13 @@
         }
         setField(field, value) {
             this.states.billingInformationData[field] = value;
+        }
+        getPermission() {
+            this.billingInformationAPI.getPermission()
+                .then((response) => {
+                    this.get_permissions_data = response.data;
+                    console.log(this.get_permissions_data);
+                });
         }
     }
 
