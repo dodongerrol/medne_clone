@@ -5509,10 +5509,11 @@ public function createEclaim( )
   $customer_id = PlanHelper::getCustomerId($user_id);
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-  $disabledClaim = ($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == true) ? false : true;
-  if($disabledClaim) {
+  // $disabledClaim = ($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == true) ? false : true;
+  $enabledClaim = ($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_benefits_coverage'] == 'out_of_pocket') ? true : false;
+  if(!$enabledClaim) {
     $returnObject->status = FALSE;
-    $returnObject->status_type = 'access_blocks';
+    $returnObject->status_type = 'access_block';
     $returnObject->head_message = 'E-Claim Unavailable';
     $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
     $returnObject->sub_message = '';
