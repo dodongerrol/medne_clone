@@ -121,7 +121,7 @@ class SpendingAccountController extends \BaseController {
 		foreach($topUpData as $topUp) {
 			$amount_due = ($topUp->medical_purchase_credits + $topUp->wellness_purchase_credits) - $topUp->payment_amount;
 			if($amount_due > 0) {
-				$payment_status = false;
+				// $payment_status = false;
 				$top_up_total_credits += $topUp->credits + $topUp->bonus_credits;
 				$top_up_total_purchased_credits += $topUp->credits;
 				$top_up_total_bonus_credits += $topUp->bonus_credits;
