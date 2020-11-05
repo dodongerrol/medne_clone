@@ -278,7 +278,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/transfer_employee', 'BenefitsDashboardController@transferEmployee');
 
 	// bulk update
-	Route::post('hr/bulk_update_employee', 'BenefitsDashboardController@bulkUpdateDetails');
+	Route::get('hr/export_bulk_details', 'BenefitsDashboardController@exportBulkDetails');
+	Route::post('hr/upload_bulk_update_details', 'BenefitsDashboardController@uploadBulkUpdateDetails');
 
 	// Administrator
 	Route::post('hr/add_employee_admin', 'BenefitsDashboardController@addAdministrator');
@@ -304,6 +305,11 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 
 	// employee overview
 	Route::get('hr/export_selected_member_details', 'BenefitsDashboardController@exportFilterMemberDetails');
+
+	// Cost Center
+	Route::post('hr/setup_cost_center', 'BenefitsDashboardController@setupCostCenter');
+	Route::post('hr/edit_cost_center', 'BenefitsDashboardController@editCostCenter');
+	Route::get('hr/unlink_cost_center', 'BenefitsDashboardController@unlinkCostCenter');
 	
 	// upload via excel
 	// Route::post('upload/excel_enrollment', 'BenefitsDashboardController@uploadExcel');

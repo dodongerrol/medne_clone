@@ -7962,5 +7962,158 @@ class PlanHelper
 
 		return $data;
 	}
+
+	public static function bulkUpdateEmployeeValidation($user, $except_enrolle_email_validation)
+	{
+		$customer_id = self::getCusomerIdToken();
+		$mobile_error = false;
+		$mobile_message = '';
+		$mobile_area_error = false;
+		$mobile_area_message = '';
+		$email_error = false;
+		$email_message = '';
+		$postal_code_error = false;
+		$postal_code_message = '';
+		$nric_error = false;
+		$nric_message = '';
+
+
+		if (!empty(trim($user['PhoneNo'] ?? null))) {
+			if(is_null($user['PhoneCode']) || empty($user['PhoneCode'])) {
+				$mobile_area_error = true;
+				$mobile_area_message = '*Phone Code is empty';
+			} else {
+				$mobile_area_error = false;
+				$mobile_area_message = '';
+			}
+		}
+
+		if (!empty($user['Email'])) {
+			$check_user = DB::table('user')->where('Email', $user['Email'])->where('Active', 1)->where('UserType', 5)->count();
+
+			if (filter_var($user['email'], FILTER_VALIDATE_EMAIL)) {
+				$email_error = false;
+				$email_message = '';
+			} else {
+				$email_error = true;
+				$email_message = '*Error email format.';
+			}
+			// validations
+			if ($check_user > 0) {
+				$email_error = true;
+				$email_message = '*Email Already taken.';
+			}
+
+			if (!$except_enrolle_email_validation) {
+				$check_temp_user = DB::table('employee_temporary_update')
+					->where('email', $user['Email'])
+					->where('updated_status', 'false')
+					->count();
+				if ($check_temp_user > 0) {
+					$email_error = true;
+					$email_message = '*Email Already taken.';
+				}
+			}
+		}
+
+		if (is_null($user['Name'])) {
+			$full_name_error = true;
+			$full_name_message = '*Full Name is empty';
+		} else {
+			$full_name_error = false;
+			$full_name_message = '';
+		}
+
+
+		if (is_null($user['DOB'])) {
+			$dob_error = true;
+			$dob_message = '*Date of Birth is empty';
+		} else {
+			$validate = self::isDate($user['DOB']);
+			if (!$validate) {
+				$dob_error = true;
+				$dob_message = '*Date of Birth is not a valid date.';
+			} else {
+				$dob_error = false;
+				$dob_message = '';
+			}
+		}
+
+
+		if ($email_error || $full_name_error || $dob_error || $mobile_error || $postal_code_error || $mobile_area_error ) {
+			$error_status = true;
+		} else {
+			$error_status = false;
+		}
+
+		$common = [
+			'error'                 => $error_status,
+			"email_error"           => $email_error,
+			"email_message"         => $email_message,
+			"full_name_error"      => $full_name_error,
+			"full_name_message"    => $full_name_message,
+			"dob_error"             => $dob_error,
+			"dob_message"           => $dob_message,
+			"mobile_error"          => $mobile_error,
+			"mobile_message"        => $mobile_message,
+			"mobile_area_error"     => $mobile_area_error,
+			"mobile_area_message"   => $mobile_area_message,
+			"postal_code_error"       => $postal_code_error,
+			"postal_code_message"     => $postal_code_message,
+		];
+
+		$response = array_merge($common);
+
+		return $response;
+	}
+
+	public static function bulkUpdateDependentValidation($user)
+	{
+		$customer_id = self::getCusomerIdToken();
+		if (is_null($user['Name'])) {
+			$full_name_error = true;
+			$full_name_message = '*Name is empty';
+		} else {
+			$full_name_error = false;
+			$full_name_message = '';
+		}
+
+		if (is_null($user['DOB'])) {
+			$dob_error = true;
+			$dob_message = '*Date of Birth is empty';
+		} else {
+			$dob_error = false;
+			$dob_message = '';
+		}
+
+		$relationship_error = false;
+		$relationship_message = '';
+
+		if (!empty($user['relationship'])) {
+			$rel = ["spouse", "child", "family", "parent", "sibling"];
+			if (!in_array($user['relationship'], $rel)) {
+				$relationship_error = true;
+				$relationship_message = '*Relationship type should be either Spouse, Child or Family.';
+			} else {
+			}
+		}
+
+
+		if ($full_name_error || $dob_error || $relationship_error) {
+			$error_status = true;
+		} else {
+			$error_status = false;
+		}
+
+		return array(
+			'error'                 => $error_status,
+			"full_name_error"      => $full_name_error,
+			"full_name_message"    => $full_name_message,
+			"dob_error"             => $dob_error,
+			"dob_message"           => $dob_message,
+			"relationship_message"   => $relationship_message,
+			"relationship_error"   => $relationship_error
+		);
+	}
 }
 ?>

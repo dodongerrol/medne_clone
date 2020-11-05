@@ -16,10 +16,12 @@ const USER_COLUMNS = [
 ];
 
 const EMPLOYEE_COLUMNS = [
+		'User ID'							=> 'user.UserID',
 		'Full Name'							=> 'user.Name',
 		'Work Email'						=> 'user.Email',
 		'Employee ID'						=> 'user.emp_no',
 		'Mobile Number'						=> 'user.PhoneNo',
+		'Phone Code'						=> 'user.PhoneCode',
 		'Date of Birth'						=> 'user.DOB',
 		'Benefits Start Date'				=> 'user_plan_type.plan_start',
 		'Postal Code'						=> 'user.Zip_Code',
@@ -29,10 +31,37 @@ const EMPLOYEE_COLUMNS = [
 ];
 
 const DEPENDENT_COLUMNS = [
+	'User ID'								=> 'user.UserID',
 	'Full Name'								=> 'user.Name',
 	'Date of Birth'							=> 'user.DOB',
 	'Relationship'							=> 'employee_family_coverage_sub_accounts.relationship',
 ];
+
+
+public function getDependentKeys($data)
+{
+	$length = sizeof($data);
+	$format = [];
+
+	foreach ($data as $key => $value) {
+		$temp = strpos($value, 'dependent') !== false;
+
+		if($temp) {
+			$format[] = $value;
+		}
+	}
+
+	return $format;
+}
+
+public function formatKey($data)
+{
+	$text = explode("dependent_", $data);
+	$final = substr($text[1], 2);
+	if($final) {
+		return $final;
+	}
+}
 
 	public function getDownloadToken( )
 	{
@@ -18983,11 +19012,13 @@ public function createHrLocation ()
 		return $data;
 	}
 
-	public function bulkUpdateDetails()
+	public function exportBulkDetails()
 	{
 		$input = Input::all();
         $result = StringHelper::getJwtHrSession();
 		$customer_id = $result->customer_buy_start_id;
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
 			if(empty($input['token']) || $input['token'] == null) {
 				return ['status' => false, 'message' => 'token is required'];
@@ -19001,96 +19032,333 @@ public function createHrLocation ()
 				'message'	=> null,
 				'status'	=> true 
 			];
+		
+		$container = array();
+		$customers = array();
+		$account_type = $input['account_type'] ?? null;
+		$selected_columns = $input['columns'] ?? [];
+
+		if(count($selected_columns) <= 0)
+		{
+			$data ['message'] = 'Please Select atleast one field';
+			$data ['status']  = false;
+
+			return $data;
+		}
+		if($account_type == 1) {
+			$employee_columns = array_merge(
+				self::EMPLOYEE_COLUMNS,
+				[
+					  'Locations'                         =>  'Locations',
+					  'Departments'                       =>  'Departments'
+				]
+		  );
 	
-			$selected_columns = $input['employee_columns'] ?? [];
-			$user_id = $input['user_id'] ?? [];
-			$selected_dependent = $input['dependent_columns'] ?? [];
-			$container = array();
-			$customers = array();
+		  $keys = array_keys($employee_columns);
+		  $extracted_columns = array_filter($keys, function($column) use($selected_columns) {
+			return in_array($column, $selected_columns);
+		});
+
+		$user_columns = array_filter($extracted_columns, function($column) {
+			return in_array($column, array_keys(self::EMPLOYEE_COLUMNS));
+		});
+
+		$user_db_colums = [];
+
+	  foreach ($user_columns as $user_column)	{
+		  $user_db_columns[] = $employee_columns[$user_column];
+	  }
+	  $employees = DB::table('user')
+				->select($user_db_columns)
+				->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				->join('e_wallet', 'e_wallet.UserID', '=', 'user.UserID')
+				->join('employee_wallet_entitlement', 'employee_wallet_entitlement.member_id', '=', 'user.UserID')
+				->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->get();
+	$employees = json_decode( json_encode($employees), true);
 	
-			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-			$select_account = $input['select_account'] ?? null;
+		$excel = Excel::create('Employee Information', function($excel) use($employees) {
+			$excel->sheet('Sheetname', function($sheet) use($employees) {
+				$sheet->fromArray( $employees );
+			});
+		})->export('xls');
+		return $excel;
+		} else {
+			$dependent_columns = array_merge(
+				self::DEPENDENT_COLUMNS, 
+				[
+				]
+			);
+		$dependent_keys = array_keys($dependent_columns);
+		$dependent_extracted_columns = array_filter($dependent_keys, function($column) use($selected_columns) {
+			return in_array($column, $selected_columns);
+		});
+		$dependent_user_columns = array_filter($dependent_extracted_columns, function($column) {
+			return in_array($column, array_keys(self::DEPENDENT_COLUMNS));
+		});
+
+		$dependent_db_colums = [];
+
+		foreach ($dependent_user_columns as $dependent_user_column)	{
+			$dependent_db_colums[] = $dependent_columns[$dependent_user_column];
+		}
+
+		$dependent = DB::table('user')
+				->select($dependent_db_colums)
+				// ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+				// ->where('corporate_members.corporate_id', $account_link->corporate_id)
+				->where('UserType', 5)
+				->where('access_type', 2)
+				->get();
+		$dependent = json_decode( json_encode($dependent), true);
+		$excel = Excel::create('Employee Information', function($excel) use($dependent) {
+			$excel->sheet('Sheetname', function($sheet) use($dependent) {
+				$sheet->fromArray( $dependent );
+			});
+		})->export('xls');
+		return $excel;
+		}	
+	}
+
+	public function uploadBulkUpdateDetails()
+	{
+		
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+        $customer_id = $result->customer_buy_start_id;
+        $admin_id = Session::get('admin-session-id');
+        $hr_id = $result->hr_dashboard_id;
+		$per_page = isset($input['per_page']) || !empty($input['per_page']) ? $input['per_page'] : 25;
+		
+		if(Input::hasFile('file')) {
+            $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+			$file = Input::file('file');
 			
-			if($select_account == 1){
-				$container = array();
-				$employee = DB::table('user')
-					->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-					->join('user_plan_type', 'user_plan_type.user_id', '=', 'user.UserID')
-					// ->join('company_location_members', 'company_location_members.member_id', 'user.UserID')
-					->where('corporate_members.corporate_id', $account_link->corporate_id)
-					->select('user.Name', 'user.emp_no', 'user.UserID', 'user.member_activated', 'user_plan_type.plan_start', 'user.Active', 'user.PhoneCode', 'user.PhoneNo', 'user.PhoneCode', 'user.Zip_Code', 'user.Email', 'user.DOB', 'user.communication_type'
-					, 'user.bank_name', 'user.bank_account')
-					->get();
-	
-				
-					$employee_columns = array_merge(
-						self::EMPLOYEE_COLUMNS,
-						[
-							  'Locations'                         =>  'Locations',
-							  'Departments'                       =>  'Departments'
-						]
-				  );
-	
-				  $keys = array_keys($employee_columns);
-				  $extracted_columns = array_filter($keys, function($column) use($selected_columns) {
-				  return in_array($column, $selected_columns);
-				  });
-				
-				  $user_columns = array_filter($extracted_columns, function($column) {
-					return in_array($column, array_keys(self::EMPLOYEE_COLUMNS));
-					
-				  });
+			$extensions = array("xls","xlsx","xlm","xla","xlc","xlt","xlw");
+			$result = $file->getClientOriginalExtension();
+			if(!in_array($result,$extensions)){
+				return array('status' => false, 'message' => 'Invalid File.');
+			}
 
-				  $user_db_colums = [];
-				  $dependent_db_columns = [];
-				  //   $temp = [];
-			  
-					foreach ($user_columns as $user_column)	{
-						$user_db_columns[] = $employee_columns[$user_column];
+            $temp_file = time().$file->getClientOriginalName();
+            $file->move('excel_upload', $temp_file);
+            $data_array = Excel::load(public_path()."/excel_upload/".$temp_file)->get();
+			$headerRow = $data_array->first()->keys();
+			$temp_users = [];
+            $UserID = false;
+            $Name = false;
+            $dob = false;
+            foreach ($headerRow as $key => $row) {
+                if($row == "userid") {
+                    $UserID = true;
+                } else if($row == "name") {
+                    $Name = true;
+                }
+            }
+			// dd($data_array);
+            if(!$UserID || !$Name) {
+                return array(
+                    'status'    => FALSE,
+                    'message' => 'Excel is invalid format. Please download the recommended file for Employee Bulk Update.'
+                );
+			}
+
+			foreach ($data_array as $key => $row) {
+				$dependents = [];
+				$temp_dependents = [];
+				if($row->Name !== null) {
+					$dep_ctr = 1;
+					$key_ctr = 1;
+					foreach ($row_keys as $key_2 => $value_key) {
+						foreach ($row as $field => $value) {
+							if($field == $value_key) {
+								if( $value != null ){
+									$data_name = self::formatKey($field);
+									if($data_name) {
+										$temp_dependents[$data_name] = $value;
+										if( $dep_ctr == 3 ){
+											if($key_ctr == 3) {
+												array_push($dependents, $temp_dependents);
+											}
+											$temp_dependents = [];
+											$dep_ctr = 1;
+											$key_ctr = 1;
+										}else{
+											$dep_ctr+=1;
+											if( $value != null ){
+												$key_ctr+=1;
+											}
+										}
+									}
+								}
+							}
+						}
 					}
-					  $employee = DB::table('user')
-							  ->select($user_db_columns)
-							  ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-							  ->join('user_plan_type', 'user_plan_type.user_id', '=', 'user.UserID')
-							  ->where('corporate_members.corporate_id', $account_link->corporate_id)
-							  ->get();
-					// $container[] = $employee_columns;
-			} 
-			// else if($select_account == 0) {
-			// 	$dependents = DB::table('employee_family_coverage_sub_accounts')
-			// 			->select($dependent_db_columns)
-			// 			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
-			// 			->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
-			// 		    ->where('access_type', 2)
-			// 			->where('corporate_members.corporate_id', $account_link->corporate_id)
-			// 			// ->where('user.UserID', $user_id)
-			// 			->get();
 
-			// 	$dependent_columns = array_merge(
-			// 	self::DEPENDENT_COLUMNS,[
+					$row['dependents'] = $dependents;
+					
+				}
+				array_push($temp_users, $row);
+			}
+			$format = [];
+			$temp_enroll = new TempUpdateEmployee();
+			$temp_dependent_enroll = new TempUpdateDependent();
+			foreach ($temp_users as $key => $user) {
+				$user['Email'] = isset($user['work_email']) ? $user['work_email'] : null;
+				$user['PhoneNo'] = isset($user['mobile']) ? $user['mobile'] : null;
+				$user['DOB'] = isset($user['DOB']) ? $user['DOB'] : null;
+				$user['bank_name'] = !isset($user['bank_name']) ? null : $user['bank_name'];
+				$user['bank_account'] = !isset($user['bank_account_number']) ? null : $user['bank_account_number'];
+				$user['Name'] = isset($user['full_name']) ? $user['full_name'] : null;
+				$error_member_logs = PlanHelper::bulkUpdateEmployeeValidation($user, false);
+				$mobile = preg_replace('/\s+/', '', $user['PhoneNo']);
+				$temp_enrollment_data = array(
+					'member_id'				=> 2,
+					'customer_id'			=> $customer_id,
+					'fullname'					=> trim($user['Name']),
+					'DOB'					=> $user['DOB'],
+					'email'					=> trim($user['Email']),
+					// 'emp_no'				=> trim($user['emp_no'] ?? ''),
+					'phone_number'				=> isset($user['PhoneNo']) ? trim($mobile) : null,
+					'phone_code'				=> isset($user['phone_code']) ? trim($user['phone_code']) : '65',
+					'bank_name'				=> $user['bank_name'],
+					'bank_account_number'	=> $user['bank_account'],
+					'postal_code'			=> null,
+					'error_logs'			=> serialize($error_member_logs)
+				);
 
-			// 	]
-			// 	);
+			try {
+					$enroll_result = $temp_enroll->insertTempUpdateEmployee($temp_enrollment_data);
+					if($enroll_result) {
+						if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
+							foreach ($user['dependents'] as $key => $dependent) {
+								$dependent['dob'] = date('Y-m-d', strtotime($dependent['date_of_birth']));
+								$dependent['relationship'] = strtolower($dependent['relationship']);
+								$dependent['fullname'] = $dependent['full_name'];
+								$error_dependent_logs = PlanHelper::bulkUpdateDependentValidation($dependent);
+								
 
-			// 	$dependent_keys = array_keys($dependent_columns);
-			// 	  $dependent_extracted_columns = array_filter($keys, function($column) use($selected_dependent) {
-			// 	  return in_array($column, $selected_dependent);
-			// 	  });
+								$dob = \DateTime::createFromFormat('d/m/Y', $dependent['date_of_birth']);
+								$dependent['dob'] = $dob->format('Y-m-d');
 
-			// 	  $dependent_user_columns = array_filter($dependent_extracted_columns, function($column) {
-			// 		return in_array($column, array_keys(self::DEPENDENT_COLUMNS));
-			// 	  });
-				  
-			// 	  foreach ($dependent_user_columns as $dependent_user_column)	{
-			// 		$dependent_db_columns[] = $dependent_columns[$dependent_user_column];
-			// 	}
-			// }
+								$temp_enrollment_dependent = array(
+									'employee_temp_id'		=> $enroll_result->id,
+									'dependent_plan_id'		=> $depedent_plan_id,
+									'plan_tier_id'			=> $plan_tier_id,
+									'first_name'			=> trim($dependent['fullname']),
+									'dob'					=> $dependent['dob'],
+									'nric'					=> null,
+									'plan_start'			=> $plan_start ? $plan_start : null,
+									'relationship'			=> trim($dependent['relationship']),
+									'error_logs'			=> serialize($error_dependent_logs)
+								);
+								$temp_dependent_enroll->insertTempUpdateDependent($temp_enrollment_dependent);
+							}
+						}
+					}
+				} catch(Exception $e) {
+					$email = [];
+					$email['end_point'] = url('upload_excel_dependents', $parameter = array(), $secure = null);
+					$email['logs'] = 'Save Temp Enrollment Excel - '.$e;
+					$email['emailSubject'] = 'Error log.';
+					EmailHelper::sendErrorLogs($email);
+					return array('status' => FALSE, 'message' => 'Failed to create enrollment employee. Please contact Mednefits team.', 'res' => $temp_enrollment_data, 'e' => $e->getMessage());
+				}
 
-					$excel = Excel::create('Employee Information', function($excel) use($employee) {
-						$excel->sheet('Sheetname', function($sheet) use($employee) {
-							$sheet->fromArray( $employee );
-						});
-					})->export('xls');
-					return $excel;
+				array_push($format, $temp_enrollment_data);
+			}
+			// return $format;
+			return array('status' => true);
+		}
+
+		return array('status' => false, 'message' => 'Please provide the Excel File for Bulk Update.');
+	}
+
+	public function getBulkMemberDetails()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+		$enroll_users = [];
+
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+
+		$users = DB::table('users')
+			->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+			->where('corporate_members.corporate_id', $account_link->corporate_id)
+
+			->get();
+	}
+
+	public function setupCostCenter()
+	{
+	$input = Input::all();
+	$result = StringHelper::getJwtHrSession();
+	$customer_id = $result->customer_buy_start_id;
+
+	$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+
+	// $linked_to = $input['linked_to'] ?? null;
+
+	$locations = \CorporateHrLocation::where('customer_id', $customer_id)->get();
+
+	if($customer_id) {
+		$data = array (
+			'customer_id'				=> $customer_id,
+			'linked_center'				=> $input['linked_center'],
+			'created_at'				=> date('Y-m-d H:i:s'),
+			'updated_at'				=> date('Y-m-d H:i:s')
+		);
+		\CorporateCostCenter::create($data);
+		}
+		return array (
+			'status' 		=> TRUE,
+			'message'		=> 'Successfully set up cost center.',
+			'customer_id'	=> $customer_id
+		);
+	}
+
+	public function editCostCenter()
+	{
+		$input = Input::all();
+		$result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+		
+
+		if(empty($input['cost_center_id']) || $input['cost_center_id'] == null) {
+			return ['status' => false, 'message' => 'cost_center_id is required'];
+		}
+
+		$check = DB::table('cost_center')->where('cost_center_id', $customer_id)->first();
+
+		$cost_center = new CorporateCostCenter();
+
+		$data = array(
+			'linked_center'					=> !empty($input['linked_center']) ? $input['linked_center'] : $check->linked_center,
+			
+		);
+		if($customer_id) {
+			$update = $cost_center->updateCostCenter($input['cost_center_id'], $data);
+		} 
+		return array('status' => TRUE, 'message' => 'Successfully updated Cost Center.');
+	}
+
+	public function unlinkCostCenter()
+	{
+		$input = Input::all();
+        $result = StringHelper::getJwtHrSession();
+		$customer_id = $result->customer_buy_start_id;
+		
+		if(empty($input['cost_center_id']) || $input['cost_center_id'] == null) {
+            return ['status' => false, 'message' => 'cost_center_id is required'];
+		}
+		$remove = DB::table('cost_center')
+		->where('cost_center_id', $input['cost_center_id'])->delete();
+
+		return array(
+			'status'		=> TRUE,
+			'message'		=> 'Successfully unlink cost center.'
+		);
+
 	}
 }
