@@ -17750,31 +17750,44 @@ public function createHrLocation ()
 			$data = array(
 				'customer_id'		=> $customer_id,
 				'location'			=> $info->company_address,
-				'business_address'	=> $info->unit_number && $info->building_name ? $info->unit_number.' '.$info->building_name : $info->company_address,
+				// 'business_address'	=> $info->unit_number && $info->building_name ? $info->unit_number.' '.$info->building_name : $info->company_address,
+				'business_address'	=> $info->company_address,
 				'country'			=> $customer->currency_type == "myr" ? 'Malaysia' : 'Singapore',
 				'postal_code'		=> $info->postal_code,
+				'unit_number'		=> $info->unit_number,
+				'building_name'		=> $info->building_name,
 			);
 
 			$locationData = \CorporateHrLocation::create($data);
 
-			// create location with member count
-			$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
-			$corporate_members = DB::table('corporate_members')
-			->join('user', 'user.UserID', '=', 'corporate_members.user_id')
-			->where('corporate_members.corporate_id', $account_link->corporate_id)
-			->where('user.Active', 1)
-			->lists('user.UserID');
+			$locations = \CorporateHrLocation::where('customer_id', $customer_id)->get();
+		}
 
+		// check if there are old employees that were not assigned to default location
+		$defaultLocation = \CorporateHrLocation::where('customer_id', $customer_id)->first();
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+		$corporate_members = DB::table('corporate_members')
+		->join('user', 'user.UserID', '=', 'corporate_members.user_id')
+		->where('corporate_members.corporate_id', $account_link->corporate_id)
+		->where('user.Active', 1)
+		->lists('user.UserID');
+
+		if(sizeof($corporate_members) != 0){
 			// save lists of member for location
 			foreach($corporate_members as $member) {
-				$checkMemberLocation = DB::table('company_location_members')->where('company_location_id', $locationData->id)->where('member_id', $member)->select('id')->first();
+				// $checkMemberLocation = DB::table('company_location_members')->where('company_location_id', $locationData->LocationID)->where('member_id', $member)->select('id')->first();
+				$checkMemberLocation = DB::table('company_location_members')->where('member_id', $member)->select('id')->first();
 
 				if(!$checkMemberLocation) {
-					DB::table('company_location_members')->insert(['company_location_id' => $locationData->id, 'member_id' => $member, 'status' => 1, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+					DB::table('company_location_members')->insert([
+						'company_location_id' => $defaultLocation->LocationID, 
+						'member_id' => $member, 
+						'status' => 1, 
+						'created_at' => date('Y-m-d H:i:s'), 
+						'updated_at' => date('Y-m-d H:i:s')
+					]);
 				}
 			}
-
-			$locations = \CorporateHrLocation::where('customer_id', $customer_id)->get();
 		}
 
 		$container = array();

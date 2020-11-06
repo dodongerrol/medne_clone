@@ -2210,6 +2210,19 @@ class PlanHelper
 			SystemLogLibrary::createAdminLog($admin_logs);
 		}
 
+		$defaultLocation	=	DB::table('company_locations')->where('customer_id', $customer_id)->first();
+
+		if(sizeof($defaultLocation) != 0){
+			$insertEmployeeToLocation	=	DB::table('company_location_members')->insert([
+				'company_location_id' => $defaultLocation->LocationID, 
+				'member_id' => $user_id, 
+				'status' => 1, 
+				'created_at' => date('Y-m-d H:i:s'), 
+				'updated_at' => date('Y-m-d H:i:s')
+			]);
+		}
+		
+
 		return array('status' => true, 'message' => 'Employee Enrolled.', 'total_dependents_enrolled' => $total_dependents_count, 'total_employee_enrolled' => 1);
 	}
 
