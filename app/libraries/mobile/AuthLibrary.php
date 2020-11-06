@@ -65,13 +65,13 @@ class AuthLibrary{
         return $returnObject;
       }
 
-      if((int)$user->account_update_status == 0) {
-        $returnObject->status = FALSE;
-        $returnObject->error = 'invalid_credentials';
-        $returnObject->url = url().'/app/update_user_id_web?platform=mobile';
-        $returnObject->error_description = 'Please click here to change your user ID to your mobile number.';
-        return $returnObject;
-      }
+      // if((int)$user->account_update_status == 0) {
+      //   $returnObject->status = FALSE;
+      //   $returnObject->error = 'invalid_credentials';
+      //   $returnObject->url = url().'/app/update_user_id_web?platform=mobile';
+      //   $returnObject->error_description = 'Please click here to change your user ID to your mobile number.';
+      //   return $returnObject;
+      // }
 
       $token->data['user_id'] = $findUserID;
       $returnObject->error= "false";

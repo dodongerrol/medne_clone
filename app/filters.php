@@ -247,12 +247,12 @@ Route::filter('auth.v2', function($request, $response)
         $auto = Config::get('config.enable_auto_logout');
         if($auto) {
             if((int)$user->UserType == 5 && (int)$user->access_type == 0 || (int)$user->UserType == 5 && (int)$user->access_type == 1) {
-                if((int)$user->account_update_status == 0) {
-                  $returnObject->status = FALSE;
-                  $returnObject->expired = true;
-                  $returnObject->message = 'You need to update you profile settings for new login method.';
-                  return Response::json($returnObject, 200);
-                }
+                // if((int)$user->account_update_status == 0) {
+                //   $returnObject->status = FALSE;
+                //   $returnObject->expired = true;
+                //   $returnObject->message = 'You need to update you profile settings for new login method.';
+                //   return Response::json($returnObject, 200);
+                // }
             }
         }
 
@@ -429,9 +429,9 @@ Route::filter('auth.jwt_employee', function($request, $response)
             return Response::json('You account was deactivated. Please contact Mednefits Team.', 401,  $headers);
         }
 
-        if((int)$user->account_update_status == 0) {
-          return Response::json('You need to update you profile settings for new login method.', 401, $headers);
-        }
+        // if((int)$user->account_update_status == 0) {
+        //   return Response::json('You need to update you profile settings for new login method.', 401, $headers);
+        // }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
