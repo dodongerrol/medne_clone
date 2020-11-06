@@ -338,10 +338,13 @@
 								<span class="status-label">Status</span>
 							</div>
 							<div class="status-text-container">
-								<span class="status-text active"
+								<!-- <span class="status-text active"
 									ng-if="selectedEmployee.emp_status == 'active' || selectedEmployee.account_status && selectedEmployee.schedule">Active</span>
 								<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending'">Pending</span>
-								<span class="status-text removed" ng-if="!selectedEmployee.account_status">Removed</span>
+								<span class="status-text removed" ng-if="!selectedEmployee.account_status">Removed</span> -->
+								<span class="status-text active" ng-if="(!selectedEmployee.deletion && !selectedEmployee.schedule) && (selectedEmployee.emp_status == 'active')">Active</span>
+            		<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending'">Pending</span>
+            		<span class="status-text removed" ng-if="!selectedEmployee.account_status || selectedEmployee.deletion || selectedEmployee.schedule">Removed</span>
 							</div>
 						</div>
 						<div class="status-removed" ng-if="selectedEmployee.deletion || selectedEmployee.schedule">
@@ -571,12 +574,12 @@
 					</div>
 				</div>
 
-				<div class="remove-btn-container" ng-if="selectedEmployee.emp_status == 'active' || selectedEmployee.emp_status == 'pending' || selectedEmployee.emp_status == 'activated'">
+				<div class="remove-btn-container" ng-if="(!selectedEmployee.deletion && !selectedEmployee.schedule) && (selectedEmployee.emp_status == 'active' || selectedEmployee.emp_status == 'pending' || selectedEmployee.emp_status == 'login' || selectedEmployee.emp_status == 'activated')">
 					<button class="btn-remove-employee" ng-click="removeBtn()">Remove Employee</button>
 				</div>
-
+				
 				<div class="health-spending-btn-container"
-					ng-if="selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true">
+				ng-if="selectedEmployee.emp_status == 'deleted' || selectedEmployee.schedule == true || selectedEmployee.deletion == true>
 					<button ng-click="viewEmployeeSpendingSummary()">Health Spending Account Summary</button>
 				</div>
 			</div>
