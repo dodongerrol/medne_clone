@@ -1897,6 +1897,7 @@ class EmployeeController extends \BaseController {
                     'updated_wellness_entitlement' => true,
                     'currency_type'                => strtoupper($entitlement->currency_type)
                 );
+                
             } else if($check_entitlement_medical) {
                 $data = array(
                     'status' => true,
