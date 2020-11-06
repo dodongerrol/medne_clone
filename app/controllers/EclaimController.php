@@ -5124,10 +5124,10 @@ public function getHrActivity( )
 					$half_credits = false;
 					if(strripos($trans->procedure_cost, '$') !== false) {
 						$temp_cost = explode('$', $trans->procedure_cost);
-	            // $cost = number_format($temp_cost[1]);
+	            		// $cost = number_format($temp_cost[1]);
 						$cost = $temp_cost[1];
 					} else {
-	            // $cost = number_format($trans->procedure_cost, 2);
+	            		// $cost = number_format($trans->procedure_cost, 2);
 						$cost = floatval($trans->procedure_cost);
 					}
 					$total_amount = $cost;
@@ -5162,12 +5162,12 @@ public function getHrActivity( )
 						// $cash = number_format($trans->credit_cost, 2);
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
-	                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                		// $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 								$total_amount = (float)$trans->credit_cost + $trans->cash_cost;
 								$cash = $trans->cash_cost;
 							} else {
 								$total_amount = (float)$trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-	                // $total_amount = $trans->procedure_cost;
+	                			// $total_amount = $trans->procedure_cost;
 								if((float)$trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
@@ -5534,7 +5534,9 @@ public function getHrActivity( )
 		'total_visit_limit'	=> $total_visit_limit,
 		'total_visit_created' => $total_visit_created,
 		'total_balance_visit' => $total_visit_limit - $total_visit_created,
-		'total_average_visit'	=> round($total_average_visit, 2)
+		'total_average_visit'	=> round($total_average_visit, 2),
+		'total_cash_spent'	=> $total_cash_spent,
+		'total_cash_transactions'	=> $total_cash_transactions
 
 	);
 
