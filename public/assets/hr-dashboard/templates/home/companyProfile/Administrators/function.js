@@ -374,19 +374,24 @@ app.directive("administratorsDirective", [
           }
           let data = {
             id: scope.global_hrData.id,
+            hr_id: scope.global_hrData.id,
             fullname: scope.changePrimaryData.fullname,
             email: scope.changePrimaryData.email,
             phone_code: scope.changePrimaryData.phone_code,
-            phone_number: scope.changePrimaryData.phone_no,
+            phone_no: scope.changePrimaryData.phone_no,
+            customer_id: scope.spending_account_status.customer_id,
           }
           scope.showLoading();
-          $http.post(serverUrl.url + "/hr/update_hr_details", data)
+          // $http.post(serverUrl.url + "/hr/update_hr_details", data)
+          $http.post(serverUrl.url + "/hr/unlink/company_account", data)
             .then(function(response){
               console.log(response);
               if ( response.data.status ) {
                 scope.isShowChangeAdmin = true;
                 scope.getPrimaryAdmin();
                 scope.hideLoading();
+              } else {
+                return swal('Error!', response.data.message, 'error');
               }
             });
         }
@@ -647,6 +652,20 @@ app.directive("administratorsDirective", [
               scope.get_company_details = response.data.data;
           });
         }
+        scope.spending_account_status = {};
+        scope.getSpendingAcctStatus = function () {
+          hrSettings.getPrePostStatus().then(function (response) {
+            scope.spending_account_status = response.data;
+            console.log(scope.spending_account_status);
+          });
+        };
+        scope._getAccountDetails	= async	function(){
+          await $http.get(window.location.origin + "/hr/get_business_information")
+            .success(function(response){
+              console.log(response);
+              scope.accountDetails	=	response.data;
+            });
+        }
         scope.formatMomentDate  = function(date, from, to){
           return moment(date, from).format(to);
         }
@@ -673,6 +692,7 @@ app.directive("administratorsDirective", [
           await scope.getDepartmentData();
           await scope.getPermissionsData();
           await scope.fetchCompanyDetails();
+          await scope.getSpendingAcctStatus();
         }
         scope.onLoad();
       }
