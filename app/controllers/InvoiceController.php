@@ -2906,6 +2906,69 @@ class InvoiceController extends \BaseController {
 	public function showNewPDF( ){
 		return View::make('pdf-download/admin-transactions-company-invoice');
 	}
+	
+	public function spendingInvoiceHistoryList ( ) {
+
+		$input = Input::all();
+		$session = self::checkSession();
+		$paginate = [];
+		$limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+		$customer_id = $result->customer_buy_start_id;
+
+		$customer_plans = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->get();
+
+		$new_data = [];
+
+		foreach ($customer_plans as $key => $cplan) {
+			$active_plans = DB::table('customer_active_plan')->where('plan_id', $cplan->customer_plan_id)->get();
+			foreach ($active_plans as $key => $plan) {
+				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan" || $plan->account_type == "enterprise_plan") {
+					$withdraws = DB::table('payment_refund')
+					->where('customer_active_plan_id', $plan->customer_active_plan_id)
+					->get();
+
+					foreach ($withdraws as $key => $withdraw) {
+						$refunds = DB::table('customer_plan_withdraw')
+						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
+						->count('user_id');
+
+						$amount = DB::table('customer_plan_withdraw')
+						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
+						->sum('amount');
+
+						if($amount > 0) {
+							$temp = array(
+								'customer_active_plan_id' => $withdraw->customer_active_plan_id,
+								'payment_refund_id'		  => $withdraw->payment_refund_id,
+								'total_amount'	=> number_format($amount, 2),
+								'total_employees' => $refunds,
+								'date_withdraw'	 => $withdraw->date_refund,
+								'refund_data'		=> $withdraw,
+								'currency_type' => $withdraw->currency_type
+							);
+
+							array_push($new_data, $temp);
+						}
+
+					}
+				}
+			}
+		}
+
+		$credits_statements_data = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+                                ->get();
+
+        $credits_statements = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+								->paginate($limit);
+								
+		$deposits = DB::table("spending_deposit_credits")
+		->where("customer_id", $session->customer_buy_start_id)
+		->paginate($limit);
+	}
 
 	public function getListCompanyPlanWithdrawal( )
 	{

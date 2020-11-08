@@ -1,0 +1,75 @@
+.member-wellness-wallet-wrapper {
+  height: 100%;
+}
+.activate-well-btn {
+  color: #0392CF;
+  border: 1px solid #0392CF;
+  border-radius: 3px;
+  background-color: #fff;
+  font-family: 'Helvetica Medium';
+  padding: 3px 15px;
+}
+
+.wellness-not-active-text .wellness-not-active-text {
+  margin: 20px 0
+}
+.benefits-start-date-container p {
+  font-size: 12px;
+  color: #848484;
+}
+.wellness-not-activated .benefits-input-wrapper {
+  height: 34px;
+  width: 210px;
+}
+
+.benefits-period-date-wrapper >div:first-child {
+  width: 60%;
+}
+.benefits-period-date-wrapper >div:last-child {
+  width: 40%;
+}
+.member-wellness-wallet-wrapper .mwbc-box-container.payment-methods >div {
+  margin: 20px 0 0;
+}
+.wellness-not-active-info-container .mwbc-box-container:last-child {
+  border-bottom: none;
+}
+.wellness-not-active-info-container .active-wallet-footer-btn {
+  text-align: right;
+  margin: 40px 0 0;
+}
+.active-wallet-footer-btn button {
+  border-radius: 4px;
+  height: 33px;
+  border: 0;
+}
+.active-wallet-footer-btn .btn-cancel-wallet {
+  background: #FFFFFF;
+  border: 1px solid #BFBFBF;
+  width: 110px;
+  margin: 0 10px 0 0;
+}
+.active-wallet-footer-btn .btn-activate-wallet {
+  background-color: #0392CF;
+  color: #fff;
+  width: 180px;
+}
+.wellness-not-active-info-container .non-panel-text,
+.wellness-not-active-info-container .payment-method-row-status  {
+  width: 60%;
+}
+.credits-tooltip-container.mednefits-credits,
+.credits-tooltip-container.wellness-balance,
+.credits-tooltip-container.wellness-budget,
+.credits-tooltip-container.company-budget,
+.credits-tooltip-container.mednefits-basic-plan {
+  /* display: none; */
+}
+
+.member-wellness-wallet-wrapper .mwbc-card-box-container {
+  width: 450px;
+}
+
+.member-wellness-wallet-wrapper .activate-well-btn {
+  margin: 10px 0 0;
+}

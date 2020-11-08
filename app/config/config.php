@@ -1,8 +1,8 @@
 <?php
 
 return array(
-      'deployment' => "Production",
-   // 'deployment' => "Development",
+    //   'deployment' => "Production",
+   'deployment' => "Development",
    // 'deployment' => "Testing",
 
 
@@ -12,7 +12,7 @@ return array(
     'secret_key' => 'w2c5M]=JSE/tpj#4;X',
     'environment' => 'staging',
     'enable_auto_logout' => false,
-    'sms_provider' => 'commz_gate',
-    'api_node_live' => 'https://api.medicloud.sg',
-    'spending_inquiry_email'  => 'info@medicloud.sg'
+    'sms_provider' => 'commzgate',
+    'spending_inquiry_email'  => 'info@medicloud.sg',
+    'pre_paid_credits_inquiry_email'  => 'wanwen@mednefits.com'
 );

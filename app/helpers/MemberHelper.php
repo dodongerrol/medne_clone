@@ -209,6 +209,431 @@ class MemberHelper
 	public static function activateNewEntitlement($member_id, $id)
 	{
 		$customer_id = PlanHelper::getCustomerId($member_id);
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$customer_active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
+		$member_entitlment = DB::table('wallet_entitlement_schedule')
+                            ->where('wallet_entitlement_schedule_id', $id)
+                            ->where('status', 0)
+                            ->get();
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+		$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
+		$data = [];
+		$data['member_id'] = $member_id;
+		$spending_type = null;
+		$entitlement_id = null;
+		$medical_spending_method = $spending['medical_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
+		$wellness_spending_method = $spending['wellness_payment_method_non_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
+
+		foreach ($member_entitlment as $key => $entitlement) {
+			$spending_type = $entitlement->spending_type;
+			$entitlement_id = $entitlement->wallet_entitlement_schedule_id;
+			if($entitlement->spending_type == "medical") {
+				$data['medical_usage_date'] = $entitlement->new_usage_date;
+				$data['medical_proration'] = $entitlement->proration;
+				$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['medical_allocation'] = $entitlement->new_allocation_credits;
+				$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
+				$data['medical_proration'] = $wallet_entitlement->medical_proration;
+				$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
+				$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
+				$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
+			}
+
+			if($entitlement->spending_type == "wellness") {
+				$data['wellness_usage_date'] = $entitlement->new_usage_date;
+				$data['wellness_proration'] = $entitlement->proration;
+				$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['wellness_allocation'] = $entitlement->new_allocation_credits;
+				$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
+				$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
+				$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
+				$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
+				$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
+			}
+
+			$data['spending_method'] = $entitlement->spending_method;
+		}
+
+		if($data) {
+			$total_balance_remaining = 0;
+			$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
+			// get membder credits allocation
+			$wallet = DB::table('e_wallet')->where('UserID', $member_id)->orderBy('created_at', 'desc')->first();
+
+			if($spending_type == "medical") {
+				$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $member_id);
+				if($data['medical_allocation'] > $medical_credit_data['allocation']) {
+					$new_medical_allocation = $data['medical_allocation'] - $medical_credit_data['allocation'];
+					$type_allocation_medical = "added_by_hr";
+				} else {
+					if($data['medical_allocation'] == 0) {
+						$new_medical_allocation = $medical_credit_data['allocation'];
+					} else {
+						$new_medical_allocation = $medical_credit_data['allocation'] - $data['medical_allocation'];
+					}
+					
+					$type_allocation_medical = "deducted_by_hr";
+				}
+
+				$last_customer_active_plan_id_medical = DB::table('wallet_history')
+															->where('wallet_id', $wallet->wallet_id)
+															->where('logs', 'added_by_hr')
+															->orderBy('created_at', 'desc')
+															->first();
+				if(!$last_customer_active_plan_id_medical) {
+					$last_customer_active_plan_id_medical = $customer_active_plan->customer_active_plan_id;
+				} else {
+					$last_customer_active_plan_id_medical = $last_customer_active_plan_id_medical->customer_active_plan_id;
+				}
+
+				if($type_allocation_medical == "added_by_hr") {
+					// medical
+					$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->increment('balance', $new_medical_allocation);
+					$employee_credit_logs = array(
+						'wallet_id'					=> $wallet->wallet_id,
+						'credit'						=> $new_medical_allocation,
+						'logs'							=> 'added_by_hr',
+						'running_balance'		=> $wallet->balance + $new_medical_allocation,
+						'customer_active_plan_id' => $last_customer_active_plan_id_medical,
+						'currency_type'	=> $wallet->currency_type,
+						'spending_method'		=> $medical_spending_method,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+					DB::table('wallet_history')->insert($employee_credit_logs);
+					if($spending['medical_method'] == "post_paid" && $spending['with_mednefits_credits'] == false || $spending['medical_method'] == "pre_paid" && $spending['with_mednefits_credits'] == false) {
+						$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
+						DB::table('wallet_history')->insert($employee_credit_logs);
+
+						// add customer allocation credits
+						$customer_credits_logs = array(
+							'customer_credits_id'	=> $customer_wallet->customer_credits_id,
+							'credit'				=> $new_medical_allocation,
+							'logs'					=> 'admin_added_credits',
+							'running_balance'		=> 0,
+							'customer_active_plan_id' => $last_customer_active_plan_id_medical,
+							'currency_type'	=> $customer_wallet->currency_type,
+							'spending_method'		=> $medical_spending_method,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('customer_credit_logs')->insert($company_credit_logs);
+					}
+					
+					if($spending['medical_method'] != "post_paid" && $spending['with_mednefits_credits'] == true || $spending['medical_method'] != "pre_paid" && $spending['with_mednefits_credits'] == true) {
+						$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('balance', $new_medical_allocation);
+					}
+					
+					$company_credit_logs = array(
+						'customer_credits_id' => $customer_wallet->customer_credits_id,
+						'credit'							=> $new_medical_allocation,
+						'logs'								=> 'added_employee_credits',
+						'user_id'							=> $member_id,
+						'running_balance'			=> $customer_wallet->balance - $new_medical_allocation,
+						'customer_active_plan_id' => $last_customer_active_plan_id_medical,
+						'currency_type'	=> $customer_wallet->currency_type,
+						'spending_method'		=> $medical_spending_method,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('customer_credit_logs')->insert($company_credit_logs);
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $new_medical_allocation,
+						'type'					=> "added_employee_entitlement",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer_wallet->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
+					if($spending['with_mednefits_credits'] == true && $medical_spending_method == "pre_paid") {
+						// create medical prepaid credits logs
+						$medicalCreditsHistory = array(
+							'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+							'customer_id'			=> $customer_id,
+							'credits'				=> $new_medical_allocation,
+							'member_id'				=> $member_id,
+							'credit_type'			=> 'added_employee_credits',
+							'top_up_status'			=> 0,
+							'currency_type'			=> $customer_wallet->currency_type,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('medical_credits')->insert($medicalCreditsHistory);
+					}
+
+					if($spending['with_mednefits_credits'] == true) {
+						// check if needs to create top up or update top up invoice
+						$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $new_medical_allocation);
+
+						if(!$checkTopUp) {
+							$toTopUp = array(
+								'customer_id' 	=> $customer_id,
+								'credits'		=> $new_medical_allocation,
+								'member_id'		=> $member_id,
+								'created_at'	=> date('Y-m-d H:i:s'),
+								'updated_at'	=> date('Y-m-d H:i:s'),
+								'status'		=> 0
+							);
+
+							DB::table('top_up_credits')->insert($toTopUp);
+						}
+					}
+				} else {
+					$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->decrement('balance', $new_medical_allocation);
+					$employee_credit_logs = array(
+						'wallet_id'					=> $wallet->wallet_id,
+						'credit'						=> $new_medical_allocation,
+						'logs'							=> 'deducted_by_hr',
+						'running_balance'		=> $wallet->balance - $new_medical_allocation,
+						'customer_active_plan_id' => $last_customer_active_plan_id_medical,
+						'currency_type'	=> $wallet->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s'),
+						'spending_method'		=> $medical_spending_method,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+					DB::table('customer_credits')->where('customer_id', $customer_id)->increment('balance', $new_medical_allocation);
+					DB::table('wallet_history')->insert($employee_credit_logs);
+
+					// credit wallet activity
+					$creditWalletActivityData = array(
+						'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+						'customer_id'			=> $customer_id,
+						'credit'				=> $new_medical_allocation,
+						'type'					=> "deducted_employee_entitlement",
+						'spending_type'			=> "medical",
+						'currency_type'			=> $customer_wallet->currency_type,
+						'created_at'			=> date('Y-m-d H:i:s'),
+						'updated_at'			=> date('Y-m-d H:i:s')
+					);
+
+					DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+					if($spending['with_mednefits_credits'] == true && $medical_spending_method == "pre_paid") {
+						// create medical prepaid credits logs
+						$medicalCreditsHistory = array(
+							'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+							'customer_id'			=> $customer_id,
+							'credits'				=> $new_medical_allocation,
+							'member_id'				=> $member_id,
+							'credit_type'			=> 'deducted_employee_credits',
+							'top_up_status'			=> 0,
+							'currency_type'			=> $customer_wallet->currency_type,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('medical_credits')->insert($medicalCreditsHistory);
+					}
+				}
+
+			} else if($spending_type == "wellness"){
+				$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $member_id);
+				if($data['wellness_allocation'] > $wellness_credit_data['allocation']) {
+						$new_wellness_allocation = $data['wellness_allocation'] - $wellness_credit_data['allocation'];
+						$type_allocation_wellness = "added_by_hr";
+					} else {
+						if($data['wellness_allocation'] == 0)	{
+							$new_wellness_allocation = $wellness_credit_data['allocation'];
+						} else {
+							$new_wellness_allocation = $wellness_credit_data['allocation'] - $data['wellness_allocation'];
+						}
+						
+						$type_allocation_wellness = "deducted_by_hr";
+					}
+
+					$last_customer_active_plan_id_wellness = DB::table('wellness_wallet_history')
+															->where('wallet_id', $wallet->wallet_id)
+															->where('logs', 'added_by_hr')
+															->orderBy('created_at', 'desc')
+															->first();
+					if(!$last_customer_active_plan_id_wellness) {
+						$last_customer_active_plan_id_wellness = $customer_active_plan->customer_active_plan_id;
+					} else {
+						$last_customer_active_plan_id_wellness = $last_customer_active_plan_id_wellness->customer_active_plan_id;
+					}
+					if($type_allocation_wellness == "added_by_hr") {
+						// wellness
+						$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->increment('wellness_balance', $new_wellness_allocation);
+						$employee_credit_logs = array(
+							'wallet_id'					=> $wallet->wallet_id,
+							'credit'						=> $new_wellness_allocation,
+							'logs'							=> 'added_by_hr',
+							'running_balance'		=> $wallet->wellness_balance + $new_wellness_allocation,
+							'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
+							'currency_type'	=> $wallet->currency_type,
+							'spending_method'		=> $wellness_spending_method,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
+						if(($spending['wellness_method'] == "post_paid" && $spending['with_mednefits_credits'] == false) || ($spending['wellness_method'] == "pre_paid" && $spending['with_mednefits_credits'] == false)) {
+							$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
+							DB::table('wellness_wallet_history')->insert($employee_credit_logs);
+							// add company credits
+							$customer_wellness_credits_logs = array(
+								'customer_credits_id'	=> $customer_wallet->customer_credits_id,
+								'credit'				=> $new_wellness_allocation,
+								'logs'					=> 'admin_added_credits',
+								'running_balance'		=> 0,
+								'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
+								'currency_type'	=> $customer_wallet->currency_type,
+								'spending_method'		=> $wellness_spending_method,
+								'created_at'			=> date('Y-m-d H:i:s'),
+								'updated_at'			=> date('Y-m-d H:i:s')
+							);
+
+							DB::table('customer_wellness_credits_logs')->insert($company_credit_logs);
+						}
+
+						if($spending['wellness_method'] != "post_paid" && $spending['with_mednefits_credits'] == true || $spending['wellness_method'] != "pre_paid" && $spending['with_mednefits_credits'] == true) {
+							$company_credits_result = DB::table('customer_credits')->where('customer_id', $customer_id)->decrement('wellness_credits', $new_wellness_allocation);
+						}
+						
+						$company_credit_logs = array(
+							'customer_credits_id' => $customer_wallet->customer_credits_id,
+							'credit'							=> $new_wellness_allocation,
+							'logs'								=> 'added_employee_credits',
+							'user_id'							=> $member_id,
+							'running_balance'			=> $customer_wallet->wellness_credits - $new_wellness_allocation,
+							'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
+							'currency_type'	=> $customer_wallet->currency_type,
+							'spending_method'		=> $wellness_spending_method,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+						DB::table('customer_wellness_credits_logs')->insert($company_credit_logs);
+
+						// credit wallet activity
+						$creditWalletActivityData = array(
+							'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+							'customer_id'			=> $customer_id,
+							'credit'				=> $new_wellness_allocation,
+							'type'					=> "added_employee_entitlement",
+							'spending_type'			=> "wellness",
+							'currency_type'			=> $customer_wallet->currency_type,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+
+						if($spending['with_mednefits_credits'] == true && $wellness_spending_method == "pre_paid") {
+							// create prepaid credits logs
+							$wellnessCreditsHistory = array(
+								'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+								'customer_id'			=> $customer_id,
+								'credits'				=> $new_wellness_allocation,
+								'member_id'				=> $member_id,
+								'credit_type'			=> 'added_employee_credits',
+								'top_up_status'			=> 0,
+								'currency_type'			=> $customer_wallet->currency_type,
+								'created_at'			=> date('Y-m-d H:i:s'),
+								'updated_at'			=> date('Y-m-d H:i:s')
+							);
+
+							DB::table('wellness_credits')->insert($wellnessCreditsHistory);
+						}
+						if($spending['with_mednefits_credits'] == true) {
+							// check if needs to create top up or update top up invoice
+							$checkTopUp = \SpendingHelper::checkPendingTopUpInvoice($customer_id, $new_wellness_allocation);
+	
+							if(!$checkTopUp) {
+								$toTopUp = array(
+									'customer_id' 	=> $customer_id,
+									'credits'		=> $new_wellness_allocation,
+									'member_id'		=> $member_id,
+									'created_at'	=> date('Y-m-d H:i:s'),
+									'updated_at'	=> date('Y-m-d H:i:s'),
+									'status'		=> 0
+								);
+	
+								DB::table('top_up_credits')->insert($toTopUp);
+							}
+						}
+					} else {
+						$wallet_result = DB::table('e_wallet')->where('UserID', $member_id)->decrement('wellness_balance', $new_wellness_allocation);
+						$employee_credit_logs = array(
+							'wallet_id'					=> $wallet->wallet_id,
+							'credit'						=> $new_wellness_allocation,
+							'logs'							=> 'deducted_by_hr',
+							'running_balance'		=> $wallet->wellness_balance - $new_wellness_allocation,
+							'customer_active_plan_id' => $last_customer_active_plan_id_wellness,
+							'currency_type'	=> $wallet->currency_type,
+							'spending_method'		=> $wellness_spending_method,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+						DB::table('customer_credits')->where('customer_id', $customer_id)->increment('wellness_credits', $new_wellness_allocation);
+						DB::table('wellness_wallet_history')->insert($employee_credit_logs);
+						
+						// credit wallet activity
+						$creditWalletActivityData = array(
+							'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+							'customer_id'			=> $customer_id,
+							'credit'				=> $new_wellness_allocation,
+							'type'					=> "deducted_employee_entitlement",
+							'spending_type'			=> "wellness",
+							'currency_type'			=> $customer_wallet->currency_type,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
+						if($spending['with_mednefits_credits'] == true && $wellness_spending_method == "mednefits_credits") {
+							// create prepaid credits logs
+							$wellnessCreditsHistory = array(
+								'mednefits_credits_id'	=> $spending['mednefits_credits_id'],
+								'customer_id'			=> $customer_id,
+								'credits'				=> $new_wellness_allocation,
+								'member_id'				=> $member_id,
+								'credit_type'			=> 'deducted_employee_credits',
+								'top_up_status'			=> 0,
+								'currency_type'			=> $customer_wallet->currency_type,
+								'created_at'			=> date('Y-m-d H:i:s'),
+								'updated_at'			=> date('Y-m-d H:i:s')
+							);
+							DB::table('wellness_credits')->insert($wellnessCreditsHistory);
+						}
+					}
+			}
+
+			// create entitlement
+			$data['currency_type'] = $wallet->currency_type;
+			$data['created_at'] = date('Y-m-d H:i:s');
+			$data['updated_at'] = date('Y-m-d H:i:s');
+			$result = DB::table('employee_wallet_entitlement')->insert($data);
+			if($result) {
+				DB::table('wallet_entitlement_schedule')->where('wallet_entitlement_schedule_id', $entitlement_id)->update(['status' => 1]);
+				$admin_logs = array(
+					'admin_id'  => null,
+					'type'      => 'system_create_activate_new_credit_allocation',
+					'data'      => \SystemLogLibrary::serializeData($result)
+				);
+				\SystemLogLibrary::createAdminLog($admin_logs);
+			}
+			return $result;
+		} else {
+			return false;
+		}
+	}
+
+	public static function activateNewEntitlementold2($member_id, $id)
+	{
+		$customer_id = PlanHelper::getCustomerId($member_id);
 		$member_entitlment = DB::table('wallet_entitlement_schedule')
                             ->where('wallet_entitlement_schedule_id', $id)
                             ->where('status', 0)
@@ -217,6 +642,9 @@ class MemberHelper
 		$customer_active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$wallet_entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
 		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+		$medical_spending_method = $spending['medical_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
+		$wellness_spending_method = $spending['wellness_payment_method_panel'] != "mednefits_credits" ? 'post_paid' : 'pre_paid';
+
 		$data = [];
 		$data['member_id'] = $member_id;
 		$spending_type = null;
@@ -224,33 +652,33 @@ class MemberHelper
 		foreach ($member_entitlment as $key => $entitlement) {
 			$spending_type = $entitlement->spending_type;
 			$entitlement_id = $entitlement->wallet_entitlement_schedule_id;
-		if($entitlement->spending_type == "medical") {
-			$data['medical_usage_date'] = $entitlement->new_usage_date;
-			$data['medical_proration'] = $entitlement->proration;
-			$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
-			$data['medical_allocation'] = $entitlement->new_allocation_credits;
-			$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
-		} else {
-			$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
-			$data['medical_proration'] = $wallet_entitlement->medical_proration;
-			$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
-			$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
-			$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
-		}
+			if($entitlement->spending_type == "medical") {
+				$data['medical_usage_date'] = $entitlement->new_usage_date;
+				$data['medical_proration'] = $entitlement->proration;
+				$data['medical_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['medical_allocation'] = $entitlement->new_allocation_credits;
+				$data['medical_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['medical_usage_date'] = $wallet_entitlement->medical_usage_date;
+				$data['medical_proration'] = $wallet_entitlement->medical_proration;
+				$data['medical_entitlement'] = $wallet_entitlement->medical_entitlement;
+				$data['medical_allocation'] = $wallet_entitlement->medical_allocation;
+				$data['medical_entitlement_balance'] = $wallet_entitlement->medical_entitlement_balance;
+			}
 
-		if($entitlement->spending_type == "wellness") {
-			$data['wellness_usage_date'] = $entitlement->new_usage_date;
-			$data['wellness_proration'] = $entitlement->proration;
-			$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
-			$data['wellness_allocation'] = $entitlement->new_allocation_credits;
-			$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
-		} else {
-			$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
-			$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
-			$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
-			$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
-			$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
-		}
+			if($entitlement->spending_type == "wellness") {
+				$data['wellness_usage_date'] = $entitlement->new_usage_date;
+				$data['wellness_proration'] = $entitlement->proration;
+				$data['wellness_entitlement'] = $entitlement->new_entitlement_credits;
+				$data['wellness_allocation'] = $entitlement->new_allocation_credits;
+				$data['wellness_entitlement_balance'] = $entitlement->new_allocation_credits;
+			} else {
+				$data['wellness_usage_date'] = $wallet_entitlement->wellness_usage_date;
+				$data['wellness_proration'] = $wallet_entitlement->wellness_proration;
+				$data['wellness_entitlement'] = $wallet_entitlement->wellness_entitlement;
+				$data['wellness_allocation'] = $wallet_entitlement->wellness_allocation;
+				$data['wellness_entitlement_balance'] = $wallet_entitlement->wellness_entitlement_balance;
+			}
 		}
 
 		if($data) {
@@ -295,7 +723,7 @@ class MemberHelper
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
 						DB::table('wallet_history')->insert($employee_credit_logs);
-						if($spending['medical_method'] != "pre_paid") {
+						if($spending['medical_payment_method_panel'] != "mednefits_credits") {
 							$employee_credit_logs['logs'] = 'added_by_hr_supplementary';
 							DB::table('wallet_history')->insert($employee_credit_logs);
 
@@ -308,7 +736,8 @@ class MemberHelper
 								'customer_active_plan_id' => $last_customer_active_plan_id_medical,
 								'currency_type'	=> $customer_wallet->currency_type,
 								'created_at'			=> date('Y-m-d H:i:s'),
-								'updated_at'			=> date('Y-m-d H:i:s')
+								'updated_at'			=> date('Y-m-d H:i:s'),
+								'spending_method'		=> $medical_spending_method
 							);
 							DB::table('customer_credit_logs')->insert($company_credit_logs);
 
@@ -326,9 +755,23 @@ class MemberHelper
 							'customer_active_plan_id' => $last_customer_active_plan_id_medical,
 							'currency_type'	=> $customer_wallet->currency_type,
 							'created_at'			=> date('Y-m-d H:i:s'),
-							'updated_at'			=> date('Y-m-d H:i:s')
+							'updated_at'			=> date('Y-m-d H:i:s'),
+							'spending_method'		=> $medical_spending_method
 						);
 						DB::table('customer_credit_logs')->insert($company_credit_logs);
+						// credit wallet activity
+						$creditWalletActivityData = array(
+							'mednefits_credits_id'	=> $customer_spending['mednefits_credits_id'],
+							'customer_id'			=> $customer_id,
+							'credit'				=> $credits,
+							'type'					=> "added_employee_credits",
+							'spending_type'			=> "wellness",
+							'currency_type'			=> $customer->currency_type,
+							'created_at'			=> date('Y-m-d H:i:s'),
+							'updated_at'			=> date('Y-m-d H:i:s')
+						);
+
+						DB::table('credit_wallet_activity')->insert($creditWalletActivityData);
 					} else {
 						$wallet_result = Wallet::where('UserID', $member_id)->decrement('balance', $new_medical_allocation);
 						$employee_credit_logs = array(
@@ -339,7 +782,8 @@ class MemberHelper
 							'customer_active_plan_id' => $last_customer_active_plan_id_medical,
 							'currency_type'	=> $wallet->currency_type,
 							'created_at'			=> date('Y-m-d H:i:s'),
-							'updated_at'			=> date('Y-m-d H:i:s')
+							'updated_at'			=> date('Y-m-d H:i:s'),
+							'spending_method'		=> $medical_spending_method
 						);
 						DB::table('customer_credits')->where('customer_id', $customer_id)->increment('balance', $new_medical_allocation);
 						DB::table('wallet_history')->insert($employee_credit_logs);
@@ -445,7 +889,7 @@ class MemberHelper
 		}
 	}
 
-	public static function newActivateNewEntitlement($member_id, $id)
+	public static function newActivateNewEntitlementold2($member_id, $id)
 	{
 		$customer_id = PlanHelper::getCustomerId($member_id);
 		$member_entitlment = DB::table('wallet_entitlement_schedule')
@@ -692,13 +1136,60 @@ class MemberHelper
 		return $total_days->format('%a') + 1;
 	}
 
-	public static function checkMemberAccessTransactionStatus($member_id)
+	public static function checkMemberAccessTransactionStatus($member_id, $type)
 	{
 		$status = DB::table('member_block_transaction')->where('member_id', $member_id)->where('status', 1)->first();
 
 		if($status) {
 			return true;
 		} else {
+			// get member account settings
+			// check for spending transaction access
+			$customer_id = \PlanHelper::getCustomerId($member_id);
+			// $spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+
+			// if($type == "non_panel") {
+			// 	if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
+			// 		return "fuck";
+			// 		return true;
+			// 	}
+			// }
+
+			// check of from top up and pending
+			$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
+
+			// check if account is active
+			$accountStatus = self::getMemberWalletStatus($member_id, 'medical');
+
+			if($accountStatus == "expired" || $accountStatus == "deactivated") {
+				return true;
+			}
+
+			// check if plan is paid
+			$plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+			$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_history->customer_active_plan_id)->first();
+
+			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan")	{
+				if($customer_active_plan->paid == "false") {
+					return true;
+				}
+			}
+
+			$accessTransaction = $type == "panel" ? \SpendingHelper::checkSpendingCreditsAccess($customer_id) : \SpendingHelper::checkSpendingCreditsAccessNonPanel($customer_id);
+			if(!$top_up_user) {
+				// check if first purchase is already paid
+				$account_credits = DB::table('spending_purchase_invoice')
+										->where('customer_id', $customer_id)
+										->first();
+				if($account_credits && (int)$account_credits->payment_status == 1) {
+					return false;
+				}
+			}
+			
+			if(!$accessTransaction['enable']) {
+				return true;
+			}
+			
 			return false;
 		}
 	}
@@ -1597,7 +2088,10 @@ class MemberHelper
 		);
 
 		try {
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			$user_plan_history->createUserPlanHistory($user_plan_history_data);
 
 			if($plan_active->account_type != "enterprise_plan")	{
@@ -1628,7 +2122,7 @@ class MemberHelper
 				'amount'					=> $amount
 			);
 
-			if($plan_active->account_type == "lite_plan") {
+			if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 				$data['refund_status'] = 2;
 				$data['keep_seat']	= 1;
 				$data['vacate_seat']	= 1;
@@ -1762,7 +2256,7 @@ class MemberHelper
 			'amount'					=> $amount
 		);
 
-		if($plan_active->account_type == "lite_plan") {
+		if($plan_active->account_type == "lite_plan" || $plan_active->account_type == "out_of_pocket") {
 			$data['refund_status'] = 2;
 			$data['keep_seat']	= 1;
 			$data['vacate_seat']	= 1;
@@ -1773,7 +2267,10 @@ class MemberHelper
 
 		try {
 			$withdraw->createPlanWithdraw($data);
-			self::getEmployeeSpendingAccountSummaryNew($input);
+			if($plan_active->account_type != "out_of_pocket") {
+				self::getEmployeeSpendingAccountSummaryNew($input);
+			}
+			
 			PlanHelper::revemoDependentAccounts($user_id, date('Y-m-d', strtotime($expiry_date)));
 			return TRUE;
 		} catch(Exception $e) {
@@ -1861,6 +2358,563 @@ class MemberHelper
 		}
 
 		return false;
+	}
+
+	public static function memberMedicalPrepaid($user_id, $start, $end, $spending_method)
+	{
+		
+		$customer_id = \PlanHelper::getCustomerId($user_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+		$get_allocation = 0;
+		$deducted_credits = 0;
+		$credits_back = 0;
+		$deducted_by_hr_medical = 0;
+		$in_network_temp_spent = 0;
+		$e_claim_spent = 0;
+		$deleted_employee_allocation = 0;
+		$total_deduction_credits = 0;
+		$allocation = 0;
+		$medical_balance = 0;
+		$balance = 0;
+		$total_supp = 0;
+		$in_network = 0;
+		$out_network = 0;
+
+        // check if employee has reset credits
+		$employee_credit_reset_medical = DB::table('credit_reset')
+		->where('id', $user_id)
+		->where('spending_type', 'medical')
+		->where('user_type', 'employee')
+		->orderBy('created_at', 'desc')
+		->first();
+
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+		$e_wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+		$user_plan_history = DB::table('user_plan_history')
+								->where('user_id', $user_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->first();
+		if($user_plan_history ) {
+			if($employee_credit_reset_medical) {
+				$start = $employee_credit_reset_medical->date_resetted;
+				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
+				$wallet_history = DB::table('wallet_history')
+								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wallet_history.wallet_id')
+								->where('wallet_history.wallet_id', $e_wallet->wallet_id)
+								->where('e_wallet.UserID', $user_id)
+								// ->where('spending_method', $spending_method)
+								->where('wallet_history.created_at',  '>=', $start)
+								->get();
+			} else {
+				$wallet_history = DB::table('wallet_history')
+									->where('wallet_id', $e_wallet->wallet_id)
+									// ->where('spending_method', $spending_method)
+									->get();
+			}
+
+			foreach ($wallet_history as $key => $history) {
+				if($history->logs == "added_by_hr") {
+					$get_allocation += $history->credit;
+				}
+
+				if($history->logs == "deducted_by_hr") {
+					$deducted_credits += $history->credit;
+				}
+
+				if($history->where_spend == "e_claim_transaction") {
+					$e_claim_spent += $history->credit;
+					$out_network += $history->credit;
+				}
+
+				if($history->where_spend == "in_network_transaction") {
+					$in_network_temp_spent += $history->credit;
+					if($history->spending_type == "medical")	{
+						$in_network += $history->credit;
+					} else {
+						$out_network += $history->credit;
+					}
+				}
+
+				if($history->where_spend == "credits_back_from_in_network") {
+					$credits_back += $history->credit;
+				}
+
+				if($history->logs == "added_by_hr_supplementary") {
+					$total_supp += $history->credit;
+				}
+			}
+
+			$pro_allocation = DB::table('wallet_history')
+			->where('wallet_id', $e_wallet->wallet_id)
+			->where('logs', 'pro_allocation')
+			->sum('credit');
+			
+			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
+			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+			$medical_balance = 0;
+
+			if($spending['medical_method'] == "pre_paid") {
+				
+				$allocation = $get_allocation - $deducted_credits;
+				$balance = $allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+				$total_deduction_credits += $deducted_credits;
+
+				if($balance < 0) {
+					$allocation = $get_allocation_spent;
+				}
+			} else {
+				if($pro_allocation > 0 && (int)$user->Active == 0) {
+					$allocation = $pro_allocation;
+					$balance = $pro_allocation - $get_allocation_spent;
+					$medical_balance = $balance;
+
+					if($balance < 0) {
+						$balance = 0;
+						$medical_balance = $balance;
+						$allocation = $get_allocation - $deducted_credits;
+					}
+				} else if($pro_allocation == 0 && (int)$user->Active == 0){
+					$allocation = 0;
+					$balance = 0;
+					$medical_balance = 0;
+					$total_deduction_credits += $deducted_credits;
+				} else {
+					$allocation = $get_allocation - $deducted_credits;
+					$balance = $allocation - $get_allocation_spent;
+					$medical_balance = $balance;
+					$total_deduction_credits += $deducted_credits;
+
+					if($user->Active == 0) {
+						$deleted_employee_allocation = $get_allocation - $deducted_credits;
+						$medical_balance = 0;
+					}
+				}
+			}
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance);
+
+		} else {
+			return false;
+		}
+	}
+
+	public static function memberWellnessPrepaid($user_id, $start, $end)
+	{
+		
+		$customer_id = \PlanHelper::getCustomerId($user_id);
+		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+		$get_allocation = 0;
+		$deducted_credits = 0;
+		$credits_back = 0;
+		$deducted_by_hr_medical = 0;
+		$in_network_temp_spent = 0;
+		$e_claim_spent = 0;
+		$deleted_employee_allocation = 0;
+		$total_deduction_credits = 0;
+		$allocation = 0;
+		$medical_balance = 0;
+		$balance = 0;
+		$total_supp = 0;
+		$in_network = 0;
+		$out_network = 0;
+
+        // check if employee has reset credits
+		$employee_credit_reset_medical = DB::table('credit_reset')
+		->where('id', $user_id)
+		->where('spending_type', 'medical')
+		->where('user_type', 'employee')
+		->orderBy('created_at', 'desc')
+		->first();
+
+		$user = DB::table('user')->where('UserID', $user_id)->first();
+		$e_wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+		$user_plan_history = DB::table('user_plan_history')
+								->where('user_id', $user_id)
+								->where('type', 'started')
+								->orderBy('created_at', 'desc')
+								->first();
+		if($user_plan_history ) {
+			if($employee_credit_reset_medical) {
+				$start = $employee_credit_reset_medical->date_resetted;
+				$wallet_history_id = $employee_credit_reset_medical->wallet_history_id;
+				$wallet_history = DB::table('wellness_wallet_history')
+								->join('e_wallet', 'e_wallet.wallet_id', '=', 'wellness_wallet_history.wallet_id')
+								->where('wellness_wallet_history.wallet_id', $e_wallet->wallet_id)
+								->where('e_wallet.UserID', $user_id)
+								// ->where('spending_method', 'pre_paid')
+								->where('wellness_wallet_history.created_at',  '>=', $start)
+								->get();
+			} else {
+				$wallet_history = DB::table('wellness_wallet_history')
+									->where('wallet_id', $e_wallet->wallet_id)
+									// ->where('spending_method', 'pre_paid')
+									->get();
+			}
+
+			foreach ($wallet_history as $key => $history) {
+				if($history->logs == "added_by_hr") {
+					$get_allocation += $history->credit;
+				}
+
+				if($history->logs == "deducted_by_hr") {
+					$deducted_credits += $history->credit;
+				}
+
+				if($history->where_spend == "e_claim_transaction") {
+					$e_claim_spent += $history->credit;
+					$out_network += $history->credit;
+				}
+
+				if($history->where_spend == "in_network_transaction") {
+					$in_network_temp_spent += $history->credit;
+					if($history->spending_type == "medical")	{
+						$in_network += $history->credit;
+					} else {
+						$out_network += $history->credit;
+					}
+				}
+
+				if($history->where_spend == "credits_back_from_in_network") {
+					$credits_back += $history->credit;
+				}
+
+				if($history->logs == "added_by_hr_supplementary") {
+					$total_supp += $history->credit;
+				}
+			}
+
+			$pro_allocation = DB::table('wellness_wallet_history')
+			->where('wallet_id', $e_wallet->wallet_id)
+			->where('logs', 'pro_allocation')
+			->sum('credit');
+			
+			$get_allocation_spent_temp = $in_network_temp_spent - $credits_back;
+			$get_allocation_spent = $get_allocation_spent_temp + $e_claim_spent;
+			$medical_balance = 0;
+
+			if($spending['medical_method'] == "pre_paid") {
+				
+				$allocation = $get_allocation - $deducted_credits;
+				$balance = $allocation - $get_allocation_spent;
+				$medical_balance = $balance;
+				$total_deduction_credits += $deducted_credits;
+
+				if($balance < 0) {
+					$allocation = $get_allocation_spent;
+				}
+			} else {
+				if($pro_allocation > 0 && (int)$user->Active == 0) {
+					$allocation = $pro_allocation;
+					$balance = $pro_allocation - $get_allocation_spent;
+					$medical_balance = $balance;
+
+					if($balance < 0) {
+						$balance = 0;
+						$medical_balance = $balance;
+						$allocation = $get_allocation - $deducted_credits;
+					}
+				} else if($pro_allocation == 0 && (int)$user->Active == 0){
+					$allocation = 0;
+					$balance = 0;
+					$medical_balance = 0;
+					$total_deduction_credits += $deducted_credits;
+				} else {
+					$allocation = $get_allocation - $deducted_credits;
+					$balance = $allocation - $get_allocation_spent;
+					$medical_balance = $balance;
+					$total_deduction_credits += $deducted_credits;
+
+					if($user->Active == 0) {
+						$deleted_employee_allocation = $get_allocation - $deducted_credits;
+						$medical_balance = 0;
+					}
+				}
+			}
+			return array('allocation' => $allocation, 'get_allocation_spent' => $get_allocation_spent, 'balance' => $balance);
+
+		} else {
+			return false;
+		}
+	}
+
+	public function getTransactionSpent($customer_id, $start, $end)
+    {
+        $end = \PlanHelper::endDate($end);
+        $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
+        $user_allocated = \CustomerHelper::getActivePlanUsers($customer_id);
+
+        $total_spent = 0;
+
+        foreach($user_allocated as $key => $user) {
+            $ids = StringHelper::getSubAccountsID($user);
+
+			if(sizeof($ids) > 0) {
+				 // panel
+				 $total_spent += DB::table('transaction_history')
+					->whereIn('UserID', $ids)
+					->where('procedure_cost', '>', 0)
+					->where('deleted', 0)
+					->where('created_at', '>=', $start)
+                	->where('created_at', '<=', $end)
+					->sum('procedure_cost');
+			}
+        }
+
+        return $total_spent;
+	}
+	
+	public static function getMemberWalletValidity($member_id, $spending_type)
+	{
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+		$valid = false;
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+		// return ['start' => $start, 'medical_spending_end_date' => $spending->medical_spending_end_date, 'wellness_spending_end_date' => $spending->wellness_spending_end_date];
+		// if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		// } else {
+			// $end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		// }
+
+		if($spending->medical_benefits_coverage == "out_of_pocket") {
+			$start = date('Y-m-d', strtotime($spending->medical_spending_start_date));
+		}
+
+		if($spending->wellness_benefits_coverage == "out_of_pocket") {
+			$start = date('Y-m-d', strtotime($spending->wellness_spending_start_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+		if($start <= $today && $end >= $today) {
+			$valid = true;
+		}
+		
+		$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		$end = PlanHelper::endDate($end);
+		if($start <= $today && $end >= $today) {
+			$valid = true;
+		}
+
+		return $valid;
+	}
+
+	public static function getMemberWalletStatus($member_id, $spending_type)
+	{
+		$emp_status = "active";
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
+		$member = DB::table('user')->where('UserID', $member_id)->first();
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+
+		if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		} else {
+			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+
+
+		if($start < $today) {
+			$status = "active";
+		}
+
+		if($start <= $today && $end >= $today) {
+			if((int)$member->member_activated == 0 || (int)$member->member_activated == 1 && (int)$member->Status == 0) {
+				$emp_status = 'pending';
+			}
+
+			$panel = DB::table('transaction_history')->where('UserID', $member_id)->first();
+			$non_panel = DB::table('e_claim')->where('user_id', $member_id)->first();
+							
+			if($panel || $non_panel) {
+				$emp_status = 'active';
+			} else if((int)$member->member_activated == 1){
+				$emp_status = 'active';
+			}
+		}
+
+		if($today > $end) {
+			$emp_status = 'expired';
+		}
+
+		if((int)$member->Active == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		if((int)$spending->medical_enable == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		if($customer_active_plan->account_type == "out_of_pocket") {
+			$emp_status = "active";
+		}
+
+		return $emp_status;
+	}
+
+	public static function getMemberEnterprisePlanTransactionCounts($member_id, $start, $end)
+	{
+		$end = \PlanHelper::endDate($end);
+		$ids = \StringHelper::getSubAccountsID($member_id);
+
+		$panels = DB::table('transaction_history')
+					->whereIn('UserID', $ids)
+					->where('spending_type', 'medical')
+					->where('paid', 1)
+					->where('deleted', 0)
+					->where('enterprise_visit_deduction', 1)
+					->where('date_of_transaction', '>=', $start)
+					->where('date_of_transaction', '<=', $end)
+					->count();
+
+		$non_panels = DB::table('e_claim')
+					->whereIn('user_id', $ids)
+					->whereIn('status', [1, 0])
+					->where('enterprise_visit_deduction', 1)
+					->where('spending_type', 'medical')
+					->where('created_at', '>=', $start)
+					->where('created_at', '<=', $end)
+					->count();
+		
+		$user_plan_history = DB::table('user_plan_history')
+				->where('user_id', $member_id)
+				->where('type', 'started')
+				->orderBy('created_at', 'desc')
+				->first();
+
+		$dependentsData = \DependentHelper::getDependentVisits($member_id);
+		$total_visit_limit = $dependentsData['total_visit_limit'];
+		
+		return ['visits' => $user_plan_history->total_visit_limit + $total_visit_limit, 'panels' => $panels, 'non_panels' => $non_panels, 'total' => $panels + $non_panels];
+	}
+
+	public static function getMemberWalletPaymentMethod($member_id)
+	{
+		$top_up_user = DB::table('top_up_credits')->where('member_id', $member_id)->where('status', 0)->first();
+		// check for spending transaction access
+		$customer_id = \PlanHelper::getCustomerId($member_id);
+		$spending_account_settings = DB::table('spending_account_settings')
+                                  ->where('customer_id', $customer_id)
+                                  ->orderBy('created_at', 'desc')
+                                  ->first();
+		$medical_payment_method = $spending_account_settings->medical_payment_method_panel == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+		if(!$top_up_user) {
+			// check if first purchase is already paid
+			$account_credits = DB::table('spending_purchase_invoice')
+									->where('customer_id', $customer_id)
+									->first();
+			if($account_credits && (int)$account_credits->payment_status == 0) {
+				$medical_payment_method = 'post_paid';
+			}
+		}
+			
+		return $medical_payment_method;
+	}
+
+	public static function newMedicalLatestAllocation($user_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->select('wallet_id')->first();
+		$wallet_id = $wallet->wallet_id;
+		$employee_credit_reset_medical = DB::table('credit_reset')
+										->where('id', $user_id)
+										->where('spending_type', 'medical')
+										->where('user_type', 'employee')
+										->orderBy('created_at', 'desc')
+										->select('date_resetted')
+										->first();
+		// return $employee_credit_reset_medical;
+		if($employee_credit_reset_medical) {
+			$start = $employee_credit_reset_medical->date_resetted;
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,totalReturnedSpent,proAllocation from 
+			(select sum(credit) as totalAddedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr' and created_at >= '".$start."') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr' and created_at >= '".$start."') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction' and created_at >= '".$start."') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction' and created_at >= '".$start."') as totalNonPanelSpentCreditTable, 
+			(select sum(credit) as totalReturnedSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network' and created_at >= '".$start."') as totalReturnedSpentCreditTable, 
+			(select sum(credit) as proAllocation from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		} else {
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,proAllocation,totalReturnedSpent from (select sum(credit) as totalAddedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction') as totalNonPanelSpentCreditTable,
+			(select sum(credit) as totalReturnedSpent from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network') as totalReturnedSpentCreditTable,  
+			(select sum(credit) as proAllocation from medi_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		}
+		
+		$wallet_history = DB::select($statement);
+		$wallet_history = $wallet_history[0];
+		
+		$totalAddedCredits = $wallet_history ? $wallet_history->totalAddedCredits : 0;
+		$totaldeductedCredits = $wallet_history ? $wallet_history->totaldeductedCredits : 0;
+		$totalPanelSpent = $wallet_history ? $wallet_history->totalPanelSpent : 0;
+		$totalNonPanelSpent = $wallet_history ? $wallet_history->totalNonPanelSpent : 0;
+		$totalReturnedSpent = $wallet_history ? $wallet_history->totalReturnedSpent : 0;
+		$proAllocation = $wallet_history ? $wallet_history->proAllocation : 0;
+		$total_allocation = $totalAddedCredits - $totaldeductedCredits;
+		$total_spent = ($totalPanelSpent + $totalNonPanelSpent) - $totalReturnedSpent;
+		$balance = $total_allocation - $total_spent;
+		return ['allocation' => $total_allocation, 'total_allocation' => $total_allocation, 'tota_spent' => $total_spent, 'balance' => $balance];
+	}
+
+	public static function newWellnessLatestAllocation($user_id)
+	{
+		$wallet = DB::table('e_wallet')->where('UserID', $user_id)->select('wallet_id')->first();
+		$wallet_id = $wallet->wallet_id;
+		$employee_credit_reset_medical = DB::table('credit_reset')
+										->where('id', $user_id)
+										->where('spending_type', 'wellness')
+										->where('user_type', 'employee')
+										->orderBy('created_at', 'desc')
+										->select('date_resetted')
+										->first();
+		// return $employee_credit_reset_medical;
+		if($employee_credit_reset_medical) {
+			$start = $employee_credit_reset_medical->date_resetted;
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,totalReturnedSpent,proAllocation from 
+			(select sum(credit) as totalAddedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr' and created_at >= '".$start."') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr' and created_at >= '".$start."') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction' and created_at >= '".$start."') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction' and created_at >= '".$start."') as totalNonPanelSpentCreditTable, 
+			(select sum(credit) as totalReturnedSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network' and created_at >= '".$start."') as totalReturnedSpentCreditTable, 
+			(select sum(credit) as proAllocation from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		} else {
+			$statement = "select totalAddedCredits,totaldeductedCredits,totalPanelSpent,totalNonPanelSpent,proAllocation,totalReturnedSpent from (select sum(credit) as totalAddedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'added_by_hr') as totalAddedCreditTable, 
+			(select sum(credit) as totaldeductedCredits from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_by_hr') as totalDeductedCreditTable, 
+			(select sum(credit) as totalPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_mobile_payment' and where_spend = 'in_network_transaction') as totalPanelSpentCreditTable, 
+			(select sum(credit) as totalNonPanelSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'deducted_from_e_claim' and where_spend = 'e_claim_transaction') as totalNonPanelSpentCreditTable, 
+			(select sum(credit) as totalReturnedSpent from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'credits_back_from_in_network' and where_spend = 'credits_back_from_in_network') as totalReturnedSpentCreditTable,  
+			(select sum(credit) as proAllocation from medi_wellness_wallet_history where wallet_id = ".$wallet_id." and logs = 'pro_allocation') as totalProAllocationtCreditTable";
+		}
+		
+		$wallet_history = DB::select($statement);
+		$wallet_history = $wallet_history[0];
+		
+		$totalAddedCredits = $wallet_history ? $wallet_history->totaldeductedCredits : 0;
+		$totaldeductedCredits = $wallet_history ? $wallet_history->totaldeductedCredits : 0;
+		$totalPanelSpent = $wallet_history ? $wallet_history->totalPanelSpent : 0;
+		$totalNonPanelSpent = $wallet_history ? $wallet_history->totalNonPanelSpent : 0;
+		$totalReturnedSpent = $wallet_history ? $wallet_history->totalReturnedSpent : 0;
+		$proAllocation = $wallet_history ? $wallet_history->proAllocation : 0;
+		$total_allocation = $totalAddedCredits - $totaldeductedCredits;
+		$total_spent = ($totalPanelSpent + $totalNonPanelSpent) - $totalReturnedSpent;
+		$balance = $total_allocation - $total_spent;
+		return ['allocation' => $total_allocation, 'total_allocation' => $total_allocation, 'tota_spent' => $total_spent, 'balance' => $balance];
 	}
 }
 ?>

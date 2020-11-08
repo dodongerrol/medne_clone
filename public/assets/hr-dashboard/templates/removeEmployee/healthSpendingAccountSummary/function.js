@@ -54,7 +54,12 @@ app.directive('healthSpendingAccountSummaryDirective', [
             });
         }
 				scope.backBtn	=	function(){
-					$state.go('employee-overview.remove-emp-checkboxes');
+					if( scope.emp_details.account_type == 'basic_plan' || scope.emp_details.account_type == 'lite_plan' ){
+						$state.go('employee-overview.remove-emp-inputs');
+					}else{
+						$state.go('employee-overview.remove-emp-checkboxes');
+					}
+					
 				}
 				scope.nextBtn	=	function(){
 					scope.showLoading();

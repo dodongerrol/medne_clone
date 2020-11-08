@@ -303,11 +303,11 @@ class Api_V1_AuthController extends \BaseController {
                 // $oldpass = Input::get('oldpass');
       $newpass = Input::get('newpass');
 
-      if(!empty($userid) && !empty($newpass)){ 
+      if(!empty($userid) && !empty($newpass)){
         $findUser = $user->getUserDetails($userid);
         $user_type = $findUser->UserType;
 
-        if($findUser){               
+        if($findUser){
                   // $compnarePassword = StringHelper::encode($oldpass);
                         //Update password
           $updateArray['userid'] = $findUser->UserID;
@@ -332,7 +332,7 @@ class Api_V1_AuthController extends \BaseController {
        }
      }else{
       return array('status' => FALSE, 'message' => 'ID not found.');
-    }      
+    }
   }
 
         //Use for forgot password by Mobile app
@@ -654,7 +654,7 @@ return Response::json($returnObject);
           $user_id = StringHelper::getUserId($profileid);
           // $properties = !empty($input['type']) && $input['type'] == "with_medical_properties" ? "with_medical_properties" : "profile";
           $properties = "with_medical_properties";
-          
+
           if($findUserProfile){
             // $userPolicy = $userinsurancepolicy->FindUserInsurancePolicy($findUserProfile->UserID);
             $returnArray->status = TRUE;
@@ -1065,6 +1065,7 @@ return Response::json($returnObject);
                 $e_claim = [];
                 $transaction_details = [];
                 $in_network_spent = 0;
+                $out_of_pocket_spent = 0;
                 $ids = StringHelper::getSubAccountsID($findUserID);
                 $user_id = StringHelper::getUserId($findUserID);
                 $user_plan_history = DB::table('user_plan_history')
@@ -1105,6 +1106,7 @@ return Response::json($returnObject);
                     ->where('spending_type', $spending_type)
                     ->where('date', '>=', $dates['start'])
                     ->where('date', '<=', $dates['end'])
+                    ->where('status', 1)
                     ->orderBy('date', 'desc')
                     ->take(3)
                     ->get();
@@ -1124,6 +1126,7 @@ return Response::json($returnObject);
                     ->where('spending_type', $spending_type)
                     ->where('date', '>=', $dates['start'])
                     ->where('date', '<=', $dates['end'])
+                    ->where('status', 1)
                     ->orderBy('date', 'desc')
                     ->take(3)
                     ->get();
@@ -1138,7 +1141,7 @@ return Response::json($returnObject);
                     ->take(3)
                     ->get();
                   }
-                  
+
                 } else {
                   $e_claim_result = [];
                   $transactions = [];
@@ -1284,7 +1287,7 @@ return Response::json($returnObject);
 
                 $clinic_sub_name = strtoupper(substr($clinic->Name, 0, 3));
                 $transaction_id = $clinic_sub_name.str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
-
+                $out_of_pocket_spent += $converted_amount;
                 $format = array(
                   'clinic_name'       => $clinic->Name,
                   'clinic_image'      => $clinic->image,
@@ -1309,18 +1312,19 @@ return Response::json($returnObject);
             $current_spending = $credit_data ? $credit_data['get_allocation_spent'] : 0;
             $e_claim_spent = $credit_data ? $credit_data['e_claim_spent'] : 0;
             $in_network_spent = $credit_data ? $credit_data['in_network_spent'] : 0;
+
             $balance = $credit_data ? $credit_data['balance'] : 0;
 
             // if($customer_active_plan->account_type != "enterprise_plan")  {
               PlanHelper::reCalculateEmployeeBalance($user_id);
             // }
-            
+
             $total_visit_limit = 0;
             $total_visit_created = 0;
             $total_visit_balance = 0;
 
+            $currency_symbol = strtoupper($wallet->currency_type);
             if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
-              $currency_symbol = "";
               $balance = number_format($balance, 2);
               if($filter == "current_term") {
                 if($user_type == "employee") {
@@ -1337,7 +1341,7 @@ return Response::json($returnObject);
                   $total_visit_created = $user_plan_history->total_visit_created;
                   $total_visit_balance = $total_visit_limit - $total_visit_created;
                 }
-                
+
               } else {
                 if($user_type == "employee") {
                   $plan_history = MemberHelper::getMemberPreviousPlanHistory($user_id);
@@ -1351,9 +1355,8 @@ return Response::json($returnObject);
                   $total_visit_balance = $total_visit_limit - $total_visit_created;
                 }
               }
-              
+
             } else {
-              $currency_symbol = strtoupper($wallet->currency_type);
               $balance = number_format($balance, 2);
             }
 
@@ -1370,7 +1373,7 @@ return Response::json($returnObject);
               'total_visit'               => $total_visit_limit,
               'total_utilised'            => $total_visit_created,
               'total_visit_balance'       => $total_visit_balance,
-              'user_type'                 => $user_type
+              'user_type'                 => $user_type,
             );
 
             $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
@@ -1452,7 +1455,7 @@ return Response::json($returnObject);
                   $balance = number_format($balance, 2);
                   $returnObject->data = ['balance' => $balance, 'currency_symbol' => $currency_symbol, 'account_type' => $customer_active_plan->account_type];
                 }
-                
+
                 $returnObject->status = true;
                 $returnObject->message = "Success";
                 return Response::json($returnObject);
@@ -1474,7 +1477,7 @@ return Response::json($returnObject);
         }
 
   public function getUserCredits( )
-  {   
+  {
         // $ip = file_get_contents('https://api.ipify.org');
         // // return $ip;
    $rm = false;
@@ -1922,7 +1925,8 @@ public function getEcardDetails( )
    if($findUserID){
     $returnObject->status = TRUE;
     $returnObject->data = $e_card->newEcardDetails($findUserID);
-                    // return $e_card->newEcardDetails($findUserID);
+    DB::table('user')->where('UserID', $findUserID)->update(['Status' => 1]);
+    // return $e_card->newEcardDetails($findUserID);
     if($returnObject->data == 0) {
      $returnObject->status = FALSE;
      $returnObject->message = 'User does not have a package plan.';
@@ -2005,7 +2009,7 @@ public function getNewClinicDetails($id)
      }
 
      // check if enable to access feature
-      $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($owner_id);
+      $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($owner_id, 'panel');
 
       if($transaction_access)	{
         $returnObject->status = FALSE;
@@ -2017,7 +2021,7 @@ public function getNewClinicDetails($id)
 
       // check if employee/user is still coverge
      $user_type = PlanHelper::getUserAccountType($findUserID);
-    
+
      // // check visit limit
      if($user_type == "employee") {
       $user_plan_history = DB::table('user_plan_history')->where('user_id', $owner_id)->orderBy('created_at', 'desc')->first();
@@ -2033,7 +2037,7 @@ public function getNewClinicDetails($id)
 
      if($customer_active_plan->account_type == "enterprise_plan")	{
       $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
-  
+
       if($limit <= 0) {
         $returnObject->status = FALSE;
         $returnObject->status_type = 'access_block';
@@ -2041,7 +2045,7 @@ public function getNewClinicDetails($id)
         $returnObject->message = 'Maximum of 14 visits already reached.';
         return Response::json($returnObject);
       }
-      
+
       if($wallet_checker->currency_type === 'myr') {
         if($clinic->currency_type === 'sgd') {
             $returnObject->status = FALSE;
@@ -2052,14 +2056,14 @@ public function getNewClinicDetails($id)
         }
       }
     }
-    
+
     if($user_type == "employee") {
       $plan_coverage = PlanHelper::checkEmployeePlanStatus($findUserID);
     } else {
       $plan_coverage = PlanHelper::getDependentPlanCoverage($findUserID);
     }
 
-    if($plan_coverage['expired'] == true) {
+    if($plan_coverage['expired'] == true && $plan_coverage['plan_type'] != "out_of_pocket") {
      $returnObject->status = FALSE;
      $returnObject->status_type = 'access_block';
      $returnObject->head_message = 'Registration Unavailable';
@@ -2158,7 +2162,7 @@ if($customer_id) {
 
 $cap_currency_symbol = "SGD";
 $cap_amount = 0;
-  
+
 $currency_data = DB::table('currency_options')->where('currency_type', $wallet->currency_type)->first();
 if($currency_data) {
   $currency_value = $currency_data->currency_value;
@@ -2624,7 +2628,7 @@ public function payCredits( )
     $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
     $returnObject->sub_mesage = 'Lite Plan users needs an additional S$'.number_format($co_paid_amount, 2).' to be able to pay for the transaction.';
     return Response::json($returnObject);
-  } 
+  }
 } else {
   $total_credits = self::floatvalue($total_amount);
   if(self::floatvalue($total_amount) > $user_credits) {
@@ -2633,7 +2637,7 @@ public function payCredits( )
     $returnObject->sub_mesage = 'You may choose to pay directly to health provider.';
     return Response::json($returnObject);
   }
-} 
+}
 }
           // return $total_credits * 3;
 $transaction = new Transaction();
@@ -3116,7 +3120,7 @@ public function checkUserPin( )
        $co_paid_amount = $clinic->peak_hour_amount;
        $co_paid_status = $clinic->co_paid_status;
      }
-   } 
+   }
    else {
     if($clinic->co_paid_status == 1 || $clinic->co_paid_status == "1") {
      $gst = $clinic->co_paid_amount * $clinic->gst_percent;
@@ -3145,7 +3149,7 @@ if($lite_plan_status && (int)$clinic_type->lite_plan_enabled == 1) {
   $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
   $returnObject->sub_mesage = 'Lite Plan users needs an additional S$'.number_format($co_paid_amount, 2).' to be able to pay for the transaction.';
   return Response::json($returnObject);
-} 
+}
 } else {
  if(self::floatvalue($input['amount']) > $user_credits) {
   $returnObject->status = FALSE;
@@ -3602,7 +3606,7 @@ public function notifyClinicDirectPayment( )
 
    $returnObject->status = TRUE;
    $returnObject->message = 'Success.';
-                    // check user type 
+                    // check user type
    $type = StringHelper::checkUserType($findUserID);
    $lite_plan_status = false;
    $lite_plan_status = StringHelper::newLitePlanStatus($findUserID);
@@ -4170,7 +4174,7 @@ public function getFamilCoverageAccounts( )
                             //     $returnObject->data['users']['dependents'][] = $profile;
                             // }
     }
-  } 
+  }
                     // else {
                     //     $returnObject->status = TRUE;
                     //     $returnObject->data['users'] = [];
@@ -4978,7 +4982,7 @@ public function getEclaimTransactions( )
     $user_type = PlanHelper::getUserAccountType($findUserID);
     $e_claim = [];
     $paginate = [];
-    
+
     if($dates) {
       if(isset($input['paginate']) && !empty($input['paginate']) && $input['paginate'] == true) {
         $per_page = !empty($input['per_page']) ? $input['per_page'] : 5;
@@ -4997,7 +5001,7 @@ public function getEclaimTransactions( )
                       ->orderBy('date', 'desc')
                       ->paginate($per_page);
         }
-        
+
       } else {
         if($user_type == "employee") {
           $e_claims = DB::table('e_claim')
@@ -5014,7 +5018,7 @@ public function getEclaimTransactions( )
                       ->orderBy('date', 'desc')
                       ->get();
         }
-        
+
       }
 
       foreach ($e_claims as $key => $res) {
@@ -5106,7 +5110,7 @@ public function getEclaimTransactions( )
     } else {
       $returnObject->data = $e_claim;
     }
-  
+
   return Response::json($returnObject);
 } else {
   $returnObject->status = FALSE;
@@ -5298,7 +5302,7 @@ public function getHealthLists( )
         $customer_active_plan = DB::table('customer_active_plan')
                                 ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
                                 ->first();
-        
+
         if($customer_active_plan->account_type == "enterprise_plan")  {
           if($input['spending_type'] == "medical") {
             $spending_types = DB::table('health_types')->where('account_type', $customer_active_plan->account_type)->where('active', 1)->get();
@@ -5324,7 +5328,7 @@ public function getHealthLists( )
           ->get();
           if(sizeof($get_company_e_claim_services) > 0) {
             $spending_types = $get_company_e_claim_services;
-          } else { 
+          } else {
             $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
           }
         }
@@ -5492,17 +5496,31 @@ public function createEclaim( )
   $ids = StringHelper::getSubAccountsID($findUserID);
   $user_id = StringHelper::getUserId($findUserID);
   $check_user_balance = DB::table('e_wallet')->where('UserID', $user_id)->first();
-  
-  $customer_id = PlanHelper::getCustomerId($user_id);
-  // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
-  $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-  if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
+  // check if enable to access feature
+  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
+  if($transaction_access)	{
     $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Member not eligible for Non-Panel transactions';
+    $returnObject->status_type = 'access_block';
+    $returnObject->head_message = 'E-Claim Unavailable';
+    $returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
     return Response::json($returnObject);
   }
+
+  $customer_id = PlanHelper::getCustomerId($user_id);
+  $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+
+  // $disabledClaim = ($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == true) ? false : true;
+  $enabledClaim = ($input['spending_type'] == "medical" && $spending['medical_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_non_panel_submission'] == true) || ($input['spending_type'] == "wellness" && $spending['wellness_benefits_coverage'] == 'out_of_pocket') ? true : false;
+  if(!$enabledClaim) {
+    $returnObject->status = FALSE;
+    $returnObject->status_type = 'access_block';
+    $returnObject->head_message = 'E-Claim Unavailable';
+    $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+    $returnObject->sub_message = '';
+    return Response::json($returnObject);
+  }
+
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
   if($user_type == "employee") {
@@ -5533,7 +5551,7 @@ public function createEclaim( )
       $returnObject->message = 'Maximum of 14 visits already reached.';
       return Response::json($returnObject);
     }
-  
+
     if($limit <= 0) {
       $returnObject->status = FALSE;
       $returnObject->head_message = 'Non-Panel Error';
@@ -5543,23 +5561,13 @@ public function createEclaim( )
 
     // check if A&E already get for 2 times
     $claim_status = EclaimHelper::checkMemberClaimAEstatus($user_id);
-    
+
     if($claim_status && $input['service'] == "Accident & Emergency") {
       $returnObject->status = FALSE;
       $returnObject->head_message = '2/2 A&E used';
       $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
       return Response::json($returnObject);
     }
-  }
-
-  // check if enable to access feature
-  $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
-
-  if($transaction_access)	{
-    $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Non-Panel function is disabled for your company.';
-    return Response::json($returnObject);
   }
 
   $input_amount = 0;
@@ -5648,7 +5656,7 @@ if($customer_id) {
   ->first();
   if($get_company_e_claim_service) {
     $data['cap_amount'] = $get_company_e_claim_service->cap_amount;
-  }  
+  }
 }
 $data['spending_type'] = !empty($input['spending_type']) ? $input['spending_type'] : "medical";
 if($customer_active_plan->account_type == "enterprise_plan")  {
@@ -5680,7 +5688,7 @@ try {
       MemberHelper::deductPlanHistoryVisit($input['user_id']);
     }
   }
-  
+
   $e_claim_docs = new EclaimDocs( );
     // loop ang process
   foreach (Input::file('files') as $key => $file) {
@@ -5739,9 +5747,9 @@ try {
     );
     SystemLogLibrary::createAdminLog($admin_logs);
    } catch(Exeption $e) {
-    
+
    }
-    
+
  } else {
   $email = [];
   $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
@@ -5944,7 +5952,7 @@ public function payCreditsNew( )
                   $returnObject->message = 'You have insufficient '.$spending_type.' credits in your account';
                   $returnObject->sub_mesage = 'Lite Plan users needs an additional S$'.number_format($co_paid_amount, 2).' to be able to pay for the transaction.';
                   return Response::json($returnObject);
-                } 
+                }
                 } else {
                   $total_credits = self::floatvalue($credits);
                   if(self::floatvalue($credits) > $user_credits) {
@@ -6379,7 +6387,7 @@ public function payCreditsNew( )
                   }
                 }
 
-                public function removeCheckIn( ) 
+                public function removeCheckIn( )
                 {
                   $AccessToken = new Api_V1_AccessTokenController();
                   $returnObject = new stdClass();
@@ -6523,7 +6531,7 @@ public function payCreditsNew( )
                                       ->where('user_id', $user_id)
                                       ->orderBy('created_at', 'desc')
                                       ->first();
-          
+
           $customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_active_plan_history->customer_active_plan_id)->first();
           if($customer_active_plan->account_type != "enterprise_plan" || $customer_active_plan->account_type == "enterprise_plan" && $input['spending_type'] == "wellness") {
             $date = date('Y-m-d', strtotime($input['visit_date']));
@@ -6542,8 +6550,8 @@ public function payCreditsNew( )
             }
 
             $data = array(
-              'balance' => DecimalHelper::formatDecimal($balance), 
-              'term_status' => $term_status, 
+              'balance' => DecimalHelper::formatDecimal($balance),
+              'term_status' => $term_status,
               'currency_type' => $spending['currency_type'],
               'last_term' => $spending['back_date'],
               'claim_amounts' => $claim_amounts
@@ -6551,14 +6559,14 @@ public function payCreditsNew( )
           } else {
             $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
             $data = array(
-              'balance' => 99999, 
-              'term_status' => 'Current', 
+              'balance' => 99999,
+              'term_status' => 'Current',
               'currency_type' => $wallet->currency_type,
               'last_term' => false,
               'claim_amounts' => 0
             );
           }
-          
+
           $returnObject->status = true;
           $returnObject->data = $data;
           return Response::json($returnObject);
@@ -6622,54 +6630,82 @@ public function payCreditsNew( )
     $input = Input::all();
 
     if(!empty($getRequestHeader['Authorization'])){
-      $config = Config::get('config.deployment');
-      $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
-      if($config == "Production") {
-        return MemberHelper::getMemberSpendingStatusLive($getRequestHeader['Authorization'], $type);
-      } else {
-        $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
-        if($getAccessToken){
-          $findUserID = $authSession->findUserID($getAccessToken->session_id);
-          if($findUserID){
-            $user_id = StringHelper::getUserId($findUserID);
-            $customer_id = PlanHelper::getCustomerId($user_id);
-            $spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
-            $user_type = PlanHelper::getUserAccountType($findUserID);
-            
-            if($type == "spending") {
-              $returnObject->status = true;
-              if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'zero_balance';
-                $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
-                $returnObject->sub_message = '';
-                return Response::json($returnObject);
-              }
-                
-              if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-                $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
+      $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
+      if($getAccessToken){
+         $findUserID = $authSession->findUserID($getAccessToken->session_id);
+         if($findUserID){
+          $input = Input::all();
+          $user_id = StringHelper::getUserId($findUserID);
+          $customer_id = PlanHelper::getCustomerId($user_id);
+          $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
+          $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+          $user_type = PlanHelper::getUserAccountType($findUserID);
 
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'zero_balance';
-                $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+          if($type == "spending") {
+            $returnObject->status = true;
+            // check if user id deactivated
+            $deactivated = MemberHelper::checkMemberDeactivated($user_id);
 
-                if($current_balance <= 0) {
-                  $returnObject->status = FALSE;
-                  $returnObject->status_type = 'zero_balance';
-                  $returnObject->head_message = 'Registration on Hold';
-                  $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-                  $returnObject->sub_message = 'Kindly contact your HR for more details.';
-                  return Response::json($returnObject);
-                }
-              }
-            
-              // check for member transaction
-              $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+            if($deactivated) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
 
-              if($transaction_access)	{
+            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+            //     $returnObject->status = FALSE;
+            //     $returnObject->status_type = 'zero_balance';
+            //     $returnObject->head_message = 'Registration on Hold';
+            //     // $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+            //     $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more details.';
+            //     $returnObject->sub_message = '';
+            //     return Response::json($returnObject);
+            // }
+
+            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+            //   $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
+
+            //   if($current_balance <= 0) {
+            //     $returnObject->status = FALSE;
+            //     $returnObject->status_type = 'zero_balance';
+            //     $returnObject->head_message = 'Registration on Hold';
+            //     $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+            //     $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //     return Response::json($returnObject);
+            //   }
+            // }
+
+             // check for member transaction
+             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
+             if($transaction_access)	{
+               $returnObject->status = FALSE;
+               $returnObject->status_type = 'registration_hold';
+               $returnObject->head_message = 'Registration On Hold';
+               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+               $returnObject->sub_message = 'Kindly contact your HR for more details.';
+               return Response::json($returnObject);
+             }
+
+            // // check visit limit
+            if($user_type == "employee") {
+              $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('customer_active_plan')
+              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+              ->first();
+            } else {
+              $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('dependent_plans')
+                            ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+                            ->first();
+            }
+
+            if($customer_active_plan->account_type == "enterprise_plan")	{
+              $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+
+              if($limit <= 0) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'registration_hold';
                 $returnObject->head_message = 'Registration On Hold';
@@ -6678,18 +6714,25 @@ public function payCreditsNew( )
                 return Response::json($returnObject);
               }
 
-              // // check visit limit
-              if($user_type == "employee") {
-                $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-                $customer_active_plan = DB::table('customer_active_plan')
-                ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                ->first();
-              } else {
-                $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
-                $customer_active_plan = DB::table('dependent_plans')
-                              ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
-                              ->first();
-              }
+            // check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
+
+            if(!$validity) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'zero_balance';
+              $returnObject->head_message = 'Registration on Hold';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
+
+            $returnObject->status = TRUE;
+            $returnObject->status_type = 'with_balance';
+            $returnObject->message = 'You have access this feature at the moment.';
+            $returnObject->sub_message = '';
+            return Response::json($returnObject);
+          } else {
+            $deactivated = MemberHelper::checkMemberDeactivated($user_id);
 
               if($customer_active_plan->account_type == "enterprise_plan")	{
                 $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
@@ -6708,19 +6751,10 @@ public function payCreditsNew( )
               $returnObject->message = 'You have access this feature at the moment.';
               $returnObject->sub_message = '';
               return Response::json($returnObject);
-            } else {
-              $deactivated = MemberHelper::checkMemberDeactivated($user_id);
-
-              if($deactivated) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'without_e_claim';
-                $returnObject->head_message = 'E-Claim Unavailable';
-                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
-                $returnObject->sub_message = '';
-                return Response::json($returnObject);
-              }
-
-              if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+            }
+            
+            if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
+              if($spending['wellness_enabled'] == false) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'without_e_claim';
                 $returnObject->head_message = 'E-Claim Unavailable';
@@ -6728,33 +6762,49 @@ public function payCreditsNew( )
                 $returnObject->sub_message = 'Kindly contact your HR for more details.';
                 return Response::json($returnObject);
               }
+            }
 
-              if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
-                if($spending['wellness_enabled'] == false) {
-                  $returnObject->status = FALSE;
-                  $returnObject->status_type = 'without_e_claim';
-                  $returnObject->head_message = 'E-Claim Unavailable';
-                  $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-                  $returnObject->sub_message = 'Kindly contact your HR for more details.';
-                  return Response::json($returnObject);
-                }
-              }
+            // check if e-claim platform is enable
+            // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-              // check if e-claim platform is enable
-              $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+            // if($customer && (int)$customer->access_e_claim == 0) {
+            //   $returnObject->status = FALSE;
+            //   $returnObject->status_type = 'without_e_claim';
+            //   $returnObject->head_message = 'E-Claim Unavailable';
+            //   $returnObject->message = 'The E-Claim function has been disabled for your company.';
+            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //   return Response::json($returnObject);
+            // }
 
-              if($customer && (int)$customer->access_e_claim == 0) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'without_e_claim';
-                $returnObject->head_message = 'E-Claim Disabled';
-                $returnObject->message = 'The E-Claim function has been disabled for your company.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
-                return Response::json($returnObject);
-              }
-            
-              // check for member transaction
-              $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
-              if($transaction_access)	{
+            // check for member transaction
+            $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
+
+            if($transaction_access)	{
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-claim Unavailable';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+              $returnObject->sub_message = 'Kindly contact your HR for more details.';
+              return Response::json($returnObject);
+            }
+
+            // // check visit limit
+            if($user_type == "employee") {
+              $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('customer_active_plan')
+              ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+              ->first();
+            } else {
+              $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
+              $customer_active_plan = DB::table('dependent_plans')
+                            ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+                            ->first();
+            }
+
+            if($customer_active_plan->account_type == "enterprise_plan")	{
+              $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
+
+              if($limit <= 0) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'without_e_claim';
                 $returnObject->head_message = 'E-claim Disabled';
@@ -6763,40 +6813,29 @@ public function payCreditsNew( )
                 return Response::json($returnObject);
               }
 
-              // check visit limit
-              if($user_type == "employee") {
-                $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-                $customer_active_plan = DB::table('customer_active_plan')
-                ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-                ->first();
-              } else {
-                $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $findUserID)->orderBy('created_at', 'desc')->first();
-                $customer_active_plan = DB::table('dependent_plans')
-                              ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
-                              ->first();
-              }
-            
-              if($customer_active_plan->account_type == "enterprise_plan")	{
-                $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
-          
-                if($limit <= 0) {
-                  $returnObject->status = FALSE;
-                  $returnObject->status_type = 'exceed_limit';
-                  $returnObject->head_message = '14/14 visits used';
-                  $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
-                  $returnObject->sub_message = '';
-                  return Response::json($returnObject);
-                }
-              }
-
-              $returnObject->status = TRUE;
-              $returnObject->status_type = 'with_e_claim';
-              $returnObject->message = 'You have access this feature at the moment.';
+            if($customer_active_plan->account_type == "out_of_pocket" && $spending['medical_benefits_coverage'] == "out_of_pocket" && $spending['wellness_benefits_coverage'] == "out_of_pocket")	{
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable ';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
-          } else {
-            $returnObject->status = FALSE;
-            $returnObject->message = StringHelper::errorMessage("Token");
+
+            // check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
+            if(!$validity) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable ';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              $returnObject->sub_message = '';
+              return Response::json($returnObject);
+            }
+
+            $returnObject->status = TRUE;
+            $returnObject->status_type = 'with_e_claim';
+            $returnObject->message = 'You have access this feature at the moment.';
             return Response::json($returnObject);
           }
 
@@ -6816,10 +6855,10 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     }
   }
-  
+
   public function sendOtpMobile( ) {
       $input = Input::all();
-      
+
       if (isset($input['country']) && strtoupper($input['country']) == 'MYR') {
         return self::sendMYROtpMobile($input);
       } else {
@@ -6840,8 +6879,8 @@ public function payCreditsNew( )
             - mobile  (if This key is empty or not exist but NRIC is not empty it Means that login process will follow the new MY login process.)
             - nric (This key will be the identifier that new login process will MY login process)
             - passport (This key will be the identifier that new login process will MY login process)
-      */ 
-      
+      */
+
       // Check county
       if (isset($input['country']) && strtoupper($input['country']) == 'MYR') {
         // Follow the new MY login process.
@@ -6921,7 +6960,7 @@ public function payCreditsNew( )
     $checker = DB::table('user')
       ->select('UserID', 'Name as name', 'member_activated')
       ->where('UserID', $input['user_id'])->first();
-    
+
       if(!$checker) {
         $returnObject->status = false;
         $returnObject->message = 'User not found!';
@@ -6946,7 +6985,7 @@ public function payCreditsNew( )
         'account_update_status' => 1,
         'account_already_update'  => 1
       ];
-      
+
       DB::table('user')->where('UserID', $checker->UserID)->update($newPassword);
       $token = StringHelper::createLoginToken($checker->UserID, $input['client_id']);
       if(!$token->status) {
@@ -7001,7 +7040,7 @@ public function payCreditsNew( )
       $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
       if($getAccessToken){
         $findUserID = $authSession->findUserID($getAccessToken->session_id);
-      
+
         if($findUserID){
           $user_type = PlanHelper::getUserAccountType($findUserID);
 
@@ -7061,11 +7100,11 @@ public function payCreditsNew( )
   function MYRMemberVerification($keys) {
     $returnObject = new stdClass();
     $userModel = new User();
-    
+
     // Login using Mobile number
     if (isset($keys['mobile'])) {
         // Check Member mobile number if already registered
-        $userDetails = $userModel->checkMemberExistence(array( 
+        $userDetails = $userModel->checkMemberExistence(array(
                                       array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $keys['mobile']),
                                       array( 'paramKey' => 'PhoneCode', 'paramKeyValue'=> $keys['PhoneCode'])
                                   ));
@@ -7082,14 +7121,14 @@ public function payCreditsNew( )
           return Response::json($returnObject);
         }
     }
-    
+
     // Login using NRIC
     if (!empty($keys['nric']) && isset($keys['nric'])) {
       // Check if NRIC already exist
-      $userDetails = $userModel->checkMemberExistence(array( 
+      $userDetails = $userModel->checkMemberExistence(array(
                                     array( 'paramKey' => 'NRIC', 'paramKeyValue'=> $keys['nric'])
                                 ));
-        
+
       if (!$userDetails) {
           $returnObject->status = false;
           $returnObject->message = 'Unregistered Member.';
@@ -7102,11 +7141,11 @@ public function payCreditsNew( )
         return Response::json($returnObject);
       }
     }
-    
+
     // Login using Passport
     if (!empty($keys['passport']) && isset($keys['passport'])) {
       // Check if passport already exist
-      $userDetails = $userModel->checkMemberExistence(array( 
+      $userDetails = $userModel->checkMemberExistence(array(
                                     array( 'paramKey' => 'passport', 'paramKeyValue'=> $keys['passport'])
                                 ));
 
@@ -7148,7 +7187,7 @@ public function payCreditsNew( )
     }
 
     // Check if user id exist.
-    $userRecord = $userDetails->checkMemberExistence(array( 
+    $userRecord = $userDetails->checkMemberExistence(array(
                                   array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['user_id'])
                               ));
 
@@ -7156,10 +7195,10 @@ public function payCreditsNew( )
       $returnObject->status = false;
       $returnObject->message = 'User not exist.';
       return Response::json($returnObject);
-    } 
-    
+    }
+
     // Verify OTP shit
-    $OTPVerified = $userDetails->checkMemberExistence(array( 
+    $OTPVerified = $userDetails->checkMemberExistence(array(
                                       array( 'paramKey' => 'OTPCode', 'paramKeyValue'=> $input['otp_code'])
                                   ));
 
@@ -7174,7 +7213,7 @@ public function payCreditsNew( )
       }
 
       // Get new set of member records.
-      $userNewRecord = $userDetails->checkMemberExistence(array( 
+      $userNewRecord = $userDetails->checkMemberExistence(array(
                                         array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['user_id'])
                                     ));
 
@@ -7226,7 +7265,7 @@ public function payCreditsNew( )
     $returnObject->status = true;
     $returnObject->message = 'OTP Code is valid';
     $returnObject->data = $checker;
-    return Response::json($returnObject); 
+    return Response::json($returnObject);
   }
 
   function sendMYROtpMobile ($input) {
@@ -7252,15 +7291,15 @@ public function payCreditsNew( )
       }
 
       // Check if mobile number already
-      $mobileExist = $userDetails->checkMemberExistence(array( 
+      $mobileExist = $userDetails->checkMemberExistence(array(
           array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile']),
           // array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId'])
       ));
-      
+
       if ($mobileExist) {
         $returnObject->status = false;
         $returnObject->message = 'Mobile number already been used.';
-        return Response::json($returnObject); 
+        return Response::json($returnObject);
       }
 
       $mobile_number = (int)$input['mobile'];
@@ -7285,9 +7324,9 @@ public function payCreditsNew( )
       $returnObject->status = true;
       $returnObject->message = 'OTP SMS sent';
       $returnObject->data = $userRecord;
-      return Response::json($returnObject);  
+      return Response::json($returnObject);
   }
-  
+
   function sendSGDOtpMobile ($input) {
     $returnObject = new stdClass();
 
@@ -7347,22 +7386,22 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     } else {
       // Check if mobile number already
-      $mobileExist = $userDetails->checkMemberExistence(array( 
+      $mobileExist = $userDetails->checkMemberExistence(array(
                                   array( 'paramKey' => 'PhoneNo', 'paramKeyValue'=> $input['mobile_number']),
                                   // array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['userId']),
                                   array( 'paramKey' => 'Active', 'paramKeyValue'=> 1),
                               ));
-      
+
       if ($mobileExist) {
         $returnObject->status = false;
         $returnObject->message = 'Mobile number already been used.';
-        return Response::json($returnObject); 
+        return Response::json($returnObject);
       } else {
         // Update User OTP record
         $userDetails->updateMemberRecord($input['userId'], array('PhoneNo' => $input['mobile_number'], 'PhoneCode' => $input['phoneCode']));
         $returnObject->status = true;
         $returnObject->message = 'Mobile number successfully registered.';
-        return Response::json($returnObject); 
+        return Response::json($returnObject);
       }
 
     }

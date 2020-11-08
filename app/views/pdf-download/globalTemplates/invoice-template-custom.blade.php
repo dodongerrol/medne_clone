@@ -49,7 +49,7 @@
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: SAM NG</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">7 JALAN KENARI 19,  BANDAR PUTRA</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">038989</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">MALAYSIA</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;text-transform: uppercase;">MALAYSIA</p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;">
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">
