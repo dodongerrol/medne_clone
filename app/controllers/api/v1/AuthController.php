@@ -6627,7 +6627,6 @@ public function payCreditsNew( )
     $returnObject = new stdClass();
     $authSession = new OauthSessions();
     $getRequestHeader = StringHelper::requestHeader();
-    $input = Input::all();
 
     if(!empty($getRequestHeader['Authorization'])){
       $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
@@ -6707,12 +6706,13 @@ public function payCreditsNew( )
 
               if($limit <= 0) {
                 $returnObject->status = FALSE;
-                $returnObject->status_type = 'registration_hold';
-                $returnObject->head_message = 'Registration On Hold';
-                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+                $returnObject->status_type = 'exceed_limit';
+                $returnObject->head_message = '14/14 visits used';
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
+                $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
+            }
 
             // check member wallet spending validity
             $validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
@@ -6734,21 +6734,11 @@ public function payCreditsNew( )
           } else {
             $deactivated = MemberHelper::checkMemberDeactivated($user_id);
 
-              if($customer_active_plan->account_type == "enterprise_plan")	{
-                $limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
-                if($limit <= 0) {
-                  $returnObject->status = FALSE;
-                  $returnObject->status_type = 'exceed_limit';
-                  $returnObject->head_message = '14/14 visits used';
-                  $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
-                  $returnObject->sub_message = '';
-                  return Response::json($returnObject);
-                }
-              }
-              
-              $returnObject->status = TRUE;
-              $returnObject->status_type = 'with_balance';
-              $returnObject->message = 'You have access this feature at the moment.';
+            if($deactivated) {
+              $returnObject->status = FALSE;
+              $returnObject->status_type = 'without_e_claim';
+              $returnObject->head_message = 'E-Claim Unavailable';
+              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
               $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
@@ -6758,7 +6748,7 @@ public function payCreditsNew( )
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'without_e_claim';
                 $returnObject->head_message = 'E-Claim Unavailable';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
                 $returnObject->sub_message = 'Kindly contact your HR for more details.';
                 return Response::json($returnObject);
               }
@@ -6806,12 +6796,13 @@ public function payCreditsNew( )
 
               if($limit <= 0) {
                 $returnObject->status = FALSE;
-                $returnObject->status_type = 'without_e_claim';
-                $returnObject->head_message = 'E-claim Disabled';
-                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-                $returnObject->sub_message = 'Kindly contact your HR.';
+                $returnObject->status_type = 'exceed_limit';
+                $returnObject->head_message = '14/14 visits used';
+                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
+                $returnObject->sub_message = '';
                 return Response::json($returnObject);
               }
+            }
 
             if($customer_active_plan->account_type == "out_of_pocket" && $spending['medical_benefits_coverage'] == "out_of_pocket" && $spending['wellness_benefits_coverage'] == "out_of_pocket")	{
               $returnObject->status = FALSE;
@@ -6848,7 +6839,11 @@ public function payCreditsNew( )
           $returnObject->message = StringHelper::errorMessage("Token");
           return Response::json($returnObject);
         }
-      }
+      } else {
+       $returnObject->status = FALSE;
+       $returnObject->message = StringHelper::errorMessage("Token");
+       return Response::json($returnObject);
+     }
     } else {
       $returnObject->status = FALSE;
       $returnObject->message = StringHelper::errorMessage("Token");
