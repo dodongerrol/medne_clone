@@ -477,7 +477,11 @@ login.directive('eclaimLogin', [
               scope.checkMemberPassword = response.data;
               if ( response.data.status ) {
                 scope.hideLoading();
-                scope.showPostalCodeInput = true;
+                if(scope.checkMemberData.postal_code == 1){
+                  scope.signIn();
+                }else{
+                  scope.showPostalCodeInput = true;
+                }
               } else {
                 scope.hideLoading();
                 scope.passwordSignInNotMatch = true;

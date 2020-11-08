@@ -1897,6 +1897,7 @@ class EmployeeController extends \BaseController {
                     'updated_wellness_entitlement' => true,
                     'currency_type'                => strtoupper($entitlement->currency_type)
                 );
+                
             } else if($check_entitlement_medical) {
                 $data = array(
                     'status' => true,
@@ -2940,18 +2941,18 @@ class EmployeeController extends \BaseController {
 
         $medical = array(
             'entitlement' => $wallet_entitlement->medical_entitlement,
-            'credits_allocation' => $medical_credit_data['allocation'],
-            'credits_spent'     => $medical_credit_data['get_allocation_spent'],
-            'balance'           => $active_plan->account_type == 'super_pro_plan' || $active_plan->account_type == 'enterprise_plan' ? 'UNLIMITED' :  $medical_credit_data['balance'],
+            'credits_allocation' => DecimalHelper::formatDecimal($medical_credit_data['allocation']),
+            'credits_spent'     => DecimalHelper::formatDecimal($medical_credit_data['get_allocation_spent']),
+            'balance'           => DecimalHelper::formatDecimal($active_plan->account_type == 'super_pro_plan' || $active_plan->account_type == 'enterprise_plan' ? 'UNLIMITED' :  $medical_credit_data['balance']),
             'e_claim_amount_pending_medication' => $e_claim_amount_pending_medication,
             'currency_type'  =>  $wallet->currency_type
         );
 
         $wellness = array(
             'entitlement' => $wallet_entitlement->wellness_entitlement,
-            'credits_allocation_wellness'    => $wellness_credit_data['allocation'],
-            'credits_spent_wellness'        => $wellness_credit_data['get_allocation_spent'],
-            'balance'                       => $active_plan->account_type == 'super_pro_plan' || $active_plan->account_type == 'enterprise_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent'],
+            'credits_allocation_wellness'    => DecimalHelper::formatDecimal($wellness_credit_data['allocation']),
+            'credits_spent_wellness'        => DecimalHelper::formatDecimal($wellness_credit_data['get_allocation_spent']),
+            'balance'                       => DecimalHelper::formatDecimal($active_plan->account_type == 'super_pro_plan' || $active_plan->account_type == 'enterprise_plan' ? 'UNLIMITED' : $wellness_credit_data['allocation'] - $wellness_credit_data['get_allocation_spent']),
             'e_claim_amount_pending_wellness'   => $e_claim_amount_pending_wellness,
             'currency_type'  =>  $wallet->currency_type
         );
