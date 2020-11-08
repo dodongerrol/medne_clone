@@ -1,0 +1,139 @@
+<div class="out-of-pocket-wrapper" out-of-pocket-directive>
+  <div class="show-details-on-container">
+    <div>
+      <span class="member-bold-text">Show details on</span> 
+      <div class="current-term-wrapper"> 
+        <div ng-click="termSelector()" class="current-term-input-wrapper">
+          <span>{{ selectedTerm.term }}</span>
+          <i class="fa fa-angle-down"></i>
+        </div>
+        <div ng-if="showLastTermSelector && selectedTerm != list" ng-repeat="list in dateTerm" class="last-term-selector">
+          <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
+        </div>
+      </div>
+      <div>
+        <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
+      </div>
+    </div>
+    <div>
+      <!-- <button>Save</button> -->
+    </div>
+  </div>
+  <div class="mwbc-box-container">
+    <h4 class="member-bold-text">Out of pocket</h4>
+    <p class="prepaid-subtext">This indicates that no plan is in effect to enable employee benefits budget allocation, meaning all employees will be charged for the cost of their own benefits usage.</p>
+    <div class="mwbc-card-box-container">
+      <div class="available-credits-container">
+        <div class="available-credits">
+          <span class="available-credits-container dp-flex-ai">
+            <div class="available-credits-text member-bold-text">Total Employee Transaction</div>
+            <span class="credits-tooltip-wrapper">
+              <img ng-click="toggleTransaction()" class="member-summary-info-tooltip" src="../../assets/hr-dashboard/img/summary-info-tooltip.png">
+              <div class="credits-tooltip-container total-member-transaction">
+                <div class="tooltip-title">Total Employee Transaction</div>
+                <p>Total spending by employees at Mednefits panel visits.
+                </p>
+                <div class="tooltip-btn-footer">
+                  <button ng-click="toggleTransaction()">Got it</button>
+                </div>
+              </div> 
+            </span>
+          </span>
+          <span>
+            <div class="available-credits-amount member-bold-text"><span class="currency-type" ng-bind="benefitsCoverageData.currency_type"></span> {{ benefitsCoverageData.spent ? benefitsCoverageData.spent : 0 | number : 2 }}</div>
+          </span>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <div class="mwbc-box-container">
+    <div class="dp-flex-ai">
+      <h5 class="member-bold-text flex-1">Member Wallet</h5>
+      <div ng-if="false">
+        <button class="edit-btn"><img src="../../assets/hr-dashboard/img/edit.png">Edit</button>
+      </div>
+    </div>
+    <div ng-if="(!benefitsCoverageData.medical.panel || !benefitsCoverageData.medical.non_panel) && (!benefitsCoverageData.wellness.panel || !benefitsCoverageData.wellness.non_panel)" class="mednefits-credits-pending">
+      <div>This method is currently not in use due to pending Mednefits Credits Account Invoice.</div>
+    </div>
+    <div ng-if="(benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel) || (benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel)">
+      <div>
+        Mednefits Credits is currently used in:
+      </div>
+      <div>
+        <div ng-if="medical_wallet_details.benefits_coverage == 'out_of_pocket'" class="wallet-container medical-wallet-container display-flex">
+          <div ng-if="benefitsCoverageData.medical.panel || benefitsCoverageData.medical.non_panel" class="member-bold-text">Medical Wallet:</div>
+          <div class="display-flex wallet-panel-container">
+            <div ng-if="benefitsCoverageData.medical.panel">Mednefits Panel</div>
+            <div ng-if="benefitsCoverageData.medical.non_panel">Non Panel</div>
+          </div>
+        </div>
+        <div ng-if="wellness_wallet_details.benefits_coverage == 'out_of_pocket'" class="wallet-container wellness-wallet-container display-flex">
+          <div ng-if="benefitsCoverageData.wellness.panel || benefitsCoverageData.wellness.non_panel" class="member-bold-text">Wellness Wallet:</div>
+          <div class="display-flex wallet-panel-container">
+            <div ng-if="benefitsCoverageData.wellness.non_panel">Non Panel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mwbc-box-container">
+    <h5 class="member-bold-text">Activities</h5>
+    <div class="member-activities-table-wrapper">
+      <div class="member-activities-table-container">
+        <table>
+          <thead>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount</th>
+          </thead>
+          <tbody ng-repeat="list in spending_activity.data">
+            <tr>
+              <td>{{formatTableDate(list.created_at)}}</td>
+              <td>{{list.label || 'N/A'}}</td>
+              <!-- <td class="amount-value" ng-class="{'add':list.type_status == 'added','deduct':list.type_status != 'added' }">{{list.type_status == 'added' ? '+':'-' }} <span class="currency-type">{{list.currency_type}}</span> {{list.credit}}</td> -->
+              <td class="amount-value""><span class="currency-type color-black">{{list.currency_type}}</span> {{list.credit}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="custom-pagination-container flex-1">
+          <div class="custom-pagination">
+            <div class="page-wrapper">
+              <div class="page-scroll-container">
+                <span ng-click="_prevPageList_('activity')" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                  <i class="fa fa-angle-left"></i> 
+                  <span>Prev</span>
+                </span>
+                <div class="pages-list">
+                    
+                  <!-- <span class="page-num active">1</span>	 -->
+                  <span ng-repeat="list in range( spending_activity.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_('activity',list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+
+                   <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+                  
+                </div>
+                <span ng-click="_nextPageList_('activity')" class="prev-next-container">  
+                  <span>Next</span>
+                  <i class="fa fa-angle-right"></i> 
+                </span>
+              </div>
+            </div>
+            <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+            <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+              <span><span>10</span> per page</span>
+              <span>  
+                <i class="fa fa-caret-down"></i>
+              </span>
+              <div ng-if="pagination_dropdown" class="opened-per-page-scroll invoice-per-page-container">
+                <span ng-click="_setPageLimit_( 'activity',10 )">10 per page</span>
+                <span ng-click="_setPageLimit_( 'activity',25 )">20 per page</span>
+                <span ng-click="_setPageLimit_( 'activity',50 )">50 per page</span>
+                <span ng-click="_setPageLimit_( 'activity',100 )">100 per page</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div> 

@@ -190,7 +190,7 @@ class StringHelper{
                 return FALSE;
             }
 
-            if($result) {
+            if($result && isset($result->hr_dashboard_id)) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
                             // ->where('active', 1)
@@ -198,6 +198,7 @@ class StringHelper{
                 if($hr) {
                     if((int)$hr->active == 1) {
                         $hr->signed_in = $result->signed_in;
+                        $hr->hr_activated = true;
                         if(isset($result->expire_in)) {
                             $hr->expire_in = $result->expire_in;
                         } else {

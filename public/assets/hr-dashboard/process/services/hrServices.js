@@ -464,6 +464,77 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   hrFactory.updateScheduleDate = function ( data ) {
     return $http.post( serverUrl.url + "/hr/update_enrollment_schedule", data);
   }
+  hrFactory.fetchMednefitsCreditsAccountData = function ( start,end ) {
+    return $http.get( serverUrl.url + "/hr/get_mednefits_credits_account/?start=" + start + "&end=" + end  ); 
+  }
+  hrFactory.fetchDateTerms = function ( type ) {
+    return $http.get( serverUrl.url + "/hr/get_company_date_terms?type=" + type );
+  }
+
+  // Member Wallet
+  hrFactory.fetchMemberWallet = function ( start,end,type ) {
+    return $http.get( serverUrl.url + "/hr/get_member_wallet_details/?start=" + start + "&end=" + end + "&type=" + type );
+  }
+
+  // Mednefits Credits Account Activity Table
+  hrFactory.fetchMednefitsActivitiesData = function ( start,end,page,per_page, account_type ) {
+    var url = serverUrl.url + "/hr/spending_account_activity/?start=" + start + "&end=" + end + "&page=" + page + "&per_page=" + per_page;
+    if(account_type){
+      url += '&coverage_type=' + account_type;
+    }
+    return $http.get(url);
+  }
+
+  // Medical and Wellness Wallent Activity Table
+  hrFactory.fetchMemberWalletActivitiesData = function ( id,type, page, per_page ) {
+    return $http.get( serverUrl.url + "/hr/get_member_allocation_activity/?customer_id=" + id + "&spending_type=" + type + "&page=" + page + "&per_page=" + per_page );
+  }
+
+  // Member save wallet
+  hrFactory.updateMemberWallet = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_member_wallet_details", data);
+  }
+
+  // Active wellness wallet
+  hrFactory.updateWellnessWallet = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/activate_wellness_wallet_details", data);
+  }
+
+  // confirm payment methods
+  hrFactory.updatePaymentMethods = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/update_spending_payment_method", data);
+  }
+
+  // Benefits Coverage
+  hrFactory.fetchBenefitsCoverageData = function ( start,end,type ) {
+    return $http.get( serverUrl.url + "/hr/get_benefits_coverage_details/?start=" + start + "&end=" + end + "&type=" + type );
+  }
+
+  // confirm top up mednefits credits 
+  hrFactory.updateTopUp = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/create_top_up_mednefits_credits", data);
+  }
+
+  hrFactory.updatePrepaidCredits = function ( data ) {
+    return $http.post( serverUrl.url + "/hr/activate_company_mednefits_credits", data);
+  }
+  
+  // Billing 
+  hrFactory.fetchCompanyInvoiceHistory = function ( type, page, per_page ) {
+    return $http.get( serverUrl.url + "/hr/company_invoice_history/?type=" + type + '&page=' + page + 'limit=' + per_page  );
+  }
+
+  // Download SOA
+  hrFactory.downloadSoaData = function ( type,download ) {
+    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download + '&token=' + window.localStorage.getItem('token'));
+    // return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
+  }
+
+  // Activate mednefits basic plan
+  hrFactory.fetchBasicPlan = function ( ) {
+    return $http.post( serverUrl.url + "/hr/activate_mednefits_basic_plan"  );
+  }
+
 
   return hrFactory;
 });

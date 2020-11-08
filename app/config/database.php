@@ -30,6 +30,17 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
+	| Enable database query logging
+	|--------------------------------------------------------------------------
+	|
+	| Set this to true if you want to enable database query logging
+	| Not meant for production environment it'll cause performance issue.
+	|
+	*/
+	'enable_logging' => false,
+
+	/*
+	|--------------------------------------------------------------------------
 	| Database Connections
 	|--------------------------------------------------------------------------
 	|

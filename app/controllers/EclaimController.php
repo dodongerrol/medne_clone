@@ -129,7 +129,6 @@ class EclaimController extends \BaseController {
 		if(!$check) {
 			return array('status' => FALSE, 'message' => 'User does not exist.');
 		}
-
 		
 		// check if their is receipts
 		if(sizeof($input['receipts']) == 0) {
@@ -168,8 +167,6 @@ class EclaimController extends \BaseController {
 		$date = date('Y-m-d', strtotime($input['date']));
 		$claim_amount = $input['claim_amount'];
 		
-		
-
 		if($check_plan) {
 			if($check_plan['expired'] == true) {
 				return array('status' => FALSE, 'message' => 'Employee Plan has expired. You cannot submit an e-claim request.');
@@ -180,9 +177,20 @@ class EclaimController extends \BaseController {
 			}
 		}
 
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'medical');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
+		}
+
+		// check if it is myr or sgd
+		if($check_user_balance->currency_type == "myr" ) {
+			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
+		}
 
 		// check if enable to access feature
-		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
@@ -250,19 +258,19 @@ class EclaimController extends \BaseController {
 			$amount = trim($input['amount']);
 		} else {
 			if(Input::has('currency_type') && $input['currency_type'] != null) {
-			if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
-				$amount = $input['amount'] / $currency;
-				$claim_amount = $claim_amount / $currency;
-			} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
-				$amount = $input['amount'] * $currency;
-				$claim_amount = $claim_amount * $currency;
+				if(strtolower($input['currency_type']) == "myr" && $check_user_balance->currency_type == "sgd") {
+					$amount = $input['amount'] / $currency;
+					$claim_amount = $claim_amount / $currency;
+				} else if (strtolower($input['currency_type']) == "sgd" && $check_user_balance->currency_type == "myr") {
+					$amount = $input['amount'] * $currency;
+					$claim_amount = $claim_amount * $currency;
+				} else {
+					$amount = trim($input['amount']);
+					$claim_amount = trim($claim_amount);
+				}
 			} else {
 				$amount = trim($input['amount']);
 				$claim_amount = trim($claim_amount);
-			}
-			} else {
-			$amount = trim($input['amount']);
-			$claim_amount = trim($claim_amount);
 			}
 		}    	
 
@@ -270,7 +278,6 @@ class EclaimController extends \BaseController {
 			$spending = EclaimHelper::getSpendingBalance($user_id, $date, 'medical');
 			$balance = number_format($spending['balance'], 2);
 			$balance = TransactionHelper::floatvalue($balance);
-
 			if($spending['back_date'] == false) {
 				if($claim_amount > $balance || $balance <= 0) {
 					return array('status' => FALSE, 'message' => 'You have insufficient Benefits Credits for this transaction. Please check with your company HR for more details.');
@@ -304,7 +311,7 @@ class EclaimController extends \BaseController {
 			'default_currency'	=> $check_user_balance->currency_type,
 			'currency_value' => $currency
 		);
-
+		
 		if($customer_id) {
 			// get claim type service cap
 			$get_company_e_claim_service = DB::table('company_e_claim_service_types')
@@ -473,10 +480,17 @@ class EclaimController extends \BaseController {
 		}
 
 		// check if enable to access feature
-		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'non_panel');
 
 		if($transaction_access)	{
 			return array('status' => FALSE, 'message' => 'Non-Panel function is disabled for your company.');
+		}
+
+		// check member wallet spending validity
+		$validity = MemberHelper::getMemberWalletValidity($user_id, 'wellness');
+
+		if(!$validity) {
+			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
 		$check_user_balance = DB::table('e_wallet')->where('UserID', $employee->UserID)->first();
@@ -3184,7 +3198,7 @@ public function getActivityInNetworkTransactions( )
 			$transactions = [];
 		}
 	}
-
+	
 	if(sizeof($transactions) > 0) {
 		$paginate['current_page'] = $transactions->getCurrentPage();
 		$paginate['from'] = $transactions->getFrom();
@@ -3209,8 +3223,8 @@ public function getActivityInNetworkTransactions( )
 
 		if($trans) {
 
-			if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
-				if($trans->deleted == 0 || $trans->deleted == "0") {
+			if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
+				if((int)$trans->deleted == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 					} else {
@@ -3219,8 +3233,6 @@ public function getActivityInNetworkTransactions( )
 					$total_in_network_transactions++;
 
 					if($trans->lite_plan_enabled == 1) {
-
-
 						$logs_lite_plan = DB::table($table_wallet_history)
 						->where('logs', 'deducted_from_mobile_payment')
 						->where('lite_plan_enabled', 1)
@@ -3429,7 +3441,7 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
-       	// check user if it is spouse or dependent
+       			// check user if it is spouse or dependent
 				if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -3512,7 +3524,7 @@ public function getActivityInNetworkTransactions( )
 						}
 					}
 				}
-
+				
 				$bill_amount = 0;
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -3593,6 +3605,10 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
+				if($consultation_credits == false) {
+					$total_amount = $trans->procedure_cost;
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 					$total_amount = $total_amount * $trans->currency_amount;
@@ -3603,10 +3619,10 @@ public function getActivityInNetworkTransactions( )
 					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
+					$bill_amount = $bill_amount * $trans->currency_amount;
 				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
 					$trans->currency_type = "sgd";
 				}
-
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,
@@ -4813,11 +4829,12 @@ public function getHrActivity( )
 	$total_visit_created = 0;
 	$total_allocation = 0;
 	$total_visit_limit  = 0;
-
+	$total_cash_spent = 0;
 	
   	// get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
 	$lite_plan = StringHelper::liteCompanyPlanStatus($session->customer_buy_start_id);
+	$plan = DB::table('customer_plan')->where('customer_buy_start_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
 	$corporate_members = DB::table('corporate_members')
 							->join('user', 'user.UserID', '=', 'corporate_members.user_id')
 							->where('corporate_members.corporate_id', $account->corporate_id)
@@ -4965,10 +4982,10 @@ public function getHrActivity( )
 					$procedure_temp = "";
 					$procedure = "";
 
-	         // get services
+	         		// get services
 					if((int)$trans->multiple_service_selection == 1)
 					{
-	          // get multiple service
+	          			// get multiple service
 						$service_lists = DB::table('transaction_services')
 						->join('clinic_procedure', 'clinic_procedure.ProcedureID', '=', 'transaction_services.service_id')
 						->where('transaction_services.transaction_id', $trans->transaction_id)
@@ -4995,7 +5012,7 @@ public function getHrActivity( )
 						}
 					}
 
-	        // check if there is a receipt image
+	        		// check if there is a receipt image
 					$receipts = DB::table('user_image_receipt')
 					->where('transaction_id', $trans->transaction_id)
 					->get();
@@ -5085,9 +5102,9 @@ public function getHrActivity( )
 						}
 					}
 
-	        $employee = $customer->Name;
+	        		$employee = $customer->Name;
 					$dependent = null;
-	        // check user if it is spouse or dependent
+	        		// check user if it is spouse or dependent
 					if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 						$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 						$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -5107,10 +5124,10 @@ public function getHrActivity( )
 					$half_credits = false;
 					if(strripos($trans->procedure_cost, '$') !== false) {
 						$temp_cost = explode('$', $trans->procedure_cost);
-	            // $cost = number_format($temp_cost[1]);
+	            		// $cost = number_format($temp_cost[1]);
 						$cost = $temp_cost[1];
 					} else {
-	            // $cost = number_format($trans->procedure_cost, 2);
+	            		// $cost = number_format($trans->procedure_cost, 2);
 						$cost = floatval($trans->procedure_cost);
 					}
 					$total_amount = $cost;
@@ -5145,12 +5162,12 @@ public function getHrActivity( )
 						// $cash = number_format($trans->credit_cost, 2);
 						if((int)$trans->lite_plan_enabled == 1) {
 							if((int)$trans->half_credits == 1) {
-	                // $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
+	                		// $total_amount = $trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
 								$total_amount = (float)$trans->credit_cost + $trans->cash_cost;
 								$cash = $trans->cash_cost;
 							} else {
 								$total_amount = (float)$trans->credit_cost + $trans->cash_cost + $trans->consultation_fees;
-	                // $total_amount = $trans->procedure_cost;
+	                			// $total_amount = $trans->procedure_cost;
 								if((float)$trans->credit_cost > 0) {
 									$cash = 0;
 								} else {
@@ -5253,7 +5270,7 @@ public function getHrActivity( )
 						}
 					}
 
-					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+					if($trans->currency_type == "myr") {
 						$total_amount = $total_amount * $trans->currency_amount;
 						$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
 						$trans->cap_per_visit = $trans->cap_per_visit * $trans->currency_amount;
@@ -5261,8 +5278,11 @@ public function getHrActivity( )
 						$consultation_credits = $consultation_credits * $trans->currency_amount;
 						$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 						$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
+						$cash = $cash * $trans->currency_amount;
 					}
 
+					$in_network_spent += $consultation;
+					$total_cash_spent += $cash;
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					$format = array(
@@ -5444,7 +5464,8 @@ public function getHrActivity( )
 		}
 	}
 
-	$total_spent = $e_claim_spent + $in_network_spent + $total_lite_plan_consultation;
+	$total_spent = $e_claim_spent + $in_network_spent;
+	$temp_total_in_network_spent_format_number = $in_network_spent;
   	// sort in-network transaction
 	usort($transaction_details, function($a, $b) {
 		return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
@@ -5470,21 +5491,40 @@ public function getHrActivity( )
 	if($total_visit_created > 0) {
 		$total_average_visit = $total_visit_created / $total_occupied_seats;
 	}
+
+	// $temp_total_in_network_spent_format_number = array_sum(
+	// 	array_column($transaction_details, 'amount')
+	// );
+	
+	if($plan->account_type == "out_of_pocket") {
+		$total_spent = $total_cash_spent + $e_claim_spent;
+	}
+
+	$cash = array_pluck($transaction_details, 'cash');
+	$out_of_pocket_in_network_spent_format_number = sum($cash);
+
+	$total_balance = $plan->account_type == "out_of_pocket" ? 0 : $total_allocation - $total_spent;
+
+	if ($spending_type == 'wellness') {
+		$total_balance = $total_allocation - $total_spent;
+	}
 	
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
-		'total_balance'			=> $total_allocation - $total_spent,
+		// 'total_balance'			=> $total_allocation - $total_spent,
+		'total_balance' => $total_balance,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
 		'in_network_spent'  => number_format($in_network_spent + $total_lite_plan_consultation, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		'in_network_transactions' => $transaction_details,
 		'in_network_transactions_size' => sizeof($transaction_details),
-		'in_network_spending_format_number' => $in_network_spent + $total_lite_plan_consultation,
+		'in_network_spending_format_number' => $plan->account_type == "out_of_pocket" ? $out_of_pocket_in_network_spent_format_number : $in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		'e_claim_transactions'	=> $e_claim,
 		'total_in_network_spent'    => number_format($in_network_spent + $total_lite_plan_consultation, 2),
-		'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
+		// 'total_in_network_spent_format_number'    => $in_network_spent + $total_lite_plan_consultation,
+		'total_in_network_spent_format_number' => $plan->account_type == "out_of_pocket" ? $out_of_pocket_in_network_spent_format_number : $temp_total_in_network_spent_format_number,
 		'total_lite_plan_consultation'      => floatval($total_lite_plan_consultation),
 		'total_in_network_transactions' => $total_in_network_transactions,
 		'spending_type' => $spending_type,
@@ -5494,7 +5534,9 @@ public function getHrActivity( )
 		'total_visit_limit'	=> $total_visit_limit,
 		'total_visit_created' => $total_visit_created,
 		'total_balance_visit' => $total_visit_limit - $total_visit_created,
-		'total_average_visit'	=> round($total_average_visit, 2)
+		'total_average_visit'	=> round($total_average_visit, 2),
+		'total_cash_spent'	=> $total_cash_spent,
+		'total_cash_transactions'	=> $total_cash_transactions
 
 	);
 
@@ -6673,7 +6715,7 @@ public function updateEclaimStatus( )
 	$hr_data = StringHelper::getJwtHrSession();
 	$hr_id = $hr_data->hr_dashboard_id;
 	$e_claim = new Eclaim( );
-
+	$spending_method = "post_paid";
 	if((int)$check->status == 1 || (int)$check->status == 2) {
 		return array('status' => true, 'message' => 'E-Claim updated.', 'updated_already' => true);
 	}
@@ -6686,7 +6728,8 @@ public function updateEclaimStatus( )
 
 	if((int)$input['status'] == 1) {
 		$customer_id = PlanHelper::getCustomerId($employee);
-		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->first();
+		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 		$amount = !empty($input['claim_amount']) ? $input['claim_amount'] : $check->amount;
 		$amount = TransactionHelper::floatvalue($amount);
 		$claim_amount = TransactionHelper::floatvalue($input['claim_amount']);
@@ -6737,7 +6780,9 @@ public function updateEclaimStatus( )
 		$history = new WalletHistory( );
     	// check what type of spending wallet the e-claim is
 		if($check->spending_type == "medical") {
-      		// create wallet logs
+			$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'medical');
+			$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+			// create wallet logs
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
@@ -6746,7 +6791,8 @@ public function updateEclaimStatus( )
 				'where_spend'   => 'e_claim_transaction',
 				'id'            => $e_claim_id,
 				'currency_type'	=> $wallet->currency_type,
-				'currency_value' => $check->currency_value
+				'currency_value' => $check->currency_value,
+				'spending_method'	=> $spending_method
 			);
 
 			if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
@@ -6790,6 +6836,20 @@ public function updateEclaimStatus( )
           			// send notification to browser
 					Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 					EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
+					// create non panel invoice
+					try {
+						$start = date('Y-m-01', strtotime($e_claim_details->created_at));
+						$end = PlanHelper::getEndDate($start);
+						if($spending['medical_reimbursement'] == true) {
+							EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
+						}
+					} catch(Exception $e) {
+						$email = [];
+						$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
+						$email['logs'] = 'E-Claim Update Status Medical Create Invoice - '.$e;
+						$email['emailSubject'] = 'Error log.';
+						EmailHelper::sendErrorLogs($email);
+					}
 					if($admin_id) {
 						$data = array(
 							'e_claim_id' => $e_claim_id,
@@ -6836,6 +6896,8 @@ public function updateEclaimStatus( )
 				return array('status' => FALSE, 'message' => 'E-Claim failed to update.');
 			}
 		} else if($check->spending_type == "wellness") {
+			$spending_method = CustomerHelper::getNonPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'wellness');
+			$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
 			// $employee_credits_left = DB::table('e_wallet')->where('wallet_id', $balance->wallet_id)->first();
 			$wallet_logs = array(
 				'wallet_id'     => $wallet->wallet_id,
@@ -6845,7 +6907,8 @@ public function updateEclaimStatus( )
 				'id'            => $e_claim_id,
 				'created_at'	=> $e_claim_details->created_at,
 				'currency_type'	=> $wallet->currency_type,
-				'currency_value' => $check->currency_value
+				'currency_value' => $check->currency_value,
+				'spending_method'	=> $spending_method
 			);
 
 			if($customer_active_plan && $customer_active_plan->account_type == "enterprise_plan") {
@@ -6884,7 +6947,20 @@ public function updateEclaimStatus( )
 						);
 
 						$result = DB::table('e_claim')->where('e_claim_id', $e_claim_id)->update($update_data);
-            // send notification to browser
+						$start = date('Y-m-01', strtotime($e_claim_details->created_at));
+						$end = PlanHelper::getEndDate($start);
+						try {
+							if($spending['wellness_reimbursement'] == true) {
+								EclaimHelper::createNonPanelInvoice($customer_id, $start, $end, $e_claim_details->spending_type);
+							}
+						} catch(Exception $e) {
+							$email = [];
+							$email['end_point'] = url('hr/e_claim_update_status', $parameter = array(), $secure = null);
+							$email['logs'] = 'E-Claim Update Status Wellness Create Invoice - '.$e;
+							$email['emailSubject'] = 'Error log.';
+							EmailHelper::sendErrorLogs($email);
+						}
+						// send notification to browser
 						Notification::sendNotificationEmployee('Claim Approved - Mednefits', 'Your E-claim submission has been approved with Transaction ID - '.$e_claim_id, url('app/e_claim#/activity', $parameter = array(), $secure = null), $e_claim_details->user_id, "https://s3-ap-southeast-1.amazonaws.com/mednefits/images/verified.png");
 						EclaimHelper::sendEclaimEmail($employee, $e_claim_id);
 						if($admin_id) {
@@ -6894,12 +6970,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-                'admin_id'  => $admin_id,
-                'admin_type' => 'mednefits',
-                'type'      => 'admin_hr_approved_e_claim',
-                'data'      => SystemLogLibrary::serializeData($data)
-              );
-              SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $admin_id,
+								'admin_type' => 'mednefits',
+								'type'      => 'admin_hr_approved_e_claim',
+								'data'      => SystemLogLibrary::serializeData($data)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						} else {
 							$data = array(
 								'e_claim_id' => $e_claim_id,
@@ -6907,12 +6983,12 @@ public function updateEclaimStatus( )
 								'rejected_reason' => $rejected_reason
 							);
 							$admin_logs = array(
-                'admin_id'  => $hr_id,
-                'admin_type' => 'hr',
-                'type'      => 'admin_hr_approved_e_claim',
-                'data'      => SystemLogLibrary::serializeData($data)
-              );
-              SystemLogLibrary::createAdminLog($admin_logs);
+								'admin_id'  => $hr_id,
+								'admin_type' => 'hr',
+								'type'      => 'admin_hr_approved_e_claim',
+								'data'      => SystemLogLibrary::serializeData($data)
+							);
+							SystemLogLibrary::createAdminLog($admin_logs);
 						}
 					}
 				} catch(Exception $e) {
@@ -9875,6 +9951,152 @@ public function downloadEclaimCsv( )
 		}
 
 		return $data;
+	}
+
+	public function downloadNonPanelInvoice( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$statement = DB::table('company_credits_statement')->where('statement_id', $input['id'])->where('type', 'non_panel')->first();
+
+		if(!$statement) {
+			return ['status' => false, 'message' => 'Non Panel Invoice does not exist'];
+		}
+
+		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
+		$total = round($transaction_data['credits'], 2);
+		$amount_due = (float)$total - (float)$statement->paid_amount;
+		
+		if($statement->payment_method == "mednefits_credits") {
+			$amount_due = 0;
+		}
+
+		$data = array(
+			'xeroInvoiceId'	=> $statement->xeroInvoiceId,
+			'company' => ucwords($statement->statement_company_name),
+			'company_address' => ucwords($statement->statement_company_address),
+			'contact_email' => $statement->statement_contact_email,
+			'contact_name' => ucwords($statement->statement_contact_name),
+			'contact_contact_number' => $statement->statement_contact_number,
+			'customer_id' => $statement->statement_customer_id,
+			'statement_date' => date('j M Y', strtotime($statement->statement_date)),
+			'statement_due' => date('j M Y', strtotime($statement->statement_due)),
+			'statement_start_date' => $statement->statement_start_date,
+			'statement_end_date'	=> $statement->statement_end_date,
+			'start_date' => date('j M Y', strtotime($statement->statement_start_date)),
+			'end_date'	=> date('j M Y', strtotime($statement->statement_end_date)),
+			'statement_id'	=> $statement->statement_id,
+			'statement_number' => $statement->statement_number,
+			'statement_status'	=> $amount_due <= 0 ? true : false,
+			'statement_total_amount' => number_format($total, 2),
+			'total_in_network_amount'		=> number_format($transaction_data['credits'], 2),
+			'statement_amount_due' => $amount_due < 0 ? "0.00" : number_format($amount_due, 2),
+			'consultation_amount_due'	=> 0,
+			'in_network'				=> null,
+			'paid_date'				=> $statement->paid_date ? date('j M Y', strtotime($statement->paid_date)) : NULL,
+			'payment_remarks' => $statement->payment_remarks,
+			'payment_amount' => number_format($statement->paid_amount, 2),
+			'lite_plan'	=> true,
+			'total_consultation'	=> $transaction_data['total_consultation'],
+			'currency_type'	=> strtoupper($statement->currency_type),
+			'postal'		=> null,
+			'medical'		=> number_format($transaction_data['total_medical'], 2),
+			'wellness'		=> number_format($transaction_data['total_wellness'], 2),
+			'spending'		=> $statement->spending,
+			'payment_method' => $statement->payment_method
+		);
+
+		if($statement->payment_method == "mednefits_credits") {
+			$data['payment_method'] = "Prepaid Credits Account";
+		}
+	
+		if($statement->payment_method == "bank_transfer") {
+			$data['payment_method'] = "Bank Transfer";
+		}
+	
+		if($statement->payment_method == "giro") {
+			$data['payment_method'] = "Giro";
+		}
+
+		// return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
+		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);
+		$pdf->getDomPDF()->get_option('enable_html5_parser');
+		$pdf->setPaper('A4', 'portrait');
+		return $pdf->stream();
+		return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
+	}
+
+	public function downloadNonPanelReimbursement( )
+	{
+		$input = Input::all();
+		if(empty($input['token']) || $input['token'] == null) {
+			return array('status' => false, 'message' => 'Token is required.');
+		}
+
+		$result = StringHelper::getJwtHrToken($input['token']);
+		if(!$result) {
+			return array(
+				'status'	=> FALSE,
+				'message'	=> 'Need to authenticate user.'
+			);
+		}
+
+		if(empty($input['id']) || $input['id'] == null) {
+			return ['status' => false, 'message' => 'id is required'];
+		}
+
+		$statement = DB::table('company_credits_statement')->where('statement_id', $input['id'])->where('type', 'non_panel')->first();
+
+		if(!$statement) {
+			return ['status' => false, 'message' => 'Non Panel Invoice does not exist'];
+		}
+
+		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
+		$container = array();
+
+		foreach($transaction_data['transactions'] as $key => $transaction) {
+			if($transaction['spending_method'] == "post_paid") {
+				$container[] = array(
+					'Member'				=> $transaction['member'],
+					'Email Address'			=> $transaction['email_address'],
+					'Claim Member Type'		=> $transaction['claim_member_type'],
+					'Employee'				=> $transaction['employee_name'],
+					'Claim Date'			=> $transaction['claim_date'],
+					'Visited Date'			=> $transaction['visit_date'],
+					'Transaction#'			=> $transaction['transaction_id'],
+					'Claim Type'			=> $transaction['service'],
+					'Provider'				=> $transaction['merchant'],
+					'Member Wallet'			=> strtoupper($transaction['spending_type']),
+					'Claim Amount'			=> $transaction['claim_amount'],
+					'Total Amount'			=> $transaction['amount'],
+					'Remarks'				=> $transaction['remarks'],
+					'Bank Name'				=> $transaction['bank_name'],
+					'Bank Account Number'	=> $transaction['bank_account_number']
+				);
+			}
+		}
+
+		return \Excel::create('Reimbursement CSV', function($excel) use($container) {
+			$excel->sheet('Non-Panel', function($sheet) use($container) {
+				$sheet->fromArray( $container );
+			});
+		})->export('csv');
+		return $container;
 	}
 }
 ?>

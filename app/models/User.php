@@ -146,6 +146,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
                 $this->UserType = 5; // for users
                 $this->access_type = 0; // for users
                 $this->source_type = 1;
+                $this->Status = 0;
                 $this->Job_Title = $data['Job_Title'];
                 $this->communication_type = !empty($data['communication_type']) ? $data['communication_type'] : "email";
                 $this->account_update_status = 1;
