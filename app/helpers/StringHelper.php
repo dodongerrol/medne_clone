@@ -253,7 +253,6 @@ class StringHelper{
             $getRequestHeader = self::getHeaders();
             if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
                 $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
-                return $getRequestHeader['Authorization'];
             }
  
             if(isset($getRequestHeader['Authorization'])) {
