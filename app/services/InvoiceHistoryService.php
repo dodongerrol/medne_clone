@@ -181,7 +181,7 @@ class InvoiceHistoryService
                 if((int)$dependent->new_head_count == 1) {
                     $calculated_prices_end_date = \CustomerHelper::getCompanyPlanDates($plan->customer_buy_start_id);
                     $calculated_prices_end_date = date('Y-m-d', strtotime('+1 day', strtotime($calculated_prices_end_date['plan_end'])));
-                    $calculated_prices = \BenefitsPlanHelper::calculateInvoicePlanPrice($invoice_dependent->individual_price, $dependent->plan_start, $calculated_prices_end_date);
+                    $calculated_prices = \CustomerHelper::calculateInvoicePlanPrice($invoice_dependent->individual_price, $dependent->plan_start, $calculated_prices_end_date);
                     $total += $calculated_prices * $dependent->total_dependents;
                 } else {
                     $total += $dependent->individual_price * $dependent->total_dependents;
