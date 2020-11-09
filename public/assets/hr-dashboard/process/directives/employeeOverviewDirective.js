@@ -414,10 +414,12 @@ app.directive("employeeOverviewDirective", [
                 ctr += 1;
                 scope.showLoading();
                 toBlockArr.push(value.ClinicID)
+                // Comment if ever got issue with this logic can revert back again to this logic
                 // scope.updateClinics(value.ClinicID, status, region, opt);
               }
               if (ctr > 0 && scope.clinic_open_arr.length - 1 == key) {
                 scope.updateClinics(toBlockArr, status, region, opt);
+                // Comment if ever got issue with this logic can revert back again to this logic
                 // scope.blockHealthPatnerLoad();
                 // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 scope.hideLoading();
@@ -427,8 +429,6 @@ app.directive("employeeOverviewDirective", [
             });
             if (scope.clinic_open_arr.length == 0) {
               swal('Error!', 'Please Select a clinic first.', 'error');
-            } else {
-              scope.updateClinics(scope.clinic_open_arr, status, region, opt);
             }
           }
           if (opt == 'type') {
@@ -459,10 +459,12 @@ app.directive("employeeOverviewDirective", [
                 ctr += 1;
                 scope.showLoading();
                 toOpenArr.push(value.ClinicID);
+                // Comment if ever got issue with this logic can revert back again to this logic
                 // scope.updateClinics(value.ClinicID, status, region, opt);
               }
               if (ctr > 0 && scope.clinic_block_arr.length - 1 == key) {
                 scope.updateClinics(toOpenArr, status, region, opt);
+                // Comment if ever got issue with this logic can revert back again to this logic
                 // scope.blockHealthPatnerLoad();
                 // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 scope.hideLoading();
