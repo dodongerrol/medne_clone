@@ -1,0 +1,56 @@
+.member-medical-wallet-wrapper .available-credits-container {
+  margin: 0 0 10px;
+}
+.member-medical-wallet-wrapper .mwbc-card-box-container {
+  width: 450px;
+}
+.mwbc-benefits-container {
+  margin: 20px 0 0;
+}
+.mwbc-benefits-container label {
+  font-family: 'Helvetica Medium';
+  font-size: 14px;
+  color: #000;
+}
+.mwbc-benefits-container >div {
+  width: 25%;
+}
+.benefits-input-wrapper.start-date,
+.benefits-input-wrapper.end-date {
+  width: 130px;
+}
+.benefits-input-wrapper.rollover,
+.benefits-input-wrapper.deposits {
+  width: 80px;
+}
+.non-panel-claim-container >div{
+  margin: 10px 0 0;
+}
+.payment-methods-box-container {
+  display: flex;
+  /* margin: 20px 0 0; */
+  flex-wrap: wrap;
+}
+.payment-methods-box-container >div {
+  margin: 15px 20px 0 0;
+}
+.mednefits-panel >div{
+  margin: 20px 0 0;
+}
+.mwbc-box-container.activities-container {
+  border-bottom: 0;
+}
+.member-medical-wallet-wrapper .benefits-input-wrapper.rollover select {
+  border: 0;
+  display: block;
+  height: auto;
+  padding: 0;
+}
+.credits-tooltip-container.medical-balance,
+.credits-tooltip-container.medical-funds,
+.credits-tooltip-container.company-funds,
+.credits-tooltip-container.mednefits-basic-plan,
+.credits-tooltip-container.panel-mednefits-credits,
+.credits-tooltip-container.non-panel-mednefits-credits {
+  /* display: none; */
+}

@@ -209,49 +209,31 @@ class DashboardController extends \BaseController {
 		try {
 			$payload = Input::all();
 
+			if (!isset($payload['provider_id'])) {
+				$getSessionData = StringHelper::getMainSession(3);
+				$payload['provider_id'] = $getSessionData->Ref_ID;
+			}
+			
+			$clinic  = new Clinic;
 			// Update Providers info, operating hours and break hours.
-			if (isset($payload['providersDetails']['providersInfo'])
-				&& isset($payload['providersDetails']['providersOperatingHours'])
-				&& isset($payload['providersDetails']['providersBreakHours'])) {
+			if (isset($payload['providersDetails'])) {
+				if (isset($payload['providersDetails']['providersInfo'])) {
 					// update providers info
-					new updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
+					$clinic->updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
+				}
+				
+				if (isset($payload['providersDetails']['providersOperatingHours'])) {
 					// update providers operating hours
-					new updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
+					$clinic->updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
+				}
+				
+				if (isset($payload['providersDetails']['providersBreakHours'])) {
 					// update providers break hours
-					new updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+					$clinic->updateBreakHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
+				}
 					
 					return array(
 						'message' => 'Providers details successfully updated.',
-						'success' => true
-					);
-			} else if(!isset($payload['providersDetails']['providersInfo'])
-				&& isset($payload['providersDetails']['providersOperatingHours'])
-				&& !isset($payload['providersDetails']['providersBreakHours'])) {
-					// update providers operating hours
-					new updateOperatingHours($payload['providersDetails']['providersOperatingHours'], $payload['provider_id']);
-					
-					return array(
-						'message' => 'Providers Operating Hours Successfully Updated.',
-						'success' => true
-					);
-			} else if(!isset($payload['providersDetails']['providersInfo'])
-				&& !isset($payload['providersDetails']['providersOperatingHours'])
-				&& isset($payload['providersDetails']['providersBreakHours'])) {
-					// update providers break hours
-					new updateOperatingHours($payload['providersDetails']['providersBreakHours'], $payload['provider_id']);
-					
-					return array(
-						'message' => 'Providers Break Hours Successfully Updated.',
-						'success' => true
-					);
-			} else if(isset($payload['providersDetails']['providersInfo'])
-				&& !isset($payload['providersDetails']['providersOperatingHours'])
-				&& !isset($payload['providersDetails']['providersBreakHours'])) {
-					// update providers info
-					new updateClinicInfo($payload['providersDetails']['providersInfo'], $payload['provider_id']);
-					
-					return array(
-						'message' => 'Providers Info Successfully Updated.',
 						'success' => true
 					);
 			} else {
@@ -260,6 +242,50 @@ class DashboardController extends \BaseController {
 					'success' => false
 				);
 			}
+
+		} catch(Exception $error) {print_r($error);
+			return array(
+				'message' => $error,
+				'success' => false
+			);
+		}
+	}
+
+	function getProviderOperatingHours () {
+		try {
+			
+			$clinic  = new Clinic;
+			
+			$getSessionData = StringHelper::getMainSession(3);
+			
+			$operatingHours = $clinic->getProviderOperatingHour($getSessionData->Ref_ID);
+
+			return array(
+				'data' => $operatingHours,
+				'success' => true
+			);
+
+		} catch(Exception $error) {
+			return array(
+				'message' => $error,
+				'success' => false
+			);
+		}
+	}
+
+	function getProviderBreakHours () {
+		try {
+			
+			$clinic  = new Clinic;
+			
+			$getSessionData = StringHelper::getMainSession(3);
+			
+			$breakHours = $clinic->getProviderBreakHours($getSessionData->Ref_ID);
+
+			return array(
+				'data' => $breakHours,
+				'success' => true
+			);
 
 		} catch(Exception $error) {
 			return array(

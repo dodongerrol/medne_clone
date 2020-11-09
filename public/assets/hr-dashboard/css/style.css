@@ -18,7 +18,7 @@ body {
   height: 100%;
   width: 100%;
   color: #9c9c9c;
-  /*font-family: "Helvetica Neue",Arial,sans-serif;*/
+  /*font-family: "'",Arial,sans-serif;*/
   font-family: "Helvetica Light", sans-serif;
   font-style: normal;
   font-weight: 400;
@@ -2484,7 +2484,8 @@ p.number-of-enrollees.inactive-enroll-text {
 }
 
 .account-billing-link-list ul li.active-link {
-  background-color: #e9e9e9;
+  /* background-color: #e9e9e9; */
+  text-decoration: underline;
 }
 
 .account-billing-link-list ul li a {
@@ -8937,7 +8938,7 @@ span.dropdown-entitlement.disabled {
 }
 
 .new_spent, .new_breakDown {
-  font-family: Helvetica Neue !important;
+  /* font-family: ' !important; */
   position: relative;
 }
 
@@ -9049,7 +9050,7 @@ span.dropdown-entitlement.disabled {
   min-width: 1134px; */
   width: 1145px;
 
-  font-family: Helvetica Neue;
+  font-family: 'Helvetica Light';
   font-style: normal;
   font-weight: 400;
   font-size: 14px;
@@ -9792,7 +9793,7 @@ span.dropdown-entitlement.disabled {
 }
 .mednefits-logo-container .mednefits-logo {
   width: 180px;
-  margin: 40px 0 90px;
+  margin: 40px 0 50px;
 }
 .mednefits-logo-container {
   text-align: center;
@@ -9883,6 +9884,7 @@ span.dropdown-entitlement.disabled {
 }
 .btn-footer {
   text-align: right;
+  margin-bottom: 50px;
 }
 .privacy-policy-wrapper >div:nth-child(2) p:nth-child(2) {
   /* margin: 0 0 40px; */
@@ -10733,6 +10735,16 @@ span.dropdown-entitlement.disabled {
   justify-content: center;
 }
 
+.welcome-container .fa-angle-down {
+  color: #fff;
+  font-size: 16px;
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+.welcome-container .nav-drop-wrapper.account-drop-wrapper {
+  width: 250px;
+}
 .employee-details.tier-feature-item .iti__country-list {
   z-index: 1000;
 }

@@ -29,7 +29,7 @@
           <div class="header-title">Remove Employee</div>
 
           <div class="body-content">
-            <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == false">
+            <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == false && emp_details.account_type != 'lite_plan'">
               <p>
                 Member’s wallet will not reflect the pro-rated amount, and will continue reflecting the initial allocated amount. Any unused 
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid' && emp_details.summary.wellness.plan_method == 'pre_paid'">credits</span> 
@@ -43,7 +43,7 @@
               <p> Please confirm to proceed.</p>
             </div>
 
-            <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == true">
+            <div ng-if="!isRemoveSuccess && emp_details.wallet_opt == true && emp_details.account_type != 'lite_plan'">
               <p>
                 The 
                 <span ng-if="emp_details.account_type == 'lite_plan' && emp_details.summary.medical.plan_method == 'pre_paid'">
@@ -69,6 +69,10 @@
               <p>Please confirm to proceed.</p>
             </div>
 
+            <div ng-if="!isRemoveSuccess && emp_details.account_type == 'lite_plan'">
+              <p>Are you sure you want to remove this employee?</p>
+              <p>Please confirm to proceed.</p>
+            </div>
             
 
             <div ng-if="isRemoveSuccess" class="remove-success-div">

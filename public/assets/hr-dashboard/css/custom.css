@@ -159,7 +159,12 @@
 .font-medium{
 }
 
+.font-regular{
+    font-family: 'Helvetica Medium';
+}
+
 .font-medium2{
+    font-family: 'Helvetica Medium';
 }
 
 .font-boldest{
@@ -172,7 +177,13 @@
 .display-flex{
     display: flex;
 }
-
+.dp-flex-ai {
+    display: flex;
+    align-items: center;
+}
+.flex-1 {
+    flex: 1;
+}
 /*----------------------------*/
 
 
@@ -473,3 +484,6 @@ body::-webkit-scrollbar-thumb
                        color-stop(.5, transparent), to(transparent));*/
 }
 
+.text-left{
+    text-align: left;
+}

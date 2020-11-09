@@ -37,3 +37,167 @@
 	}
 
 /*--------------------------------*/
+
+/****************Added by Stephen******************/
+button#profile-operatingHours-copyTimetoAllBtn, 
+button#profile-operatingHours-undoCopyTimetoAllBtn {
+	font-size: 0.9em;
+}
+
+button#profile-operatingHours-undoCopyTimetoAllBtn {
+	display: none;
+}
+
+.operatingHours-div {
+	display: none;
+    width: 70%;
+}
+
+button#profile-operatingHours-saveOperatingHours {
+	background: #1b9bd7;
+    border: 0px;
+    color: white;
+    width: 20%;
+    height: 35px;
+	border-radius: 5px;
+	float: right;
+}
+
+#cover-spin {
+    position:fixed;
+    width:100%;
+    left:0;right:0;top:0;bottom:0;
+    background-color: rgba(255,255,255,0.7);
+    z-index:9999;
+    display:none;
+}
+
+@-webkit-keyframes spin {
+	from {-webkit-transform:rotate(0deg);}
+	to {-webkit-transform:rotate(360deg);}
+}
+
+@keyframes spin {
+	from {transform:rotate(0deg);}
+	to {transform:rotate(360deg);}
+}
+
+#cover-spin::after {
+    content:'';
+    display:block;
+    position:absolute;
+    left:48%;top:40%;
+    width:40px;height:40px;
+    border-style:solid;
+    border-color: rgb(176, 226, 249);
+    border-top-color:transparent;
+    border-width: 4px;
+    border-radius:50%;
+    -webkit-animation: spin .8s linear infinite;
+    animation: spin .8s linear infinite;
+}
+
+.breakHours-div {
+	display: none;
+    width: 70%;
+}
+
+button#profile-breakHours-copyTimetoAllBtn {
+    font-size: 0.9em;
+    color: #1b9bd7;
+}
+ button#profile-operatingHours-copyTimetoAllBtn {
+    color: #1b9bd7;
+ }
+
+.breakHours-div {
+	display: none;
+    width: 70%;
+}
+
+button#profile-breakHours-savebreakHours {
+	background: #1b9bd7;
+    border: 0px;
+    color: white;
+    width: 20%;
+    height: 35px;
+	border-radius: 5px;
+	float: right;
+}
+
+div#profile-breakHours-time-panel #monday-addBreak,
+div#profile-breakHours-time-panel #tuesday-addBreak,
+div#profile-breakHours-time-panel #wednesday-addBreak,
+div#profile-breakHours-time-panel #thursday-addBreak,
+div#profile-breakHours-time-panel #friday-addBreak,
+div#profile-breakHours-time-panel #saturday-addBreak,
+div#profile-breakHours-time-panel #sunday-addBreak,
+div#profile-breakHours-time-panel #publicHoliday-addBreak {
+    border-radius: 5px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+}
+
+div#profile-breakHours-time-panel #monday-div .card-body .row,
+div#profile-breakHours-time-panel #tuesday-div .card-body .row,
+div#profile-breakHours-time-panel #wednesday-div .card-body .row,
+div#profile-breakHours-time-panel #thursday-div .card-body .row,
+div#profile-breakHours-time-panel #friday-div .card-body .row,
+div#profile-breakHours-time-panel #saturday-div .card-body .row,
+div#profile-breakHours-time-panel #sunday-div .card-body .row,
+div#profile-breakHours-time-panel #publicHoliday-div .card-body .row {
+    margin-bottom: 1%;
+}
+
+div#profile-breakHours-time-panel .row.monday1,
+div#profile-breakHours-time-panel .row.monday2,
+div#profile-breakHours-time-panel .row.monday3,
+div#profile-breakHours-time-panel .row.monday4,
+div#profile-breakHours-time-panel .row.tuesday1,
+div#profile-breakHours-time-panel .row.tuesday2,
+div#profile-breakHours-time-panel .row.tuesday3,
+div#profile-breakHours-time-panel .row.tuesday4,
+div#profile-breakHours-time-panel .row.wednesday1,
+div#profile-breakHours-time-panel .row.wednesday2,
+div#profile-breakHours-time-panel .row.wednesday3,
+div#profile-breakHours-time-panel .row.wednesday4,
+div#profile-breakHours-time-panel .row.thursday1,
+div#profile-breakHours-time-panel .row.thursday2,
+div#profile-breakHours-time-panel .row.thursday3,
+div#profile-breakHours-time-panel .row.thursday4,
+div#profile-breakHours-time-panel .row.friday1,
+div#profile-breakHours-time-panel .row.friday2,
+div#profile-breakHours-time-panel .row.friday3,
+div#profile-breakHours-time-panel .row.friday4,
+div#profile-breakHours-time-panel .row.saturday1,
+div#profile-breakHours-time-panel .row.saturday2,
+div#profile-breakHours-time-panel .row.saturday3,
+div#profile-breakHours-time-panel .row.saturday4,
+div#profile-breakHours-time-panel .row.sunday1,
+div#profile-breakHours-time-panel .row.sunday2,
+div#profile-breakHours-time-panel .row.sunday3,
+div#profile-breakHours-time-panel .row.sunday4,
+div#profile-breakHours-time-panel .row.publicHoliday1,
+div#profile-breakHours-time-panel .row.publicHoliday2,
+div#profile-breakHours-time-panel .row.publicHoliday3,
+div#profile-breakHours-time-panel .row.publicHoliday4 {
+    display: none
+}
+
+div#profile-breakHours-time-panel {
+    height: 1008px;
+    overflow: scroll;
+}
+
+#profile-breakHours-time-panel #monday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #tuesday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #wednesday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #thursday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #friday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #saturday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #sunday-mainCollapsibleDiv,
+#profile-breakHours-time-panel #publicHoliday-mainCollapsibleDiv {
+    border-top: 1px solid #d0d0d0;
+    max-height:284px;
+}

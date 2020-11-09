@@ -10,6 +10,8 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
+// test spending transaction access
+Route::get('test_spending_transaction_access', 'HomeController@testUserCheckSpendingAccess');
 
 // test paginate new
 Route::get('ge_test_paginate', 'testcontroller@paginateMembers');
@@ -234,6 +236,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/enrollment_progress', 'BenefitsDashboardController@employeeEnrollmentProgress');
 	Route::get('hr/get/temp_enrollment', 'BenefitsDashboardController@getTempEnrollment');
 	Route::get('remove/temp_enrollee/{id}', 'BenefitsDashboardController@removeEnrollee');
+	// Delete all existing temp employees in enrollment summary
 	Route::get('delete_all_temp_employees', 'BenefitsDashboardController@removeAllEnrolleeTemp');
 	Route::post('insert/enrollee_web_input', 'BenefitsDashboardController@insertFromWebInput');
 	Route::post('update/enrollee_details', 'BenefitsDashboardController@updateEnrolleeDetails');
@@ -251,8 +254,6 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/search/employee', 'BenefitsDashboardController@searchEmployee');
 	// update employee details
 	Route::post('hr/employee/update', 'BenefitsDashboardController@updateEmployeeDetails');
-	
-
 	// get company details and contacts
 	Route::get('hr/company_contacts', 'BenefitsDashboardController@getCompanyContacts');
 	// get transactions
@@ -309,6 +310,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/save/payment/method/new_active_plan', 'BenefitsDashboardController@newPaymentAddedPurchaseEmployee');
 	// get hr activity
 	Route::get('hr/get_activity', 'EclaimController@getHrActivity');
+	Route::get('hr/get_spending_invoice_history_list', 'InvoiceController@spendingInvoiceHistoryList');
 	
 	// search employee activity
 	Route::post('hr/search_employee_activity', 'EclaimController@searchEmployeeActivity');
@@ -504,10 +506,45 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/get_users_by_active_plan', 'BenefitsDashboardController@enrolledUsersFromActivePlan');
 	// get employee refund details
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
+	// get member allocation activity
+	Route::get('hr/get_member_allocation_activity', 'SpendingAccountController@getMemberAllocationActivity');
+	// get mednefits credits account
+	Route::get('hr/get_mednefits_credits_account', 'SpendingAccountController@getMednefitsCreditsAccount');
+	// get company wallet details
+	Route::get('hr/get_member_wallet_details', 'SpendingAccountController@getMemberWalletDetails');
+	// get company date terms
+	Route::get('hr/get_company_date_terms', 'SpendingAccountController@getTermsSpendingDates');
+	Route::get('hr/spending_account_activity', 'SpendingAccountController@spendingAccountActivities');
+	// get bebnefits coverage details
+	Route::get('hr/get_benefits_coverage_details', 'SpendingAccountController@getBenefitsCoverageDetails');
+	// get company medical wallet details
+	Route::get('hr/get_company_wallet_details', 'SpendingAccountController@getWalletDetails');
+	// update wallet details
+	Route::post('hr/update_member_wallet_details', 'SpendingAccountController@updateWalletDetails');
+	// activate wellness wallet
+	Route::post('hr/activate_wellness_wallet_details', 'SpendingAccountController@activeWellnessWallet');
+	// update spending payment method
+	Route::post('hr/update_spending_payment_method', 'SpendingAccountController@updateSpendingPaymentMethod');
+	// create top up mednefits credits
+	Route::post('hr/create_top_up_mednefits_credits', 'SpendingAccountController@createMednefitsCreditsTopUp');
+	// activate mednefis basic plan
+	Route::post('hr/activate_mednefits_basic_plan', 'SpendingAccountController@activateBasicPlan');
+	// wallet activation or deactivation
+	Route::post('hr/wallet_activate_deactivate', 'SpendingAccountController@activateDeactivateWallet');
+	// enable disable mednefits credits account
+	Route::post('hr/enabled_disabled_mednefits_credits_account', 'SpendingAccountController@enableDisableCreditsAccount');
+	// activate company mednefits credits
+	Route::post('hr/activate_company_mednefits_credits', 'SpendingAccountController@activateMednefitCreditsAccount');
 	// get refund invoice
 	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
 });
-
+	
+	Route::get('hr/company_invoice_history', 'SpendingInvoiceController@getCompanyInvoiceHistory');
+	Route::get('hr/download_pre_paid_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
+	// download non-panel reimbursement
+	Route::get('hr/download_non_panel_reimbursement_transactions', 'EclaimController@downloadNonPanelReimbursement');
+	// download non-panel invoice
+	Route::get('hr/download_non_panel_invoice', 'EclaimController@downloadNonPanelInvoice');
 	// downloand plan invoice
 	Route::get('hr/plan_all_download', 'BenefitsDashboardController@downloadPlanInvoice');
 	// get company employees and credits left
@@ -515,7 +552,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
-	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
+	Route::get('hr/download_spending_purchase_invoice', 'SpendingAccountController@downloadPrepaidInvoice');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');
@@ -1006,6 +1043,11 @@ Route::group(array('prefix' => 'v2'), function()
 	    Route::post('auth/forgotpassword','Api_V1_AuthController@Forgot_PasswordV2');
 	    Route::post('auth/checkemail','Api_V1_AuthController@Check_Email');
 	    Route::post('auth/reset-details', 'Api_V1_AuthController@ResetPasswordDetails');
+	    Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
+
+		// for getting member lists
+		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
+
 		Route::post('auth/reset-process', 'Api_V1_AuthController@newProcessResetPassword');
 		
 		Route::post('auth/check-member-exist', 'Api_V1_AuthController@checkMemberExist');
@@ -1014,6 +1056,7 @@ Route::group(array('prefix' => 'v2'), function()
 		Route::put('auth/registerMobileNumber', 'Api_V1_AuthController@registerMobileNumber');
 		Route::post('auth/add-postal-code-member', 'Api_V1_AuthController@addPostalCodeMember');
 		Route::post('auth/activated-create-new-password', 'Api_V1_AuthController@createNewPasswordByMember');
+		
 
 		// for getting member lists
 		Route::get('member/lists', 'Api_V1_AuthController@getCompanyMemberLists');
@@ -1278,7 +1321,9 @@ Route::group(array('prefix' => 'app'), function()
 		/*
 			Refactor API for gettting providers information for the first time.
 		*/
-		Route::get('clinic/getProvidersDetail', '@DashboardController@getProvidersDetail');
+		Route::get('clinic/getProviderBreakHours', 'DashboardController@getProviderBreakHours');
+		Route::get('clinic/getProviderOperatingHours', 'DashboardController@getProviderOperatingHours');
+		Route::get('clinic/getProvidersDetail', 'DashboardController@getProvidersDetail');
 		/* End Here. */
 		
 		Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
@@ -1339,7 +1384,7 @@ Route::group(array('prefix' => 'app'), function()
 		
 		/*****************Clinic : PUT*****************/
 		//Refactor API for gettting providers information for the first time.
-			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+			Route::put('clinic/updateProvidersDetail', 'DashboardController@updateProvidersDetail');
 		/* End Here. */
 	   
 		

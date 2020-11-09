@@ -1,0 +1,152 @@
+.spending-billing-wrapper .navbar-blue-bg {
+  padding: 0 60px;
+}
+.spending-billing-container {
+  padding: 140px 40px 0;
+  font-size: 14px;
+  color: #000;
+  height: 100vh;
+}
+.billing-invoice-history-body table {
+  border: 2px solid #E0E0E0;
+}
+.billing-invoice-history-body table thead {
+  background-color: #F7F9FA;
+  border: 0;
+}
+.billing-tbl-invoice tr th {
+  font-family: 'Helvetica Medium';
+  padding: 15px 20px;
+}
+.billing-tbl-invoice tr td {
+  padding: 15px 20px;
+}
+.billing-tbl-invoice tbody tr {
+  border-top: 2px solid #E0E0E0;
+}
+.show-details-on-container .btn-download-soa {
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  background-color: #fff;
+  width: 160px;
+}
+.btn-download-soa img {
+  height: 15px;
+  width: 15px;
+  margin: 0 5px 5px 0;
+}
+.spending-billing-wrapper .show-details-on-container {
+  border-bottom: 2px solid #DBDBDB;
+}
+.billing-invoice-history-header {
+  margin: 20px 0;
+}
+.billing-invoice-history-header select {
+  display: block  ;
+}
+.billing-invoice-history-header h4 {
+  margin: 0 30px 0 0;
+}
+.invoice-type-select-wrapper {
+  border: 2px solid #E0E0E0;
+  border-radius: 3px;
+  position: relative;
+  width: 190px;  
+  height: 32px;
+}
+.invoice-type-select-wrapper select {
+  border: 0;
+  height: auto;
+  -webkit-appearance: none;
+  padding: 2px 12px;
+}
+.invoice-type-select-wrapper i {
+  color: #979797;
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 16px;
+}
+.billing-invoice-history-header .total-outstanding-container {
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;;
+}
+.total-outstanding-container >div:first-child {
+  background-color: #EB635D;
+  width: 7px;
+  height: auto;
+}
+.total-outstanding-container >div:last-child {
+  padding: 5px 10px;
+}
+.billing-tbl-invoice .invoice-status-wrapper i {
+  font-size: 20px;
+  margin: 0 20px 0 0;
+}
+.download-dot-img {
+  width: 17px;
+}
+.billing-tbl-invoice thead th:last-child {
+  text-align: right;
+}
+.billing-tbl-invoice tbody .download-dot-container {
+  text-align: right;
+}
+.billing-tbl-invoice tbody td {
+  position: relative;
+}
+.invoice-credits-info-container {
+  background-color: #F7F9FA;
+  border-radius: 10px;
+  padding: 20px;
+}
+.billing-tbl-invoice tbody tr.invoice-history-info {
+  border-top: none;
+}
+.billing-tbl-invoice tr td.invoice-credits-info-wrapper {
+  padding: 0 20px 15px;
+}
+.invoice-credits-info-wrapper >div {
+  margin: 0 0 20px;
+}
+.invoice-credits-info-wrapper >div:last-child {
+  margin: 0;
+}
+.credits-not-enough {
+  color: #CC2119;
+}
+.invoice-credits-info-container >div:nth-child(1) {
+  width: 36%;
+}
+.invoice-credits-info-container >div:nth-child(2) {
+  width: 34%;
+}
+.invoice-credits-info-container >div:nth-child(3) {
+  width: 30%;
+}
+.invoice-credits-remarks {
+  margin: 10px 0 0;
+}
+.download-dot-container .download-dp-container {
+  position: absolute;
+  background-color: #fff;
+  top: 25px;
+  right: 0;
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+  border-radius: 2px;
+  padding: 8px 0;
+  width: 190px;
+  text-align: initial;
+  z-index: 1;
+}
+.download-dp-container >div {
+  padding: 15px;
+  cursor: pointer;
+}
+.download-dp-container >div.disabled {
+  pointer-events: none;
+  opacity: .3;
+}
+.download-dp-container >div:hover {
+  background-color: rgba(158,158,158,0.2);
+}

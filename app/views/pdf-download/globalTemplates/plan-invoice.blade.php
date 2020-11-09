@@ -2,7 +2,7 @@
 <html><head>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Statement</title>
+    <title>Employee Plan Invoice</title>
     <style type="text/css">
       @page { 
         margin: 10px 10px 0 10px; 
@@ -46,9 +46,9 @@
             <p style="font-size: 35px;line-height: 35px;margin: 0 0 15px 0;">INVOICE</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$company}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">Attention: {{$name}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$address}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$address}}, {{$building_name}}, {{$unit_number}}</p>
             <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$postal}}</p>
-            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
+            <p style="font-size: 14px;line-height: 14px;margin: 0 0 10px 0;text-transform: uppercase;">{{$currency_type == "SGD" ? "Singapore" : "Malaysia"}}</p>
           </td>
           <td style="vertical-align: top;padding-right: 40px;">
             <div class="invoice-number-address" style="width: 100%;display: inline-block;vertical-align: top;">

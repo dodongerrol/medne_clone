@@ -618,6 +618,10 @@ class AuthLibrary{
         $hostName = $_SERVER['HTTP_HOST'];
         $protocol = $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         $server = $protocol.$hostName;
+
+        if($server == "https://mobileapi.medicloud.sg") {
+          $server = "https://medicloud.sg";
+        }
         // return $server;
         $email = Input::get ('email');
         $send_type = !empty(Input::get ('send_type')) ? Input::get ('send_type') : "both";

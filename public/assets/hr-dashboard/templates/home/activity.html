@@ -1,49 +1,4 @@
 <div class="activity-hr-wrapper" activity-page>
-	<div class="navbar-blue-bg" style="margin-top: 60px;position: fixed;height: 40px;">
-		<div class="container">
-			<div class="welcome-container">
-				<h4 ui-sref="benefits-dashboard">Overview</h4>
-				<div class="arrow-up" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container">
-				<h4 ui-sref="employee-overview">Employee</h4>
-				<div class="arrow-up" style="visibility: hidden;"></div>
-			</div>
-			<!-- <div class="welcome-container">
-				<div class="dropdown">
-				  <h4 class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				    Employee
-				  </h4>
-				  <ul class="dropdown-menu emp-overview-drop" aria-labelledby="dropdownMenu1" style="top: 20px;border-radius: 0;">
-				    <li><a href="javascript:void(0)" ui-sref="employee-overview">Overview</a></li>
-				    <li><a href="javascript:void(0)" ui-sref="bulk-cred-allocation">Credit Allocation</a></li>
-				    <li><a href="javascript:void(0)" ui-sref="cred-allocation">Credit Allocation</a></li>
-				  </ul>
-				</div>
-				<div class="arrow-up-2" style="visibility: visible;"></div>
-			</div> -->
-			<!-- <div class="welcome-container" ng-if="empStatementShow">
-				<h4 ui-sref="employee-overview" ui-sref="employee-overview">Employee</h4>
-				<div id="arrow-up-statement"></div>
-			</div> -->
-			<div class="welcome-container">
-				<h4 ui-sref="activity">Activity</h4>
-				<div class="arrow-up-3" style="visibility: visible;"></div>
-			</div>
-			<div class="welcome-container" ng-if="options.accessibility == 1">
-				<h4 ui-sref="e-claim">Claim</h4>
-				<div class="arrow-up-4" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container statement-hide">
-				<h4 ui-sref="statement">Statement</h4>
-				<div class="arrow-up-5" style="visibility: hidden;"></div>
-			</div>
-			<div class="welcome-container">
-				<h4 ui-sref="account-and-payment">Account</h4>
-				<div class="arrow-up-5" style="visibility: hidden;"></div>
-			</div>
-		</div>
-	</div>
 
 	<div class="hrdb-body-container" style="background-color: #f5f5f5;padding-top: 180px;padding-bottom: 0;">
 		<div class="container-fluid">
@@ -283,7 +238,7 @@
 								<div class="col-md-6">
 									<div class="benefit-box">
 										<div>
-											<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+											<p class="color-black3 weight-500 font-16">Total {{ activitySpendingType == 0 ? 'Medical' : 'Wellness' }} Allocation: <span
 													class="weight-500 color-blue-custom currency-type"
 													ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span class="weight-500 color-blue-custom"
@@ -308,7 +263,7 @@
 													<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
 												</span> -->
 											</p>
-											<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+											<small class="weight-300 font-12 no-margin-top">*Total {{ activitySpendingType == 0 ? 'Medical' : 'Wellness' }} Allocation and Balance are displayed
 												as Year-to-Date.</small>
 											<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
 										</div>
@@ -354,7 +309,7 @@
 							</div>
 							<div ng-if="spending_account_status.medical_enabled == false && spending_account_status.wellness_enabled == false" class="activity-spending-not-activated-box">
 								<div class="spending-border-box">
-									<p>Spending Account for your<br>company has not been activated.</p>
+									<p>Mednefits Basic Plan for your<br>company has not been activated.</p>
 									<a href="/sa-landing" target="_blank">Learn more >></a>
 								</div>
 							</div>
@@ -745,7 +700,7 @@
 								<div class="white-space-10"></div>
 
 								<p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
-									report-fields="{employee: 'EMPLOYEE', emp_no: 'EMPLOYEE ID', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
+									report-fields="{employee_id: 'EMPLOYEE ID', employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
 									filename="'Panel Transactions'" separator=","
 									class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
 									DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
@@ -907,7 +862,7 @@
 								<div class="col-md-6">
 									<div class="benefit-box">
 										<div>
-											<p class="color-black3 weight-500 font-16">Total Allocated Credits: <span
+											<p class="color-black3 weight-500 font-16">Total {{ activitySpendingType == 0 ? 'Medical' : 'Wellness' }} Credits: <span
 													class="weight-500 color-blue-custom currency-type"
 													ng-bind="total_allocation.currency_type">MYR/SGD</span>
 												<span class="weight-500 color-blue-custom"
@@ -932,7 +887,7 @@
 													<span ng-bind="credits.total_wellness_employee_balance">0.00</span>
 												</span> -->
 											</p>
-											<small class="weight-300 font-12 no-margin-top">*Total Allocated Credits and Balance are displayed
+											<small class="weight-300 font-12 no-margin-top">*Total {{ activitySpendingType == 0 ? 'Medical' : 'Wellness' }} Allocation and Balance are displayed
 												as Year-to-Date.</small>
 											<!-- <span ng-if="select_to_date == false">{{rangePicker_start}} to {{rangePicker_end}}</span><span ng-if="select_to_date == 'wtd'">Week-to-Date</span><span ng-if="select_to_date == 'mtd'">Month-to-Date</span><span ng-if="select_to_date == 'qtd'">Quarter-to-Date</span><span ng-if="select_to_date == 'ytd'">Year-to-Date</span> -->
 										</div>
@@ -1422,13 +1377,13 @@
 							</div>
 
 							<div class="col-md-6 no-padding text-center transactions-btn-container">
-								<button ng-disabled="spending_account_status.wellness_enabled == true && inNetWorkTable == false" class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+								<button class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
 									PANEL<br>
 									<!-- IN-NETWORK<br> -->
 									TRANSACTIONS 
 								</button>
 
-								<button ng-disabled="spending_account_status.wellness_enabled == true && outNetWorkTable == false || spending_account_status.wellness_enabled == false" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+								<button ng-disabled="spending_account_status.wellness_enabled == false && spending_account_status.account_type == 'enterprise_plan'" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
 									E-CLAIM TRANSACTIONS<br>
 									(NON-PANEL)
 								</button>
@@ -1438,7 +1393,7 @@
 								<div class="white-space-10"></div>
 
 								<p class="inNetwork-dl" ng-json-export-excel data="in_network_transactions"
-									report-fields="{employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
+									report-fields="{employee_id: 'EMPLOYEE ID', employee: 'EMPLOYEE', dependent: 'DEPENDENT', clinic_name: 'HEALTH PROVIDER', date_of_transaction: 'DATE', transaction_id: 'TRANSACTION ID', clinic_type_and_service: 'ITEM/SERVICE', amount: 'TOTAL AMOUNT', type: 'TYPE', refund_text: 'REFUNDED/REMOVED'}"
 									filename="'Panel Transactions'" separator=","
 									class="color-blue-custom2 font-12 weight-700 pointer-cursor" style="position: absolute;opacity: 0;">
 									DOWNLOAD <img src="../assets/e-claim/img/new-assets/Download.png"
