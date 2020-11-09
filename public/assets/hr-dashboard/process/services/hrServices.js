@@ -521,6 +521,7 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   
   // Billing 
   hrFactory.fetchCompanyInvoiceHistory = function ( type, page, per_page ) {
+    per_page = per_page ? per_page : 5;
     return $http.get( serverUrl.url + "/hr/company_invoice_history?type=" + type + '&page=' + page + '&limit=' + per_page + '&token=' + window.localStorage.getItem('token'));
   }
 
