@@ -117,7 +117,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;">
+          <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;align-items: center;justify-content: center;">
             <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 20px;display: inline-block;width: 100%;box-sizing: border-box;">
                 GP - MEDICINE/TREATMENT
