@@ -151,11 +151,7 @@ app.directive('spendingBillingDirective', [
 
         scope.downloadViewInvoice = function ( id ) {
           if(scope.invoiceSelectorValue == 'spending'){
-            if(scope.download_token.live == true) {
-              window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + id + '&token=' + scope.download_token.token);
-            } else {
               window.open(serverUrl.url + '/hr/statement_download?id=' + id + '&token=' + window.localStorage.getItem('token'));
-            }
           }
           if(scope.invoiceSelectorValue == 'spending_purchase'){
             window.open(serverUrl.url + '/hr/download_spending_purchase_invoice?id=' + id + '&token=' + window.localStorage.getItem('token'));
@@ -236,7 +232,7 @@ app.directive('spendingBillingDirective', [
        
         scope.onLoad = async function () {
           // scope.showLoading();
-          await scope.getDownloadToken();
+          // await scope.getDownloadToken();
           await scope.getDateTerms();
           await scope.getBillingInvoiceHistory( scope.invoiceSelectorValue );
         }
