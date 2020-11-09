@@ -119,7 +119,7 @@
         <tr>
           <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;">
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 20px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;color: #fff;padding: 0px 6px;line-height: 20px;">
                 GP - MEDICINE/TREATMENT
               </div>
               <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
@@ -128,7 +128,7 @@
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;color: #fff;padding: 0px 6px;line-height: 36px;">
                 GP - CONSULTATION
               </div>
               <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
@@ -137,7 +137,7 @@
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;color: #fff;padding: 0px 6px;line-height: 36px;">
                 DENTAL
               </div>
               <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
@@ -146,7 +146,7 @@
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-top-left-radius: 5px;border-top-right-radius: 5px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;color: #fff;padding: 0px 6px;line-height: 36px;">
                 TCM
               </div>
               <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
