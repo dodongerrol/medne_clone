@@ -572,6 +572,7 @@ class SpendingInvoiceController extends \BaseController {
 		$today = date('Y-m-d');
 		$type = '';
 		if($input['type'] == 'spending') {
+			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 			$pagination = [];
 			$all_data = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->get();
 			$credits_statements = DB::table('company_credits_statement')->where('statement_customer_id', $customer_id)->where('statement_date', '<=', $today)->orderBy('statement_date', 'desc')->paginate($limit);
@@ -658,12 +659,17 @@ class SpendingInvoiceController extends \BaseController {
 
 					$amount_due = $amount_due < 0 ? 0 : $amount_due;
 
+					if($plan->account_type == "enterprise_plan" && $data->type == "panel") {
+						$amount_due = 0;
+					}
+					
 					if($amount_due <= 0) {
 						$data->statement_status = 1;
 					} else {
 						$data->statement_status = 0;
 						$data->paid_date = null;
 					}
+					
 
 					$data->paid_amount = $results['total_pre_paid_spent'] + $data->paid_amount;
 
