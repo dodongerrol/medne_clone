@@ -72,15 +72,15 @@
 							<strong ng-bind="emp.name">Calvin Lee</strong>
 						</td>
 						<td class="status-details-wrapper">
-							<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'pending' && !emp.deletion">
+							<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'pending' && emp.schedule == false">
 								<span class="status-color pending"></span>
 								<span>Pending</span>
 							</div>
-							<div class="status-details-container" ng-if="!emp.deletion && emp.emp_status == 'active' || (!emp.deletion && emp.schedule)">
+							<div class="status-details-container" ng-if="emp.account_status && emp.emp_status == 'active' || emp.account_status && emp.schedule && emp.schedule == false">
 								<span class="status-color active"></span>
 								<span>Active</span>
 							</div>
-							<div class="status-details-container" ng-if="emp.deletion || !emp.account_status || emp.emp_status == 'deleted'">
+							<div class="status-details-container" ng-if="!emp.account_status || emp.emp_status == 'deleted' || emp.deletion == true || emp.schedule == true ">
 								<span class="status-color removed"></span>
 								<span>Removed</span>
 							</div>
@@ -303,7 +303,7 @@
 								<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending'">Pending</span>
 								<span class="status-text removed" ng-if="!selectedEmployee.account_status">Removed</span> -->
 								<span class="status-text active" ng-if="(!selectedEmployee.deletion && !selectedEmployee.schedule) && (selectedEmployee.emp_status == 'active')">Active</span>
-            		<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending'">Pending</span>
+            		<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending' && selectedEmployee.schedule == false || selectedEmployee.deletion == false">Pending</span>
             		<span class="status-text removed" ng-if="!selectedEmployee.account_status || selectedEmployee.deletion || selectedEmployee.schedule">Removed</span>
 							</div>
 						</div>
