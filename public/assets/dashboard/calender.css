@@ -878,3 +878,116 @@ div.fc-scroller
 {
     overflow-y: hidden!important;
 }
+
+#setupBreakHours .timepicker {
+    color: #777676;
+    border: 1px solid #d9d9d9;
+    width: 80px;
+    font-size: 15px;
+    height: 30px;
+    background: white;
+}
+
+#setupBreakHours .btn-info {
+    background: #1B9BD7;
+}
+
+div#setupBreakHours #monday-addBreak,
+div#setupBreakHours #tuesday-addBreak,
+div#setupBreakHours #wednesday-addBreak,
+div#setupBreakHours #thursday-addBreak,
+div#setupBreakHours #friday-addBreak,
+div#setupBreakHours #saturday-addBreak,
+div#setupBreakHours #sunday-addBreak,
+div#setupBreakHours #publicHoliday-addBreak {
+    border-radius: 5px;
+    background: #1b9bd7;
+    color: white;
+    border: 1px solid #1b9bd7;
+    font-size: 0.5em;
+}
+
+div#setupBreakHours .profile-breakHours-detail-lbl.day-name,
+div#setupBreakHours .profile-breakHours-detail-lbl {
+    font-size: 12px;
+    color: #666666;
+}
+
+div#setupBreakHours .row.monday1,
+div#setupBreakHours .row.monday2,
+div#setupBreakHours .row.monday3,
+div#setupBreakHours .row.monday4,
+div#setupBreakHours .row.tuesday1,
+div#setupBreakHours .row.tuesday2,
+div#setupBreakHours .row.tuesday3,
+div#setupBreakHours .row.tuesday4,
+div#setupBreakHours .row.wednesday1,
+div#setupBreakHours .row.wednesday2,
+div#setupBreakHours .row.wednesday3,
+div#setupBreakHours .row.wednesday4,
+div#setupBreakHours .row.thursday1,
+div#setupBreakHours .row.thursday2,
+div#setupBreakHours .row.thursday3,
+div#setupBreakHours .row.thursday4,
+div#setupBreakHours .row.friday1,
+div#setupBreakHours .row.friday2,
+div#setupBreakHours .row.friday3,
+div#setupBreakHours .row.friday4,
+div#setupBreakHours .row.saturday1,
+div#setupBreakHours .row.saturday2,
+div#setupBreakHours .row.saturday3,
+div#setupBreakHours .row.saturday4,
+div#setupBreakHours .row.sunday1,
+div#setupBreakHours .row.sunday2,
+div#setupBreakHours .row.sunday3,
+div#setupBreakHours .row.sunday4,
+div#setupBreakHours .row.publicHoliday1,
+div#setupBreakHours .row.publicHoliday2,
+div#setupBreakHours .row.publicHoliday3,
+div#setupBreakHours .row.publicHoliday4 {
+    display: none
+}
+
+div#setupBreakHours #clinic-time-panel {
+    height: 500px;
+    overflow: scroll;
+}
+
+#setupBreakHours #monday-mainCollapsibleDiv,
+#setupBreakHours #tuesday-mainCollapsibleDiv,
+#setupBreakHours #wednesday-mainCollapsibleDiv,
+#setupBreakHours #thursday-mainCollapsibleDiv,
+#setupBreakHours #friday-mainCollapsibleDiv,
+#setupBreakHours #saturday-mainCollapsibleDiv,
+#setupBreakHours #sunday-mainCollapsibleDiv,
+#setupBreakHours #publicHoliday-mainCollapsibleDiv {
+    border-top: 1px solid #d0d0d0;
+    max-height: 150px;
+}
+
+#setupBreakHours #profile-breakHours-copyTimetoAllBtn {
+    font-size: 0.5em;
+}
+
+#setupBreakHours #monday-div .card-body .row,
+#setupBreakHours #tuesday-div .card-body .row,
+#setupBreakHours #wednesday-div .card-body .row,
+#setupBreakHours #thursday-div .card-body .row,
+#setupBreakHours #friday-div .card-body .row,
+#setupBreakHours #saturday-div .card-body .row,
+#setupBreakHours #sunday-div .card-body .row,
+#setupBreakHours #publicHoliday-div .card-body .row {
+    margin-bottom: 1%;
+}
+
+#setupBreakHours #monday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #tuesday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #wednesday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #thursday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #friday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #saturday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #sunday-mainCollapsibleDiv .scrollableDiv,
+#setupBreakHours #publicHoliday-mainCollapsibleDiv .scrollableDiv{
+    overflow: scroll;
+    max-height: 117px;
+}

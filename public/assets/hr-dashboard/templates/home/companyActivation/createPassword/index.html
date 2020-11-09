@@ -32,7 +32,8 @@
         <div class="input-with-clickable">
           <input type="{{ inputType }}" ng-model="formData.password" placeholder="Enter Your Password">
           <div class="clickable" ng-click="togglePassword()">
-            <img src="../../assets/images/showhidepass.png" alt="">
+            <img ng-if="inputType == 'password'" src="../../assets/images/Hide.png" alt="">
+            <img ng-if="inputType != 'password'" src="../../assets/images/Show.png" alt="">
           </div>
         </div>
       </div>

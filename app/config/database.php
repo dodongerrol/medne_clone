@@ -30,6 +30,17 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
+	| Enable database query logging
+	|--------------------------------------------------------------------------
+	|
+	| Set this to true if you want to enable database query logging
+	| Not meant for production environment it'll cause performance issue.
+	|
+	*/
+	'enable_logging' => false,
+
+	/*
+	|--------------------------------------------------------------------------
 	| Database Connections
 	|--------------------------------------------------------------------------
 	|
@@ -55,14 +66,23 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host' => 'localhost',
-			'database'  => 'medicloud_v3',
-			'username'  => 'root',
-			'password'  => '',
-			'charset'   => 'utf8',
-			'collation' => 'utf8_unicode_ci',
-			'prefix'    => 'medi_',
+		'read' => array(
+            // Return a random host
+            // 'host' => 'root',
+            'host' => '127.0.0.1',
     ),
+    'write' => array(
+            // 'host' => 'root'
+            'host' => '127.0.0.1'
+    ),
+    // 'database'  => 'root',
+    'database'  => 'medicloud_v3',
+    'username'  => 'root',
+    'password'  => '',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => 'medi_',
+    	),
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',

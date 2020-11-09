@@ -68,6 +68,7 @@ public static function getClinicTypeImage($clinic_type)
     $type = "";
     $image = "";
     $type_name = "";
+    
     if($clinic_type->head == 1 || $clinic_type->head == "1") {
       if($clinic_type->Name == "GP") {
        $type = "GP";

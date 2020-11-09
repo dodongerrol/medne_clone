@@ -1,0 +1,95 @@
+.mednefits-basic-plan-wrapper .mwbc-card-box-container .available-credits {
+  margin: 0;
+}
+.mednefits-basic-plan-wrapper .mbp-total-spent-box {
+  width: 300px;
+}
+.mednefits-basic-plan-wrapper .mednefits-credits-wallet-container {
+  margin: 10px 0 0;
+}
+.mednefits-basic-plan-wrapper .mednefits-credits-wallet-container >div:first-child {
+  width: 230px;
+}
+.mwbc-payment-methods-wrapper {
+  margin: 20px 0 0;
+}
+.bank-transfer-paynow h5 {
+  margin: 0;
+}
+.mca-text {
+  font-size: 12px;
+}
+.mca-link-text {
+  color: #0392CF;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.mednefits-credits-wallet-container .m-panel >div:first-child {
+  margin: 0 30px 0 0;
+}
+#edit-payment-methods-modal .custom-checkbox-selector .text {
+  color: #000;
+}
+#edit-payment-methods-modal .modal-dialog.medical-wellness-wallet-container {
+  width: auto;
+}
+.medical-wellness-wallet-container .modal-body {
+  padding: 0 40px 40px;
+}
+.medical-wellness-wallet-container .modal-body .payment-medical-wallet {
+  width: 60%;
+}
+.medical-wellness-wallet-container .mednefits-panel-container {
+  width: 50%;
+}
+.medical-wellness-wallet-container .payment-border-separator {
+  border: 1px solid #ccc;
+  height: 114px;
+  position: relative;
+  top: 25px;
+  display: block;
+  margin: 0 50px 0 0;
+}
+.medical-wellness-wallet-container .payment-wellness-wallet {
+  width: 40%;
+}
+.medical-wellnss-wallet-container .modal-body {
+  padding: 0 40px 40px;
+}
+.credits-tooltip-container.total-spent {
+  /* display: none; */
+}
+.member-wallet-body-info-container .mednefits-basic-plan-wrapper {
+  height: 100vh;
+}
+
+.mednefits-basic-plan-wrapper .activate-well-btn {
+  margin: 10px 0 0;
+}
+.mednefits-basic-plan-wrapper .activate-well-btn:focus {
+  background-color: #fff;
+}
+#active-basic-plan-modal .modal-body {
+  padding: 0 40px 10px;
+}
+#edit-payment-methods-modal .btn-update[disabled] {
+  background-color: #D9D9D9;
+  color: #fff;
+}
+.coverage-subtext {
+  font-size: 17px;
+  line-height: 24px;
+  color: #848484;
+  margin: 15px 0;
+}
+.mednefits-basic-plan-wrapper .prepaid-not-activated .btn-activate-credits {
+  padding: 2px 20px;
+}
+.wellness-not-active-text{
+  color: #999;
+  margin-bottom: 10px;
+}
+.not-activated-basic-plan-text a{
+  color: #3192CF;
+}

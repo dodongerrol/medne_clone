@@ -41,6 +41,8 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/custom.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/fonts.css?_={{ $date->format('U') }}">
 
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/header-navigation.css?_={{ $date->format('U') }}">
+
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/bulk-credit-allocation.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/new-account-payment.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/css/view-member-modal.css?_={{ $date->format('U') }}">
@@ -65,8 +67,14 @@
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/sendEmployeeActivation/style.css?_={{ $date->format('U') }}">
 	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/employeeEnrollment/enterpriseSummary/style.css?_={{ $date->format('U') }}">
 
-	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/medicalWallet/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/wellnessWallet/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/style.css?_={{ $date->format('U') }}">
+	<link rel="stylesheet" href="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/style.css?_={{ $date->format('U') }}">
 
+	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async="async"></script>
 
 
 	<script src="//fast.appcues.com/57952.js"></script>
@@ -74,7 +82,7 @@
 </head>
 <body>
 	<div id="main-section-container">
-		<div ui-view="navigation" ng-controller="checkCtrls"></div>
+		<div ui-view="navigation" ng-controller="checkCtrls as navCtr"></div>
 		<div class="main-ui-view" ui-view="main"></div>
 		<div ui-view="modal"></div>
 		<div ui-view="modal_2"></div>
@@ -194,6 +202,7 @@
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/exif.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/e-claim/js/angular-fix-image-orientation.js?_={{ $date->format('U') }}"></script>
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/intlTelInput.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/js/alpine.min.js?_={{ $date->format('U') }}"></script>
 
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/app.js?_={{ $date->format('U') }}"></script>
 	<!-- Directives -->
@@ -257,6 +266,16 @@
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/healthSpendingAccountConfirm/function.js?_={{ $date->format('U') }}"></script>
 		<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/removeEmployee/removeEmployeeFactory.js?_={{ $date->format('U') }}"></script>
 	<!-------------------------------->
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/medicalWallet/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/wellnessWallet/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsBasicPlan/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsEnterprisePlan/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/outOfPocket/function.js?_={{ $date->format('U') }}"></script>
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/memberWalletBenefitsCoverage/mednefitsCreditAccount/function.js?_={{ $date->format('U') }}"></script>
+
+	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/templates/home/billing/function.js?_={{ $date->format('U') }}"></script>
 
 	<!-- Controllers -->
 	<script type="text/javascript" src="<?php echo $server; ?>/assets/hr-dashboard/process/controllers/checkCtrl.js?_={{ $date->format('U') }}"></script>

@@ -376,8 +376,8 @@ class PlanTierController extends \BaseController {
 					->orderBy('created_at', 'desc')
 					->first();
 
-
-		if($planned->account_type != "lite_plan") {
+		// $checkEnrollVacantSeats = $planned->account_type == "lite_plan" || $planned->account_type == "out_of_pocket" ? false : true;
+		if($planned->account_type == "stand_alone_plan" || $planned->account_type == "insurance_bundle" || $planned->account_type == "enterprise_plan") {
 			$plan_status = DB::table('customer_plan_status')
 							->where('customer_plan_id', $planned->customer_plan_id)
 							->orderBy('created_at', 'desc')
@@ -420,7 +420,7 @@ class PlanTierController extends \BaseController {
 			$customer_active_plan_id = $active_plan->customer_active_plan_id;
 		}
 
-		if($planned->account_type != "lite_plan") {
+		if($planned->account_type == "stand_alone_plan" || $planned->account_type == "insurance_bundle" || $planned->account_type == "enterprise_plan") {
 			$total_dependents_entry = 0;
 			$total_dependents = 0;
 			// check total depedents to be save
@@ -681,6 +681,8 @@ class PlanTierController extends \BaseController {
 		);
 
 		$temp_enroll->updateEnrollee($data);
+		// $temp = \DateTime::createFromFormat('d/m/Y', $input['plan_start']);
+		// $input['plan_start'] = $temp->format('Y-m-d');
 		$input['mobile_country_code'] = $input['mobile_area_code'];
 		$error_logs = PlanHelper::enrollmentEmployeeValidation($input, true);
 		$mobile = preg_replace('/\s+/', '', $input['mobile']);
@@ -701,7 +703,6 @@ class PlanTierController extends \BaseController {
 			'start_date'				=> $input['plan_start'],
 			'error_logs'				=> serialize($error_logs)
 		);
-
 
 		$result = $temp_enroll->updateEnrollee($data);
 
@@ -758,7 +759,7 @@ class PlanTierController extends \BaseController {
 		$dependent_enrollment = new DependentTempEnrollment();
 		$plan_start = $input['plan_start'];
 		$input['plan_start'] = date('d/m/Y', strtotime($input['plan_start']));
-		
+
 		$error_dependent_logs = PlanHelper::enrollmentDepedentValidation($input);
 		$temp_enrollment_dependent = array(
 			'dependent_temp_id'		=> $input['dependent_temp_id'],
@@ -770,7 +771,7 @@ class PlanTierController extends \BaseController {
 			'relationship'			=> $input['relationship'],
 			'error_logs'			=> serialize($error_dependent_logs)
 		);
-		
+
 		$result = $dependent_enrollment->updateEnrollement($temp_enrollment_dependent);
 
 		if($result) {

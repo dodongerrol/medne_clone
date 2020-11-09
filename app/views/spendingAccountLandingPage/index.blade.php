@@ -38,10 +38,9 @@
 				</div>
 
 				<div class="banner-text-wrapper">
-					<p><b>What is my Spending Account?</b></p>
-					<p>Your spending account enables you to enjoy the full benefits of the Mednefits platform with <b>cashless payments</b> at Mednefits panel providers and <b>e-claim submissions</b> at non-panel providers</p>
+					<p><b>What is my Mednefits Basic Plan?</b></p>
+					<p>Mednefits Basic Plan enables you to enjoy the full benefits of the Mednefits platform with cashless payments at Mednefits panel providers and e-claim submissions at non-panel providers.</p>
 					<p>What this means for your team:</p>
-
 				</div>
 			</div>
 
@@ -54,7 +53,7 @@
 							</div>
 						</div>
 						<div class="col-box">
-							<p class="description-p">Simply allocate credits to enjoy a cashless experience.</p>
+							<p class="description-p">Simply allocate budget to enjoy a cashless experience.</p>
 						</div>
 					</div>
 				</section>
@@ -104,7 +103,7 @@
 								<div class="num">2</div>
 							</div>
 							<div class="step-description">
-								<p>Spending Account activated</p>
+								<p>Mednefits Basic Plan activated</p>
 							</div>
 						</div>
 
@@ -113,7 +112,7 @@
 								<div class="num">3</div>
 							</div>
 							<div class="step-description">
-								<p>Distribute allocations to employees.</p>
+								<p>Distribute budget to employees.</p>
 							</div>
 						</div>
 
@@ -140,7 +139,7 @@
 			</section>
 
 			<div class="footer-wrapper">
-				<p>If you wish to open a Spending Account, please contact us<br>through <a href="/enquiry-form" target="_blank" >this form</a>.</p>
+				<p>If you wish to open a Mednefits Basic Plan, please contact us<br>through <a href="/enquiry-form" target="_blank" >this form</a>.</p>
 			</div>
 
 		</div>
