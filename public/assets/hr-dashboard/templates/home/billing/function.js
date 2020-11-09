@@ -79,7 +79,7 @@ app.directive('spendingBillingDirective', [
           // console.log( type );
 
           scope.showLoading();
-          hrSettings.fetchCompanyInvoiceHistory( type,download )
+          hrSettings.fetchCompanyInvoiceHistory( type, download, scope.page_active, scope.per_page )
             .then(function(response){
               console.log(response);
 
