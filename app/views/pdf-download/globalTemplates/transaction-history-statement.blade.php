@@ -117,8 +117,8 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;vertical-align: middle;">
-            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+          <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 20px;display: inline-block;width: 100%;box-sizing: border-box;">
                 GP - MEDICINE/TREATMENT
               </p>
@@ -127,7 +127,7 @@
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
-            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 GP - CONSULTATION
               </p>
@@ -136,7 +136,7 @@
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
-            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 DENTAL
               </p>
@@ -145,7 +145,7 @@
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
-            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 TCM
               </p>
