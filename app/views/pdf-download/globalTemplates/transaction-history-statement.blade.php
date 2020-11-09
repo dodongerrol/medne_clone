@@ -117,9 +117,9 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;">
-            <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 20px;display: inline-block;width: 100%;box-sizing: border-box;">
+          <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;vertical-align: middle;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 20px;display: inline-block;width: 100%;box-sizing: border-box;">
                 GP - MEDICINE/TREATMENT
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
@@ -127,8 +127,8 @@
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
-            <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 GP - CONSULTATION
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
@@ -136,8 +136,8 @@
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
-            <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 DENTAL
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
@@ -145,8 +145,8 @@
               </p>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
-            <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
+            <div style="width: 150px;display: inline-block;vertical-align: middle;overflow: hidden;text-align: center;border-radius: 5px 5px 0px 0px;">
+              <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 TCM
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
