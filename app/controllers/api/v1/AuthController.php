@@ -5769,7 +5769,17 @@ if($customer_id) {
  $user = DB::table('user')->where('UserID', $findUserID)->first();
  Notification::sendNotificationToHR('Employee E-Claim', 'Employee '.ucwords($user->Name).' created an E-Claim.', url('company-benefits-dashboard#/e-claim', $parameter = array(), $secure = null), $customer_id, 'https://www.medicloud.sg/assets/new_landing/images/favicon.ico');
 }
-EclaimHelper::sendEclaimEmail($user_id, $id);
+
+try {
+  EclaimHelper::sendEclaimEmail($user_id, $id);
+} catch(Exception $e) {
+  $email = [];
+  $email['end_point'] = url('v2/user/create_e_claim', $parameter = array(), $secure = null);
+  $email['logs'] = 'E-Claim Mobile Email Send Submission - '.$e;
+  $email['emailSubject'] = 'Error log.';
+  EmailHelper::sendErrorLogs($email);
+}
+
 $returnObject->status = TRUE;
 $returnObject->message = 'E-Claim successfully created.';
 
