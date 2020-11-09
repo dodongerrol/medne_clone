@@ -567,7 +567,7 @@ class SpendingInvoiceController extends \BaseController {
 			return ['status' => false, 'message' => 'type should only be spending, spending_purchase, plan, deposit and plan_withdrawal'];
 		}
 
-		$limit = !empty($input['limit']) && $input['limit'] =! null || !empty($input['limit']) && $input['limit'] =! null? $input['limit'] : 10;
+		$limit = !empty($input['limit']) && $input['limit'] =! null ? $input['limit'] : 10;
 		$download = !empty($input['download']) && $input['download'] === "true" || !empty($input['download']) && $input['download'] === true ? true : false;
 		$today = date('Y-m-d');
 		$type = '';
