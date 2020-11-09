@@ -126,7 +126,7 @@
               {{ strtoupper($currency_type) }} {{ $total_gp_medicine }}
               </p>
             </div>
-            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
+            <div style="margin-top: 45px;display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 GP - CONSULTATION
@@ -135,7 +135,7 @@
               {{ strtoupper($currency_type) }} {{ $total_gp_consultation }}
               </p>
             </div>
-            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
+            <div style="margin-top: 45px;display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 DENTAL
@@ -144,7 +144,7 @@
               {{ strtoupper($currency_type) }} {{ $total_dental }}
               </p>
             </div>
-            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
+            <div style="margin-top: 45px;display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background-color: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
                 TCM
