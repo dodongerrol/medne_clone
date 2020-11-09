@@ -147,7 +147,7 @@
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
               <p style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;display: inline-block;width: 100%;box-sizing: border-box;">
-                TCM
+                TCMMM
               </p>
               <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
               {{ strtoupper($currency_type) }} {{ $total_tcm }}
