@@ -521,12 +521,12 @@ service.factory("hrSettings", function($http, serverUrl, Upload) {
   
   // Billing 
   hrFactory.fetchCompanyInvoiceHistory = function ( type, page, per_page ) {
-    return $http.get( serverUrl.url + "/hr/company_invoice_history/?type=" + type + '&page=' + page + 'limit=' + per_page  );
+    return $http.get( serverUrl.url + "/hr/company_invoice_history?type=" + type + '&page=' + page + '&limit=' + per_page + '&token=' + window.localStorage.getItem('token'));
   }
 
   // Download SOA
   hrFactory.downloadSoaData = function ( type,download ) {
-    return window.open( serverUrl.url + "/hr/company_invoice_history/?type=" + type + "&download=" + download + '&token=' + window.localStorage.getItem('token'));
+    return window.open( serverUrl.url + "/hr/company_invoice_history?type=" + type + "&download=" + download + '&token=' + window.localStorage.getItem('token'));
     // return window.open( serverUrl.url + "/hr/download_bulk_allocation_employee_lists?token=" + token );
   }
 
