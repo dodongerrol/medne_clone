@@ -262,6 +262,12 @@ login.directive('eclaimLogin', [
         
         scope.continueButton = function (num) {
           scope.showContinueInput = true;
+
+          if(scope.checkMemberData.disabled_otp == 1){
+            scope.showPasswordInputInOtp = true;
+          }else{
+            scope.resendOtp(true);
+          }
         }
 
         scope.checkMobileNum = async function (num) {
@@ -317,7 +323,7 @@ login.directive('eclaimLogin', [
             })
         }
 
-        scope.resendOtp = function () {
+        scope.resendOtp = function (isFirst) {
           let data = {
             mobile: scope.mobile_number,
             mobile_country_code: scope.country_code_value,
@@ -328,7 +334,9 @@ login.directive('eclaimLogin', [
 	          .then(function(response) {
               console.log(response);
               scope.hideLoading();
-              swal('Success!', response.data.message, 'success');
+              if(!isFirst){
+                swal('Success!', response.data.message, 'success');
+              }
             })
         }
 
@@ -477,7 +485,11 @@ login.directive('eclaimLogin', [
               scope.checkMemberPassword = response.data;
               if ( response.data.status ) {
                 scope.hideLoading();
-                scope.showPostalCodeInput = true;
+                if(scope.checkMemberData.postal_code == 1){
+                  scope.signIn();
+                }else{
+                  scope.showPostalCodeInput = true;
+                }
               } else {
                 scope.hideLoading();
                 scope.passwordSignInNotMatch = true;

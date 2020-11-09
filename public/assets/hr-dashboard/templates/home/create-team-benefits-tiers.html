@@ -731,7 +731,7 @@
 			</div>
 
 			<div ng-if="isReviewEnroll" class="enroll-container-button">
-				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<!-- <span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span> -->
 				<button ng-click="goToCommunication()" class="btn-enroll" ng-disabled="hasError" >ENROLL
 					<span class="enroll-badge">
 						{{ temp_employees.length < 1000 ? temp_employees.length : ''  }}
@@ -743,7 +743,7 @@
 			</div>
 
 			<div ng-if="isCommunicationShow" class="enroll-container-button">
-				<span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span>
+				<!-- <span ng-if="spendingPlan_status.account_type != 'lite_plan'" class="pending-enroll-text"><span ng-bind="progress.in_progress">10</span> PENDING TO ENROLL</span> -->
 				<button class="btn-enroll" ng-click="saveTempUser()">COMPLETE</button>
 			</div>
 
@@ -795,12 +795,12 @@
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_message"></span>
                         <span class="error-message" ng-bind="selected_edit_details_data.error_logs.mobile_area_code_message"></span>
 										</div>
-										<div class="form-group">
+										<div ng-if="showCurrencyType == 'myr'" class="form-group">
 											<label>NRIC</label>
 											<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.nric_error == true}" ng-model="selected_edit_details_data.employee.nric">
 											<span class="error-message" ng-bind="selected_edit_details_data.error_logs.nric_message"></span>
 										</div>
-										<div class="form-group">
+										<div ng-if="showCurrencyType == 'myr'" class="form-group">
 											<label>Passport Number</label>
 											<input type="text" class="form-control input-edit-employee-details" ng-class="{'has-input-error':selected_edit_details_data.error_logs.passport_error == true}" ng-model="selected_edit_details_data.employee.passport">
 											<span class="error-message" ng-bind="selected_edit_details_data.error_logs.passport_message"></span>

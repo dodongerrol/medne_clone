@@ -308,7 +308,7 @@ class BenefitsDashboardController extends \BaseController {
 			$in_progress = 0;
 		}
 
-		if($plan->account_type == "lite_plan") {
+		if($plan->account_type == "lite_plan" || $plan->account_type == "out_of_pocket") {
 			$in_progress = 99999;
 		}
 
@@ -321,7 +321,7 @@ class BenefitsDashboardController extends \BaseController {
 				'total_employees' => $plan_status->employees_input,
 				'plan_end_date'	=> $end_plan,
 				'added_purchase_status' => $added_purchase_status,
-				'account_type'	=> $customer->account_type
+				'account_type'	=> $plan->account_type
 			)
 		);
 	}
@@ -403,21 +403,10 @@ class BenefitsDashboardController extends \BaseController {
 					}
 				}
 
-	        // return $temp_users;
-
 				if(sizeof($temp_users) == 0) {
 					return array('status' => FALSE, 'message' => 'Excel File data is empty.');
 				}
 
-	        // if($total_employees >= sizeof($temp_users)) {
-
-		        // $completed = DB::table('customer_link_customer_buy')
-						// 		->join('corporate', 'corporate.corporate_id', '=', 'customer_link_customer_buy.corporate_id')
-						// 		->join('corporate_members', 'corporate_members.corporate_id', '=', 'corporate.corporate_id')
-						// 		->where('customer_link_customer_buy.customer_buy_start_id', $result->customer_buy_start_id)
-						// 		->where('corporate_members.removed_status', 0)
-						// 		->count();
-						// $total = $total_employees - $completed;
 				if($total <= 0) {
 					return array(
 						'status'	=> FALSE,
@@ -2105,9 +2094,27 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_name = "Basic Plan";
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
+			} else if($active_plan->account_type == 'out_of_pocket') {
+				$plan_name = "Out of Pocket";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
+
+			$plan_user_history = DB::table('user_plan_history')
+				->where('user_id', $user->UserID)
+				->where('type', 'started')
+				->orderBy('created_at', 'desc')
+				->first();
+
+			if(!$plan_user_history) {
+				// create plan user history
+				PlanHelper::createUserPlanHistory($user->UserID, $link_account->customer_buy_start_id, $customer_id);
+				$plan_user_history = DB::table('user_plan_history')
+				->where('user_id', $user->UserID)
+				->where('type', 'started')
+				->orderBy('created_at', 'desc')
+				->first();
+			}
 
 			if($employee_status['status'] == true) {
 				$schedule = $employee_status['schedule_status'];
@@ -2117,77 +2124,64 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_withdraw = $employee_status['plan_withdraw'];
 				$emp_status = $employee_status['emp_status'];
 			} else {
-				$plan_user_history = DB::table('user_plan_history')
-				->where('user_id', $user->UserID)
-				->where('type', 'started')
-				->orderBy('created_at', 'desc')
-				->first();
-
-				if(!$plan_user_history) {
-                    // create plan user history
-					PlanHelper::createUserPlanHistory($user->UserID, $link_account->customer_buy_start_id, $customer_id);
-					$plan_user_history = DB::table('user_plan_history')
-					->where('user_id', $user->UserID)
-					->where('type', 'started')
-					->orderBy('created_at', 'desc')
-					->first();
-				}
-
 				$active_plan = DB::table('customer_active_plan')
 				->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
 				->first();
-
-				$plan = DB::table('customer_plan')
-				->where('customer_plan_id', $active_plan->plan_id)
-				->orderBy('created_at', 'desc')
-				->first();
-
-				$active_plan_first = DB::table('customer_active_plan')
-				->where('plan_id', $active_plan->plan_id)
-				->first();
-
-				if((int)$active_plan_first->plan_extention_enable == 1) {            
-					$plan_user = DB::table('user_plan_type')
-					->where('user_id', $user->UserID)
-					->orderBy('created_at', 'desc')
-					->first();
-
-					$active_plan_extension = DB::table('plan_extensions')
-					->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
-					->first();
-
-					if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
-						$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
-						$expiry_date = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
-					} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-						$expiry_date = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
-					}
-
-					if($active_plan_extension->account_type == 'stand_alone_plan') {
-						$plan_name = "Pro Plan";
-					} else if($active_plan_extension->account_type == 'insurance_bundle') {
-						$plan_name = "Insurance Bundle";
-					} else if($active_plan_extension->account_type == 'trial_plan'){
-						$plan_name = "Trial Plan";
-					} else if($active_plan_extension->account_type == 'lite_plan') {
-						$plan_name = "Lite Plan";
-					}
-				} else {
-					$plan_user = DB::table('user_plan_type')
-					->where('user_id', $user->UserID)
-					->orderBy('created_at', 'desc')
-					->first();
-
+				if(($active_plan->account_type != "lite_plan") && ($active_plan->account_type != "out_of_pocket")) {
 					$plan = DB::table('customer_plan')
 					->where('customer_plan_id', $active_plan->plan_id)
+					->orderBy('created_at', 'desc')
 					->first();
 
-					if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
-						$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
-						$expiry_date = date('m/d/Y', strtotime('-1 day', strtotime($temp_valid_date)));
-					} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
-						$expiry_date = date('m/d/Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+					$active_plan_first = DB::table('customer_active_plan')
+					->where('plan_id', $active_plan->plan_id)
+					->first();
+
+					if((int)$active_plan_first->plan_extention_enable == 1) {            
+						$plan_user = DB::table('user_plan_type')
+						->where('user_id', $user->UserID)
+						->orderBy('created_at', 'desc')
+						->first();
+
+						$active_plan_extension = DB::table('plan_extensions')
+						->where('customer_active_plan_id', $active_plan_first->customer_active_plan_id)
+						->first();
+
+						if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
+							$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_extension->duration, strtotime($active_plan_extension->plan_start)));
+							$expiry_date = date('F d, Y', strtotime('-1 day', strtotime($temp_valid_date)));
+						} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+							$expiry_date = date('F d, Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+						}
+
+						if($active_plan_extension->account_type == 'stand_alone_plan') {
+							$plan_name = "Pro Plan";
+						} else if($active_plan_extension->account_type == 'insurance_bundle') {
+							$plan_name = "Insurance Bundle";
+						} else if($active_plan_extension->account_type == 'trial_plan'){
+							$plan_name = "Trial Plan";
+						} else if($active_plan_extension->account_type == 'lite_plan') {
+							$plan_name = "Lite Plan";
+						}
+					} else {
+						$plan_user = DB::table('user_plan_type')
+						->where('user_id', $user->UserID)
+						->orderBy('created_at', 'desc')
+						->first();
+
+						$plan = DB::table('customer_plan')
+						->where('customer_plan_id', $active_plan->plan_id)
+						->first();
+
+						if($plan_user->fixed == 1 || $plan_user->fixed == "1") {
+							$temp_valid_date = date('F d, Y', strtotime('+'.$active_plan_first->duration, strtotime($plan->plan_start)));
+							$expiry_date = date('m/d/Y', strtotime('-1 day', strtotime($temp_valid_date)));
+						} else if($plan_user->fixed == 0 | $plan_user->fixed == "0") {
+							$expiry_date = date('m/d/Y', strtotime('+'.$plan_user->duration, strtotime($plan_user->plan_start)));
+						}
 					}
+				} else {
+					$expiry_date = date('m/d/Y', strtotime($spending_account->medical_spending_end_date));
 				}
 			}
 
@@ -2277,11 +2271,6 @@ class BenefitsDashboardController extends \BaseController {
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
-
-			if((int)$user->Active == 0) {
-				$emp_status = 'deleted';
-			}
-
 			$cap_per_visit = $wallet->cap_per_visit_medical;
 
 			if($plan_tier) {
@@ -2308,6 +2297,10 @@ class BenefitsDashboardController extends \BaseController {
 				$emp_status = 'pending';
 			}
 
+			if((int)$user->Active == 0) {
+				$emp_status = 'deleted';
+			}
+
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -2326,6 +2319,7 @@ class BenefitsDashboardController extends \BaseController {
 				'enrollment_date' 		=> $user->created_at,
 				'plan_name'				=> $plan_name,
 				'start_date'			=> date('F d, Y', strtotime($get_employee_plan->plan_start)),
+				'end_date'				=> $active_plan->account_type != 'out_of_pocket' ? date('F d, Y', strtotime($plan_user_history->end_date)) : null,
 				'expiry_date'			=> $expiry_date,
 				'user_id'				=> $user->UserID,
 				'member_id'				=> $member_id,
@@ -5989,18 +5983,10 @@ class BenefitsDashboardController extends \BaseController {
 		->where('customer_active_plan_id', $invoice->customer_active_plan_id)
 		->first();
 
-		// check if head count or not
-		// if((int)$get_active_plan->new_head_count == 0) {
-			$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
-			// return $data;
-			// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-			$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		// } else {
-		// 	$data = self::getAddedHeadCountInvoice($input['invoice_id']);
-		// 	// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
-		// 	$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
-		// }
-
+		$data = self::benefitsNoHeadCountInvoice($input['invoice_id']);
+		// return $data;
+		// return View::make('pdf-download.globalTemplates.plan-invoice', $data);
+		$pdf = PDF::loadView('pdf-download.globalTemplates.plan-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream();
@@ -6170,10 +6156,9 @@ class BenefitsDashboardController extends \BaseController {
 		}
 
 		$contact = DB::table('customer_business_contact')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
 		$business_info = DB::table('customer_business_information')->where('customer_buy_start_id', $get_active_plan->customer_start_buy_id)->first();
-
-
+		$data['building_name'] = $business_info->building_name;
+		$data['unit_number'] = $business_info->unit_number;
 		$data['email'] = $contact->work_email;
 		$data['phone']     = $contact->phone;
 		$data['company'] = ucwords($business_info->company_name);
@@ -6483,9 +6468,9 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
 				}
-				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
+				$calculated_prices = \DecimalHelper::formatWithNoCommas($calculated_prices);
 				$duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
 
 				$data['price']          = number_format($calculated_prices, 2);
@@ -6587,8 +6572,10 @@ class BenefitsDashboardController extends \BaseController {
 
 		// return $dependents_data;
 		$data['dependents'] = $dependents_data;
-		$data['total'] = number_format($data['total'] + $dependent_amount, 2);
 		$data['amount_due'] = number_format($data['amount_due'] + $dependent_amount_due, 2);
+		$data['total'] = $data['amount_due'];
+		// $data['total'] = number_format($data['total'] + $dependent_amount, 2);
+		
 		// return $data['amount_due'];
 		$data['customer_active_plan_id'] = $get_active_plan->customer_active_plan_id;
 		$data['plan_end'] 			= date('F d, Y', strtotime('-1 day', strtotime($end_plan_date)));
@@ -11704,8 +11691,6 @@ class BenefitsDashboardController extends \BaseController {
 		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
 	    // get user plan
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-		$spending = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->first();
 		$final_user = [];
 
@@ -11714,7 +11699,11 @@ class BenefitsDashboardController extends \BaseController {
 		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
 		->where('corporate.corporate_id', $account_link->corporate_id)
 		->where('corporate_members.removed_status', 0)
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.PhoneCode', 'user.PhoneNo', 'user.Job_Title', 'user.DOB', 'user.created_at', 
+				'corporate.company_name', 'corporate_members.removed_status', 'user.Active', 'user.emp_no', 'user.member_activated', 'user.Zip_Code', 
+				'user.bank_name', 'user.bank_account', 'user.NRIC', 'user.Status')
 		->get();
+
 		$users_count = sizeOf($users);
 		$last_term_credits = false;
 		for($x = 0; $x < $users_count; $x++) {
@@ -11758,14 +11747,49 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
-							->where('owner_id', $users[$x]->UserID)
-							->where('deleted', 0)
-							->count();
+							->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
+							->where('employee_family_coverage_sub_accounts.owner_id', $users[$x]->UserID)
+							->where('employee_family_coverage_sub_accounts.deleted', 0)
+							->where('user.access_type', 2)
+							->where('user.Active', 1)
+							->select('user.Name', 'user.DOB')
+							->groupBy('user.Name')
+							->get();
+			
+			if ( count($dependents) > 0 && Config::get('config.seven_eleven_id') == $result->customer_buy_start_id) {
+				foreach ($dependents as $key => $item) {
+					$temp = array(
+						'Status'	=> $status,
+						'Name'		=> ucwords( $users[$x]->Name),
+						'NRIC'		=>	 $users[$x]->NRIC,
+						'Family Coverage'	=> count($dependents),
+						'Mobile No'		=>  $users[$x]->PhoneCode. $users[$x]->PhoneNo,
+						'Email'		=>  $users[$x]->Email,
+						'Date of Birth'		=>  $users[$x]->DOB,
+						'Postal'	=> $users[$x]->Zip_Code,
+						'Employee ID' => $users[$x]->emp_no,
+						'Bank Name'			=>  $users[$x]->bank_name,
+						'Bank Account'		=>  $users[$x]->bank_account,
+						'Plan Type' => \PlanHelper::getAccountType($plan->account_type)." (Corporate)",
+						'Start Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
+						'End Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
+						'Medical Allocation' => number_format($medical_credit_data['allocation'], 2),
+						'Medical Usage' => number_format($medical_credit_data['get_allocation_spent'], 2),
+						'Medical Balance' => number_format($medical_credit_data['balance'], 2),
+						'Wellness Allocation' => number_format($wellness_credit_data['allocation'], 2),
+						'Wellness Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
+						'Wellness Balance' => number_format($wellness_credit_data['balance'], 2),
+						'Dependent Name' => $item->Name,
+						'Dependent DOB' => $item->DOB,
+					);
+					$final_user[] = $temp;	
+				}
+			} 
 
 			$temp = array(
 				'Status'	=> $status,
 				'Name'		=> ucwords($users[$x]->Name),
-				'Family Coverage'	=> $dependents,
+				'Family Coverage'	=> count($dependents),
 				'Mobile No'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
 				'Date of Birth'		=> $users[$x]->DOB,
@@ -11782,7 +11806,8 @@ class BenefitsDashboardController extends \BaseController {
 				'Wellness Allocation' => number_format($wellness_credit_data['allocation'], 2),
 				'Wellness Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
 				'Wellness Balance' => number_format($wellness_credit_data['balance'], 2),
-				
+				'Dependent Name' => null,
+				'Dependent DOB' => null,
 			);
 
 			// if((int)$spending_accounts->wellness_enable == 1) {
@@ -12385,7 +12410,7 @@ class BenefitsDashboardController extends \BaseController {
 
 		$session = self::checkSession();
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $session->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
-
+		
 		$active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->get();
         // return $active_plans;
 
@@ -12404,25 +12429,25 @@ class BenefitsDashboardController extends \BaseController {
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				}
 				$calculated_prices_end_date = $end_plan_date;
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = $invoice->individual_price;
+					$calculated_prices = $invoice ? $invoice->individual_price : 0;
 				}
 			} else {
 				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($active->customer_start_buy_id);
 				$end_plan_date = $calculated_prices_end_date['plan_end'];
 				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
 
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice ? $invoice->individual_price : 0, $active->plan_start, $calculated_prices_end_date);
 				}
 			}
 
-			$active->plan_amount = number_format($calculated_prices * $invoice->employees, 2);
-			$active->employees = $invoice->employees;
+			$active->plan_amount = $invoice ? number_format($calculated_prices * $invoice->employees, 2) : 0;
+			$active->employees = $invoice ? $invoice->employees : $active->employees;
 
             // get depost
 			$deposits = DB::table("spending_deposit_credits")
@@ -12461,49 +12486,6 @@ class BenefitsDashboardController extends \BaseController {
 
 			$active->total_allocated_amount_medical = number_format($total_allocated_amount_medical, 2);
 			$active->total_allocated_amount_wellness = number_format($total_allocated_amount_wellness, 2);
-
-            // get users by customer active plan
-            // $users_id[] = DB::table('user_plan_history')->where('customer_active_plan_id', $active->customer_active_plan_id)->pluck('user_id');
-
-            // if(sizeof($users_id) > 0) {
-            //     $active->users_id = $users_id;
-                // medical
-                // $temp_medical_allocation = DB::table('e_wallet')
-                //                         ->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wallet_history.logs', 'added_by_hr')
-                //                         ->where('wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wallet_history.credit');
-
-                // $temp_medical_deduct_allocation = DB::table('e_wallet')
-                //                         ->join('wallet_history', 'wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wallet_history.logs', 'deducted_by_hr')
-                //                         ->where('wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wallet_history.credit');
-                // $total_medical_allocation += $temp_medical_allocation - $temp_medical_deduct_allocation;
-
-                // // wellness
-                // $temp_wellness_allocation = DB::table('e_wallet')
-                //                         ->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wellness_wallet_history.logs', 'added_by_hr')
-                //                         ->where('wellness_wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wellness_wallet_history.credit');
-
-                // $temp_wellness_deduct_allocation = DB::table('e_wallet')
-                //                         ->join('wellness_wallet_history', 'wellness_wallet_history.wallet_id', '=', 'e_wallet.wallet_id')
-                //                         ->where('wellness_wallet_history.logs', 'deducted_by_hr')
-                //                         ->where('wellness_wallet_history.customer_active_plan_id', $active->customer_active_plan_id)
-                //                         // ->whereIn('e_wallet.UserID', $users_id)
-                //                         ->sum('wellness_wallet_history.credit');
-
-                // $total_wellness_allocation += $temp_wellness_allocation - $temp_wellness_deduct_allocation;
-            // } else {
-            //     $active->total_unallocated_medical = "0.00";
-            //     $active->total_unallocated_wellness = "0.00";
-            // }
-
 			$active->total_allocated_amount_medical = number_format($total_allocated_amount_medical, 2);
 			$active->total_allocated_amount_wellness = number_format($total_allocated_amount_wellness, 2);
 
@@ -13424,9 +13406,14 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
-			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
-
+			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id, 'medical');
 			if($transaction_access)	{
+				$result['spending_feature_status_type'] = false;
+			}
+
+			// check member wallet spending validity
+            $validity = MemberHelper::getMemberWalletValidity($id, 'medical');
+			if(!$validity)	{
 				$result['spending_feature_status_type'] = false;
 			}
 
@@ -15991,32 +15978,39 @@ class BenefitsDashboardController extends \BaseController {
 				} else {
 					$end_plan_date = date('Y-m-d', strtotime('+1 year', strtotime($plan->plan_start)));
 				}
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = $invoice->individual_price;
+					$calculated_prices = $invoice ? $invoice->individual_price : 0;
 				}
-				$plan_amount = $calculated_prices * $invoice->employees;
+				$plan_amount = $invoice ? $calculated_prices * $invoice->employees : 0;
 				$new_head_count = false;
 			} else {
 				// $calculated_prices_end_date = CustomerHelper::getCompanyPlanDates($active->customer_start_buy_id);
 				$calculated_prices_end_date = $plan->plan_end;
 				$duration = CustomerHelper::getPlanDuration($active->customer_start_buy_id, $active->plan_start);
-				if((int)$invoice->override_total_amount_status == 1) {
+				if($invoice && (int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice ? $invoice->individual_price : 0, $active->plan_start, $calculated_prices_end_date);
 					$calculated_prices = $calculated_prices;
 				}
-				$plan_amount = $calculated_prices * $invoice->employees;
+				$plan_amount = $invoice ? $calculated_prices * $invoice->employees : 0;
 				$new_head_count = true;
 			}
 
 			$total += $plan_amount;
-			// get dependent if any
-			$dependents = DB::table('dependent_plans')
-			->where('customer_active_plan_id', $invoice->customer_active_plan_id)
-			->get();
+			if($invoice) {
+				// get dependent if any
+				$dependents = DB::table('dependent_plans')
+				->where('customer_active_plan_id', $invoice->customer_active_plan_id)
+				->get();
+				$payment_data = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
+			} else {
+				$dependents = [];
+				$payment_data = null;
+			}
+			
 	  
 			foreach ($dependents as $key => $dependent) {
 			  $invoice_dependent = DB::table('dependent_invoice')
@@ -16033,20 +16027,19 @@ class BenefitsDashboardController extends \BaseController {
 			  }
 			}
 			
-			$payment_data = DB::table('customer_cheque_logs')->where('invoice_id', $invoice->corporate_invoice_id)->first();
-			
+			$amount_due = $total - $payment_data->paid_amount;
 			$pagination['data'][] = [
-				'invoice_id'      => $invoice->corporate_invoice_id,
-				'invoice_date'    => date('Y-m-d', strtotime($invoice->invoice_date)),
-				'invoice_due'    => date('Y-m-d', strtotime($invoice->invoice_due)),
-				'invoice_number'  => $invoice->invoice_number,
+				'invoice_id'      => $invoice ? $invoice->corporate_invoice_id : null,
+				'invoice_date'    => $invoice ? date('Y-m-d', strtotime($invoice->invoice_date)) : null,
+				'invoice_due'    => $invoice ? date('Y-m-d', strtotime($invoice->invoice_due)) : null,
+				'invoice_number'  => $invoice ? $invoice->invoice_number : null,
 				'total'           => DecimalHelper::formatDecimal($total),
-        		'amount_due'      => $payment_data ? DecimalHelper::formatDecimal($total - $payment_data->paid_amount) : $total,
+        		'amount_due'      => $amount_due <= 0 ? "0.00" : DecimalHelper::formatDecimal($amount_due),
 				'payment_amount'  => $payment_data ? $payment_data->paid_amount : 0,
 				'payment_date'    => $payment_data && $active->paid == "true" ? date('Y-m-d', strtotime($payment_data->date_received)) : null,
 				'payment_remarks' => $payment_data ? $payment_data->remarks : null,
-				'currency_type'   => $invoice->currency_type,
-				'payment_status'  => $active->paid == "true" ? true : false
+				'currency_type'   => $invoice ? $invoice->currency_type : null,
+				'payment_status'  => $amount_due <= 0 ? true : false
 			];
 		}
 		
@@ -16099,7 +16092,8 @@ class BenefitsDashboardController extends \BaseController {
 
 		if(!$hr->fullname) {
 			// update info
-			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)->first();
+			$customer = DB::table('customer_business_contact')->where('customer_buy_start_id', $hr->customer_buy_start_id)
+			->first();
 
 			if($customer) {
 				$hr_acount_details = [

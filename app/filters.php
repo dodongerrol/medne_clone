@@ -100,7 +100,7 @@ Route::filter('auth.clinic', function()
                 ->where('admin_type', 'clinic')
                 ->where('created_at', $date)
                 ->first();
-                
+
     if(!$check) {
         $admin_logs = array(
             'admin_id'  => Session::get('user-session'),
@@ -125,7 +125,7 @@ Route::filter('auth.v1', function($request, $response)
     $returnObject = new stdClass();
     $returnObject->error = TRUE;
     $returnObject->message = 'You have an invalid token. Please login again';
-    
+
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: *');
     header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, authorization, X-Request-With');
@@ -171,7 +171,7 @@ Route::filter('auth.v2', function($request, $response)
     $returnObject = new stdClass();
     $returnObject->error = TRUE;
     $returnObject->message = 'You have an invalid token. Please login again';
-    
+
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: *');
     header('Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, authorization, X-Request-With');
@@ -183,38 +183,38 @@ Route::filter('auth.v2', function($request, $response)
     //     return Response::json($returnObject, 200);
     // } else {
         /*
-            Description: 
+            Description:
                 - Accessing API as Third Party Condition.
                 - This one line code will verify if X-Access Key found under header. If X-Access Key found
                 it will automatically check member Key in database, hence if nothing found in the database it will automatically
                 create Key for the specific member.
-                
-            Developer: 
+
+            Developer:
                 Stephen
-            Date: 
+            Date:
                 April 9 2020
         */
-        
+
         // $return_data = StringHelper::verifyXAccessKey();
-        
+
         // if (is_object($return_data)) {
         //     return Response::json($return_data, 200);
         // }
-        /*  
+        /*
             End here.
         */
 
         // return StringHelper::requestHeader();
         // check if there is a header authorization
         $token = StringHelper::getToken();
-        
+
         if(!$token) {
             $returnObject->expired = true;
           return Response::json($returnObject, 200);
         }
 
         $findUserID = AuthLibrary::validToken();
-        
+
         if(!$findUserID) {
           $returnObject->status = FALSE;
           $returnObject->expired = true;
@@ -247,12 +247,12 @@ Route::filter('auth.v2', function($request, $response)
         $auto = Config::get('config.enable_auto_logout');
         if($auto) {
             if((int)$user->UserType == 5 && (int)$user->access_type == 0 || (int)$user->UserType == 5 && (int)$user->access_type == 1) {
-                if((int)$user->account_update_status == 0) {
-                  $returnObject->status = FALSE;
-                  $returnObject->expired = true;
-                  $returnObject->message = 'You need to update you profile settings for new login method.';
-                  return Response::json($returnObject, 200);
-                }
+                // if((int)$user->account_update_status == 0) {
+                //   $returnObject->status = FALSE;
+                //   $returnObject->expired = true;
+                //   $returnObject->message = 'You need to update you profile settings for new login method.';
+                //   return Response::json($returnObject, 200);
+                // }
             }
         }
 
@@ -304,11 +304,11 @@ Route::filter('auth.headers', function($request, $response) {
 Route::filter('auth.jwt_hr', function($request, $response)
 {
     $headers = [];
-    if(!StringHelper::requestHeader()){
-        $headers[]['error'] = true;
-        // return Redirect::to('company-benefits-dashboard-login');
-        return Response::json('You have an invalid token. Please login again', 403, $headers);
-    } else {
+    // if(!StringHelper::requestHeader()){
+    //     $headers[]['error'] = true;
+    //     // return Redirect::to('company-benefits-dashboard-login');
+    //     return Response::json('You have an invalid token. Please login again', 403, $headers);
+    // } else {
         $headers[]['error'] = true;
         // check if there is a header authorization
         $token = StringHelper::getToken();
@@ -371,7 +371,7 @@ Route::filter('auth.jwt_hr', function($request, $response)
             SystemLogLibrary::createAdminLog($admin_logs);
         }
 
-    }
+    // }
 });
 
 
@@ -428,9 +428,9 @@ Route::filter('auth.jwt_employee', function($request, $response)
             return Response::json('You account was deactivated. Please contact Mednefits Team.', 401,  $headers);
         }
 
-        if((int)$user->account_update_status == 0) {
-          return Response::json('You need to update you profile settings for new login method.', 401, $headers);
-        }
+        // if((int)$user->account_update_status == 0) {
+        //   return Response::json('You need to update you profile settings for new login method.', 401, $headers);
+        // }
 
         $request = Request::instance();
         $ip = $request->getClientIp();
@@ -560,3 +560,13 @@ Route::filter('strip_tags', function()
 {
     Input::merge(Utility::array_strip_tags(Input::all()));
 });
+
+if (Config::get('database.enable_logging')) {
+    Event::listen('illuminate.query', function($query, $bindings, $time, $name) {
+      $data = compact('bindings', 'time', 'name');
+
+      Log::info("Query: {$query}");
+      Log::info("Execution time: {$data['time']} ms");
+      Log::info('--------------------------------');
+    });
+}

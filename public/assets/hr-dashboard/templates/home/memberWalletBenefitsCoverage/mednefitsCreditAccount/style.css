@@ -1,0 +1,322 @@
+.mwbc-card-box-container .available-credits .available-credits-text {
+  font-size: 18px;
+}
+.mwbc-card-box-container .available-credits {
+  margin: 0 0 40px;
+}
+.mwbc-card-box-container .available-credits .available-credits-amount {
+  font-size: 20px;
+}
+.btn-top-up-credits { 
+  border: 1px solid #0392CF;
+  color: #0392CF;
+  width: 120px;
+  background-color: #fff;
+  border-radius: 3px;
+  padding: 6px 0;
+}
+.btn-top-up-credits:focus {
+  background-color: #fff;;
+}
+.btn-top-up-credits[disabled]{
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+.available-credits-container {
+  /* margin: 0 0 40px; */
+}
+.mednefits-credits-account-container .mwbc-card-box-container {
+  width: 640px;
+}
+.mednefits-credits-account-container .available-credits-container {
+  margin: 0 0 10px;
+}
+.total-credits-container,
+.purchased-credits-container,
+.bonus-credits-container {
+  display: flex;
+  align-items: center;
+}
+.credits-border-container {
+  border-right: .5px solid #BFBFBF;
+  margin: 0 10px;
+  height: 25px;
+  align-self: flex-start;
+}
+.mednefits-credits-pending {
+  margin: 20px 0 0;
+}
+.wallet-container {
+  margin: 10px 0 0;
+}
+.wallet-container >div:first-child {
+  width: 150px;
+}
+.wallet-panel-container >div {
+  margin: 0 30px 0 0;
+}
+
+.member-activities-table-container table {
+  border: 2px solid #E0E0E0;
+  margin: 20px 0 0;
+}
+.member-activities-table-container thead {
+  background-color: #FAFAFA;
+}
+
+.member-activities-table-container tr {
+  border-top: 2px solid #E0E0E0;
+}
+.member-activities-table-container th {
+  font-family: 'Helvetica Medium';
+}
+.member-activities-table-container th,
+.member-activities-table-container td {
+  padding: 15px;
+}
+.member-activities-table-container .amount-value {
+  color: #3F9D59;
+}
+.mednefits-credits-account-container .mwbc-card-box-container.mednefits-credits-account {
+  padding: 0;
+}
+.mednefits-credits-account-container .mwbc-card-box-container .mednefits-available-credits {
+  padding: 20px 20px 0;
+}
+.mednefits-credits-account-container .mwbc-card-box-container .credits-info-details-container {
+  padding: 0 20px 20px;
+}
+.credits-on-hold-text {
+  background-color: #FDF3F3;
+  color: #EB635D;
+  font-family: "Helvetica Medium";
+  font-family: "Helvetica Medium";
+  display: block;
+  padding: 15px 20px;
+  font-size: 16px;
+}
+#top-up-credits-modal .modal-dialog {
+  width: 680px;
+  max-height: 100%;
+  margin: 200px auto 0;
+}
+#top-up-credits-modal .modal-header span {
+  font-family: 'Helvetica Light';
+}
+.top-up-credits-container {
+  background-color: rgba(242, 242, 242, 0.5);
+  border-radius: 2px;
+  padding: 10px;
+}
+.top-up-credits-container >span {
+  color: #949494;
+  font-size: 10px;
+}
+.top-up-body-container h5 {
+  margin: 0;
+}
+.top-up-body-container >div >div {
+  width: 50%;
+}
+.top-up-input-wrapper {
+  border: 1px solid #BFBFBF;
+  display: flex;
+  border-radius: 3px;
+}
+.top-up-input-wrapper >div {
+  background: #fff;
+  border-right: 1px solid #BFBFBF;
+  padding: 2px 10px;
+  border-radius: 3px 0 0 3px;
+}
+.top-up-credits-container.invoice-date input {
+  border-radius: 3px;
+  padding: 0 10px;
+  height: 28px;
+}
+.top-up-input-wrapper input {
+  border: 0;
+  width: 100%;
+  padding: 2px 10px;
+  border-radius: 0 3px 3px 0;
+}
+.asterisk-red {
+  color: #FF0000;
+  margin: 0 5px 0 0;
+}
+
+#top-up-credits-modal .modal-body {
+  padding: 15px 50px 20px;
+}
+#top-up-credits-modal .company-account-text {
+  width: 209px;
+}
+#top-up-credits-modal .bnt-update {
+  width: 180px;
+}
+.top-up-icon-container {
+  border-radius: 3px;
+  width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin: 0 10px 0 0;
+}
+.top-up-icon-container.see-calc {
+  border: 2px solid #0392CF;
+  /* font-size: 18px; */
+  color: #0392CF ;
+  background-color: #fff;
+}
+.top-up-icon-container.calc-details {
+  background-color: #0392CF;
+  font-size: 12px;
+}
+.top-up-icon-container.calc-details i {
+  position: relative;
+  top: 1px;
+}
+.top-up-icon-container.see-calc img {
+  width: 9px;
+}
+.top-up-see-calc-wrapper span {
+  font-size: 12px;
+  color: #0392CF;
+}
+.top-up-calculation-wrapper {
+  position: relative;
+  margin: 5px 0;
+}
+.top-up-calculation-wrapper >div {
+  position: relative;
+  z-index: 1;
+  padding: 10px 0;
+}
+.top-up-calculation-wrapper .bonus-credits {
+  padding: 0 0 10px;
+}
+.top-up-calculation-wrapper:before {
+  display: block;
+  content: "";
+  border-right: 1px solid #BFBFBF;
+  width: auto;
+  height: 100%;
+  position: absolute;
+  left: 8px;
+}
+.top-up-calculation-wrapper .bonus-credits-amount >span:first-child {
+  margin: 0 20px 0 0;
+}
+.bonus-credtits-rate-container >div:first-child {
+  color: #0392CF;
+  font-size: 12px;
+  padding: 10px 0;
+}
+.bonus-credtits-rate-container >div:first-child i {
+  font
+}
+.bonus-credtits-rate-container .top-up-bonus-credits-container {
+  margin: 0 0 10px;
+}
+.mednefits-credits-deactive-btn-footer {
+  text-align: right;
+}
+.mednefits-credits-deactive-btn-footer button {
+  color: #EB635D;
+  border: 1px solid #EB635D;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 2px 50px;
+}
+#top-up-credits-modal button.btn-update[disabled] {
+  background-color: #F2F2F2;
+}
+.member-wallet-benefits-wrapper .mednefits-credits-account-container {
+  height: 100vh;
+}
+
+/* Prepaid not activate */
+.prepaid-not-activated .gray-text {
+  color: #848484;
+}
+.prepaid-not-activated .btn-activate-credits {
+  color: #0392CF;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #0392CF;
+  padding: 2px 30px;
+  font-family: 'Helvetica Medium';
+}
+
+.prepaid-credits-form-container .btn-container {
+  text-align: right;
+  margin: 30px 0 0;
+}
+
+.prepaid-credits-form-container .btn-container button {
+  border-radius: 4px;
+  padding: 4px 0;
+  background-color: #fff;
+}
+.prepaid-credits-form-container button.btn-custom-cancel {
+  border: 1px solid #BFBFBF;
+  width: 90px;
+  margin: 0 10px 0 0;
+}
+.prepaid-credits-form-container button.btn-custom-confirm {
+  border: 1px solid #0392CF;
+  background-color: #0392CF;
+  width: 170px;
+  color: #fff;
+}
+.top-up-input-wrapper {
+  position: relative;
+}
+.top-up-input-wrapper img {
+  height: 14px;
+  width: 13px;
+  position: absolute;
+  top: 7px;
+  right: 10px;
+}
+
+#active-prepaid-credits-modal {
+  margin: 200px auto 0;
+}
+#active-prepaid-credits-modal .modal-body {
+  padding: 0px 40px 15px;
+  text-align: center;
+}
+#active-prepaid-credits-modal .modal-body img {
+  width: 45px;
+  margin: 0 0 10px;
+}
+
+.mwbc-box-container .prepaid-subtext {
+  font-size: 15px;
+  line-height: 12px;
+  color: #848484;
+  font-weight: 700;
+  margin: 15px 0;
+}
+
+.pending-top-up-available{
+  margin-left: 10px;
+  font-family: 'Helvetica Medium';
+  font-size: 20px;
+  color: rgba(46, 64, 87, 0.3);
+}
+.top-up-values-pending{
+  font-family: 'Helvetica Medium';
+  font-size: 15px;
+  color: rgba(46, 64, 87, 0.3);
+  margin-top: 10px;
+}
+.pending-top-up-text{
+  color: #EB635D;
+  font-size: 15px;
+  padding: 0 20px;
+  margin-top: 0;
+}

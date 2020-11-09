@@ -56,12 +56,9 @@ class Api_V1_TransactionController extends \BaseController
 					$lite_plan_status = false;
 					$clinic_peak_status = false;
 					$service_id = $input['services'][0];
+					$spending_method = "post_paid";
+
 					if(is_array($service_id)) {
-						// $returnObject->status = FALSE;
-						// $returnObject->head_message = 'Panel Submission Error';
-						// $returnObject->message = 'Please choose a service.';
-						// return Response::json($returnObject);
-						// if()
 						if(isset($service_id['procedureid'])) {
 							$service_id = $service_id['procedureid'];
 							$input['services'] = [$service_id];
@@ -91,6 +88,12 @@ class Api_V1_TransactionController extends \BaseController
 						$dependent_user = true;
 					}
 
+					$customerID = PlanHelper::getCustomerId($user_id);
+					$spending = CustomerHelper::getAccountSpendingStatus($customerID);
+					$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $customerID)->orderBy('created_at','desc')->first();
+					$spending_method = CustomerHelper::getPanelPaymentMethod($spending['spending_purchase'], $spending_accounts, 'medical');
+					$spending_method = $spending_method == "mednefits_credits" ? 'pre_paid' : 'post_paid';
+					
 					// get clinic info and type
 					$clinic = DB::table('clinic')->where('ClinicID', $input['clinic_id'])->first();
 					$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
@@ -130,12 +133,13 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check if enable to access feature
-					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
-
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 					if($transaction_access)	{
 						$returnObject->status = FALSE;
-						$returnObject->head_message = 'Panel Submission Error';
-						$returnObject->message = 'Panel function is disabled for your company.';
+						$returnObject->status = FALSE;
+						$returnObject->status_type = 'access_block';
+						$returnObject->head_message = 'Registration Unavailable';
+						$returnObject->message = 'Sorry, your account is not enabled to access this provider at the moment. Kindly contact your HR for more details.';
 						return Response::json($returnObject);
 					}
 
@@ -213,8 +217,9 @@ class Api_V1_TransactionController extends \BaseController
 					$co_paid_status = $clinic_co_payment['co_paid_status'];
 					$clinic_peak_status = $clinic_co_payment['clinic_peak_status'];
 					// check if user has a plan tier
-					$plan_tier = PlanHelper::getEmployeePlanTier($customer_id, $user_id);
+					$plan_tier = PlanHelper::getEmployeePlanTier($user_id);
 					$cap_amount = 0;
+
 					if($plan_tier) {
 						if($wallet_user->cap_per_visit_medical > 0) {
 							$cap_amount = $wallet_user->cap_per_visit_medical;
@@ -377,7 +382,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 						$data['enterprise_visit_deduction'] = 1;
 					}
-					
+
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;
@@ -423,7 +428,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								} else {
 									$credits_logs = array(
@@ -434,7 +440,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								}
 
@@ -457,7 +464,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									} else {
 										$lite_plan_credits_log = array(
@@ -469,7 +477,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									}
 								}
@@ -485,7 +494,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								} else {
 									$credits_logs = array(
@@ -496,7 +506,8 @@ class Api_V1_TransactionController extends \BaseController
 										'where_spend'   => 'in_network_transaction',
 										'id'            => $transaction_id,
 										'currency_type' => $user_curreny_type,
-										'currency_value'	=> $currency
+										'currency_value'	=> $currency,
+										'spending_method'	=> $spending_method
 									);
 								}
 
@@ -518,7 +529,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									} else {
 										$lite_plan_credits_log = array(
@@ -530,7 +542,8 @@ class Api_V1_TransactionController extends \BaseController
 											'id'            => $transaction_id,
 											'lite_plan_enabled' => 1,
 											'currency_type' => $user_curreny_type,
-											'currency_value'	=> $currency
+											'currency_value'	=> $currency,
+											'spending_method'	=> $spending_method
 										);
 									}
 								}
@@ -636,12 +649,13 @@ class Api_V1_TransactionController extends \BaseController
 											MemberHelper::deductPlanHistoryVisit($findUserID);
 										}
 										try {
-											$customer_id = PlanHelper::getCustomerId($user_id);
-											$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+											// $customer_id = PlanHelper::getCustomerId($user_id);
+											// $spending = CustomerHelper::getAccountSpendingStatus($customerID);
 											
 											// if($spending['medical_method'] == "post_paid") {
-												$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
-												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+												// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
+												// $plan_method = MemberHelper::getMemberWalletPaymentMethod($user_id);
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $spending_method);
 											// }
 										} catch(Exception $e) {
 											$email['end_point'] = url('v2/clinic/send_payment', $parameter = array(), $secure = null);
@@ -865,7 +879,7 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check if enable to access feature
-					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
 					if($transaction_access)	{
 						$returnObject->status = FALSE;

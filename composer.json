@@ -22,7 +22,12 @@
     "predis/predis": "^2.0@dev"
   },
   "autoload": {
+    "files": [
+      "app/helpers.php"
+    ],
     "classmap": [
+      "app/jobs",
+      "app/actions",
       "app/commands",
       "app/controllers",
       "app/models",
@@ -31,6 +36,7 @@
       "app/tests/TestCase.php",
       "app/helpers",
       "app/libraries",
+      "app/services",
       "public/twilio-php/Twilio",
       "app/helpers/EclaimFileUploadQueue.php"
     ]
