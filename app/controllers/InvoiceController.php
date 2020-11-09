@@ -473,6 +473,7 @@ class InvoiceController extends \BaseController {
 			);
 		}
 
+		$clinic = DB::table('clinic')->where('ClinicID', $invoice_data->clinic_id)->first();
 		$get_payment_record = \PaymentRecord::where('invoice_id', $id)->first();
 		$get_payment_details = $bank->getBankDetails($get_payment_record->clinic_id);
 		$transactions['payment_record'] = $get_payment_record;
@@ -495,25 +496,25 @@ class InvoiceController extends \BaseController {
 		$transactions['mednefits_fee'] = number_format($mednefits_total_fee, 2);
 		$transactions['mednefits_credits'] = number_format($mednefits_total_credits, 2);
 		$transactions['total_cash'] = number_format($total_cash, 2);
-		$transactions['clinic'] = DB::table('clinic')->where('ClinicID', $invoice_data->clinic_id)->first();
+		$transactions['clinic'] = $clinic;
     // $transactions['total_transaction'] = sizeof($transaction_data);
 		$transactions['total_transaction'] = $total_transaction;
 		$transactions['total_fees'] = number_format($total_fees, 2);
 		$transactions['total_credits_transactions'] = $total_credits_transactions;
 		$transactions['total_cash_transactions'] = $total_cash_transactions;
-		$transactions['currency_type'] = "SGD";
+		$transactions['currency_type'] = strtoupper($clinic->currency_type);
 		$transactions['transactions'] = $transaction_data;
 		$balance = $mednefits_total_fee - $paid_amount;
 
-		if($balance > 0) {
-			$amount_due = number_format($balance, 2);
-		} else if($balance < 0) {
-			$amount_due = number_format(0, 2);
-		} else {
-			$amount_due = number_format($balance, 2);
-		}
+		// if($balance > 0) {
+		// 	$amount_due = number_format($balance, 2);
+		// } else if($balance < 0) {
+		// 	$amount_due = number_format(0, 2);
+		// } else {
+		// 	$amount_due = number_format($balance, 2);
+		// }
 
-		$transactions['amount_due'] = number_format($balance, 2);
+		$transactions['amount_due'] = $balance > 0 ? number_format($balance, 2) : "0.00";
     	// return View::make('pdf-download.clinic_invoice', $transactions);
 		$pdf = PDF::loadView('pdf-download.clinic_invoice', $transactions);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
@@ -759,12 +760,12 @@ class InvoiceController extends \BaseController {
 		$transactions['billing_address'] = $check_clinic->billing_address ? ucwords($check_clinic->billing_address) : $check_clinic->Address;
 		$balance = $mednefits_total_fee - $paid_amount;
 	    // if($balance > 0) {
-		$amount_due = number_format($balance, 2);
+		$amount_due = $balance >= 0 ? number_format($balance, 2) : "0.00";
 	    // } else {
 	    // 	$amount_due = number_format(0, 2);
 	    // }
 		$transactions['amount_due'] = $amount_due;
-		$transactions['currency_type'] = "SGD";
+		$transactions['currency_type'] = strtoupper($check_clinic->currency_type);
 
 		return $transactions;
 	}
