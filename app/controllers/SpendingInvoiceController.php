@@ -177,14 +177,20 @@ class SpendingInvoiceController extends \BaseController {
 		$results = \SpendingInvoiceLibrary::getTotalCreditsInNetworkTransactions($data->statement_id, $data->statement_customer_id, true);
 
 		if($results['credits'] > 0 || $results['total_consultation'] > 0 || $results['total_post_paid_spent'] > 0 || $results['total_post_paid_spent'] > 0) {
+			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $data->statement_customer_id)->select('account_type')->first();
 			$consultation_amount_due = 0;
 			$company_details = DB::table('customer_business_information')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 			if((int)$data->lite_plan == 1) {
 				$lite_plan = true;
 			}
+
 			$billingContact = DB::table('customer_billing_contact')->where('customer_buy_start_id', $data->statement_customer_id)->first();
 			$total = round($results['total_post_paid_spent'], 2);
 			$amount_due = (float)$total - (float)$data->paid_amount;
+
+			if($plan->account_type == "enterprise_plan") {
+				$amount_due = 0;
+			}
 
 			$temp = array(
 				'company' => ucwords($data->statement_company_name),
@@ -228,6 +234,18 @@ class SpendingInvoiceController extends \BaseController {
 				'total_pre_paid_spent'	=> number_format($results['total_pre_paid_spent'], 2),
 				'total_post_paid_spent'	=> number_format($results['total_post_paid_spent'], 2)
 			);
+
+			if($data->payment_method == "mednefits_credits") {
+				$temp['payment_method'] = "Prepaid Credits Account";
+			}
+		
+			if($data->payment_method == "bank_transfer") {
+				$temp['payment_method'] = "Bank Transfer";
+			}
+		
+			if($data->payment_method == "giro") {
+				$temp['payment_method'] = "Giro";
+			}
 
     		// return View::make('pdf-download.globalTemplates.panel-invoice', $temp);
 			$pdf = \PDF::loadView('pdf-download.globalTemplates.panel-invoice', $temp);
