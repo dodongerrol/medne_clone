@@ -688,6 +688,12 @@ class SpendingInvoiceLibrary
 			});
 		}
 
+		if($statement && $statement->payment_method == "bank_transfer" || $statement && $statement->payment_method == "giro") {
+			$total_post_paid_spent += $total_consultation;
+		} else {
+			$total_pre_paid_spent += $total_consultation;
+		}
+
 		return array(
 			'credits' 				=> $in_network_transactions,
 			'total_consultation'	=> $total_consultation, 
