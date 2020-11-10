@@ -142,10 +142,10 @@
           <td></td>
           <td colspan="3" style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
             Less Amount Paid<br>
-            (via Prepaid Credits Account)
+            (via {{ $payment_method }})
           </td>
           <td style="text-align: right;border-bottom: 2px solid #000;padding: 10px 0;">
-            {{$total_pre_paid_spent}}
+            {{$total_spent}}
           </td>
         </tr>
         <tr>
