@@ -61,7 +61,12 @@ class CreateCompanyBlockClinicList extends \BaseController
             } else {
                 $clinicBatches = array_chunk($clinic_ids, 50);
 
-                foreach ($clinic_ids as $clinic_id) {
+                foreach ($clinicBatches as $clinics) {
+                    Queue::push('ProcessBlockClinicAccess', [
+                        'account_type' => $input['account_tyep'],
+                        'status' => $input['status'],
+                        'clinic_ids' => $input['']
+                    ]);
                     $existed = \CompanyBlockClinicAccess::where(
                         'customer_id', 
                         $customer_id
