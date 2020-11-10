@@ -9978,10 +9978,22 @@ public function downloadEclaimCsv( )
 		}
 
 		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
-		$total = round($transaction_data['credits'], 2);
+		$spending = \CustomerHelper::getAccountSpendingStatus($statement->statement_customer_id);
+    	$spendingPurchasePayment = true;
+		if($spending['spending_purchase']) {
+			if((int)$spending['spending_purchase']->payment_status == 0) {
+				$spendingPurchasePayment = false;
+			}
+		}
+
+		if(!$spendingPurchasePayment && $statement->plan_method == "pre_paid") {
+			$total = $transaction_data['total_pre_paid_spent'] > 0 ? round($transaction_data['total_pre_paid_spent'], 2) : $transaction_data['total_post_paid_spent'];
+		} else {
+			$total = !$spendingPurchasePayment && $statement->plan_method == "pre_paid" ? round($transaction_data['total_pre_paid_spent'], 2) : round($transaction_data['total_post_paid_spent'], 2);
+		}
 		$amount_due = (float)$total - (float)$statement->paid_amount;
 		
-		if($statement->payment_method == "mednefits_credits") {
+		if($statement->payment_method == "mednefits_credits" && $spendingPurchasePayment) {
 			$amount_due = 0;
 		}
 
@@ -10032,12 +10044,10 @@ public function downloadEclaimCsv( )
 			$data['payment_method'] = "Giro";
 		}
 
-		// return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream();
-		return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
 	}
 
 	public function downloadNonPanelReimbursement( )
