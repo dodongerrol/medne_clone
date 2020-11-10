@@ -505,7 +505,7 @@ class InvoiceController extends \BaseController {
 		$transactions['currency_type'] = strtoupper($clinic->currency_type);
 		$transactions['transactions'] = $transaction_data;
 		$balance = $mednefits_total_fee - $paid_amount;
-
+		// return $mednefits_total_fee;
 		// if($balance > 0) {
 		// 	$amount_due = number_format($balance, 2);
 		// } else if($balance < 0) {
