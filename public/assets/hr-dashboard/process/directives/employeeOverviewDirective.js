@@ -14,6 +14,7 @@ app.directive("employeeOverviewDirective", [
       link: function link(scope, element, attributeSet) {
         console.log("employeeOverviewDirective Runnning !");
 
+        scope.default_currency_type = localStorage.getItem('currency_item');
         scope.employees = {};
         scope.options = {};
         scope.page_ctr = 5;
@@ -407,15 +408,20 @@ app.directive("employeeOverviewDirective", [
         scope.openToBlock = function (status, region, opt) {
           if (opt == 'name') {
             var ctr = 0;
+            let toBlockArr = [];
             angular.forEach(scope.clinic_open_arr, function (value, key) {
               if (value.selected) {
                 ctr += 1;
                 scope.showLoading();
-                scope.updateClinics(value.ClinicID, status, region, opt);
+                toBlockArr.push(value.ClinicID)
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.updateClinics(value.ClinicID, status, region, opt);
               }
               if (ctr > 0 && scope.clinic_open_arr.length - 1 == key) {
-                scope.blockHealthPatnerLoad();
-                swal('Success!', 'Clinic Block Lists updated.', 'success');
+                scope.updateClinics(toBlockArr, status, region, opt);
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.blockHealthPatnerLoad();
+                // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 scope.hideLoading();
               } else if (ctr == 0 && scope.clinic_open_arr.length - 1 == key) {
                 swal('Error!', 'Please Select a clinic first.', 'error');
@@ -447,15 +453,20 @@ app.directive("employeeOverviewDirective", [
         scope.blockToOpen = function (status, region, opt) {
           if (opt == 'name') {
             var ctr = 0;
+            let toOpenArr = [];
             angular.forEach(scope.clinic_block_arr, function (value, key) {
               if (value.selected) {
                 ctr += 1;
                 scope.showLoading();
-                scope.updateClinics(value.ClinicID, status, region, opt);
+                toOpenArr.push(value.ClinicID);
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.updateClinics(value.ClinicID, status, region, opt);
               }
               if (ctr > 0 && scope.clinic_block_arr.length - 1 == key) {
-                scope.blockHealthPatnerLoad();
-                swal('Success!', 'Clinic Block Lists updated.', 'success');
+                scope.updateClinics(toOpenArr, status, region, opt);
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.blockHealthPatnerLoad();
+                // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 scope.hideLoading();
               } else if (ctr == 0 && scope.clinic_block_arr.length - 1 == key) {
                 swal('Error!', 'Please Select a clinic first.', 'error');
@@ -482,37 +493,6 @@ app.directive("employeeOverviewDirective", [
             if (scope.clinic_type_block_arr.length == 0) {
               swal('Error!', 'Please Select a clinic type first.', 'error');
             }
-          }
-        }
-
-        scope.blockToOpen = function (status, region, opt) {
-          if (opt == 'name') {
-            var ctr = 0;
-            angular.forEach(scope.clinic_block_arr, function (value, key) {
-              if (value.selected) {
-                ctr += 1;
-                scope.showLoading();
-                scope.updateClinics(value.ClinicID, status, region, opt);
-              }
-              if (ctr > 0 && scope.clinic_block_arr.length - 1 == key) {
-                scope.blockHealthPatnerLoad();
-                swal('Success!', 'Clinic Block Lists updated.', 'success');
-                scope.hideLoading();
-              }
-            });
-          }
-          if (opt == 'type') {
-            var ctr = 0;
-            angular.forEach(scope.clinic_type_block_arr, function (value, key) {
-              if (value.selected) {
-                ctr += 1;
-                scope.showLoading();
-                scope.clinic_type_open_ids.push(value.ClinicTypeID);
-              }
-              if (ctr > 0 && scope.clinic_type_block_arr.length - 1 == key) {
-                scope.updateClinics(scope.clinic_type_open_ids, status, region, opt);
-              }
-            });
           }
         }
         scope.updateClinics = function (id, status, region, type) {
@@ -690,6 +670,7 @@ app.directive("employeeOverviewDirective", [
 						.then(function (response) {
 							console.log(response);
               scope.spending_account_status = response.data;
+              scope.checkSpendingValuesStatus();
 						});
         }
 
@@ -1768,7 +1749,12 @@ app.directive("employeeOverviewDirective", [
             scope.hideLoading();
             scope.selectedEmployee_index--;
             scope.selectedEmployee = scope.employees.data[scope.selectedEmployee_index];
+            scope.fetchRefundStatus(scope.selectedEmployee.user_id);
             scope.getEmpDependents(scope.selectedEmployee.user_id);
+            scope.getEmpPlans(scope.selectedEmployee.user_id);
+            scope.getMemberEntitlement(scope.selectedEmployee.user_id);
+            scope.getMemberNewEntitlementStatus(scope.selectedEmployee.user_id);
+            scope.entitlementCalc(scope.selectedEmployee.user_id);
             scope.blockHealthPatnerLoad();
           }
         };
@@ -1780,8 +1766,12 @@ app.directive("employeeOverviewDirective", [
             scope.hideLoading();
             scope.selectedEmployee_index++;
             scope.selectedEmployee = scope.employees.data[scope.selectedEmployee_index];
+            scope.fetchRefundStatus(scope.selectedEmployee.user_id);
             scope.getEmpDependents(scope.selectedEmployee.user_id);
             scope.getEmpPlans(scope.selectedEmployee.user_id);
+            scope.getMemberEntitlement(scope.selectedEmployee.user_id);
+            scope.getMemberNewEntitlementStatus(scope.selectedEmployee.user_id);
+            scope.entitlementCalc(scope.selectedEmployee.user_id);
             scope.blockHealthPatnerLoad();
           }
         };
@@ -2933,6 +2923,39 @@ app.directive("employeeOverviewDirective", [
           }
           return passport_pattern.test(value);
         };
+
+        scope.checkSpendingValuesStatus = function(){
+          if( scope.spending_account_status.account_type == 'lite_plan' ){
+            if(scope.spending_account_status.medical_enabled == true || scope.spending_account_status.wellness_enabled == true){
+              scope.showBulkEntitlement = true;
+            }
+          }
+          if( scope.spending_account_status.account_type == 'enterprise_plan' ){
+            if(scope.spending_account_status.wellness_enabled == true){
+              scope.showBulkEntitlement = true;
+            }
+          }
+          if( scope.spending_account_status.account_type == 'out_of_pocket' ){
+            if( scope.spending_account_status.wellness_enabled){
+              scope.showBulkEntitlement = true;
+            }
+          }
+
+          if(
+            (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.medical_enabled)) ||
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.medical_enabled))
+          ){
+            scope.isMedicalShow = true;
+          }
+          if(
+            (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.wellness_enabled)) ||
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'myr' && scope.spending_account_status.wellness_enabled) || 
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.wellness_enabled)) ||
+            (scope.spending_account_status.account_type == 'out_of_pocket' && (scope.spending_account_status.wellness_enabled))
+          ){
+            scope.isWellnessShow = true;
+          }
+        }
 
         scope.onLoad = function () {
           console.log($state.current);

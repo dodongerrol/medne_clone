@@ -678,7 +678,10 @@ class CronController extends \BaseController {
                 $user_dat = DB::table('user')->where('UserID', $removed_employee->user_id)->first();
                 // set company members removed to 1
                 if($user_dat) {
-                    MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
+                    $plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $active_plan->customer_active_plan_id)->first();
+                    if($plan->account_type == "lite_plan") {
+                        MemberHelper::memberReturnCreditBalance($removed_employee->user_id);
+                    }
                 }
 
                 if($user_dat && $user_dat->Active == 1) {

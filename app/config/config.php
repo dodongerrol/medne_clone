@@ -1,8 +1,8 @@
 <?php
 
 return array(
-      'deployment' => "Production",
-   // 'deployment' => "Development",
+    //   'deployment' => "Production",
+   'deployment' => "Development",
    // 'deployment' => "Testing",
 
 
@@ -13,5 +13,7 @@ return array(
     'environment' => 'staging',
     'enable_auto_logout' => false,
     'sms_provider' => 'commzgate',
-    'spending_inquiry_email'  => 'info@medicloud.sg'
+    'spending_inquiry_email'  => 'info@medicloud.sg',
+    'pre_paid_credits_inquiry_email'  => 'wanwen@mednefits.com',
+    'seven_eleven_id'   => 763
 );

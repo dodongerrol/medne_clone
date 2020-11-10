@@ -1,0 +1,200 @@
+<div class="spending-billing-wrapper" spending-billing-directive>
+  <div class="spending-billing-container">
+    <div class="show-details-on-container">
+      <div class="flex-1">
+        <span class="member-bold-text">Show details on</span> 
+        <div class="current-term-wrapper"> 
+          <div ng-click="termSelector()" class="current-term-input-wrapper">
+            <span>{{ selectedTerm.term }}</span>
+            <!-- <span ng-repeat="list in dateTerm" ng-if="$last">
+              (<span ng-bind="formatDate(list.start)">01/01/2020</span> - <span ng-bind="formatDate(list.end)">31/12/2020</span>)
+            </span> -->
+            <i class="fa fa-angle-down"></i>
+          </div>
+          <div ng-if="showLastTermSelector" ng-repeat="list in dateTerm" class="last-term-selector">
+            <!-- <span>Last term</span> -->
+            <!-- <span>(<span>01/01/2020</span> - <span>31/12/2020</span>)</span> -->
+            <span ng-click="termSelection(list,'select')">{{ list.term }}</span>
+          </div>
+        </div>
+        <div>
+          <button ng-class="{'active' : applyTerm == true}" class="btn-apply-term" ng-click="termSelection(selectedTerm,'applyBtn')">Apply</button>
+        </div>
+      </div>
+      <div>
+        <button ng-click="downloadSoa(true)" class="btn-download-soa"> <img src="../../assets/hr-dashboard/img/blue-download.png"> Download SOA</button>
+      </div>
+    </div>
+    <div>
+      <div class="billing-invoice-history-header display-flex">
+        <div class="display-flex flex-1">
+          <h4 class="member-bold-text">Invoice History</h4>
+          <div class="invoice-type-select-wrapper">
+            <select ng-change="invoiceSelector( invoiceSelectorValue )" ng-model="invoiceSelectorValue">
+              <option value="spending">Spendings</option>
+              <option value="spending_purchase">Prepaid Credits Invoice</option>
+              <option value="plan">Plan</option>
+              <option value="plan_withdrawal">Refund</option>
+              <option value="deposit">Deposit</option>
+            </select>
+            <i class="fa fa-angle-down"></i>
+          </div>
+        </div>
+        <div class="total-outstanding-container display-flex">
+          <div></div>
+          <div>
+            <span>Total Outstanding</span>
+            <div>SGD {{ totalOutstanding }}</div>
+          </div>
+        </div>
+      </div>  
+      <div class="billing-invoice-history-body">
+        <div>
+          <table class="billing-tbl-invoice">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Invoice Date</th>
+                <th>Number</th>
+                <th>Amount Due</th>
+                <th>Panel/Non-panel</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody ng-repeat="list in billingData track by $index">
+              <tr>
+                <td ng-click="invoiceAccordion( list,$index )">
+                  <div class="dp-flex-ai invoice-status-wrapper">
+                    <i ng-if="list.isAccordionShow" class="fa fa-angle-up"></i>
+                    <i ng-if="!list.isAccordionShow" class="fa fa-angle-down"></i>
+                    <div ng-if="list.status == 0" class="invoice-status pending">Pending</div>
+                    <div ng-if="list.status == 1" class="invoice-status paid">Paid</div>
+                  </div>
+                </td>
+                <td ng-click="invoiceAccordion( list,$index )" ng-bind="list.invoice_date">01 Feb 2010</td>
+                <td ng-click="invoiceAccordion( list,$index )" ng-bind="list.number">000056634</td>
+                <td ng-click="invoiceAccordion( list,$index )"><span class="currency-type" ng-bind="list.currency_type"></span> <span ng-bind="list.amount_due"></span></td>
+                <td ng-click="invoiceAccordion( list,$index )">
+                  <span ng-if="list.type == 'panel'">Mednefits Panel</span> 
+                  <span ng-if="list.type == 'non_panel'">
+                    <span ng-if="list.spending_type == 'medical'">Non Panel - Medical</span>
+                    <span ng-if="list.spending_type == 'wellness'">Non Panel - Wellness</span>
+                  </span> 
+                </td>
+                <td class="download-dot-container">
+                  <img ng-click="downloadAction( list,$index )" class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png">
+                  <div ng-if="list.isActionShow" class="download-dp-container">
+                    <div ng-disabled="!list.isEnableInvoices" ng-class="{'disabled' : !list.isEnableInvoices}" ng-click="downloadViewInvoice(list.id)">View Invoice</div>
+                    <div ng-disabled="!list.isEnableInvoices" ng-class="{'disabled' : !list.isEnableInvoices}" ng-if="list.category_type == 'spending'" ng-click="downloadViewTransactions(list.id, list.type)">View Transactions</div>
+                  </div>
+                </td>
+              </tr>
+              <tr ng-if="list.isAccordionShow" class="invoice-history-info">
+                <td colspan="6" class="invoice-credits-info-wrapper">
+                  <div class="invoice-credits-info-container display-flex credits-not-enough">
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Amount Due: </span>
+                        <span><span class="currency-type" ng-bind="list.currency_type"></span> <span ng-bind="list.amount_due">500.00</span></span>
+                      </div>
+                      <!-- <div>
+                        <span>Remarks: </span>
+                      </div> -->
+                    </div>
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Payment Due: </span>
+                        <span ng-bind="list.payment_due">16 Feb 2020</span>
+                      </div>
+                    </div>
+                    <div></div>
+                  </div>
+                  <div class="invoice-credits-info-container display-flex">
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Amount Paid: </span>
+                        <span><span class="currency-type" ng-bind="list.currency_type"></span class="currency-type" ng-bind="list.currency_type"> <span ng-bind="list.payment_amount">500.00</span></span>
+                      </div>
+                      <div class="invoice-credits-remarks">
+                        <span class="member-bold-text">Remarks: <span ng-bind="list.payment_remarks"></span></span>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Payment Date: </span>
+                        <span ng-bind="list.payment_due">16 Feb 2020</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div>
+                        <span class="member-bold-text">Payment Method: </span>
+                        <span ng-if="list.payment_method == 'giro'">Giro</span>
+                        <span ng-if="list.payment_method == 'bank_transfer'">Bank Transfer</span>
+                        <span ng-if="list.payment_method == 'mednefits_credits'">Prepaid Credits</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- <tr>
+                <td>
+                  <div class="dp-flex-ai invoice-status-wrapper">
+                    <i class="fa fa-angle-down"></i>
+                    <div class="invoice-status pending">Pending</div>
+                  </div>
+                </td>
+                <td>01 Feb 2010</td>
+                <td>000056634</td>
+                <td>SGD 500.00</td>
+                <td>Mednefits Panel</td>
+                <td class="download-dot-container">
+                  <img class="download-dot-img" src="../../assets/hr-dashboard/img/three-dot.png">
+                  <div class="download-dp-container">
+                    <div>View Invoice</div>
+                  </div>
+                </td>
+              </tr> -->
+            </tbody>
+          </table>
+          <div class="custom-pagination-container flex-1">
+            <div class="custom-pagination">
+              <div class="page-wrapper">
+                <div class="page-scroll-container">
+                  <span ng-click="_prevPageList_()" ng-disabled="global_memberOpenedPagination.prev_page_url == null" class="prev-next-container">  
+                    <i class="fa fa-angle-left"></i> 
+                    <span>Prev</span>
+                  </span>
+                  <div class="pages-list">
+                      
+                    <!-- <span class="page-num active">1</span>	 -->
+                    <span ng-repeat="list in range( billingPagination.last_page ) " ng-bind="list + 1" class="page-num" ng-click="_selectNumList_(list + 1)" ng-class="{'active' : list + 1 == page_active}">1</span>
+  
+                     <!-- <span style="flex: initial;" ng-if="global_memberOpenedPagination.last_page > 10 && open_page_active < ( global_memberOpenedPagination.last_page - 5 )" ng-click="_selectNumList_('open',global_memberOpenedPagination.last_page)" >.. {{ global_memberOpenedPagination.last_page }}</span> -->
+                    
+                  </div>
+                  <span ng-click="_nextPageList_()" class="prev-next-container">  
+                    <span>Next</span>
+                    <i class="fa fa-angle-right"></i> 
+                  </span>
+                </div>
+              </div>
+              <div ng-click="_toggleOpenPerPage_()" class="custom-list-per-page">
+              <!-- <div ng-click="_toggleOpenPerPage_()" ng-if="global_memberOpenedPagination.next_page_url" class="custom-list-per-page"> -->
+                <span><span>{{ per_page }}</span> per page</span>
+                <span>  
+                  <i class="fa fa-caret-down"></i>
+                </span>
+                <div ng-if="billing_pagination_dropdown" class="opened-per-page-scroll">
+                  <span ng-click="_setPageLimit_( 10 )">10 per page</span>
+                  <span ng-click="_setPageLimit_( 20 )">20 per page</span>
+                  <span ng-click="_setPageLimit_( 50 )">50 per page</span>
+                  <span ng-click="_setPageLimit_( 100 )">100 per page</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

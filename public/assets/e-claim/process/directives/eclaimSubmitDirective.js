@@ -204,6 +204,9 @@ app.directive('eclaimSubmitDirective', [
 
 				scope.backStep = function( ) {
 					scope.step_active--;
+					if(scope.step_active == 1){
+						scope.initializeDatepickers();
+					}
 				}
 
 				scope.close_new_popup = function() {
@@ -286,7 +289,8 @@ app.directive('eclaimSubmitDirective', [
 					}else{
 						if( moment(info.visit_date).isBefore( moment( scope.user_status.valid_start_claim ).subtract( 1, 'days' ) ) 
 							|| moment(info.visit_date).isAfter( moment( ).add( 1, 'days' ) ) ){
-							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( scope.user_status.valid_end_claim ).format("MM/DD/YYYY") );
+							scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( ).format("MM/DD/YYYY") );
+							// scope.showToast( "Visit Date should be between " + moment( scope.user_status.valid_start_claim ).format("MM/DD/YYYY") + " and " + moment( scope.user_status.valid_end_claim ).format("MM/DD/YYYY") );
 							return false;
 						}
 					}
@@ -459,27 +463,25 @@ app.directive('eclaimSubmitDirective', [
 						});
 				}
 
-				scope.getDetails = function( ) {
-					eclaimSettings.empDetails( )
+				scope.getDetails = async function( ) {
+					await eclaimSettings.empDetails( )
 						.then(function( response ) {
 							console.log(response);
 							scope.user_details = response.data.data;
 							scope.hideIntroLoader();
-							
-							// console.log(scope.user_details);
-							// scope.getCurrentActivity();
-
 							if ( scope.user_details.wellness == true && scope.user_details.currency_type == 'myr' && scope.user_details.plan_type == 'enterprise_plan' ) {
 								scope.spendingTypeOpt = 1;
 								scope.setSpendingType(1);
 							}else{
 								scope.getClaims( scope.eclaim.spending_type );
 							}
+
+							scope.eClaimDisabled();
 						});
 				}
 
-				scope.fetchMembers = function( ) {
-					eclaimSettings.getEclaimMember()
+				scope.fetchMembers = async function( ) {
+					await eclaimSettings.getEclaimMember()
 						.then(function(response){
 							// console.log(response);
 							scope.elcaim_members = response.data;
@@ -507,8 +509,8 @@ app.directive('eclaimSubmitDirective', [
 						});
 				};
 
-				scope.getEclaimPackages = function( ) {
-					eclaimSettings.getPackages( )
+				scope.getEclaimPackages = async function( ) {
+					await eclaimSettings.getPackages( )
 					.then(function(response){
 						console.log( response );
 						scope.user_status = response.data;
@@ -524,9 +526,9 @@ app.directive('eclaimSubmitDirective', [
 					setTimeout(function() {
 	        	var visit_date_dp =  $('#visitDateInput').datetimepicker({
 				    	format : 'DD MMMM, YYYY',
-				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
-				    	maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
+				    	maxDate : new Date( ),
+				    	// maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
 				    	useCurrent : false,
 				    });
 
@@ -570,12 +572,11 @@ app.directive('eclaimSubmitDirective', [
 					scope.eClaimDisabledState = false;
 				}
 
-				scope.onLoad = function( ) {
+				scope.onLoad = async function( ) {
 
-					scope.getDetails();
-					scope.getEclaimPackages();
-					scope.fetchMembers();
-					scope.eClaimDisabled();
+					await scope.getDetails();
+					await scope.getEclaimPackages();
+					await scope.fetchMembers();
 					
 					
 					scope.local_eclaim = storageFactory.getEclaim();

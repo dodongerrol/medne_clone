@@ -3,7 +3,12 @@ class DecimalHelper
 {
 	public static function formatDecimal($value)
 	{
-		return number_format(floor($value * 100) / 100, 2);
+		return number_format(round($value * 100) / 100, 2);
+	}
+
+	public static function formatWithNoCommas($value)
+	{
+		return number_format(floor($value * 100) / 100, 2, '.', '');
 	}
 }
 ?>

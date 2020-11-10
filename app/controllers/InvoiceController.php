@@ -473,6 +473,7 @@ class InvoiceController extends \BaseController {
 			);
 		}
 
+		$clinic = DB::table('clinic')->where('ClinicID', $invoice_data->clinic_id)->first();
 		$get_payment_record = \PaymentRecord::where('invoice_id', $id)->first();
 		$get_payment_details = $bank->getBankDetails($get_payment_record->clinic_id);
 		$transactions['payment_record'] = $get_payment_record;
@@ -495,25 +496,25 @@ class InvoiceController extends \BaseController {
 		$transactions['mednefits_fee'] = number_format($mednefits_total_fee, 2);
 		$transactions['mednefits_credits'] = number_format($mednefits_total_credits, 2);
 		$transactions['total_cash'] = number_format($total_cash, 2);
-		$transactions['clinic'] = DB::table('clinic')->where('ClinicID', $invoice_data->clinic_id)->first();
+		$transactions['clinic'] = $clinic;
     // $transactions['total_transaction'] = sizeof($transaction_data);
 		$transactions['total_transaction'] = $total_transaction;
 		$transactions['total_fees'] = number_format($total_fees, 2);
 		$transactions['total_credits_transactions'] = $total_credits_transactions;
 		$transactions['total_cash_transactions'] = $total_cash_transactions;
-		$transactions['currency_type'] = "SGD";
+		$transactions['currency_type'] = strtoupper($clinic->currency_type);
 		$transactions['transactions'] = $transaction_data;
 		$balance = $mednefits_total_fee - $paid_amount;
+		// return $mednefits_total_fee;
+		// if($balance > 0) {
+		// 	$amount_due = number_format($balance, 2);
+		// } else if($balance < 0) {
+		// 	$amount_due = number_format(0, 2);
+		// } else {
+		// 	$amount_due = number_format($balance, 2);
+		// }
 
-		if($balance > 0) {
-			$amount_due = number_format($balance, 2);
-		} else if($balance < 0) {
-			$amount_due = number_format(0, 2);
-		} else {
-			$amount_due = number_format($balance, 2);
-		}
-
-		$transactions['amount_due'] = number_format($balance, 2);
+		$transactions['amount_due'] = $balance > 0 ? number_format($balance, 2) : "0.00";
     	// return View::make('pdf-download.clinic_invoice', $transactions);
 		$pdf = PDF::loadView('pdf-download.clinic_invoice', $transactions);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
@@ -607,7 +608,7 @@ class InvoiceController extends \BaseController {
 			->where('transaction_history.transaction_id', $value->transaction_id)
 			->where('transaction_history.deleted', 0)
 			->where('transaction_history.paid', 1)
-			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount')
+			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.currency_type')
 			->first();
 
 			if($trans) {
@@ -706,7 +707,7 @@ class InvoiceController extends \BaseController {
 						'cash'									=> number_format($cash, 2),
 						'procedure_ids'					=> $procedure_ids,
 						'total'									=> number_format($fee + $mednefits_credits, 2),
-						'currency_type'					=> "SGD"
+						'currency_type'					=> strtoupper($trans->currency_type)
 					);
 					array_push($transaction_data, $temp);
 					$total_transaction++;
@@ -759,12 +760,12 @@ class InvoiceController extends \BaseController {
 		$transactions['billing_address'] = $check_clinic->billing_address ? ucwords($check_clinic->billing_address) : $check_clinic->Address;
 		$balance = $mednefits_total_fee - $paid_amount;
 	    // if($balance > 0) {
-		$amount_due = number_format($balance, 2);
+		$amount_due = $balance >= 0 ? number_format($balance, 2) : "0.00";
 	    // } else {
 	    // 	$amount_due = number_format(0, 2);
 	    // }
 		$transactions['amount_due'] = $amount_due;
-		$transactions['currency_type'] = "SGD";
+		$transactions['currency_type'] = strtoupper($check_clinic->currency_type);
 
 		return $transactions;
 	}
@@ -2905,6 +2906,69 @@ class InvoiceController extends \BaseController {
 
 	public function showNewPDF( ){
 		return View::make('pdf-download/admin-transactions-company-invoice');
+	}
+	
+	public function spendingInvoiceHistoryList ( ) {
+
+		$input = Input::all();
+		$session = self::checkSession();
+		$paginate = [];
+		$limit = !empty($input['per_page']) ? $input['per_page'] : 10;
+		$customer_id = $result->customer_buy_start_id;
+
+		$customer_plans = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->get();
+
+		$new_data = [];
+
+		foreach ($customer_plans as $key => $cplan) {
+			$active_plans = DB::table('customer_active_plan')->where('plan_id', $cplan->customer_plan_id)->get();
+			foreach ($active_plans as $key => $plan) {
+				if($plan->account_type == "stand_alone_plan" || $plan->account_type == "lite_plan" || $plan->account_type == "enterprise_plan") {
+					$withdraws = DB::table('payment_refund')
+					->where('customer_active_plan_id', $plan->customer_active_plan_id)
+					->get();
+
+					foreach ($withdraws as $key => $withdraw) {
+						$refunds = DB::table('customer_plan_withdraw')
+						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
+						->count('user_id');
+
+						$amount = DB::table('customer_plan_withdraw')
+						->where('payment_refund_id', $withdraw->payment_refund_id)
+						->whereIn('refund_status', [0, 1])
+						->sum('amount');
+
+						if($amount > 0) {
+							$temp = array(
+								'customer_active_plan_id' => $withdraw->customer_active_plan_id,
+								'payment_refund_id'		  => $withdraw->payment_refund_id,
+								'total_amount'	=> number_format($amount, 2),
+								'total_employees' => $refunds,
+								'date_withdraw'	 => $withdraw->date_refund,
+								'refund_data'		=> $withdraw,
+								'currency_type' => $withdraw->currency_type
+							);
+
+							array_push($new_data, $temp);
+						}
+
+					}
+				}
+			}
+		}
+
+		$credits_statements_data = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+                                ->get();
+
+        $credits_statements = DB::table('company_credits_statement')
+                                ->where('statement_customer_id', $customer_id)
+								->paginate($limit);
+								
+		$deposits = DB::table("spending_deposit_credits")
+		->where("customer_id", $session->customer_buy_start_id)
+		->paginate($limit);
 	}
 
 	public function getListCompanyPlanWithdrawal( )
