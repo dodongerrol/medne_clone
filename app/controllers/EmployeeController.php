@@ -1546,7 +1546,7 @@ class EmployeeController extends \BaseController {
               if(!$check) {
                 // create block access
                 $data = array(
-                  'customer_id' => $customer_id
+                  'customer_id' => $customer_id,
                   'clinic_id'   => $id,
                   'account_type' => $account_type,
                   'status'      => 1,
