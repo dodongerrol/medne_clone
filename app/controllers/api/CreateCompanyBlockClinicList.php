@@ -59,6 +59,8 @@ class CreateCompanyBlockClinicList extends \BaseController
             if (count($clinic_ids) <= 0) {
                 return array('status' => false, 'messsage' => 'No clinics found!');
             } else {
+                $clinicBatches = array_chunk($clinic_ids, 50);
+
                 foreach ($clinic_ids as $clinic_id) {
                     $existed = \CompanyBlockClinicAccess::where(
                         'customer_id', 
@@ -98,7 +100,6 @@ class CreateCompanyBlockClinicList extends \BaseController
                             ])
                         ]);
                     }
-
                 }
                 Queue::push('ProcessBlockClinicAccess', array('message' => 'This should be dispatch!'));
             }

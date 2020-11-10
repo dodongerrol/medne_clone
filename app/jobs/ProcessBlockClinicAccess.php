@@ -29,21 +29,24 @@ class ProcessBlockClinicAccess
                         'admin_id'  => $admin_id,
                         'type'      => 'admin_company_block_clinic_access',
                         'data'      => serialize([
-                            'customer_id' => $customer_id,
-                            'clinic_id'   => $id,
+                            'customer_id' => $member->user_id,
+                            'clinic_id'   => $clinicId,
                             'status'      => $data['status']
                         ])
                     ]);
                 } else {
-                    $result = \CompanyBlockClinicAccess::where('company_block_clinic_access_id', $existed->company_block_clinic_access_id)
+                    $result = \CompanyBlockClinicAccess::where(
+                        'company_block_clinic_access_id', 
+                        $existed->company_block_clinic_access_id
+                    )
                     ->update(['status' => $data['status']]);
 
                     SystemLogLibrary::createAdminLog([
                         'admin_id'  => $admin_id,
                         'type'      => 'admin_company_block_clinic_access',
                         'data'      => serialize([
-                            'customer_id' => $customer_id,
-                            'clinic_id'   => $id,
+                            'customer_id' => $member->user_id,
+                            'clinic_id'   => $clinicId,
                             'status'      => $data['status']
                         ])
                     ]);
