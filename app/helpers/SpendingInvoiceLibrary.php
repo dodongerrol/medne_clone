@@ -319,8 +319,6 @@ class SpendingInvoiceLibrary
 						->first();
 		// check new transactions added
 		$check_invoice_transactions = self::checkSpendingInvoiceNewTransactions($customer_id, $statement->statement_start_date, $statement->statement_end_date, $statement->statement_id, 'post_paid');
-		$statement_id = $statement->statement_id;
-
 		$transaction_invoices = SpendingInvoiceTransactions::where('invoice_id', $invoice_id)->get();
 		// return $invoice_id;
 		foreach ($transaction_invoices as $key => $transaction) {
@@ -342,7 +340,7 @@ class SpendingInvoiceLibrary
 					} else {
 						$in_network_transactions += (float)$trans['credit_cost'];
 					}
-
+	
 					if($trans['spending_type'] == 'medical') {
 						$table_wallet_history = 'wallet_history';
 					} else {
@@ -377,7 +375,7 @@ class SpendingInvoiceLibrary
 							$service_credits = true;
 							
 							if($trans->default_currency == "myr") {
-								$total_consultation += floatval($logs_lite_plan->credit) * $trans->currency_amount;
+								$total_consultation += floatval($logs_lite_plan->credit);
 								$mednefits_credits = floatval($logs_lite_plan->credit) * $trans->currency_amount;
 								$total_gp_consultation += floatval($logs_lite_plan->credit) * $trans->currency_amount;
 								if($logs_lite_plan && $logs_lite_plan->spending_method == "pre_paid") {
@@ -529,21 +527,21 @@ class SpendingInvoiceLibrary
 							$health_provider_status = FALSE;
 							$procedure_cost = $trans->credit_cost;
 							if((int)$trans['lite_plan_enabled'] == 1) {
-							$logs_lite_plan = DB::table($table_wallet_history)
-								->where('logs', 'deducted_from_mobile_payment')
-								->where('lite_plan_enabled', 1)
-								->where('id', $trans['transaction_id'])
-								->first();
+								$logs_lite_plan = DB::table($table_wallet_history)
+									->where('logs', 'deducted_from_mobile_payment')
+									->where('lite_plan_enabled', 1)
+									->where('id', $trans['transaction_id'])
+									->first();
 
-							if($logs_lite_plan) {
-								// if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
-								// 	$total_amount = ($trans['credit_cost'] * $trans->currency_amount) + $logs_lite_plan->credit;
-								// 	$treatment = $trans->credit_cost * $trans->currency_amount;
-								// } else {
-									$total_amount = (float)$trans['credit_cost'] + $logs_lite_plan->credit;
-									$treatment = (float)$trans->credit_cost;
-								// }
-							}
+								if($logs_lite_plan) {
+									// if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
+									// 	$total_amount = ($trans['credit_cost'] * $trans->currency_amount) + $logs_lite_plan->credit;
+									// 	$treatment = $trans->credit_cost * $trans->currency_amount;
+									// } else {
+										$total_amount = (float)$trans['credit_cost'] + $logs_lite_plan->credit;
+										$treatment = (float)$trans->credit_cost;
+									// }
+								}
 							}
 						}
 
@@ -555,7 +553,8 @@ class SpendingInvoiceLibrary
 							if($clinic_type->Name == "GP") {
 								$type = "general_practitioner";
 								$clinic_type_name = "GP";
-								$total_gp_medicine += $treatment;
+								// $total_gp_medicine += $treatment;
+								$total_gp_medicine = ($trans['consultation_fees'] + $treatment);
 							} else if($clinic_type->Name == "Dental") {
 								$type = "dental_care";
 								$clinic_type_name = "Dental";
@@ -641,8 +640,9 @@ class SpendingInvoiceLibrary
 						$transaction_id = str_pad($trans['transaction_id'], 6, "0", STR_PAD_LEFT);
 						$format = array(
 							'clinic_name'       => $clinic->Name,
-							'amount'            => number_format($total_amount, 2),
-							'total_amount'            => number_format($total_amount, 2),
+							'amount'            => number_format($trans['consultation_fees'] + $treatment , 2),
+							'total_amount'            => number_format($trans['consultation_fees'] + $treatment , 2),
+							'amount_number'            => $trans['consultation_fees'] + $treatment,
 							'procedure_cost'	=> number_format((float)$procedure_cost, 2),
 							'clinic_type_and_service' => $clinic_name,
 							'clinic_type_name'	=> $clinic_type_name,
@@ -672,6 +672,7 @@ class SpendingInvoiceLibrary
 							'service_credits'   => $service_credits,
 							'transaction_type'  => $transaction_type,
 							'treatment'			=> number_format($treatment, 2),
+							'treatment_number'			=> $treatment,
 							'currency_type'	=> strtoupper($trans->default_currency)
 						);
 
@@ -681,6 +682,7 @@ class SpendingInvoiceLibrary
 			}
 		}
 
+		$total_gp_medicine = 0;
 		if($fields == true) {
 			// return $transaction_details;
 			usort($transaction_details, function($a, $b) {
@@ -688,12 +690,21 @@ class SpendingInvoiceLibrary
 			});
 		}
 
+		foreach($transaction_details as $gp) {
+			if($gp['clinic_type_name'] == "GP") {
+				$total_gp_medicine += $gp['treatment_number'];
+			}
+		}
+		// $total_gp_medicine = $transaction_details->options()->where('clinic_type_name', 'GP')->sum('treatment_number');
+		// $total_dental = collect($transaction_details)->where('clinic_type_name', 'Dental')->sum('amount_number'); 
+		// $total_tcm = collect($transaction_details)->where('clinic_type_name', 'TCM')->sum('amount_number'); 
+
 		if($statement && $statement->payment_method == "bank_transfer" || $statement && $statement->payment_method == "giro") {
 			$total_post_paid_spent += $total_consultation;
 		} else {
 			$total_pre_paid_spent += $total_consultation;
 		}
-
+		
 		return array(
 			'credits' 				=> $in_network_transactions,
 			'total_consultation'	=> $total_consultation, 
@@ -706,7 +717,11 @@ class SpendingInvoiceLibrary
 			'total_transactions'	=> $total_transactions,
 			'total_post_paid_spent' => $total_post_paid_spent,
 			'total_pre_paid_spent'	=> $total_pre_paid_spent,
-			'with_post_paid'		=> $with_post_paid
+			'with_post_paid'		=> $with_post_paid,
+			'total_amount' 			=> sum([
+				$in_network_transactions,
+				$total_consultation
+			])
 		);
 	}
 

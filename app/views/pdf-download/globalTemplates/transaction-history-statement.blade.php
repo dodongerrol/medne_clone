@@ -132,7 +132,7 @@
                 GP - CONSULTATION
               </div>
               <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
-              {{ strtoupper($currency_type) }} {{ $total_gp_consultation }}
+              {{ strtoupper($currency_type) }} {{ $total_consultation }}
               </div>
             </div>
             <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
