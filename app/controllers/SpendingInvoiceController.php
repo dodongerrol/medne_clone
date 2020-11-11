@@ -303,7 +303,7 @@ class SpendingInvoiceController extends \BaseController {
 	    	return array('status' => FALSE, 'message' => 'Invalid Token.');
 	    }
 
-	    $statement = SpendingInvoiceLibrary::getInvoiceSpending($input['id'], true);
+		$statement = SpendingInvoiceLibrary::getInvoiceSpending($input['id'], true);
 		$statement['total_due'] = $statement['statement_amount_due'];
         $company = DB::table('customer_business_information')
         			->where('customer_buy_start_id', $result->customer_buy_start_id)
