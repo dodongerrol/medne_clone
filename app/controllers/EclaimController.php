@@ -122,7 +122,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimMedical( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id[0] : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -183,7 +183,7 @@ class EclaimController extends \BaseController {
 		if(!$validity) {
 			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
-		
+
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
@@ -372,16 +372,16 @@ class EclaimController extends \BaseController {
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-						$email['logs'] = 'E-Claim Submission Save Docs Medical - '.$e->getMessage();
+						$email['logs'] = 'E-Claim Submission Save Docs Medical - '.$e();
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
 					}
 
 				}
-
+				
                 // get customer id
 				$customer_id = StringHelper::getCustomerId($employee->UserID);
-
+				
 				if($customer_id) {
                     // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
@@ -412,7 +412,7 @@ class EclaimController extends \BaseController {
             // send email logs
 			$email = [];
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-			$email['logs'] = 'E-Claim Submission - '.$e->getMessage();
+			$email['logs'] = 'E-Claim Submission - '.$e;
 			$email['emailSubject'] = 'Error log.';
 			EmailHelper::sendErrorLogs($email);
 			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
