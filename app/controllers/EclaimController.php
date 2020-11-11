@@ -183,12 +183,7 @@ class EclaimController extends \BaseController {
 		if(!$validity) {
 			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
-
-		// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
-
+		
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
