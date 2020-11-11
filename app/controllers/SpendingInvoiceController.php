@@ -628,7 +628,7 @@ class SpendingInvoiceController extends \BaseController {
 						$lite_plan = true;
 					}
 
-					if(!$spendingPurchasePayment && $data->plan_method == "pre_paid") {
+					if(!$spendingPurchasePayment) {
 						$total = $results['total_pre_paid_spent'] > 0 ? round($results['total_pre_paid_spent'], 2) : $results['total_post_paid_spent'];
 					} else {
 						$total = !$spendingPurchasePayment && $data->plan_method == "pre_paid" ? round($results['total_pre_paid_spent'], 2) : round($results['total_post_paid_spent'], 2);
@@ -659,7 +659,7 @@ class SpendingInvoiceController extends \BaseController {
 					$lite_plan = true;
 				}
 
-				if(!$spendingPurchasePayment && $data->plan_method == "pre_paid") {
+				if(!$spendingPurchasePayment) {
 					$total = $results['total_pre_paid_spent'] > 0 ? round($results['total_pre_paid_spent'], 2) : $results['total_post_paid_spent'];
 				} else {
 					$total = !$spendingPurchasePayment && $data->plan_method == "pre_paid" ? round($results['total_pre_paid_spent'], 2) : round($results['total_post_paid_spent'], 2);
