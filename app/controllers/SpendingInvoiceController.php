@@ -229,7 +229,7 @@ class SpendingInvoiceController extends \BaseController {
 				'total_dental'			=> number_format($results['total_dental'], 2),
 				'total_tcm'				=> number_format($results['total_tcm'], 2),
 				'total_transactions'	=> number_format($results['total_transactions'], 2),
-				'total_spent'			=> number_format($results['total_post_paid_spent'] + $results['total_pre_paid_spent'], 2),
+				'total_spent'			=> number_format($results['credits'] + $results['total_consultation'], 2),
 				'currency_type'	=> strtoupper($data->currency_type),
 				'total_pre_paid_spent'	=> number_format($results['total_pre_paid_spent'], 2),
 				'total_post_paid_spent'	=> number_format($results['total_post_paid_spent'], 2)
