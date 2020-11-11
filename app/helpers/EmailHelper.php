@@ -3,7 +3,7 @@
 class EmailHelper{
     public static function sendEmail($dataArray){
         
-        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
             $message->subject($dataArray['emailSubject']);
@@ -23,7 +23,7 @@ class EmailHelper{
     }
 
     public static function sendEmailClinicInvoiceFile($dataArray) {
-        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){    
+        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){    
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
             $message->subject($dataArray['emailSubject']);
@@ -36,7 +36,7 @@ class EmailHelper{
     }
 
     public static function sendPaymentAttachment($dataArray) {
-        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $pdf = PDF::loadView($dataArray['pdf_file'], $dataArray);
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
@@ -47,7 +47,7 @@ class EmailHelper{
     }
 
     public static function sendPaymentAttachmentHealth($dataArray) {
-        Mail::queueOn('mail_health', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $pdf = PDF::loadView($dataArray['pdf_file'], $dataArray);
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
@@ -58,7 +58,7 @@ class EmailHelper{
     }
 
     public static function sendEmailRefundWithAttachment($dataArray) {
-        Mail::queueOn('mail', $dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
+        Mail::queue($dataArray['emailPage'], $dataArray, function($message) use ($dataArray){       
             $pdf = PDF::loadView('pdf-download.pdf-member-refunded-transaction', $dataArray);
             $message->from('noreply@medicloud.sg', 'MediCloud');
             $message->to($dataArray['emailTo'],$dataArray['emailName']);
