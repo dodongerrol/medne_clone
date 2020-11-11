@@ -21,6 +21,9 @@ app.directive("forgotDirective", [
         scope.password_success = false;
         scope.expire_token = false;
 
+        scope.devicePlatform = null;
+        scope.deviceOs = null;
+
         scope.changePassword = function( ) {
           if(scope.forgot_password_data.new_password !== scope.forgot_password_data.confirm_password) {
             return alert('New Password and Confirm Password does not match.');
@@ -44,7 +47,46 @@ app.directive("forgotDirective", [
           });
         }
 
+        scope.getOs = function(){
+          var userAgent = window.navigator.userAgent,
+              platform = window.navigator.platform,
+              macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+              windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+              iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+              os = null;
+
+          if (macosPlatforms.indexOf(platform) !== -1) {
+            os = 'Mac OS';
+          } else if (iosPlatforms.indexOf(platform) !== -1) {
+            os = 'iOS';
+          } else if (windowsPlatforms.indexOf(platform) !== -1) {
+            os = 'Windows';
+          } else if (/Android/.test(userAgent)) {
+            os = 'Android';
+          } else if (!os && /Linux/.test(platform)) {
+            os = 'Linux';
+          }
+
+          scope.deviceOs = os;
+          return os;
+        }
+
+        scope.goToLogin = function(){
+          if( scope.devicePlatform == 'web' ){
+            window.location = '/member-portal-login';
+          }else{
+            window.location = 'mednefitsapp://';
+          }
+        }
+        
         scope.onLoad = function( ) {
+          var fetchOs = scope.getOs();
+          if( fetchOs == 'Mac OS' || fetchOs == 'Windows' ){
+            scope.devicePlatform = 'web';
+          }else{
+            scope.devicePlatform = 'mobile';
+          }
+
           var urlParams = new URLSearchParams(window.location.search);
           $http.post(url + 'v1/auth/reset-details', { resetcode: urlParams.get('token') })
           .then(function(response){
