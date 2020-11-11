@@ -105,7 +105,7 @@
 							</div>
 							<div class="plan-details">
 								<strong>Start date: </strong>
-								<span ng-bind="emp.start_date">01/12/2018</span>
+								<span ng-bind="emp.account_type != 'out_of_pocket' ? emp.start_date : 'N.A.'">01/12/2018</span>
 							</div>
 						</td>
 						<td class="family-coverage-details">
@@ -363,11 +363,11 @@
 					</div>
 					<div class="employee-info-start-date">
 						<strong class="font-helvetica-medium">Start Date</strong>
-						<span ng-bind="selectedEmployee.start_date_format">01/11/2018</span>
+						<span ng-bind="selectedEmployee.account_type != 'out_of_pocket' ? selectedEmployee.start_date_format : 'N.A.'">01/11/2018</span>
 					</div>
 					<div class="employee-info-end-date">
 						<strong class="font-helvetica-medium">End Date</strong>
-						<span ng-bind="selectedEmployee.end_date_format">31/10/2019</span>
+						<span ng-bind="selectedEmployee.account_type != 'out_of_pocket' ? selectedEmployee.end_date_format : 'N.A.'">31/10/2019</span>
 					</div>
 				</div>
 
