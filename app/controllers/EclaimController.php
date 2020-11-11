@@ -122,7 +122,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimMedical( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id[0] : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -378,10 +378,10 @@ class EclaimController extends \BaseController {
 					}
 
 				}
-
+				
                 // get customer id
 				$customer_id = StringHelper::getCustomerId($employee->UserID);
-
+				
 				if($customer_id) {
                     // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
