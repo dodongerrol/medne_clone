@@ -66,23 +66,15 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-		'read' => array(
-            // Return a random host
-            // 'host' => 'root',
-            'host' => '127.0.0.1',
-    ),
-    'write' => array(
-            // 'host' => 'root'
-            'host' => '127.0.0.1'
+			'host' => '127.0.0.1',
+			'database'  => 'medicloud_v3',
+			'username'  => 'root',
+			'password'  => '',
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => 'medi_',
     ),
     // 'database'  => 'root',
-    'database'  => 'medicloud_v3',
-    'username'  => 'root',
-    'password'  => '',
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => 'medi_',
-    	),
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',

@@ -1240,7 +1240,10 @@ class EmployeeController extends \BaseController {
 
     public function createCompanyBlockClinicLists( )
     {
+        Queue::push('ProcessBlockClinicAccess', array('message' => 'This should be dispatch!'));
+  
         $input = Input::all();
+
         if(empty($input['type']) || $input['type'] == null) {
           return array('status' => false, 'message' => 'Block access type access is required');
         }

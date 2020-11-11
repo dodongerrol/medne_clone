@@ -11756,7 +11756,7 @@ class BenefitsDashboardController extends \BaseController {
 							->groupBy('user.Name')
 							->get();
 			
-			if ( count($dependents) > 0 ) {
+			if ( count($dependents) > 0 && Config::get('config.seven_eleven_id') == $result->customer_buy_start_id) {
 				foreach ($dependents as $key => $item) {
 					$temp = array(
 						'Status'	=> $status,

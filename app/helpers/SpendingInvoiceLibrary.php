@@ -541,7 +541,7 @@ class SpendingInvoiceLibrary
 								// 	$treatment = $trans->credit_cost * $trans->currency_amount;
 								// } else {
 									$total_amount = (float)$trans['credit_cost'] + $logs_lite_plan->credit;
-									$treatment = $trans->credit_cost;
+									$treatment = (float)$trans->credit_cost;
 								// }
 							}
 							}
@@ -643,7 +643,7 @@ class SpendingInvoiceLibrary
 							'clinic_name'       => $clinic->Name,
 							'amount'            => number_format($total_amount, 2),
 							'total_amount'            => number_format($total_amount, 2),
-							'procedure_cost'	=> number_format($procedure_cost, 2),
+							'procedure_cost'	=> number_format((float)$procedure_cost, 2),
 							'clinic_type_and_service' => $clinic_name,
 							'clinic_type_name'	=> $clinic_type_name,
 							'date_of_transaction' => date('d F Y, h:ia', strtotime($trans['date_of_transaction'])),
@@ -686,6 +686,12 @@ class SpendingInvoiceLibrary
 			usort($transaction_details, function($a, $b) {
 				return strtotime($b['date_of_transaction']) - strtotime($a['date_of_transaction']);
 			});
+		}
+
+		if($statement && $statement->payment_method == "bank_transfer" || $statement && $statement->payment_method == "giro") {
+			$total_post_paid_spent += $total_consultation;
+		} else {
+			$total_pre_paid_spent += $total_consultation;
 		}
 
 		return array(
