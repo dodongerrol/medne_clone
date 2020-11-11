@@ -220,7 +220,7 @@ class EclaimController extends \BaseController {
 		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-			if($spending['medical_reimbursement'] == false) {
+			if($spending['medical_enabled'] == false) {
 				return array('status' => FALSE, 'message' => 'Member not eligible for Non-Panel transactions.');
 			}
 		}
