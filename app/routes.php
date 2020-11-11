@@ -433,9 +433,14 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	// route get clnic active lists company block
 	Route::get('hr/get_employee_clinic_lists_block_company', 'EmployeeController@getCompanyActiveClinicListsEmployee');
 	// create company block
-	Route::post('hr/create_company_block_lists', 'EmployeeController@createCompanyBlockClinicLists');
+	// Route::post('hr/create_company_block_lists', 'EmployeeController@createCompanyBlockClinicLists');
+	Route::post(
+		'hr/create_company_block_lists',
+		'CreateCompanyBlockClinicList@create'
+	);
 	// create employee block
-	Route::post('hr/create_employee_company_block_lists', 'EmployeeController@createCompanyBlockClinicListsEmployee');
+	// Route::post('hr/create_employee_company_block_lists', 'EmployeeController@createCompanyBlockClinicListsEmployee');
+	Route::post('hr/create_employee_company_block_lists', 'CreateCompanyBlockClinicList@create');
 	// get employee cap per visits
 	Route::get('hr/employee_cap_per_visit_list', 'EmployeeController@employeeCapPerVisit');
 	// upload employee cap per visit

@@ -128,6 +128,7 @@ return array(
     	'Maatwebsite\Excel\ExcelServiceProvider',
 		'Barryvdh\DomPDF\ServiceProvider',
 		'Aws\Laravel\AwsServiceProvider',
+		'Illuminate\Queue\QueueServiceProvider'
     // 'Aloha\Twilio\Support\Laravel\ServiceProvider',
 	),
 
