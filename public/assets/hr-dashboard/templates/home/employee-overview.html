@@ -650,7 +650,7 @@
 							<div class="col-2-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Country Code</strong>
-									<span ng-bind="selectedEmployee.phone_no == '0' ? (default_currency_type == 'sgd' ? '+65' : '+60') :selectedEmployee.country_code">+63</span>
+									<span>{{ selectedEmployee.country_code.indexOf('+') < 0 ? '+' : '' }}<span ng-bind="selectedEmployee.phone_no == '0' ? (default_currency_type == 'sgd' ? '+65' : '+60') : selectedEmployee.country_code">+63</span></span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Mobile Number</strong>
