@@ -729,6 +729,8 @@ public function claimReportPage()
   if($getSessionData != FALSE){
     $dataArray['title'] = "Claim Report Page";
     $dataArray['clincID'] = $getSessionData->Ref_ID;
+    $clinic_details = DB::table('clinic')->where('ClinicID', $getSessionData->Ref_ID)->first();
+    
     return View::make('clinic.claim', $dataArray);
   }else{
 

@@ -19,13 +19,15 @@
     "pusher/pusher-php-server": "^3.0@dev",
     "barryvdh/laravel-dompdf": "0.4.*",
     "aws/aws-sdk-php-laravel": "1.*",
-    "predis/predis": "^2.0@dev"
+    "predis/predis": "v0.8.x-dev",
+    "pda/pheanstalk": "v2.1"
   },
   "autoload": {
     "files": [
       "app/helpers.php"
     ],
     "classmap": [
+      "app/jobs",
       "app/actions",
       "app/commands",
       "app/controllers",

@@ -322,7 +322,7 @@ class MemberHelper
 							'updated_at'			=> date('Y-m-d H:i:s')
 						);
 
-						DB::table('customer_credit_logs')->insert($company_credit_logs);
+						DB::table('customer_credit_logs')->insert($customer_credits_logs);
 					}
 					
 					if($spending['medical_method'] != "post_paid" && $spending['with_mednefits_credits'] == true || $spending['medical_method'] != "pre_paid" && $spending['with_mednefits_credits'] == true) {
@@ -496,7 +496,7 @@ class MemberHelper
 								'updated_at'			=> date('Y-m-d H:i:s')
 							);
 
-							DB::table('customer_wellness_credits_logs')->insert($company_credit_logs);
+							DB::table('customer_wellness_credits_logs')->insert($customer_wellness_credits_logs);
 						}
 
 						if($spending['wellness_method'] != "post_paid" && $spending['with_mednefits_credits'] == true || $spending['wellness_method'] != "pre_paid" && $spending['with_mednefits_credits'] == true) {

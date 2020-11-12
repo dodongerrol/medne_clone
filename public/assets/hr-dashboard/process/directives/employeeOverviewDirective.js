@@ -408,15 +408,20 @@ app.directive("employeeOverviewDirective", [
         scope.openToBlock = function (status, region, opt) {
           if (opt == 'name') {
             var ctr = 0;
+            let toBlockArr = [];
             angular.forEach(scope.clinic_open_arr, function (value, key) {
               if (value.selected) {
                 ctr += 1;
                 scope.showLoading();
-                scope.updateClinics(value.ClinicID, status, region, opt);
+                toBlockArr.push(value.ClinicID)
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.updateClinics(value.ClinicID, status, region, opt);
               }
               if (ctr > 0 && scope.clinic_open_arr.length - 1 == key) {
-                scope.blockHealthPatnerLoad();
-                swal('Success!', 'Clinic Block Lists updated.', 'success');
+                scope.updateClinics(toBlockArr, status, region, opt);
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.blockHealthPatnerLoad();
+                // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 scope.hideLoading();
               } else if (ctr == 0 && scope.clinic_open_arr.length - 1 == key) {
                 swal('Error!', 'Please Select a clinic first.', 'error');
@@ -448,15 +453,20 @@ app.directive("employeeOverviewDirective", [
         scope.blockToOpen = function (status, region, opt) {
           if (opt == 'name') {
             var ctr = 0;
+            let toOpenArr = [];
             angular.forEach(scope.clinic_block_arr, function (value, key) {
               if (value.selected) {
                 ctr += 1;
                 scope.showLoading();
-                scope.updateClinics(value.ClinicID, status, region, opt);
+                toOpenArr.push(value.ClinicID);
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.updateClinics(value.ClinicID, status, region, opt);
               }
               if (ctr > 0 && scope.clinic_block_arr.length - 1 == key) {
-                scope.blockHealthPatnerLoad();
-                swal('Success!', 'Clinic Block Lists updated.', 'success');
+                scope.updateClinics(toOpenArr, status, region, opt);
+                // Comment if ever got issue with this logic can revert back again to this logic
+                // scope.blockHealthPatnerLoad();
+                // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 scope.hideLoading();
               } else if (ctr == 0 && scope.clinic_block_arr.length - 1 == key) {
                 swal('Error!', 'Please Select a clinic first.', 'error');
@@ -483,37 +493,6 @@ app.directive("employeeOverviewDirective", [
             if (scope.clinic_type_block_arr.length == 0) {
               swal('Error!', 'Please Select a clinic type first.', 'error');
             }
-          }
-        }
-
-        scope.blockToOpen = function (status, region, opt) {
-          if (opt == 'name') {
-            var ctr = 0;
-            angular.forEach(scope.clinic_block_arr, function (value, key) {
-              if (value.selected) {
-                ctr += 1;
-                scope.showLoading();
-                scope.updateClinics(value.ClinicID, status, region, opt);
-              }
-              if (ctr > 0 && scope.clinic_block_arr.length - 1 == key) {
-                scope.blockHealthPatnerLoad();
-                swal('Success!', 'Clinic Block Lists updated.', 'success');
-                scope.hideLoading();
-              }
-            });
-          }
-          if (opt == 'type') {
-            var ctr = 0;
-            angular.forEach(scope.clinic_type_block_arr, function (value, key) {
-              if (value.selected) {
-                ctr += 1;
-                scope.showLoading();
-                scope.clinic_type_open_ids.push(value.ClinicTypeID);
-              }
-              if (ctr > 0 && scope.clinic_type_block_arr.length - 1 == key) {
-                scope.updateClinics(scope.clinic_type_open_ids, status, region, opt);
-              }
-            });
           }
         }
         scope.updateClinics = function (id, status, region, type) {

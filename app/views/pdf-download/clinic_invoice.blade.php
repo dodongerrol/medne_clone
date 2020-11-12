@@ -212,7 +212,7 @@
           <td colspan="3" style="text-align:right;border: none !important;">
             <b>Total Amount Due ({{ $currency_type }}):</b>
           </td>
-          <td><b>{{ $total }}</b></td>
+          <td><b>{{ $amount_due }}</b></td>
         </tr>
 
       </table>

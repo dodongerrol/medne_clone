@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'default' => 'sync',
+	'default' => 'beanstalkd',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ return array(
 			'driver' => 'beanstalkd',
 			'host'   => 'localhost',
 			'queue'  => 'default',
-			'ttr'    => 60,
+			'ttr'    => 90000,
 		),
 
 		'sqs' => array(
@@ -60,7 +60,7 @@ return array(
 
 		'redis' => array(
 			'driver' => 'redis',
-			'queue'  => 'default',
+			'queue'  => 'high',
 		),
 
 		'redis_high' => array(

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eed830b0249703abd09861ec037c5d2b",
+    "content-hash": "ac1cdaa3696dc9b4700ba29d6587bc31",
     "packages": [
         {
             "name": "aloha/twilio",
@@ -1643,6 +1643,48 @@
             "time": "2015-12-15T15:29:47+00:00"
         },
         {
+            "name": "pda/pheanstalk",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pda/pheanstalk.git",
+                "reference": "ab006cf9330fb5d3799f30a5d9841b85edb40a0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/ab006cf9330fb5d3799f30a5d9841b85edb40a0f",
+                "reference": "ab006cf9330fb5d3799f30a5d9841b85edb40a0f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Pheanstalk": "classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Annesley",
+                    "email": "paul@annesley.cc",
+                    "homepage": "http://paul.annesley.cc/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP client for beanstalkd queue",
+            "homepage": "https://github.com/pda/pheanstalk",
+            "keywords": [
+                "beanstalkd"
+            ],
+            "time": "2013-04-03T09:15:34+00:00"
+        },
+        {
             "name": "phenx/php-font-lib",
             "version": "0.2.2",
             "source": {
@@ -1842,12 +1884,12 @@
             "version": "0.8.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/nrk/predis.git",
+                "url": "https://github.com/predis/predis.git",
                 "reference": "192dfd61e54c3d32c9526bba03365fff818e17e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nrk/predis/zipball/192dfd61e54c3d32c9526bba03365fff818e17e4",
+                "url": "https://api.github.com/repos/predis/predis/zipball/192dfd61e54c3d32c9526bba03365fff818e17e4",
                 "reference": "192dfd61e54c3d32c9526bba03365fff818e17e4",
                 "shasum": ""
             },
@@ -3100,7 +3142,8 @@
     "stability-flags": {
         "eventviva/php-image-resize": 20,
         "cloudinary/cloudinary_php": 20,
-        "pusher/pusher-php-server": 20
+        "pusher/pusher-php-server": 20,
+        "predis/predis": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

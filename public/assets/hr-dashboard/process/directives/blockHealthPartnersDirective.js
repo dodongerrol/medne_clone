@@ -312,17 +312,21 @@ app.directive('blockHealthPartnersDirective', [
           scope.blockToOpen = function( status, region, opt ) {
             if( opt == 'name' ){
               var ctr = 0;
+              let toOpenArr = [];
               angular.forEach( scope.clinic_block_arr, function( value, key ){
                 if( value.selected ){
                   ctr += 1;
+                  toOpenArr.push(value.ClinicID);
+                // Comment if ever got issue w
                   console.log( value.selected );
                   scope.showLoading();
-                  scope.updateClinics( value.ClinicID, status, region, opt );
+                  // scope.updateClinics( value.ClinicID, status, region, opt );
                 }
                 if( ctr > 0 && scope.clinic_block_arr.length - 1 == key ){
+                  scope.updateClinics( toOpenArr, status, region, opt );
                   scope.hideLoading();
-                  scope.onLoad();
-                  swal('Success!', 'Clinic Block Lists updated.', 'success');
+                  // scope.onLoad();
+                  // swal('Success!', 'Clinic Block Lists updated.', 'success');
                 }else if( ctr == 0 && scope.clinic_block_arr.length - 1 == key ){
                   swal('Error!', 'Please Select a clinic first.', 'error');
                 }
@@ -357,7 +361,7 @@ app.directive('blockHealthPartnersDirective', [
         // --------- HTTP REQUESTS ---------- //
           scope.updateClinics = function( id, status, region, type ) {
             var data = {
-              access_status: status == 0 ? 'open' : 'block',
+              access_status: status,
               region: region,
               clinic_id: id,
               clinic_type_id: id,

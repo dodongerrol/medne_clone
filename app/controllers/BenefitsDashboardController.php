@@ -2100,6 +2100,22 @@ class BenefitsDashboardController extends \BaseController {
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
 
+			$plan_user_history = DB::table('user_plan_history')
+				->where('user_id', $user->UserID)
+				->where('type', 'started')
+				->orderBy('created_at', 'desc')
+				->first();
+
+			if(!$plan_user_history) {
+				// create plan user history
+				PlanHelper::createUserPlanHistory($user->UserID, $link_account->customer_buy_start_id, $customer_id);
+				$plan_user_history = DB::table('user_plan_history')
+				->where('user_id', $user->UserID)
+				->where('type', 'started')
+				->orderBy('created_at', 'desc')
+				->first();
+			}
+
 			if($employee_status['status'] == true) {
 				$schedule = $employee_status['schedule_status'];
 				$deletion_text = $employee_status['schedule'];
@@ -2108,22 +2124,6 @@ class BenefitsDashboardController extends \BaseController {
 				$plan_withdraw = $employee_status['plan_withdraw'];
 				$emp_status = $employee_status['emp_status'];
 			} else {
-				$plan_user_history = DB::table('user_plan_history')
-				->where('user_id', $user->UserID)
-				->where('type', 'started')
-				->orderBy('created_at', 'desc')
-				->first();
-
-				if(!$plan_user_history) {
-                    // create plan user history
-					PlanHelper::createUserPlanHistory($user->UserID, $link_account->customer_buy_start_id, $customer_id);
-					$plan_user_history = DB::table('user_plan_history')
-					->where('user_id', $user->UserID)
-					->where('type', 'started')
-					->orderBy('created_at', 'desc')
-					->first();
-				}
-
 				$active_plan = DB::table('customer_active_plan')
 				->where('customer_active_plan_id', $plan_user_history->customer_active_plan_id)
 				->first();
@@ -2271,11 +2271,6 @@ class BenefitsDashboardController extends \BaseController {
 			$phone_no = (int)$user->PhoneNo;
 			$country_code = $user->PhoneCode;
 			$member_id = str_pad($user->UserID, 6, "0", STR_PAD_LEFT);
-
-			if((int)$user->Active == 0) {
-				$emp_status = 'deleted';
-			}
-
 			$cap_per_visit = $wallet->cap_per_visit_medical;
 
 			if($plan_tier) {
@@ -2300,6 +2295,10 @@ class BenefitsDashboardController extends \BaseController {
 			
 			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$user->member_activated == 0 || (int)$user->member_activated == 1 && (int)$user->Status == 0) {
 				$emp_status = 'pending';
+			}
+
+			if((int)$user->Active == 0) {
+				$emp_status = 'deleted';
 			}
 
 			$temp = array(
@@ -11757,7 +11756,7 @@ class BenefitsDashboardController extends \BaseController {
 							->groupBy('user.Name')
 							->get();
 			
-			if ( count($dependents) > 0 ) {
+			if ( count($dependents) > 0 && Config::get('config.seven_eleven_id') == $result->customer_buy_start_id) {
 				foreach ($dependents as $key => $item) {
 					$temp = array(
 						'Status'	=> $status,

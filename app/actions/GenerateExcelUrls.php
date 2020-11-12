@@ -41,41 +41,88 @@ class GenerateExcelUrls
      */
     protected function outOfPocket(array $urls): array
     {
-        if (
-            ($this->status['medical_enabled'] && $this->status['wellness_enabled']) &&
-            ($this->status['medical_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
-        ) {
-            return [
-                'employee' => "{$this->baseUrl}/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R.xlsx",
-                'dependent'	=> "{$this->baseUrl}/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-All-R.xlsx"
-            ];
-        }
 
-        if (
-            ($this->status['medical_enabled'] && $this->status['medical_benefits_coverage'] != self::OUT_OF_POCKET)
-        ) {
-            return [
-                'employee' => "{$this->baseUrl}/excel/v5/myr/basic/employee/Employee+SA+-+All+-+R+-+Medical.xlsx",
-                'dependent'	=> "{$this->baseUrl}/excel/v5/myr/basic/dependent/Employees-and-Dependents+SA-R-Medical.xlsx"
+        if($this->status['currency_type'] == "sgd") {
+            $urls = [
+                'employee' => "{$this->baseUrl}/excel/v5/basic/employee/Employee+NO+SA.xlsx",
+                'dependent'	=> "{$this->baseUrl}/excel/v5/basic/dependent/Employees-and-Dependents+NO-SA.xlsx"
             ];
-        }
+            if (
+                ($this->status['medical_enabled'] && $this->status['wellness_enabled']) &&
+                ($this->status['medical_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
+            ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/basic/employee/Employee+SA+-+All+-+R.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/basic/dependent/Employees-and-Dependents+SA-All-R.xlsx"
+                ];
+            }
+    
+            if (
+                ($this->status['medical_enabled'] && $this->status['medical_benefits_coverage'] != self::OUT_OF_POCKET)
+            ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/basic/employee/Employee+SA+-+All+-+R+-+Medical.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/basic/dependent/Employees-and-Dependents+SA-R-Medical.xlsx"
+                ];
+            }
+    
+            if (
+                ($this->status['wellness_enabled'] && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
+             ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/enterprise/employee/Employee+R-Wellness.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/enterprise/dependent/Employees-and-Dependents+R-Wellness+.xlsx"
+                ];
+            }
+    
+            if (
+                ($this->status['wellness_enabled'])
+             ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/enterprise/employee/Employee-Wellness.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx"
+                ];
+            }
 
-        if (
-            ($this->status['wellness_enabled'] && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
-         ) {
-            return [
-                'employee' => "{$this->baseUrl}/excel/v5/myr/enterprise/employee/Employee+R-Wellness.xlsx",
-                'dependent'	=> "{$this->baseUrl}/excel/v5/myr/enterprise/dependent/Employees-and-Dependents+R-Wellness+.xlsx"
-            ];
-        }
 
-        if (
-            ($this->status['wellness_enabled'])
-         ) {
-            return [
-                'employee' => "{$this->baseUrl}/excel/v5/myr/enterprise/employee/Employee-Wellness.xlsx",
-                'dependent'	=> "{$this->baseUrl}/excel/v5/myr/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx"
-            ];
+        } else {
+
+            if (
+                ($this->status['medical_enabled'] && $this->status['wellness_enabled']) &&
+                ($this->status['medical_benefits_coverage']  != self::OUT_OF_POCKET && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
+            ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/basic/employee/Employee+SA+-+All+-+R.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/basic/dependent/Employees-and-Dependents+SA-All-R.xlsx"
+                ];
+            }
+    
+            if (
+                ($this->status['medical_enabled'] && $this->status['medical_benefits_coverage'] != self::OUT_OF_POCKET)
+            ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/basic/employee/Employee+SA+-+All+-+R+-+Medical.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/basic/dependent/Employees-and-Dependents+SA-R-Medical.xlsx"
+                ];
+            }
+    
+            if (
+                ($this->status['wellness_enabled'] && $this->status['wellness_benefits_coverage'] != self::OUT_OF_POCKET)
+             ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/enterprise/employee/Employee+R-Wellness.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/enterprise/dependent/Employees-and-Dependents+R-Wellness+.xlsx"
+                ];
+            }
+    
+            if (
+                ($this->status['wellness_enabled'])
+             ) {
+                return [
+                    'employee' => "{$this->baseUrl}/excel/v5/enterprise/employee/Employee-Wellness.xlsx",
+                    'dependent'	=> "{$this->baseUrl}/excel/v5/enterprise/dependent/Employees-and-Dependents-Wellness.xlsx"
+                ];
+            }
         }
 
         return $urls;

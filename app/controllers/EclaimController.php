@@ -122,7 +122,7 @@ class EclaimController extends \BaseController {
 	public function createEclaimMedical( )
 	{
 		$employee = StringHelper::getEmployeeSession( );
-		$admin_id = isset($employee->admin_id) ? $employee->admin_id : null;
+		$admin_id = isset($employee->admin_id) ? $employee->admin_id[0] : null;
 		$input = Input::all();
 		$check = DB::table('user')->where('UserID', $input['user_id'])->first( );
 
@@ -184,11 +184,6 @@ class EclaimController extends \BaseController {
 			return array ('status' => FALSE, 'message' => 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail.');
 		}
 
-		// check if it is myr or sgd
-		if($check_user_balance->currency_type == "myr" ) {
-			return array ('status' => FALSE, 'message' => 'Cannot submit e-claim.');
-		}
-
 		// check if enable to access feature
 		$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id, 'panel');
 
@@ -220,7 +215,7 @@ class EclaimController extends \BaseController {
 		if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
 			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 
-			if($spending['medical_reimbursement'] == false) {
+			if($spending['medical_enabled'] == false) {
 				return array('status' => FALSE, 'message' => 'Member not eligible for Non-Panel transactions.');
 			}
 		}
@@ -377,16 +372,16 @@ class EclaimController extends \BaseController {
 					} catch(Exception $e) {
 						$email = [];
 						$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-						$email['logs'] = 'E-Claim Submission Save Docs Medical - '.$e->getMessage();
+						$email['logs'] = 'E-Claim Submission Save Docs Medical - '.$e();
 						$email['emailSubject'] = 'Error log.';
 						EmailHelper::sendErrorLogs($email);
 					}
 
 				}
-
+				
                 // get customer id
 				$customer_id = StringHelper::getCustomerId($employee->UserID);
-
+				
 				if($customer_id) {
                     // send notification
 					$user = DB::table('user')->where('UserID', $employee->UserID)->first();
@@ -417,7 +412,7 @@ class EclaimController extends \BaseController {
             // send email logs
 			$email = [];
 			$email['end_point'] = url('employee/create/e_claim', $parameter = array(), $secure = null);
-			$email['logs'] = 'E-Claim Submission - '.$e->getMessage();
+			$email['logs'] = 'E-Claim Submission - '.$e;
 			$email['emailSubject'] = 'Error log.';
 			EmailHelper::sendErrorLogs($email);
 			return array('status' => FALSE, 'message' => 'Error.', 'e' => $e->getMessage());
@@ -9978,10 +9973,22 @@ public function downloadEclaimCsv( )
 		}
 
 		$transaction_data = \SpendingInvoiceLibrary::getNonPanelTransactionDetails($input['id'], $statement->statement_customer_id, true);
-		$total = round($transaction_data['credits'], 2);
+		$spending = \CustomerHelper::getAccountSpendingStatus($statement->statement_customer_id);
+    	$spendingPurchasePayment = true;
+		if($spending['spending_purchase']) {
+			if((int)$spending['spending_purchase']->payment_status == 0) {
+				$spendingPurchasePayment = false;
+			}
+		}
+
+		if(!$spendingPurchasePayment && $statement->plan_method == "pre_paid") {
+			$total = $transaction_data['total_pre_paid_spent'] > 0 ? round($transaction_data['total_pre_paid_spent'], 2) : $transaction_data['total_post_paid_spent'];
+		} else {
+			$total = !$spendingPurchasePayment && $statement->plan_method == "pre_paid" ? round($transaction_data['total_pre_paid_spent'], 2) : round($transaction_data['total_post_paid_spent'], 2);
+		}
 		$amount_due = (float)$total - (float)$statement->paid_amount;
 		
-		if($statement->payment_method == "mednefits_credits") {
+		if($statement->payment_method == "mednefits_credits" && $spendingPurchasePayment) {
 			$amount_due = 0;
 		}
 
@@ -10032,12 +10039,10 @@ public function downloadEclaimCsv( )
 			$data['payment_method'] = "Giro";
 		}
 
-		// return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf = PDF::loadView('pdf-download.globalTemplates.non-panel-invoice', $data);
 		$pdf->getDomPDF()->get_option('enable_html5_parser');
 		$pdf->setPaper('A4', 'portrait');
 		return $pdf->stream();
-		return View::make('pdf-download.globalTemplates.non-panel-invoice', $data);
 	}
 
 	public function downloadNonPanelReimbursement( )

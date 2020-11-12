@@ -119,39 +119,39 @@
         <tr>
           <td colspan="2" style="padding-left: 40px;padding-bottom: 30px;font-size: 12px;">
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 20px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 20px;">
                 GP - MEDICINE/TREATMENT
-              </p>
-              <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
+              </div>
+              <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
               {{ strtoupper($currency_type) }} {{ $total_gp_medicine }}
-              </p>
+              </div>
             </div>
-            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
+            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;">
                 GP - CONSULTATION
-              </p>
-              <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
-              {{ strtoupper($currency_type) }} {{ $total_gp_consultation }}
-              </p>
+              </div>
+              <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
+              {{ strtoupper($currency_type) }} {{ $total_consultation }}
+              </div>
             </div>
-            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
+            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;">
                 DENTAL
-              </p>
-              <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
+              </div>
+              <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
               {{ strtoupper($currency_type) }} {{ $total_dental }}
-              </p>
+              </div>
             </div>
-            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;">+</div>
+            <div style="display:inline-block;vertical-align: middle;width: 30px;text-align: center;height: 80px;padding-top: 36px;">+</div>
             <div style="width: 150px;display: inline-block;vertical-align: middle;height: 80px;text-align: center;">
-              <p style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;border-radius: 5px 5px 0px 0px;color: #fff;padding: 0px 6px;line-height: 36px;">
+              <div style="margin: 0;max-height: 48px;height: 48px;background: #2E4057;color: #fff;padding: 0px 6px;line-height: 36px;">
                 TCM
-              </p>
-              <p style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
+              </div>
+              <div style="margin: 0;height: 33px;border-radius: 0px 0px 5px 5px;border: 1px solid #848484;border-width: 0 1px 1px 1px;line-height: 25px;">
               {{ strtoupper($currency_type) }} {{ $total_tcm }}
-              </p>
+              </div>
             </div>
           </td>
         </tr>
