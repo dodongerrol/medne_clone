@@ -20,7 +20,7 @@
     "barryvdh/laravel-dompdf": "0.4.*",
     "aws/aws-sdk-php-laravel": "1.*",
     "predis/predis": "v0.8.x-dev",
-    "pda/pheanstalk": "v3.0.0"
+    "pda/pheanstalk": "v2.1"
   },
   "autoload": {
     "files": [
