@@ -178,6 +178,10 @@ class UserPackage extends Eloquent
                             $data['plan_add_on'] = "N.A.";
                         }
 
+                        $wallet_entitlement = DB::table('employee_wallet_entitlement')
+                        ->where('member_id', $owner_id)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
                         $data['account_type'] = $active_plan->account_type;
                         $data['account_status'] = MemberHelper::getMemberWalletStatus($user_details->UserID, 'medical');
                         if($data['plan_type'] == "Mednefits Enterprise Plan") {
@@ -279,6 +283,10 @@ class UserPackage extends Eloquent
                             $active_plan_data = $active_plan_first;
                         }
                         
+                        $wallet_entitlement = DB::table('employee_wallet_entitlement')
+                        ->where('member_id', $id)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
                         $plan_type = 'Corporate';
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($user_details->UserID);
                         $data['packages'] = PlanHelper::getUserPackages($active_plan_data, $id, $data['plan_add_on'], $plan_user);
