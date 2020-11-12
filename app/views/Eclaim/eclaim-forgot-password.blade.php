@@ -54,7 +54,7 @@
 			
 			<div ng-if="password_success" class="success-content">
 				<img src="../assets/hr-dashboard/img/verified.png" class="center-block login-logo" style="height: 80px;">
-				<p class="text-center" style="font-size: 20px;color: #222;margin: 15px 0;">Your password has been reset successfully!<br>Now <a href="/member-portal-login/">login</a> with your new password.</p>
+				<p class="text-center" style="font-size: 20px;color: #222;margin: 15px 0;">Your password has been reset successfully!<br>Now <a ng-click="goToLogin()">login</a> with your new password.</p>
 			</div>
 			@endif
 			@if($expire_token)
