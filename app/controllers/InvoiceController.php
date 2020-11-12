@@ -607,7 +607,7 @@ class InvoiceController extends \BaseController {
 			->where('transaction_history.transaction_id', $value->transaction_id)
 			->where('transaction_history.deleted', 0)
 			->where('transaction_history.paid', 1)
-			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount')
+			->select('transaction_history.ClinicID', 'user.Name as user_name', 'user.UserID', 'transaction_history.date_of_transaction', 'transaction_history.procedure_cost', 'transaction_history.paid', 'user.NRIC', 'transaction_history.transaction_id', 'transaction_history.medi_percent', 'transaction_history.clinic_discount', 'transaction_history.co_paid_status', 'transaction_history.multiple_service_selection', 'transaction_history.transaction_id', 'transaction_history.ProcedureID', 'transaction_history.co_paid_amount', 'transaction_history.in_network', 'transaction_history.mobile', 'transaction_history.health_provider_done', 'transaction_history.credit_cost','transaction_history.credit_divisor', 'transaction_history.deleted', 'transaction_history.refunded', 'transaction_history.gst_percent_value', 'transaction_history.peak_hour_status', 'transaction_history.peak_hour_amount', 'transaction_history.currency_type')
 			->first();
 
 			if($trans) {
@@ -706,7 +706,7 @@ class InvoiceController extends \BaseController {
 						'cash'									=> number_format($cash, 2),
 						'procedure_ids'					=> $procedure_ids,
 						'total'									=> number_format($fee + $mednefits_credits, 2),
-						'currency_type'					=> "SGD"
+						'currency_type'					=> strtoupper($trans->currency_type)
 					);
 					array_push($transaction_data, $temp);
 					$total_transaction++;
