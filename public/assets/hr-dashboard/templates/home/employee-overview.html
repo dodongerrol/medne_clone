@@ -343,7 +343,7 @@
 								<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending'">Pending</span>
 								<span class="status-text removed" ng-if="!selectedEmployee.account_status">Removed</span> -->
 								<span class="status-text active" ng-if="(!selectedEmployee.deletion && !selectedEmployee.schedule) && (selectedEmployee.emp_status == 'active')">Active</span>
-            		<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending' && selectedEmployee.schedule == false || selectedEmployee.deletion == false">Pending</span>
+            		<span class="status-text pending" ng-if="selectedEmployee.emp_status == 'pending' && selectedEmployee.schedule == false && selectedEmployee.deletion == false">Pending</span>
             		<span class="status-text removed" ng-if="!selectedEmployee.account_status || selectedEmployee.deletion || selectedEmployee.schedule">Removed</span>
 							</div>
 						</div>
