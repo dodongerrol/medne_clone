@@ -1437,7 +1437,7 @@ Route::group(array('prefix' => 'v2'), function()
 		    //Route::get('clinic/clinicdetails','Api_V1_ClinicController@ClinicDetails');
 		    Route::get('clinic/clinicdetails/{id}','Api_V1_ClinicController@ClinicDetails');
 		  	Route::get('clinic/all_nearby','Api_V1_ClinicController@Nearby');
-
+			Route::get('clinic/nearby','Api_V1_ClinicController@Nearby');
 		  	Route::get('clinic/paginate_nearby','Api_V1_ClinicController@NewNearby');
 
 		    Route::get('clinic/booking-history','Api_V1_ClinicController@AppointmentHistory');
