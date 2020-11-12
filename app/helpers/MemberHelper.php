@@ -1855,5 +1855,68 @@ class MemberHelper
 
 		return false;
 	}
+
+	public static function getMemberWalletStatus($member_id, $spending_type)
+	{
+		$emp_status = "active";
+		$today = date('Y-m-d');
+		$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->first();
+
+		if(!$user_plan_history) {
+			return false;
+		}
+
+		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
+		$member = DB::table('user')->where('UserID', $member_id)->first();
+		$customer_id = PlanHelper::getCustomerId($member_id);
+		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
+		$start = date('Y-m-d', strtotime($user_plan_history->date));
+
+		if($spending_type == "medical") {
+			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		} else {
+			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		}
+
+		$end = PlanHelper::endDate($end);
+
+
+		if($start < $today) {
+			$status = "active";
+		}
+
+		if($start <= $today && $end >= $today) {
+			if((int)$member->member_activated == 0 || (int)$member->member_activated == 1 && (int)$member->Status == 0) {
+				$emp_status = 'pending';
+			}
+
+			$panel = DB::table('transaction_history')->where('UserID', $member_id)->first();
+			$non_panel = DB::table('e_claim')->where('user_id', $member_id)->first();
+							
+			if($panel || $non_panel) {
+				$emp_status = 'active';
+			} else if((int)$member->member_activated == 1){
+				$emp_status = 'active';
+			}
+		}
+
+		if($today > $end) {
+			$emp_status = 'expired';
+		}
+
+		if((int)$member->Active == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		if((int)$spending->medical_enable == 0) {
+			$emp_status = 'deactivated';
+		}
+
+		if($customer_active_plan->account_type == "out_of_pocket") {
+			$emp_status = "active";
+		}
+
+		return $emp_status;
+	}
 }
 ?>

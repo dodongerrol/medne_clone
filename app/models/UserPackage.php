@@ -177,6 +177,18 @@ class UserPackage extends Eloquent
                         if($data['plan_type'] == "Enterprise Plan") {
                             $data['plan_add_on'] = "N.A.";
                         }
+                        
+                        $data['account_type'] = $active_plan->account_type;
+                        $data['account_status'] = MemberHelper::getMemberWalletStatus($user_details->UserID, 'medical');
+                        if($data['plan_type'] == "Mednefits Enterprise Plan") {
+                            $data['plan_add_on'] = "N.A.";
+                            $data['annual_entitlement'] = 14;
+                        } else if($data['plan_type'] == "Out of Pocket") {
+                            $data['plan_add_on'] = "N.A.";
+                            $data['annual_entitlement'] = 'Not applicable';
+                        } else {
+                            $data['annual_entitlement'] = strtoupper($wallet->currency_type).' '.number_format($wallet_entitlement->medical_entitlement, 2);
+                        }
                         // get cap per visit
                         // check if their is a plan tier
                         $plan_tier = DB::table('plan_tier_users')
