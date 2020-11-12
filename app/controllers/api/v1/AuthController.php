@@ -670,7 +670,7 @@ return Response::json($returnObject);
               ->first();
             $returnArray->data['profile']['user_id'] = $findUserProfile->UserID;
             $returnArray->data['profile']['email'] = $findUserProfile->Email;
-            $returnArray->data['profile']['account_type'] = $customer_active_plan->account_type;
+            $returnArray->data['profile']['account_type'] = $customer_active_plan->account_type == "out_of_pocket" ? "lite_plan" : $customer_active_plan->account_type;
             $returnArray->data['profile']['full_name'] = $findUserProfile->Name;
             $returnArray->data['profile']['nric'] = $findUserProfile->NRIC;
             $returnArray->data['profile']['fin'] = $findUserProfile->FIN;
