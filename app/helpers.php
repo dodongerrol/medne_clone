@@ -33,7 +33,7 @@ if (!function_exists('is_date_between')) {
     }
 }
 
-if (!function_exists('medi_date_format')) {
+if (!function_exists('medi_date_foarmat')) {
     function medi_date_format($date, $format = 'd/m/Y')
     {
         $raw = strtotime(medi_date_parser($date));
