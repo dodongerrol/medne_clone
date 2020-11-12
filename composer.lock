@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "440eecdcd89d930009bdd25118c886e1",
+    "content-hash": "ac1cdaa3696dc9b4700ba29d6587bc31",
     "packages": [
         {
             "name": "aloha/twilio",
@@ -1644,16 +1644,16 @@
         },
         {
             "name": "pda/pheanstalk",
-            "version": "v2.1.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pda/pheanstalk.git",
-                "reference": "672eb5cc9049d61e4eb68d30f0f33de65a947e6b"
+                "reference": "ab006cf9330fb5d3799f30a5d9841b85edb40a0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/672eb5cc9049d61e4eb68d30f0f33de65a947e6b",
-                "reference": "672eb5cc9049d61e4eb68d30f0f33de65a947e6b",
+                "url": "https://api.github.com/repos/pda/pheanstalk/zipball/ab006cf9330fb5d3799f30a5d9841b85edb40a0f",
+                "reference": "ab006cf9330fb5d3799f30a5d9841b85edb40a0f",
                 "shasum": ""
             },
             "require": {
@@ -1682,7 +1682,7 @@
             "keywords": [
                 "beanstalkd"
             ],
-            "time": "2014-12-02T22:44:56+00:00"
+            "time": "2013-04-03T09:15:34+00:00"
         },
         {
             "name": "phenx/php-font-lib",
@@ -3148,6 +3148,5 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }

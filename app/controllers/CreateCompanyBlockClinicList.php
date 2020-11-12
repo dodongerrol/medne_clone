@@ -106,16 +106,24 @@ class CreateCompanyBlockClinicList extends \BaseController
                 \CorporateMembers::select('user_id')
                     ->where('removed_status', 0)
                     ->where('corporate_id', $account->corporate_id)
-                    ->chunk(self::CHUNK, function ($members) use ($customer_id, $clinics)   {
-                        Queue::push('ProcessBlockClinicAccess', [
-                            'customer_id' => $customer_id,
-                            'members' => $members, 
-                            'clinic_ids' => Input::get('clinic_type_id'),
-                            'account_type' => 'employee',
-                            'status' => Input::get('status')
-                        ]);
+                    ->chunk(self::CHUNK, function ($members) use ($customer_id, $chunkClinics)   {
+                        // Queue::push('ProcessBlockClinicAccess', [
+                        //     'customer_id' => $customer_id,
+                        //     'members' => $members, 
+                        //     'clinic_ids' => Input::get('clinic_type_id'),
+                        //     'account_type' => 'employee',
+                        //     'status' => Input::get('status')
+                        // ]);
+                        foreach (array_chunk($chunkClinics, self::CHUNK) as $clinics) {
+                            Queue::push('ProcessBlockClinicAccess', [
+                                'customer_id' => $customer_id,
+                                'members' => $members, 
+                                'clinic_ids' => $clinics,
+                                'account_type' => 'employee',
+                                'status' => Input::get('status')
+                            ]);
+                        }
                     });
-                    usleep(500000);
             // }
 
             $response['status'] = true;

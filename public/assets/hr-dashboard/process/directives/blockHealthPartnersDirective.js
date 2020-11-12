@@ -361,7 +361,7 @@ app.directive('blockHealthPartnersDirective', [
         // --------- HTTP REQUESTS ---------- //
           scope.updateClinics = function( id, status, region, type ) {
             var data = {
-              access_status: status == 0 ? 'open' : 'block',
+              access_status: status,
               region: region,
               clinic_id: id,
               clinic_type_id: id,

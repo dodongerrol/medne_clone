@@ -16,10 +16,13 @@ class BlockClinicAccess
         $statusForHumans = isEqual($this->options['status'], 1) ? 'Blocked' : 'Opened';
         
         $count = 0;
+        echo $this->options['account_type']." \n";
+        echo "BlockClinicAccess\n";
         // First loop for members
         foreach ($this->options['members'] as $member) {
             // Second loop for clinic ids
             foreach ($this->options['clinic_ids'] as $clinicId) {
+                echo $clinicId." done for member id ".$member['user_id']." \n";
                 $existed = \CompanyBlockClinicAccess::where('customer_id', $member['user_id'])
                     ->where('account_type', $this->options['account_type'])
                     ->where('clinic_id', $clinicId)
@@ -32,6 +35,7 @@ class BlockClinicAccess
                         'account_type' => $this->options['account_type'],
                         'status' => $this->options['status']
                     ]);
+                    // echo $result." created \n";
                     SystemLogLibrary::createAdminLog([
                         'admin_id'  => $admin_id,
                         'type'      => 'admin_company_block_clinic_access',
