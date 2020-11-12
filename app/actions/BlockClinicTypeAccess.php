@@ -14,7 +14,8 @@ class BlockClinicTypeAccess
         $admin_id = Session::get('admin-session-id');
 
         $count = 0;
-
+        echo $this->options['account_type']." \n";
+        echo "BlockClinicTypeAccess\n";
         foreach ($this->options['ids'] as $clinicId) {
             $existed = \CompanyBlockClinicAccess::where(
                     'customer_id', 
