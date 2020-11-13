@@ -589,7 +589,9 @@
 						Employee</div>
 					<div ng-if="selected_emp_dependents.length > 0" class="dependent-selection"
 						ng-class="{'active' : empTabSelected == 1}" ng-click="toggleEmpTab(1)">Dependent</div>
-					<div ng-if="(selectedEmployee.account_type != 'enterprise_plan' && (selectedEmployee.medical_wallet || selectedEmployee.wellness_wallet)) || (selectedEmployee.account_type == 'enterprise_plan' && selectedEmployee.wellness_wallet == true)" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)"> {{ (selectedEmployee.account_type == 'lite_plan') && (selectedEmployee.plan_method_type == 'pre_paid') ? 'Credits' : 'Allocation' }} </div>
+					<div ng-if="selectedEmployee.isAllocationShow" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)"> 
+						Allocation
+					</div>
 					<!-- <div ng-if="medical_wallet || wellness_wallet" class="settings-selection" ng-class="{'active' : empTabSelected == 2}" ng-click="toggleEmpTab(2)">
 						Entitlement</div> -->
 					<div class="settings-selection" ng-class="{'active' : empTabSelected == 3}" ng-click="toggleEmpTab(3)">

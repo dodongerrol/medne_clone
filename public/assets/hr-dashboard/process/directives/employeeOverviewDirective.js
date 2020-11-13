@@ -1317,6 +1317,15 @@ app.directive("employeeOverviewDirective", [
             } else {
               scope.addActiveDependent_index = scope.dependents.occupied_seats + 1;
             }
+            if(
+              (scope.selectedEmployee.account_type != 'enterprise_plan' && (scope.selectedEmployee.medical_wallet || scope.selectedEmployee.wellness_wallet)) || 
+              (scope.selectedEmployee.account_type == 'enterprise_plan' && scope.selectedEmployee.wellness_wallet == true)
+            ){
+              scope.selectedEmployee.isAllocationShow = true;
+            }else{
+              scope.selectedEmployee.isAllocationShow = false;
+            }
+            
 
             scope.selectedEmployee.start_date_dmy = moment(scope.selectedEmployee.start_date,['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
             scope.selectedEmployee.end_date_dmy = moment(scope.selectedEmployee.expiry_date).format('DD/MM/YYYY');
