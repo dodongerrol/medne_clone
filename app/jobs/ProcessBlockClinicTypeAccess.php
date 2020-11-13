@@ -7,5 +7,6 @@ class ProcessBlockClinicTypeAccess
         $blocker = new \BlockClinicTypeAccess($data);
 
         $blocker->execute();
+        $job->delete();
     }
 }

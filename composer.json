@@ -20,7 +20,7 @@
     "barryvdh/laravel-dompdf": "0.4.*",
     "aws/aws-sdk-php-laravel": "1.*",
     "predis/predis": "v0.8.x-dev",
-    "pda/pheanstalk": "~2.0"
+    "pda/pheanstalk": "v2.0"
   },
   "autoload": {
     "files": [
@@ -37,7 +37,6 @@
       "app/tests/TestCase.php",
       "app/helpers",
       "app/libraries",
-      "app/services",
       "public/twilio-php/Twilio",
       "app/helpers/EclaimFileUploadQueue.php"
     ]
