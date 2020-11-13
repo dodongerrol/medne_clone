@@ -1058,9 +1058,13 @@ app.directive('benefitsTiersDirective', [
 					}
 					if (scope.employee_data.mobile) {
 						// console.log( iti.getSelectedCountryData().iso2 );
-						if (iti.getSelectedCountryData().iso2 == 'sg' && scope.employee_data.mobile.length < 8) {
-							swal('Error!', 'Mobile Number for your country code should be 8 digits.', 'error');
-							return false;
+						if (iti.getSelectedCountryData().iso2 == 'sg') {
+							var temp_mobile = scope.employee_data.mobile.toString();
+							console.log(temp_mobile);
+							if( (temp_mobile[0] != '8' && temp_mobile[0] != '9') || scope.employee_data.mobile.length != 8 ){
+								swal('Error!', 'Invalid mobile format. Please enter mobile in the format of 8 digit number and starts with 8 or 9.', 'error');
+								return false;
+							}
 						}
 						if (iti.getSelectedCountryData().iso2 == 'my' && scope.employee_data.mobile.length < 9 || scope.employee_data.mobile.length > 10) {
 							// swal('Error!', 'Mobile Number for your country code should be 10 digits.', 'error');
@@ -1357,6 +1361,15 @@ app.directive('benefitsTiersDirective', [
 								sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter or number.", "error");
 								// sweetAlert("Oops...", "Invalid passport format. Please enter passport in the format of a letter followed by an 8 digit number.", "error");
 									return false;
+							}
+						}
+					}else{
+						if (emp.employee.mobile) {
+							var temp_mobile = emp.employee.mobile.toString();
+							console.log(temp_mobile);
+							if( (temp_mobile[0] != '8' && temp_mobile[0] != '9') || emp.employee.mobile.length != 8 ){
+								swal('Error!', 'Invalid mobile format. Please enter mobile in the format of 8 digit number and starts with 8 or 9.', 'error');
+								return false;
 							}
 						}
 					}
