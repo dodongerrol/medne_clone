@@ -374,7 +374,7 @@ class CustomerHelper
 
 	public static function getExcelLink($status)
 	{
-		$excelUrls = new GenerateExcelUrls($status);
+		$excelUrls = new \GenerateExcelUrls($status);
 		$response = [
 			'status' => true
 		];
