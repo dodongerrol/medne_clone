@@ -1124,23 +1124,30 @@ class PlanHelper
 			$user['passport'] = $user['passport'] ?? null;
 			$myr_messages =  $myrValidator->validateAll($user);
 		} else {
-
 			if (is_null($user['mobile'])) {
 				$mobile_error = true;
 				$mobile_message = '*Mobile Phone is empty';
 			} else {
-				// check mobile number
-				$check_mobile = DB::table('user')
+				$phoneValidation = validate_phone($user['mobile'], $user['mobile_country_code']);
+
+				if ($phoneValidation['error']) {
+					$mobile_error = true;
+					$mobile_message = $phoneValidation['message'];
+				} else {
+					// check mobile number
+					$check_mobile = DB::table('user')
 					->where('UserType', 5)
 					->where('PhoneNo', $user['mobile'])
 					->where('Active', 1)
 					->first();
-				if ($check_mobile) {
-					$mobile_error = true;
-					$mobile_message = '*Mobile Phone No already taken.';
-				} else {
-					$mobile_error = false;
-					$mobile_message = '';
+
+					if ($check_mobile) {
+						$mobile_error = true;
+						$mobile_message = '*Mobile Phone No already taken.';
+					} else {
+						$mobile_error = false;
+						$mobile_message = '';
+					}
 				}
 			}
 		}
@@ -1218,30 +1225,40 @@ class PlanHelper
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
-			$plan_start = strftime("%Y-%m-%d",strtotime($user['plan_start']));
-			if($plan_start == "1970-01-01") {
-				$temp = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
-				$user['plan_start'] = $temp->format('d/m/Y');
-			} else {
-				$user['plan_start'] = date('d/m/Y', strtotime($plan_start));
-			}
+			// TODO remove this commented code if it's already stable
+			// $plan_start = strftime("%Y-%m-%d",strtotime($user['plan_start']));
 
-			$validate = self::isDate($user['plan_start']);
+			// if($plan_start == "1970-01-01") {
+			// 	$temp = \DateTime::createFromFormat('d/m/Y', $user['plan_start']);
+			// 	$user['plan_start'] = $temp->format('d-m-Y');
+			// } else {
+			// 	$user['plan_start'] = date('d-m-Y', strtotime($plan_start));
+			// }
+			// $plan_start = medi_date_parser($user['plan_start']);
+
+			// $user['plan_start'] = date('d/m/Y', strtotime($plan_start));
+
+			$validate = self::isDate(
+				date('d/m/Y', strtotime(medi_date_parser($user['plan_start'])))
+			);
+
 			if (!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
 				$start_date_result = false;
 			} else {
+				// $user['plan_start'] = $plan_start;
+				// return date('Y-m-d', strtotime($user['plan_start']));
 				$plan = self::getCompanyPlanDates($customer_id);
-				$start = strtotime($plan['plan_start']);
-				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
-				if ($plan_start >= $start && $plan_start <= $end) {
+				// $start = strtotime($plan['plan_start']);
+				// $end = strtotime($plan['plan_end']);
+				// $plan_start = strtotime(date('Y-m-d', strtotime($user['plan_start'])));
+				if (is_date_between($user['plan_start'], $plan['plan_start'], $plan['plan_end'])) {
 					$start_date_error = false;
 					$start_date_message = '';
 				} else {
 					$start_date_error = true;
-					$start_date_message = "*Start Date must be between company's plan start and plan end (" . date('d/m/Y', $start) . " - " . date('d/m/Y', $end) . ").";
+					$start_date_message = "*Start Date must be between company's plan start and plan end (" . medi_date_format($plan['plan_start']) . " - " . medi_date_format($plan['plan_end']) . ").";
 					$start_date_result = false;
 				}
 			}
@@ -1255,26 +1272,31 @@ class PlanHelper
 				if ($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
 					$credits_medical_error = true;
 					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
-				} else if ($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true) {
-					$total_credits = PlanHelper::getTempCredits($customer_id);
-					if ($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
-						$credits_medical_error = true;
-						$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
-					} else {
+				} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+					if($spending['with_mednefits_credits'] == true) {
+						$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+						$total_balance_remaining = $creditData['total_balance'];
 						$credits_medical_error = false;
 						$credits_medical_message = '';
+						// if($total_balance_remaining == 0) {
+						// 	$credits_medical_error = true;
+						// 	$credits_medical_message = '*Company Total Medical Credits is not sufficient for this Member';
+						// }
+					} else {
+						$total_credits = PlanHelper::getTempCredits($customer_id);
+						if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
+							$credits_medical_error = true;
+							$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+						} else {
+							$credits_medical_error = false;
+							$credits_medical_message = '';
+						}
 					}
 				}
 			} else {
-				if (is_numeric($user['medical_credits'])) {
-					// check
-					// if($user['medical_credits'] > $customer_wallet->balance) {
-					//  $credits_medical_error = true;
-					//  $credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
-					// } else {
+				if(is_numeric($user['medical_credits'])) {
 					$credits_medical_error = false;
 					$credits_medical_message = '';
-					// }
 				} else {
 					$credits_medical_error = true;
 					$credits_medical_message = '*Credits is not a number.';
@@ -1290,14 +1312,25 @@ class PlanHelper
 				if ($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
 					$credits_wellness_error = true;
 					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
-				} else if ($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true) {
-					$total_credits = PlanHelper::getTempCredits($customer_id);
-					if ($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
-						$credits_wellness_error = true;
-						$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
-					} else {
+				} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+					if($spending['with_mednefits_credits'] == true) {
+						$creditData = \CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+						$total_balance_remaining = $creditData['total_balance'];
 						$credits_wellness_error = false;
 						$credits_wellnes_message = '';
+						// if($total_balance_remaining == 0) {
+						// 	$credits_wellness_error = true;
+						// 	$credits_wellnes_message = '*Company Total Medical Credits is not sufficient for this Member';
+						// }
+					} else {
+						$total_credits = PlanHelper::getTempCredits($customer_id);
+						if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
+							$credits_wellness_error = true;
+							$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+						} else {
+							$credits_wellness_error = false;
+							$credits_wellnes_message = '';
+						}
 					}
 				}
 			} else {
@@ -1322,30 +1355,29 @@ class PlanHelper
 			$error_status = false;
 		}
 
-		$response = array_merge(
-			[
-				'error'                 => $error_status,
-				"email_error"           => $email_error,
-				"email_message"         => $email_message,
-				"full_name_error"      => $full_name_error,
-				"full_name_message"    => $full_name_message,
-				"dob_error"             => $dob_error,
-				"dob_message"           => $dob_message,
-				"mobile_error"          => $mobile_error,
-				"mobile_message"        => $mobile_message,
-				"mobile_area_error"     => $mobile_area_error,
-				"mobile_area_message"   => $mobile_area_message,
-				"postal_code_error"       => $postal_code_error,
-				"postal_code_message"     => $postal_code_message,
-				"credits_medical_error" => $credits_medical_error,
-				"credits_medical_message" => $credits_medical_message,
-				"credits_wellness_error" => $credits_wellness_error,
-				"credits_wellnes_message" => $credits_wellnes_message,
-				"start_date_error"      => $start_date_error,
-				"start_date_message"    => $start_date_message
-			],
-			$myr_messages
-		);
+		$common = [
+			'error'                 => $error_status,
+			"email_error"           => $email_error,
+			"email_message"         => $email_message,
+			"full_name_error"      => $full_name_error,
+			"full_name_message"    => $full_name_message,
+			"dob_error"             => $dob_error,
+			"dob_message"           => $dob_message,
+			"mobile_error"          => $mobile_error,
+			"mobile_message"        => $mobile_message,
+			"mobile_area_error"     => $mobile_area_error,
+			"mobile_area_message"   => $mobile_area_message,
+			"postal_code_error"       => $postal_code_error,
+			"postal_code_message"     => $postal_code_message,
+			"credits_medical_error" => $credits_medical_error,
+			"credits_medical_message" => $credits_medical_message,
+			"credits_wellness_error" => $credits_wellness_error,
+			"credits_wellnes_message" => $credits_wellnes_message,
+			"start_date_error"      => $start_date_error,
+			"start_date_message"    => $start_date_message
+		];
+
+		$response = $customer_wallet->currency_type === 'myr' ? array_merge($common, $myr_messages) : $common;
 
 		return $response;
 	}
@@ -1407,22 +1439,31 @@ class PlanHelper
 			$start_date_message = '*Start Date is empty';
 			$start_date_result = false;
 		} else {
-			$validate = self::isDate($user['plan_start']);
+
+			$validate = self::isDate(
+				date('d/m/Y', strtotime(medi_date_parser($user['plan_start'])))
+			);
+
 			if (!$validate) {
 				$start_date_error = true;
 				$start_date_message = '*Start Date is invalid date.';
 				$start_date_result = false;
 			} else {
 				$plan = self::getCompanyPlanDates($customer_id);
-				$start = strtotime($plan['plan_start']);
-				$end = strtotime($plan['plan_end']);
-				$plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
-				if ($plan_start >= $start && $plan_start <= $end) {
+				// $start = strtotime($plan['plan_start']);
+				// $end = strtotime($plan['plan_end']);
+				// $plan_start = strtotime(date_format(date_create_from_format('d/m/Y', $user['plan_start']), 'Y-m-d'));
+				if (
+					is_date_between(
+						$user['plan_start'],
+						$plan['plan_start'],
+						$plan['plan_end'])
+				) {
 					$start_date_error = false;
 					$start_date_message = '';
 				} else {
 					$start_date_error = true;
-					$start_date_message = "*Start Date must be between company's plan start and plan end (" . date('d/m/Y', $start) . " - " . date('d/m/Y', $end) . ").";
+					$start_date_message = "*Start Date must be between company's plan start and plan end (" . medi_date_format($plan['plan_start']) . " - " . medi_date_format($plan['plan_end']) . ").";
 					$start_date_result = false;
 				}
 			}
