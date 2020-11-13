@@ -1264,83 +1264,152 @@ class PlanHelper
 			}
 		}
 
-		if (!isset($user['medical_credits']) || is_null($user['medical_credits'])) {
+		// if (!isset($user['medical_credits']) || is_null($user['medical_credits'])) {
+		// 	$credits_medical_error = false;
+		// 	$credits_medical_message = '';
+		// } else {
+		// 	if ($spending['account_type'] == "lite_plan") {
+		// 		if ($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
+		// 			$credits_medical_error = true;
+		// 			$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
+		// 		} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+		// 			if($spending['with_mednefits_credits'] == true) {
+		// 				$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+		// 				$total_balance_remaining = $creditData['total_balance'];
+		// 				$credits_medical_error = false;
+		// 				$credits_medical_message = '';
+		// 				// if($total_balance_remaining == 0) {
+		// 				// 	$credits_medical_error = true;
+		// 				// 	$credits_medical_message = '*Company Total Medical Credits is not sufficient for this Member';
+		// 				// }
+		// 			} else {
+		// 				$total_credits = PlanHelper::getTempCredits($customer_id);
+		// 				if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
+		// 					$credits_medical_error = true;
+		// 					$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+		// 				} else {
+		// 					$credits_medical_error = false;
+		// 					$credits_medical_message = '';
+		// 				}
+		// 			}
+		// 		}
+		// 	} else {
+		// 		if(is_numeric($user['medical_credits'])) {
+		// 			$credits_medical_error = false;
+		// 			$credits_medical_message = '';
+		// 		} else {
+		// 			$credits_medical_error = true;
+		// 			$credits_medical_message = '*Credits is not a number.';
+		// 		}
+		// 	}
+		// }
+
+		if(!isset($user['medical_credits']) || is_null($user['medical_credits'])) {
 			$credits_medical_error = false;
 			$credits_medical_message = '';
 		} else {
-			if ($spending['account_type'] == "lite_plan") {
-				if ($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false) {
+			if($spending['account_type'] == "lite_plan")	{
+				if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false)	{
 					$credits_medical_error = true;
 					$credits_medical_message = 'Unable to allocate medical credits since your company is not yet paid for the Plan. Please make payment to enable medical allocation.';
 				} else if($user['medical_credits'] > 0 && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == true)	{
-					if($spending['with_mednefits_credits'] == true) {
-						$creditData = CustomerHelper::getUpdatedMednefitsCredits($customer_id);
-						$total_balance_remaining = $creditData['total_balance'];
+					$total_credits = PlanHelper::getTempCredits($customer_id);
+					if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
+						$credits_medical_error = true;
+						$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
+					} else {
 						$credits_medical_error = false;
 						$credits_medical_message = '';
-						// if($total_balance_remaining == 0) {
-						// 	$credits_medical_error = true;
-						// 	$credits_medical_message = '*Company Total Medical Credits is not sufficient for this Member';
-						// }
-					} else {
-						$total_credits = PlanHelper::getTempCredits($customer_id);
-						if($total_credits['medical'] > $customer_wallet->balance || $user['medical_credits'] > $customer_wallet->balance) {
-							$credits_medical_error = true;
-							$credits_medical_message = '*Company Total Medical Balance is not sufficient for this Member';
-						} else {
-							$credits_medical_error = false;
-							$credits_medical_message = '';
-						}
 					}
 				}
 			} else {
 				if(is_numeric($user['medical_credits'])) {
-					$credits_medical_error = false;
-					$credits_medical_message = '';
+					// check
+					// if($user['medical_credits'] > $customer_wallet->balance) {
+					// 	$credits_medical_error = true;
+					// 	$credits_medical_message = '*Company Medical Balance is not sufficient for this Member';
+					// } else {
+						$credits_medical_error = false;
+						$credits_medical_message = '';
+					// }
 				} else {
 					$credits_medical_error = true;
-					$credits_medical_message = '*Credits is not a number.';
+					$credits_medical_message = '*Credits is not a number.';                
 				}
 			}
 		}
 
-		if (!isset($user['wellness_credits']) || is_null($user['wellness_credits'])) {
+		// if (!isset($user['wellness_credits']) || is_null($user['wellness_credits'])) {
+		// 	$credits_wellness_error = false;
+		// 	$credits_wellnes_message = '';
+		// } else {
+		// 	if ($spending['account_type'] == "lite_plan") {
+		// 		if ($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+		// 			$credits_wellness_error = true;
+		// 			$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
+		// 		} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
+		// 			if($spending['with_mednefits_credits'] == true) {
+		// 				$creditData = \CustomerHelper::getUpdatedMednefitsCredits($customer_id);
+		// 				$total_balance_remaining = $creditData['total_balance'];
+		// 				$credits_wellness_error = false;
+		// 				$credits_wellnes_message = '';
+		// 				// if($total_balance_remaining == 0) {
+		// 				// 	$credits_wellness_error = true;
+		// 				// 	$credits_wellnes_message = '*Company Total Medical Credits is not sufficient for this Member';
+		// 				// }
+		// 			} else {
+		// 				$total_credits = PlanHelper::getTempCredits($customer_id);
+		// 				if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
+		// 					$credits_wellness_error = true;
+		// 					$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+		// 				} else {
+		// 					$credits_wellness_error = false;
+		// 					$credits_wellnes_message = '';
+		// 				}
+		// 			}
+		// 		}
+		// 	} else {
+		// 		if (is_numeric($user['wellness_credits'])) {
+		// 			// if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
+		// 			//  $credits_wellness_error = true;
+		// 			//  $credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+		// 			// } else {
+		// 			$credits_wellness_error = false;
+		// 			$credits_wellnes_message = '';
+		// 			// }
+		// 		} else {
+		// 			$credits_wellness_error = true;
+		// 			$credits_wellnes_message = '*Credits is not a number.';
+		// 		}
+		// 	}
+		// }
+
+		if(!isset($user['wellness_credits']) || is_null($user['wellness_credits'])) {
 			$credits_wellness_error = false;
 			$credits_wellnes_message = '';
 		} else {
-			if ($spending['account_type'] == "lite_plan") {
-				if ($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
+			if($spending['account_type'] == "lite_plan")	{
+				if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false)	{
 					$credits_wellness_error = true;
 					$credits_wellnes_message = 'Unable to allocate wellness credits since your company is not yet paid for the Plan. Please make payment to enable wellness allocation.';
 				} else if($user['wellness_credits'] > 0 && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == true)	{
-					if($spending['with_mednefits_credits'] == true) {
-						$creditData = \CustomerHelper::getUpdatedMednefitsCredits($customer_id);
-						$total_balance_remaining = $creditData['total_balance'];
+					$total_credits = PlanHelper::getTempCredits($customer_id);
+					if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
+						$credits_wellness_error = true;
+						$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
+					} else {
 						$credits_wellness_error = false;
 						$credits_wellnes_message = '';
-						// if($total_balance_remaining == 0) {
-						// 	$credits_wellness_error = true;
-						// 	$credits_wellnes_message = '*Company Total Medical Credits is not sufficient for this Member';
-						// }
-					} else {
-						$total_credits = PlanHelper::getTempCredits($customer_id);
-						if($total_credits['wellness'] > $customer_wallet->wellness_credits || $user['wellness_credits'] > $customer_wallet->wellness_credits) {
-							$credits_wellness_error = true;
-							$credits_wellnes_message = '*Company Total Wellness Balance is not sufficient for this Member';
-						} else {
-							$credits_wellness_error = false;
-							$credits_wellnes_message = '';
-						}
 					}
 				}
 			} else {
-				if (is_numeric($user['wellness_credits'])) {
+				if(is_numeric($user['wellness_credits'])) {
 					// if($user['wellness_credits'] > $customer_wallet->wellness_credits) {
-					//  $credits_wellness_error = true;
-					//  $credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
+					// 	$credits_wellness_error = true;
+					// 	$credits_wellnes_message = '*Company Wellness Balance is not sufficient for this Member';
 					// } else {
-					$credits_wellness_error = false;
-					$credits_wellnes_message = '';
+						$credits_wellness_error = false;
+						$credits_wellnes_message = '';
 					// }
 				} else {
 					$credits_wellness_error = true;
