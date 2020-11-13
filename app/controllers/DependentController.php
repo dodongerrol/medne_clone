@@ -48,7 +48,7 @@ class DependentController extends \BaseController {
 			$file->move('excel_upload', $temp_file);
 			try {
 				// $data_array = Excel::selectSheetsByIndex(0)->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
-				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->get();
+				$data_array = Excel::selectSheets("Member Information")->load(public_path()."/excel_upload/".$temp_file)->formatDates(false)->get();
 			} catch(Exception $e) {
 				return ['res' => $e->getMessage()];
 				return ['status' => false, 'message' => "Please use the sheet name 'Member Information'"];
@@ -371,10 +371,11 @@ class DependentController extends \BaseController {
 			->first();
 
 			if($dependents) {
-				if($dependentAccount->account_type == "lite_plan") {
-					return array('status' => true, 'total_number_of_seats' => 9999, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => 9999);
+				if($plan->account_type == "lite_plan") {
+					return array('status' => true, 'total_number_of_seats' => 9999, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => 999, 'account_type' => $plan->account_type);
+				} else {
+					return array('status' => true, 'total_number_of_seats' => $dependents->total_dependents, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => $dependents->total_dependents - $dependents->total_enrolled_dependents, 'account_type' => $plan->account_type);
 				}
-				return array('status' => true, 'total_number_of_seats' => $dependents->total_dependents, 'occupied_seats' => $dependents->total_enrolled_dependents, 'vacant_seats' => $dependents->total_dependents - $dependents->total_enrolled_dependents);
 			}
 		}
 
@@ -448,7 +449,7 @@ class DependentController extends \BaseController {
 			->orderBy('created_at', 'desc')
 			->first();
 		if($dependent_plan_status && $dependentAccount->account_type != "lite_plan") {
-			
+
 			$total_dependents = 0;
 			if($dependent_plan_status) {
 				$total_dependents = $dependent_plan_status->total_dependents - $dependent_plan_status->total_enrolled_dependents;
@@ -687,19 +688,19 @@ class DependentController extends \BaseController {
 							->where('type', 'started')
 							->orderBy('created_at', 'desc')
 							->first();
-			
+
 			$history->total_balance_visit = $history->total_visit_limit - $history->total_visit_created;
 			$history->formatted_plan_start = date('F d, Y', strtotime($history->plan_start));
 			$dependent->nric = $dependent->NRIC;
 			$dependent->member_id = str_pad($dependent->UserID, 6, "0", STR_PAD_LEFT);
-	
+
 
 		$dependent_plan = DB::table('dependent_plans')->where('dependent_plan_id', $history->dependent_plan_id)->first();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->orderBy('created_at', 'desc')->first();
 
 		$active_plan = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->first();
 		$data['start_date'] = date('d F Y', strtotime($history->plan_start));
-		
+
 		$dependent_plan_extenstion = DB::table('dependent_plans')->where('customer_plan_id', $dependent_plan->customer_plan_id)->where('type', 'extension_plan')->first();
 
 		if($dependent_plan_extenstion && $dependent_plan_extenstion->activate_plan_extension == 1) {
@@ -930,7 +931,7 @@ class DependentController extends \BaseController {
 
 
 				$result = $depent_plan_history->createData($user_plan_history_data);
-				
+
 				if(!$result) {
 					return false;
 				}
@@ -1043,7 +1044,7 @@ class DependentController extends \BaseController {
 						return array('status' => true, 'message' => 'Old Dependent Account is deactivated and new dependent account will be activated by '.date('d F Y', strtotime($input['plan_start'])));
 					}
 				}
-				
+
 			} else {
 				$replace_data = array(
 					'old_id'                => $replace_id,
@@ -1200,9 +1201,9 @@ class DependentController extends \BaseController {
 		}
 
 		if((int)$seat->vacant_status == 1) {
-			return array('status' => false, 'message' => 'Dependent Vacant Seat already occupied');	
+			return array('status' => false, 'message' => 'Dependent Vacant Seat already occupied');
 		}
-		
+
 		$dependent = DB::table('employee_family_coverage_sub_accounts')
 		->where('user_id', $seat->user_id)
 		->first();
@@ -1228,7 +1229,7 @@ class DependentController extends \BaseController {
 		}
 
 		if((int)$seat->vacant_status == 1) {
-			return array('status' => false, 'message' => 'Dependent Vacant Seat already occupied');	
+			return array('status' => false, 'message' => 'Dependent Vacant Seat already occupied');
 		}
 
 		if(empty($input['first_name']) || $input['first_name'] == null) {
@@ -1354,7 +1355,7 @@ class DependentController extends \BaseController {
 		if(!$dependent_plan) {
 			return array('status' => false, 'message' => 'Dependent Plan does not exist.');
 		}
-		
+
 		// check dependent invoice
 		$invoice = DB::table('dependent_invoice')->where('dependent_plan_id', $input['dependent_plan_id'])->first();
 		$plan = DB::table('customer_plan')->where('customer_plan_id', $dependent_plan->customer_plan_id)->first();
@@ -1432,7 +1433,7 @@ class DependentController extends \BaseController {
 			$data['company'] = ucwords($business_info->company_name);
 		}
 
-		
+
 		$plan_start = $plan->plan_start;
 
 		$data['complimentary'] = FALSE;
