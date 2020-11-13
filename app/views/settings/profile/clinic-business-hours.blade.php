@@ -138,7 +138,7 @@
 				</div>
 			</div>	
 			<!-- Public Holiday div -->
-			<div class="row col-md-13" id ='profile-operatingHours-publicHoliday-div'><br>
+			<!-- <div class="row col-md-13" id ='profile-operatingHours-publicHoliday-div'><br>
 				<div class="col-md-2" style="clear: both">
 					<label class="profile-operatingHours-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
 				</div>
@@ -152,7 +152,7 @@
 				<div class="col-md-2">
 					<input type="button" class="timepicker profile-operatingHours-time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
-			</div>		
+			</div>		 -->
 		</div>
 		<div class="col-md-9" style="padding-top: 3px;" id="saveOperatingBtnDiv">
 			<button id="profile-operatingHours-saveOperatingHours" ><span class="glyphicon glyphicon-pencil"></span> Apply Changes</button>

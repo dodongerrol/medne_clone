@@ -290,7 +290,7 @@
 				</div>
 			</div>	
 			<!-- Public Holiday div -->
-			<div class="row col-md-13" id ='publicHoliday-div'><br>
+			<!-- <div class="row col-md-13" id ='publicHoliday-div'><br>
 				<div class="col-md-2" style="clear: both">
 					<label class="con-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
 				</div>
@@ -304,7 +304,7 @@
 				<div class="col-md-2">
 					<input type="button" class="timepicker time-to" value="21:00:00" style="font-size: 12px;">
 				</div>
-			</div>		
+			</div>		 -->
 		</div>
 
 
@@ -868,7 +868,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="publicHoliday-mainCollapsibleDiv" class="row">
+				<!-- <div id="publicHoliday-mainCollapsibleDiv" class="row">
 					<div class="day-label-publicHoliday col-md-2" style="clear: both">
 						<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
 					</div>
@@ -943,7 +943,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>

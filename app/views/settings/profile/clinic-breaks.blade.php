@@ -541,7 +541,7 @@
 			</div>
 		</div>
 	</div>
-	<div id="publicHoliday-mainCollapsibleDiv" class="row">
+	<!-- <div id="publicHoliday-mainCollapsibleDiv" class="row">
 		<div class="day-label-publicHoliday col-md-2" style="clear: both">
 			<label class="profile-breakHours-detail-lbl day-name" style="padding-top: 8px;">Public Holiday</label>
 		</div>
@@ -614,7 +614,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<div class="col-md-9" style="padding-top: 3px;" id="saveBreakHoursBtnDiv">
 		<button id="profile-breakHours-savebreakHours" ><span class="glyphicon glyphicon-pencil"></span> Apply Changes</button>
 	</div>	
