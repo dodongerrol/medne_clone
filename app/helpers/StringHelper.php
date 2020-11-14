@@ -29,8 +29,9 @@ class StringHelper{
                     April 9, 2020
             */ 
             $thirdPartyAuthorization = '';
-            $getRequestHeader = getallheaders();
-
+            // $getRequestHeader = getallheaders();
+            $getRequestHeader = self::getHeaders();
+            // return $getRequestHeader;
             if (
                 (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
                 || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
@@ -175,7 +176,13 @@ class StringHelper{
         public static function getJwtHrSession()
         {   
             $secret = Config::get('config.secret_key');
-            $token = StringHelper::getToken();
+            
+            $getRequestHeader = self::getHeaders();
+            if(!isset($getRequestHeader['Authorization']) && empty($getRequestHeader['Authorization']) && $getRequestHeader['Authorization'] == null) {
+                return false;
+            }
+
+            $token = $getRequestHeader['Authorization'];
             $result = FALSE;
             try {
                 $result = JWT::decode($token, $secret);
@@ -183,7 +190,7 @@ class StringHelper{
                 return FALSE;
             }
 
-            if($result) {
+            if($result && isset($result->hr_dashboard_id)) {
                 $hr = DB::table('customer_hr_dashboard')
                             ->where('hr_dashboard_id', $result->hr_dashboard_id)
                             // ->where('active', 1)
@@ -191,6 +198,7 @@ class StringHelper{
                 if($hr) {
                     if((int)$hr->active == 1) {
                         $hr->signed_in = $result->signed_in;
+                        $hr->hr_activated = true;
                         if(isset($result->expire_in)) {
                             $hr->expire_in = $result->expire_in;
                         } else {
@@ -241,7 +249,8 @@ class StringHelper{
 
         public static function getToken( )
         {
-            $getRequestHeader = getallheaders();
+            // $getRequestHeader = getallheaders();
+            $getRequestHeader = self::getHeaders();
             if(!empty($getRequestHeader['authorization']) && $getRequestHeader['authorization'] != null) {
                 $getRequestHeader['Authorization'] = $getRequestHeader['authorization'];
             }
@@ -1641,5 +1650,26 @@ public static function get_random_password($length)
 		$c = DateTime::createFromFormat($secondFormat, $date);
 		return $d && $d->format($firstFormat) === $date || $c && $c->format($secondFormat) === $date;
 		// return ['format' => $d->format($format), 'date' => $date];
-	}
+    }
+    
+    public static function getHeaders( )
+    {
+        if (!function_exists('getallheaders'))
+        {
+                function getallheaders()
+                {
+                            $headers = '';
+                    foreach ($_SERVER as $name => $value)
+                    {
+                            if (substr($name, 0, 5) == 'HTTP_')
+                            {
+                                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+                            }
+                    }
+                    return $headers;
+                }
+        } else {
+            return getallheaders();
+        }
+    }
 }
