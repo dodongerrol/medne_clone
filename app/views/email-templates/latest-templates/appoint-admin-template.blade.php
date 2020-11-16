@@ -59,7 +59,7 @@
           <div style="border-bottom: 2px solid #999;padding-bottom: 30px;">
             <p style="font-size: 18px;">Hi {{$emailName}},</p>
 
-            <p style="margin: 16px 0 0;">You have been appointed as an administrator of Mednefits.</p>
+            <p style="margin: 16px 0 0;">You have been appointed as an administrator of {{ $company }}.</p>
             <p style="margin: 0 0 16px;">You are now able to:</p>
 
             <div>

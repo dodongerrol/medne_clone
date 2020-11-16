@@ -18255,12 +18255,13 @@ public function createHrLocation ()
 			// update member/employee status if already an hr administrator
 			DB::table('user')->where('UserID', $employee_id)->update(['is_hr_admin' => 1]);
 		}
-		
+		$company_details = DB::table('corporate')->where('corporate_id', $result->corporate_id)->first();
 		$message = [];
         $emailData = [];
 		
 		$employee = DB::table('user')->where('UserID', $employee_id)->select('UserID', 'Email', 'Name', 'ActiveLink')->first();
 		$emailDdata['emailSubject'] = 'WELCOME TO MEDNEFITS CARE';
+		$emailDdata['company']	=	ucwords($company_details->company_name);
 		$emailDdata['emailTo']= $employee->Email;
 		$emailDdata['emailName'] = ucwords($employee->Name);
 

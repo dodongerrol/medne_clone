@@ -58,7 +58,7 @@
         <div>
           <p style="font-size: 18px;">Hi {{ $emailName }},</p>
 
-          <p style="margin: 20px 0 0; font-size: 16px;">You have been appointed as an administrator of Mednefits</p>
+          <p style="margin: 20px 0 0; font-size: 16px;">You have been appointed as an administrator of {{ $company }}</p>
           <p style="margin: 0; font-size: 16px;">Please activate your corporate account by creating your password.</p>
 
           <div style="text-align: center; margin: 30px 0 0;">
