@@ -31,22 +31,27 @@ app.directive("companyProfileDirective", [
         }
         scope.prevAddContact = function () {
           if ( scope.business_ctr != 0 ) {
+            
             scope.business_ctr -= 1;
             scope.business_data = scope.business_arr[scope.business_ctr];
-            // console.log(scope.business_arr[(scope.business_ctr)-1]);
-            // if ( scope.business_arr[(scope.business_ctr)+1] == undefined ) {
-            //   scope.business_arr.splice((scope.business_ctr)+1,1);
-            //   console.log('splice dayun');
-            //   console.log(scope.business_ctr);
-            //   console.log( scope.business_arr.splice((scope.business_ctr)+1,1) )
-            //   console.log(scope.business_arr );
-            // }
+            scope.business_arr.push( scope.business_data );
+            console.log( scope.business_ctr );
+    
+            if ( scope.business_arr[scope.business_ctr + 1] == undefined ) {
+              console.log('wala sulod ang input');
+              console.log( scope.business_arr[scope.business_ctr + 1].first_name )
+            } else {
+              console.log( scope.business_arr[scope.business_ctr + 1] );
+              console.log('naa sulod ang mga input')
+              console.log( scope.business_arr[scope.business_ctr + 1].first_name )
+            }
+            
           } 
+          
         }
 
         scope.nextAddContact = function () {
           scope.business_ctr += 1;
-          console.log( scope.business_arr[scope.business_ctr] )
           if (scope.business_arr[scope.business_ctr]) {
             scope.business_data = scope.business_arr[scope.business_ctr];
           } else {
