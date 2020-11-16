@@ -675,6 +675,7 @@ app.directive('activityPage', [
 								scope.activity.in_network_spending_format_number += response.data.data.in_network_spending_format_number;
 								scope.activity.total_in_network_spent_format_number += response.data.data.total_in_network_spent_format_number;
 								scope.activity.total_allocation += response.data.data.total_allocation;
+								scope.activity.total_balance += response.data.data.total_balance;
 								scope.activity.total_lite_plan_consultation += response.data.data.total_lite_plan_consultation;
 								scope.activity.total_in_network_transactions += response.data.data.total_in_network_transactions;
 								scope.activity.total_spent_format_number += response.data.data.total_spent_format_number;

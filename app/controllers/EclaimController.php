@@ -4813,7 +4813,7 @@ public function getHrActivity( )
 	$total_visit_created = 0;
 	$total_allocation = 0;
 	$total_visit_limit  = 0;
-
+	$total_balance = 0;
 	
   	// get all hr employees, spouse and dependents
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $session->customer_buy_start_id)->first();
@@ -4848,16 +4848,18 @@ public function getHrActivity( )
 		if($spending_type == "medical") {
 			$member_spending_dates_medical = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'medical');
 			if($member_spending_dates_medical) {
-				$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
+				$credit_data = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_medical['start'], $member_spending_dates_medical['end']);
 				$total_allocation += $credit_data['allocation'];
+				$total_balance += $credit_data['balance'];
 			} else {
 				$total_allocation += 0;
 			}
 		} else {
 			$member_spending_dates_wellness = MemberHelper::getMemberCreditReset($member->user_id, $filter, 'wellness');
 			if($member_spending_dates_wellness) {
-				$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
+				$credit_data = PlanHelper::memberMedicalUpdatedCreditsSummary($wallet->wallet_id, $member->user_id, $member_spending_dates_wellness['start'], $member_spending_dates_wellness['end']);
 				$total_allocation += $credit_data['allocation'];
+				$total_balance += $credit_data['balance'];
 			} else {
 				$total_allocation += 0;
 			}
@@ -5473,7 +5475,7 @@ public function getHrActivity( )
 	
 	$paginate['data'] = array(
 		'total_allocation' => $total_allocation,
-		'total_balance'			=> $total_allocation - $total_spent,
+		'total_balance'			=> $total_balance,
 		'total_spent'       => number_format($total_spent, 2),
 		'total_spent_format_number'       => $total_spent,
 		'in_network_spent'  => number_format($in_network_spent + $total_lite_plan_consultation, 2),
