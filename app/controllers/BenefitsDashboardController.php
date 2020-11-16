@@ -17907,7 +17907,8 @@ public function createHrLocation ()
 				'customer_business_contact_id'		=> $contact->customer_business_contact_id,
 				'first_name' 						=> $contact->first_name, 
 				'email' 							=> $contact->work_email,
-				'phone' 							=> $contact->phone
+				'phone' 							=> $contact->phone,
+				'phone_code'						=> $contact->phone_code
 			);
 		  }
 
@@ -17928,7 +17929,8 @@ public function createHrLocation ()
 				'first_name' 				=> $contact->first_name, 
 				'last_name' 				=> $contact->last_name,
 				'email' 					=> $contact->email,
-				'phone' 					=> $contact->phone
+				'phone' 					=> $contact->phone,
+				'phone_code'				=> $contact->phone_code
 			);
 		  }
 
