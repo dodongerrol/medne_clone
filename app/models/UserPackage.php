@@ -308,7 +308,7 @@ class UserPackage extends Eloquent
 
                         $data['account_type'] = $active_plan->account_type;
                         $data['account_status'] = MemberHelper::getMemberWalletStatus($user_details->UserID, 'medical');
-                        if($data['plan_type'] == "Mednefits Enterprise Plan") {
+                        if($data['plan_type'] == "Enterprise Plan") {
                             $data['plan_add_on'] = "N.A.";
                             $data['annual_entitlement'] = 14;
                         } else if($data['plan_type'] == "Out of Pocket") {
