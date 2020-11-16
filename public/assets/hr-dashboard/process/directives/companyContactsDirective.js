@@ -106,6 +106,8 @@ app.directive("companyContactsDirective", [
           }
         }
 
+        
+
         scope.selectSpendingTab = function(opt){
           scope.selectedSpendingTab = opt;
         }
@@ -1257,7 +1259,7 @@ app.directive("companyContactsDirective", [
             // scope.getBillingList();
             // scope.getPlanSubscriptions();
             scope.getActiveCompPlans();
-            // scope.companyAccountType();
+            scope.companyAccountType();
             // scope.getInvoiceHistoryData();
             scope._getHrDetails_();
             scope.getOldPlansList();

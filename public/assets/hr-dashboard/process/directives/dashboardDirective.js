@@ -202,6 +202,8 @@ app.directive('dashboardDirective', [
 					hrSettings.getPlanStatus()
 						.then(function (response) {
 							scope.plan_status = response.data;
+							localStorage.setItem('company_account_type', scope.plan_status.account_type);
+							scope.companyAccountType();
 						});
 				}
 
@@ -306,7 +308,7 @@ app.directive('dashboardDirective', [
 				scope.getCompanyIntroMessage();
 				scope.companyPlanTotalDue();
 				scope.getEmployeeStatus();
-				scope.companyAccountType();
+				// scope.companyAccountType();
 			}
 		}
 	}
