@@ -6654,24 +6654,24 @@ public function payCreditsNew( )
                 return Response::json($returnObject);
             }
                 
-            if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-              $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
+            // if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+            //   $current_balance = PlanHelper::reCalculateEmployeeBalance($user_id);
 
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'zero_balance';
-              $returnObject->head_message = 'Registration on Hold';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //   $returnObject->status = FALSE;
+            //   $returnObject->status_type = 'zero_balance';
+            //   $returnObject->head_message = 'Registration on Hold';
+            //   $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
 
-              if($current_balance <= 0) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'zero_balance';
-                $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
-                return Response::json($returnObject);
-              }
-            }
+            //   if($current_balance <= 0) {
+            //     $returnObject->status = FALSE;
+            //     $returnObject->status_type = 'zero_balance';
+            //     $returnObject->head_message = 'Registration on Hold';
+            //     $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+            //     $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //     return Response::json($returnObject);
+            //   }
+            // }
 
              // check for member transaction
              $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
