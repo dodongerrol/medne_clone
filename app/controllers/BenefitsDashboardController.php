@@ -12107,20 +12107,20 @@ class BenefitsDashboardController extends \BaseController {
 		$user_spending_dates = CustomerHelper::getCustomerCreditReset($session->customer_buy_start_id, $filter, $spending_type);
 		$company_credits = DB::table('customer_credits')->where('customer_id', $session->customer_buy_start_id)->first();
 		if($user_spending_dates) {
-      if($spending_type == 'medical') {
-        $credit_data = CustomerHelper::customerMedicalAllocatedCreditsByDates($session->customer_buy_start_id, $user_spending_dates['start'], $user_spending_dates['end'], $user_spending_dates['id']);
-      } else {
-        $credit_data = CustomerHelper::customerWellnessAllocatedCreditsByDates($session->customer_buy_start_id, $user_spending_dates['start'], $user_spending_dates['end'], $user_spending_dates['id']);
-      }
-    } else {
-      $credit_data = null;
-    }
+			if($spending_type == 'medical') {
+				$credit_data = CustomerHelper::customerMedicalAllocatedCreditsByDates($session->customer_buy_start_id, $user_spending_dates['start'], $user_spending_dates['end'], $user_spending_dates['id']);
+			} else {
+				$credit_data = CustomerHelper::customerWellnessAllocatedCreditsByDates($session->customer_buy_start_id, $user_spending_dates['start'], $user_spending_dates['end'], $user_spending_dates['id']);
+			}
+		} else {
+			$credit_data = null;
+		}
 
-    if($credit_data) {
-			return array('status' => TRUE, 'total_allocation' => $credit_data, 'currency_type' => $company_credits->currency_type);
-    } else {
-    	return array('status' => TRUE, 'total_allocation' => 0, 'currency_type' => $company_credits->currency_type);
-    }
+		if($credit_data) {
+				return array('status' => TRUE, 'total_allocation' => $credit_data, 'currency_type' => $company_credits->currency_type);
+		} else {
+			return array('status' => TRUE, 'total_allocation' => 0, 'currency_type' => $company_credits->currency_type);
+		}
 
 		// $company_credits = DB::table('customer_credits')->where('customer_id', $session->customer_buy_start_id)->first();
 		// $start = date('Y-m-d', strtotime($company_credits->created_at));
