@@ -841,12 +841,19 @@ class PlanHelper
 		if ($account_type == "enterprise_plan") {
 			$wallet = 1;
 		}
-
-		$package_group = DB::table('package_group')
+		
+		if($account_type == "out_of_pocket") {
+			$package_group = DB::table('package_group')
+			->where('account_type', $account_type)
+			->where('secondary_account_type', $secondary_account_type)
+			->first();
+		} else {
+			$package_group = DB::table('package_group')
 			->where('account_type', $account_type)
 			->where('secondary_account_type', $secondary_account_type)
 			->where('wallet', $wallet)
 			->first();
+		}
 
 		// update user package plan
 		if ((int)$user_plan->package_group_id !== (int)$package_group->package_group_id) {
