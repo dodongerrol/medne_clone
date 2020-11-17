@@ -2946,7 +2946,8 @@ app.directive("employeeOverviewDirective", [
 
           if(
             (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.medical_enabled)) ||
-            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.medical_enabled))
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.medical_enabled)) || 
+            (scope.spending_account_status.account_type != 'lite_plan' && scope.spending_account_status.account_type != 'enterprise_plan' && (scope.spending_account_status.medical_enabled))
           ){
             scope.isMedicalShow = true;
           }
