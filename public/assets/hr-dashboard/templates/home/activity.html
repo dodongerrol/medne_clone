@@ -1422,7 +1422,7 @@
 							</div>
 
 							<div class="col-md-6 no-padding text-center transactions-btn-container">
-								<button ng-disabled="spending_account_status.wellness_enabled == true" class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
+								<button ng-disabled="activitySpendingType == 1 && spending_account_status.wellness_enabled == true && inNetWorkTable == false" class="btn-in-network active" ng-class="{'active':inNetWorkTable}" ng-click="togglePanelNonPanel(1);">
 									PANEL<br>
 									<!-- IN-NETWORK<br> -->
 									TRANSACTIONS 
