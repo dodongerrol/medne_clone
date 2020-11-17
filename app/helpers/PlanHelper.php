@@ -845,7 +845,6 @@ class PlanHelper
 		if($account_type == "out_of_pocket") {
 			$package_group = DB::table('package_group')
 			->where('account_type', $account_type)
-			->where('secondary_account_type', $secondary_account_type)
 			->first();
 		} else {
 			$package_group = DB::table('package_group')
