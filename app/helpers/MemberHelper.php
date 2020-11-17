@@ -701,7 +701,7 @@ class MemberHelper
 		} else {
 			$customer_id = \PlanHelper::getCustomerId($member_id);
 			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
-			if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
+			if($spending['medical_reimbursement'] == false || $spending['wellness_reimbursement'] == false) {
 				return true;
 			}
 		}
