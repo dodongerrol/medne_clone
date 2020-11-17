@@ -10482,12 +10482,12 @@ class BenefitsDashboardController extends \BaseController {
 				'currency_type' => strtoupper($refund_payment->currency_type),
 				'unit_price'	=> \DecimalHelper::formatDecimal($unit_price)
 			);
-			
+
 			if($refund_payment->account_type == "enterprise_plan")	{
 				// return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 				$pdf = PDF::loadView('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 			} else {
-				// return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
+				return View::make('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 				$pdf = PDF::loadView('pdf-download.globalTemplates.cancellation-invoice', $refund_data);
 			}
 
