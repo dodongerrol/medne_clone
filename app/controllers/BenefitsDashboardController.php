@@ -5133,6 +5133,10 @@ class BenefitsDashboardController extends \BaseController {
 					$data['amount'] += $invoice->individual_price * $invoice->total_dependents;
 				}
 
+				if($data['amount'] == 0) {
+					$data['paid'] = true;
+				}
+
 				$data['amount'] = number_format($data['amount'], 2);
 				$data['total'] = $data['amount'];
 			} else {
@@ -5151,7 +5155,10 @@ class BenefitsDashboardController extends \BaseController {
 				$data['total']					= number_format($get_invoice->employees * $calculated_prices, 2);
 				$data['amount_due']     = number_format($get_invoice->employees * $calculated_prices, 2);
 				$data['calculated_prices'] = $calculated_prices;
-			}
+				if(($get_invoice->employees * $calculated_prices) == 0) {
+					$data['paid'] = true;
+				}
+ 			}
 
 			$data['invoice_number'] = $get_invoice->invoice_number;
 			$data['invoice_date']		= $get_invoice->invoice_date;
