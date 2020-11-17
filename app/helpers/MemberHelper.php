@@ -1867,18 +1867,19 @@ class MemberHelper
 		}
 
 		$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
+		$plan = DB::table('customer_plan')->where('customer_plan_id', $customer_active_plan->plan_id)->first();
 		$member = DB::table('user')->where('UserID', $member_id)->first();
 		$customer_id = PlanHelper::getCustomerId($member_id);
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$start = date('Y-m-d', strtotime($user_plan_history->date));
 
-		if($spending_type == "medical") {
-			$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
-		} else {
-			$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
-		}
+		// if($spending_type == "medical") {
+		// 	$end = date('Y-m-d', strtotime($spending->medical_spending_end_date));
+		// } else {
+		// 	$end = date('Y-m-d', strtotime($spending->wellness_spending_end_date));
+		// }
 
-		$end = PlanHelper::endDate($end);
+		$end = PlanHelper::endDate($plan->plan_end);
 
 
 		if($start < $today) {
