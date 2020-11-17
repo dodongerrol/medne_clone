@@ -132,9 +132,9 @@ class PlanHelper
 		} else if ($active->account_type == "stand_alone_plan") {
 			$plan_name = "Pro Plan";
 		} else if ($active->account_type == "lite_plan") {
-			$plan_name = "Basic Plan";
+			$plan_name = "Mednefits Basic Plan";
 		} else if ($active->account_type == "enterprise_plan") {
-			$plan_name = "Enterprise Plan";
+			$plan_name = "Mednefits Enterprise Plan";
 		}
 
 		return $plan_name;
