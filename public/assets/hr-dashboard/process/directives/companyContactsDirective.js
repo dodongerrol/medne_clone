@@ -884,6 +884,7 @@ app.directive("companyContactsDirective", [
           });
           scope.selectActivePlanPage  = function(page){
             if(scope.activePlan_active_page != page){
+              scope.page_active = 1;
               scope.activePlan_active_page = page;
               scope.isActivePlanDropShow = false;
               scope.getPlanDetails();
