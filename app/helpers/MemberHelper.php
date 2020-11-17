@@ -699,7 +699,11 @@ class MemberHelper
 		if($status) {
 			return true;
 		} else {
-			return false;
+			$customer_id = \PlanHelper::getCustomerId($member_id);
+			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
+			if($spending['medical_non_panel_submission'] == false && $spending['wellness_non_panel_submission'] == false) {
+				return true;
+			}
 		}
 	}
 
