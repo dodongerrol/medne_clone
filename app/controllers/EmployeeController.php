@@ -1734,11 +1734,19 @@ class EmployeeController extends \BaseController {
     public function downloadCaperPervisitCSV( )
     {
         $input = Input::all();
-        $result = StringHelper::checkToken($input['token']);
+        $result = StringHelper::getJwtHrSession();
         $customer_id = $result->customer_buy_start_id;
         $per_page = isset($input['per_page']) || !empty($input['per_page']) ? $input['per_page'] : 25;
         $account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
         $final_user = [];
+
+        if(empty($input['token']) || $input['token'] == null) {
+          return ['status' => false, 'message' => 'token is required'];
+        }
+    
+        if(!$result) {
+          return array('status' => FALSE, 'message' => 'Invalid Token.');
+        }
 
         $users = DB::table('user')
         ->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
