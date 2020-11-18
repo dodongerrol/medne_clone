@@ -15553,12 +15553,13 @@ class BenefitsDashboardController extends \BaseController {
         
         $data = array();
         $data['payment_status'] = $spendingPurchase->payment_status == 1 ? 'PAID' : 'PENDING';
-        $data['paid'] = $spendingPurchase->payment_status == 1 ? true : false;
         $data['invoice_date'] = date('d F Y', strtotime($spendingPurchase->invoice_date));
         $data['invoice_number'] = $spendingPurchase->invoice_number;
-        $total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+		$total = (float)$spendingPurchase->medical_purchase_credits + (float)$spendingPurchase->wellness_purchase_credits;
+		$amount_due = $total - (float)$spendingPurchase->payment_amount;
         $data['total']  = number_format($total, 2);
-        $data['amount_due'] = number_format($total - (float)$spendingPurchase->payment_amount, 2);
+		$data['amount_due'] = $amount_due > 0 ? number_format($amount_due, 2) : "0.00";
+		$data['paid'] = $amount_due <= 0 ? true : false;
         $data['invoice_due'] = date('d F Y', strtotime($spendingPurchase->invoice_due));
         $data['payment_date'] = $spendingPurchase->payment_date ? date('d F Y', strtotime($spendingPurchase->payment_date)) : null;
         $data['remarks']    = $spendingPurchase->remarks;
