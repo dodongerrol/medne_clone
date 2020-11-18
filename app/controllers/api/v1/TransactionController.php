@@ -908,7 +908,7 @@ class Api_V1_TransactionController extends \BaseController
 						->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 						->first();
 					} else {
-						$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+						$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $customer_id)->orderBy('created_at', 'desc')->first();
 						$customer_active_plan = DB::table('dependent_plans')
 											->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
 											->first();
