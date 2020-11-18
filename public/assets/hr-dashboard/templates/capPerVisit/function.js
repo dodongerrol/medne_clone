@@ -126,6 +126,7 @@ app.directive('capPerVisitDirective', [
 
 				scope.fileUploadModal = function( emp ){
 					scope.selected_emp = emp;
+					scope.gpCapFile = {};
 				}
 				
 				scope.closePass = function( ) {
