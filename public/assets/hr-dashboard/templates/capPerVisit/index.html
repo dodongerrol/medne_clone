@@ -104,7 +104,7 @@
 
 				<button class="btn-download-template" ng-click="downloadGpCapExcelTemplate()">DOWNLOAD TEMPLATE</button>
 
-				<div class="drag-upload-box-wrapper text-center" ngf-drop ng-model="gpCapFile" ngf-drag-over-class="'dragover'">
+				<div class="drag-upload-box-wrapper text-center" ngf-drop ngf-select ng-model="gpCapFile" ngf-drag-over-class="'dragover'">
 					<img src="../../assets/hr-dashboard/img/icons/upload.svg">
 					<div ng-if="!gpCapFile.name" class="no-upload-yet">
 						<p>Drag and drop an Excel file here to upload</p>
@@ -121,7 +121,7 @@
 
 				<div class="btn-container text-center">
 					<button class="btn-cancel" data-dismiss="modal">Cancel</button>
-					<button class="btn-submit" ng-click="uploadGpCapChanged( gpCapFile )">Update</button>
+					<button class="btn-submit" ng-click="uploadGpCapPerVisit( gpCapFile )">Update</button>
 				</div>
 			</div>
 		</div>
