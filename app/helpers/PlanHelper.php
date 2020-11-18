@@ -684,6 +684,8 @@ class PlanHelper
 
 	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history, $owner_id)
 	{
+		$input = Input::all();
+		$lang = isset($input['lang']) ? $input['lang'] : "en";
 		$user_wallet = DB::table('e_wallet')->where('UserID', $owner_id)->orderBy('created_at', 'desc')->first();
 		$dependent_plan = DB::table('dependent_plans')
 			->where('dependent_plan_id', $dependent_plan_id)
