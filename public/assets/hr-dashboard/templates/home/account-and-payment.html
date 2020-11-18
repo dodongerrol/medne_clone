@@ -726,7 +726,7 @@
 					        	<label>Price Per {{ global_planData.type == 'employee' ? 'Employee' : 'Dependent' }}</label>
 					        	<div class="custom-input-wrapper price-dependent-input-wrapper">
 					        		<div>
-					        			<span class="text-uppercase">{{ global_planData.currency_type ? global_planData.currency_type : 'SGD' }}</span>
+					        			<span class="text-uppercase">{{ spending_account_status.currency_type | uppercase }}</span>
 					        		</div>
 					        		<input ng-model="global_planData.individual_price" type="text">
 					        	</div>

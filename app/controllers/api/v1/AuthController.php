@@ -2004,7 +2004,7 @@ public function getNewClinicDetails($id)
      }
 
      // check if enable to access feature
-      $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($owner_id);
+      $transaction_access = MemberHelper::checkMemberAccessTransactionStatusPanel($owner_id);
 
       if($transaction_access)	{
         $returnObject->status = FALSE;
@@ -6742,7 +6742,7 @@ public function payCreditsNew( )
             // }
 
              // check for member transaction
-             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+             $transaction_access = MemberHelper::checkMemberAccessTransactionStatusPanel($user_id);
 
              if($transaction_access)	{
                $returnObject->status = FALSE;

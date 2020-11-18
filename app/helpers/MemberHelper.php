@@ -707,6 +707,15 @@ class MemberHelper
 		}
 	}
 
+	public static function checkMemberAccessTransactionStatusPanel($member_id)
+	{
+		$status = DB::table('member_block_transaction')->where('member_id', $member_id)->where('status', 1)->first();
+
+		if($status) {
+			return true;
+		}
+	}
+
 	public static function deductPlanHistoryVisit($member_id)
 	{
 		$user_type = PlanHelper::getUserAccountType($member_id);
