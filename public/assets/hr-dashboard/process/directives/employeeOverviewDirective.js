@@ -1236,6 +1236,9 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
           // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
+          if(scope.selectedEmployee.country_code.indexOf('+') < 0){
+            scope.selectedEmployee.country_code = '+' + scope.selectedEmployee.country_code;
+          }
           scope.editEmpCountryCode = scope.selectedEmployee.country_code;
           console.log(scope.selectedEmployee.dob);
           $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
@@ -2509,7 +2512,7 @@ app.directive("employeeOverviewDirective", [
                   email: data.email,
                   phone_no: data.phone_no,
                   // country_code: data.country_code.replace('+', ''),
-                  country_code: scope.editEmpCountryCode,
+                  country_code: scope.editEmpCountryCode.toString().replace('+', ''),
                   job_title: data.job_title,
                   postal_code: data.postal_code,
                   bank_account: data.bank_account,
@@ -2768,7 +2771,7 @@ app.directive("employeeOverviewDirective", [
             iti.setNumber(scope.selectedEmployee.mobile_no);
             console.log(scope.selectedEmployee);
             if (scope.selectedEmployee.country_code == null) {
-              scope.selectedEmployee.country_code = '65';
+              scope.selectedEmployee.country_code = '+65';
             }
             scope.selectedEmployee.phone_no = scope.selectedEmployee.phone_no;
             $("#area_code").val(scope.selectedEmployee.phone_no);
@@ -2782,7 +2785,7 @@ app.directive("employeeOverviewDirective", [
             var input2 = document.querySelector("#area_code2");
             iti2 = intlTelInput(input2, settings);
             iti2.setCountry("SG");
-            scope.replace_emp_data.country_code = '65';
+            scope.replace_emp_data.country_code = '+65';
             input2.addEventListener("countrychange", function () {
               console.log(iti2.getSelectedCountryData());
               scope.replace_emp_data.country_code = iti2.getSelectedCountryData().dialCode;
@@ -2943,7 +2946,8 @@ app.directive("employeeOverviewDirective", [
 
           if(
             (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.medical_enabled)) ||
-            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.medical_enabled))
+            (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.medical_enabled)) || 
+            (scope.spending_account_status.account_type != 'lite_plan' && scope.spending_account_status.account_type != 'enterprise_plan' && (scope.spending_account_status.medical_enabled))
           ){
             scope.isMedicalShow = true;
           }
@@ -2951,7 +2955,8 @@ app.directive("employeeOverviewDirective", [
             (scope.spending_account_status.account_type == 'lite_plan' && (scope.spending_account_status.wellness_enabled)) ||
             (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'myr' && scope.spending_account_status.wellness_enabled) || 
             (scope.spending_account_status.account_type == 'enterprise_plan' && scope.spending_account_status.currency_type == 'sgd' && (scope.spending_account_status.wellness_enabled)) ||
-            (scope.spending_account_status.account_type == 'out_of_pocket' && (scope.spending_account_status.wellness_enabled))
+            (scope.spending_account_status.account_type == 'out_of_pocket' && (scope.spending_account_status.wellness_enabled)) || 
+            (scope.spending_account_status.account_type != 'lite_plan' && scope.spending_account_status.account_type != 'enterprise_plan' && scope.spending_account_status.account_type != 'out_of_pocket' && (scope.spending_account_status.wellness_enabled))
           ){
             scope.isWellnessShow = true;
           }

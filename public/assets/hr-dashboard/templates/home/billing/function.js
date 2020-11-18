@@ -11,6 +11,7 @@ app.directive('spendingBillingDirective', [
 				console.log("billing directive Runnning !");
 				console.log($location);
 
+        scope.currency_type = localStorage.getItem('currency_type');
         scope.invoiceSelectorValue = 'spending';
         scope.page_active = 1;
         scope.per_page = 5;
