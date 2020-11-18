@@ -12,6 +12,9 @@ app.directive("companyProfileDirective", [
         scope.business_arr = [];
         scope.business_data = {
           phone_code: '65',
+          first_name: null,
+          email: null,
+          phone: null,
         };
         scope.business_ctr = 0; 
         scope.isUpdateContact = false;
@@ -23,29 +26,29 @@ app.directive("companyProfileDirective", [
             return false; 
           }
           scope.business_ctr += 1;
-          scope.business_arr.push( contact_data );
+          // scope.business_arr.push( contact_data );
           scope.business_data = {
             phone_code: '65',
+            first_name: null,
+            email: null,
+            phone: null,
           }
+          scope.business_arr.push( scope.business_data );
+          console.log(scope.business_arr);
           scope.initializeAddContactCountryCode();
         }
         scope.prevAddContact = function () {
           if ( scope.business_ctr != 0 ) {
-            
             scope.business_ctr -= 1;
-            scope.business_data = scope.business_arr[scope.business_ctr];
-            scope.business_arr.push( scope.business_data );
-            console.log( scope.business_ctr );
-    
-            if ( scope.business_arr[scope.business_ctr + 1] == undefined ) {
-              console.log('wala sulod ang input');
-              console.log( scope.business_arr[scope.business_ctr + 1].first_name )
-            } else {
-              console.log( scope.business_arr[scope.business_ctr + 1] );
-              console.log('naa sulod ang mga input')
-              console.log( scope.business_arr[scope.business_ctr + 1].first_name )
+            if ( scope.business_ctr == (scope.business_arr.length-1 ) ) { 
+              scope.business_arr.push( scope.business_data );
+              scope.business_data = scope.business_arr[scope.business_ctr];
+              console.log( scope.business_arr[scope.business_ctr + 1  ]);
             }
             
+            console.log(scope.business_arr);
+            console.log( scope.business_ctr );
+            console.log( scope.business_arr.length-1 );
           } 
           
         }
@@ -54,9 +57,16 @@ app.directive("companyProfileDirective", [
           scope.business_ctr += 1;
           if (scope.business_arr[scope.business_ctr]) {
             scope.business_data = scope.business_arr[scope.business_ctr];
+          
+            if ( scope.business_ctr == (scope.business_arr.length-1 ) ) {
+              scope.business_arr.splice( scope.business_ctr,1 );
+              console.log( scope.business_arr );
+            } else {
+              scope.business_arr.splice( scope.business_ctr,1 );
+            }
           } else {
-            scope.business_data = {};
-          }
+            // scope.business_data = {};
+          }          
         }
        
         scope.addBusinessContact = async function () {
@@ -278,21 +288,17 @@ app.directive("companyProfileDirective", [
               business_contacts: scope.business_arr,
             }
             
-            // console.log(data);
-            // scope.business_arr = [];
-            // scope.business_data = {};
-            // $("#business-add-contact-modal").modal('hide');
-            scope.showLoading();
-            await hrSettings.updateMoreBusinessContact( data )
-            .then(async function (response) {
-              console.log(response);
-              scope.hideLoading();
-              await scope.getCompanyContacts();
-              scope.business_arr = [];
-              $("#business-add-contact-modal").modal('hide');
+            // scope.showLoading();
+            // await hrSettings.updateMoreBusinessContact( data )
+            // .then(async function (response) {
+            //   console.log(response);
+            //   scope.hideLoading();
+            //   await scope.getCompanyContacts();
+            //   scope.business_arr = [];
+            //   $("#business-add-contact-modal").modal('hide');
               
-              swal('Success', response.data.message, 'success');
-            });
+            //   swal('Success', response.data.message, 'success');
+            // });
         }
 
         scope.removeDisable = function () {
