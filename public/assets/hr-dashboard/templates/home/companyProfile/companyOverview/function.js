@@ -26,26 +26,30 @@ app.directive("companyProfileDirective", [
             return false; 
           }
           scope.business_ctr += 1;
-          // scope.business_arr.push( contact_data );
+          scope.business_arr.push( scope.business_data );
           scope.business_data = {
             phone_code: '65',
             first_name: null,
             email: null,
             phone: null,
           }
-          scope.business_arr.push( scope.business_data );
-          console.log(scope.business_arr);
+          // console.log(scope.business_arr);
           scope.initializeAddContactCountryCode();
         }
         scope.prevAddContact = function () {
           if ( scope.business_ctr != 0 ) {
             scope.business_ctr -= 1;
-            if ( scope.business_ctr == (scope.business_arr.length-1 ) ) { 
-              scope.business_arr.push( scope.business_data );
-              scope.business_data = scope.business_arr[scope.business_ctr];
-              console.log( scope.business_arr[scope.business_ctr + 1  ]);
-            }
+            // scope.business_arr.push( scope.business_data );
+            // if ( scope.business_ctr == (scope.business_arr.length-1 ) ) { 
+            //   scope.business_arr.push( scope.business_data );
+            //   console.log( scope.business_arr[scope.business_ctr + 1  ]);
+            //   console.log('prev test');
+            //   console.log( scope.business_data );
+            //   console.log( scope.business_ctr );
+            //   console.log( scope.business_arr.length-1 );
+            // }
             
+            scope.business_data = scope.business_arr[scope.business_ctr];
             console.log(scope.business_arr);
             console.log( scope.business_ctr );
             console.log( scope.business_arr.length-1 );
