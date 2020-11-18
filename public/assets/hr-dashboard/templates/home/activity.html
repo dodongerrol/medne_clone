@@ -1428,7 +1428,7 @@
 									TRANSACTIONS 
 								</button>
 
-								<button ng-disabled="(total_allocation.currency_type == 'myr' && spending_account_status.wellness_enabled == true && outNetWorkTable == false) || (spending_account_status.wellness_enabled == false)" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
+								<button ng-disabled="(total_allocation.currency_type == 'myr' && spending_account_status.wellness_enabled == true && outNetWorkTable == false)" class="btn-out-network" ng-class="{'active':outNetWorkTable}" ng-click="togglePanelNonPanel(2);">
 									E-CLAIM TRANSACTIONS<br>
 									(NON-PANEL)
 								</button>
@@ -2071,5 +2071,4 @@
 			<p id="done_fetching_text" hidden><i class="fa fa-check"></i> Done fetching <span
 					ng-bind="fetching_data.to">1</span> users.</p>
 		</div>
-
 	</div>
