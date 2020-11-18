@@ -1,5 +1,6 @@
 <?php
 use Aws\S3\S3Client;
+use Illuminate\Support\Facades\Input;
 
 class EclaimHelper
 {
@@ -30,9 +31,11 @@ class EclaimHelper
 
   public static function getCurrencies( )
   {
+    $input = Input::all();
+    $lang = isset($input['lang']) ? $input['lang'] : "en";
     $data = array(
       array(
-        'currency_name'   => "SGD - Singapore Dollar",
+        'currency_name'   => $lang == "malay" ? \MalayTranslation::currencyTranslation("sgd") : "SGD - Singapore Dollar",
         'currency_exchange_rate'  => 3.00,
         'currency_type'   => 'sgd'
       ),

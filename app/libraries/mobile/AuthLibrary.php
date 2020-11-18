@@ -54,6 +54,7 @@ class AuthLibrary{
     $returnObject = new stdClass();
     $input = Input::all();
     $token = StringHelper::newCustomLoginToken($input);
+    $lang = isset($input['lang']) ? $input['lang'] : "en";
     if($token->status){
       $findUserID = self::FindUserFromToken($token->data['access_token']);
       // $activePromoCode = General_Library::ActivePromoCode();
@@ -61,7 +62,11 @@ class AuthLibrary{
 
       if(!$user) {
         $returnObject->status = FALSE;
-        $returnObject->message = StringHelper::errorMessage("Login");
+        if($lang == "malay") {
+          $returnObject->message = \MalayTranslation::malayMessages('user_not_exist');
+        } else {
+          $returnObject->message = StringHelper::errorMessage("Login");
+        }
         return $returnObject;
       }
 
@@ -91,8 +96,14 @@ class AuthLibrary{
       $returnObject->status = FALSE;
       $returnObject->url = null;
       $returnObject->error = 'invalid_credentials';
-            // $returnObject->error_description = 'The user credentials were incorrect.';
-      $returnObject->error_description = 'Invalid Credentials';
+
+      if($lang == "malay") {
+        $returnObject->message = \MalayTranslation::malayMessages('invalid_credentials');
+        $returnObject->error_description = $returnObject->message;
+      } else {
+        $returnObject->message = 'Invalid Credentials';
+        $returnObject->error_description = 'Invalid Credentials';
+      }
     }
     return $returnObject;
   }
@@ -622,9 +633,11 @@ class AuthLibrary{
         if($server == "https://mobileapi.medicloud.sg") {
           $server = "https://medicloud.sg";
         }
-        // return $server;
+        
+        $input = Input::all();
         $email = Input::get ('email');
         $send_type = !empty(Input::get ('send_type')) ? Input::get ('send_type') : "both";
+        $lang = isset($input['lang']) ? $input['lang'] : "en";
         $returnObject = new stdClass();
         if(!empty($email)){
           $findUserID = null;
@@ -640,7 +653,11 @@ class AuthLibrary{
               $findUserID = $findUserEmail[0]->UserID;
             } else {
               $returnObject->status = false;
-              $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+              if($lang == "malay") {
+                $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass');
+              } else {
+                $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+              }
               return $returnObject;
             }
           } else {
@@ -658,7 +675,11 @@ class AuthLibrary{
                 $findUserID = $findUserPhone[0]->UserID;
               } else {
                 $returnObject->status = false;
-                $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                if($lang == "malay") {
+                  $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_email');
+                } else {
+                  $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                }
                 return $returnObject;
               }
             } else {
@@ -675,12 +696,20 @@ class AuthLibrary{
                   $findUserID = $findUserBackUpPhone[0];
                 } else {
                   $returnObject->status = false;
-                  $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                  if($lang == "malay") {
+                    $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_mobile');
+                  } else {
+                    $returnObject->message = "Sorry, your phone has not been signed up with Mednefits";
+                  }
                   return $returnObject;
                 }
               } else {
                 $returnObject->status = false;
-                $returnObject->message = "Sorry, there's a issue resetting your password here. Please write to us at happiness@mednefits.com or call us at +65 6254 7889.";
+                if($lang == "malay") {
+                  $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_mobile');
+                } else {
+                  $returnObject->message = "Sorry, your phone has not been signed up with Mednefits";
+                }
                 return $returnObject;
               }
             }

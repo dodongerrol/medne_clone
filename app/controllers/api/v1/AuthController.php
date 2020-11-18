@@ -5281,6 +5281,8 @@ public function getHealthLists( )
  $authSession = new OauthSessions();
  $getRequestHeader = StringHelper::requestHeader();
  $input = Input::all();
+ $lang = isset($input['lang']) ? $input['lang'] : "en";
+ 
  if(!empty($getRequestHeader['Authorization'])){
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
@@ -5330,7 +5332,11 @@ public function getHealthLists( )
     } else {
       $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
     }
-
+  
+  foreach($spending_types as $type) {
+    $type->name = $lang == "malay" ? \MalayTranslation::eclaimCategory($type->name) : $type->name;
+  }
+  
   $returnObject->data = $spending_types;
   return Response::json($returnObject);
 } else {
@@ -5368,6 +5374,7 @@ public function createEclaim( )
  $authSession = new OauthSessions();
  $getRequestHeader = StringHelper::requestHeader();
  $input = Input::all();
+ $lang = isset($input['lang']) ? $input['lang'] : "en";
  if(!empty($getRequestHeader['Authorization'])){
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
@@ -5498,8 +5505,14 @@ public function createEclaim( )
 
   if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
     $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Member not eligible for Non-Panel transactions';
+    if($lang == "malay") {
+      $messages = \MalayTranslation::malayMessages("e_claim_not_eligible");
+      $returnObject->head_message = $messages['head'];
+      $returnObject->message = $messages['message'];
+    } else {
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Member not eligible for Non-Panel transactions';
+    }
     return Response::json($returnObject);
   }
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
@@ -5519,8 +5532,14 @@ public function createEclaim( )
   if($customer_active_plan->account_type == "enterprise_plan")	{
     if($input['spending_type'] == "medical" && $check_user_balance->currency_type == "myr") {
       $returnObject->status = FALSE;
-      $returnObject->head_message = 'Non-Panel Error';
-      $returnObject->message = 'Member is prohibited to access the medical wallet';
+      if($lang == "malay") {
+        $messages = \MalayTranslation::malayMessages("e_claim_not_eligible");
+        $returnObject->head_message = $messages['head'];
+        $returnObject->message = $messages['message'];
+      } else {
+        $returnObject->head_message = 'Non-Panel Error';
+        $returnObject->message = 'Member is prohibited to access the medical wallet';
+      }
       return Response::json($returnObject);
     }
 
@@ -5528,15 +5547,14 @@ public function createEclaim( )
 
     if($limit <= 0) {
       $returnObject->status = FALSE;
-      $returnObject->head_message = 'Non-Panel Error';
-      $returnObject->message = 'Maximum of 14 visits already reached.';
-      return Response::json($returnObject);
-    }
-  
-    if($limit <= 0) {
-      $returnObject->status = FALSE;
-      $returnObject->head_message = 'Non-Panel Error';
-      $returnObject->message = 'Maximum of 14 visits already reached.';
+      if($lang == "malay") {
+        $messages = \MalayTranslation::malayMessages("enterprise_execeed_limit_e_claim");
+        $returnObject->head_message = $messages['head'];
+        $returnObject->message = $messages['message'];
+      } else {
+        $returnObject->head_message = 'Non-Panel Error';
+        $returnObject->message = 'Maximum of 14 visits already reached.';
+      }
       return Response::json($returnObject);
     }
 
@@ -5545,8 +5563,14 @@ public function createEclaim( )
     
     if($claim_status && $input['service'] == "Accident & Emergency") {
       $returnObject->status = FALSE;
-      $returnObject->head_message = '2/2 A&E used';
-      $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
+      if($lang == "malay") {
+        $messages = \MalayTranslation::malayMessages("enterprise_execeed_limit_e_claim_a_e");
+        $returnObject->head_message = $messages['head'];
+        $returnObject->message = $messages['message'];
+      } else {
+        $returnObject->head_message = '2/2 A&E used';
+        $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
+      }
       return Response::json($returnObject);
     }
   }
@@ -5556,8 +5580,14 @@ public function createEclaim( )
 
   if($transaction_access)	{
     $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Non-Panel function is disabled for your company.';
+    if($lang == "malay") {
+      $messages = \MalayTranslation::malayMessages("e_claim_not_eligible_transaction");
+      $returnObject->head_message = $messages['head'];
+      $returnObject->message = $messages['message'];
+    } else {
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Non-Panel function is disabled for your company.';
+    }
     return Response::json($returnObject);
   }
 
@@ -5595,8 +5625,14 @@ public function createEclaim( )
     if($spending['back_date'] == false) {
       if($amount > $balance) {
         $returnObject->status = FALSE;
-        $returnObject->head_message = 'Non-Panel Error';
-        $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        if($lang == "malay") {
+          $messages = \MalayTranslation::malayMessages("e_claim_no_credits");
+          $returnObject->head_message = $messages['head'];
+          $returnObject->message = $messages['message'];
+        } else {
+          $returnObject->head_message = 'Non-Panel Error';
+          $returnObject->message = 'You have insufficient '.ucwords($input['spending_type']).' Credits for this transaction. Please check with your company HR for more details.';
+        }
         return Response::json($returnObject);
       }
 
@@ -5612,8 +5648,14 @@ public function createEclaim( )
 
      if($amount > $claim_amounts) {
        $returnObject->status = FALSE;
-       $returnObject->head_message = 'Non-Panel Error';
-       $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
+        if($lang == "malay") {
+          $messages = \MalayTranslation::malayMessages("e_claim_pending_transaction");
+          $returnObject->head_message = $messages['head'];
+          $returnObject->message = $messages['message'];
+        } else {
+          $returnObject->head_message = 'Non-Panel Error';
+          $returnObject->message = 'Sorry, we are not able to process your claim. You have a claim currently waiting for approval and might exceed your credits limit. You might want to check with your company’s benefits administrator for more information.';
+        }
        return Response::json($returnObject);
      }
     }
@@ -6625,6 +6667,7 @@ public function payCreditsNew( )
          $findUserID = $authSession->findUserID($getAccessToken->session_id);
          if($findUserID){
           $input = Input::all();
+          $lang = isset($input['lang']) ? $input['lang'] : "en";
           $user_id = StringHelper::getUserId($findUserID);
           $customer_id = PlanHelper::getCustomerId($user_id);
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
@@ -6639,8 +6682,14 @@ public function payCreditsNew( )
             if($deactivated) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'zero_balance';
-              $returnObject->head_message = 'Registration on Hold';
-              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              if($lang == "malay") {
+                $message = \MalayTranslation::malayMessages('spending_hold_registration');
+                $returnObject->head_message = $message['head'];
+                $returnObject->message = $message['sub'];
+              } else {
+                $returnObject->head_message = 'Registration on Hold';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+              }
               $returnObject->sub_message = '';
               return Response::json($returnObject);
             }
@@ -6648,8 +6697,14 @@ public function payCreditsNew( )
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'zero_balance';
-                $returnObject->head_message = 'Registration on Hold';
-                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                if($lang == "malay") {
+                  $message = \MalayTranslation::malayMessages('spending_hold_registration_no_credits');
+                  $returnObject->head_message = $message['head'];
+                  $returnObject->message = $message['sub'];
+                } else {
+                  $returnObject->head_message = 'Registration on Hold';
+                  $returnObject->message = 'Sorry, you have no credits to access this feature at the moment. Kindly contact your HR for more details.';
+                }
                 $returnObject->sub_message = '';
                 return Response::json($returnObject);
             }
@@ -6679,9 +6734,16 @@ public function payCreditsNew( )
              if($transaction_access)	{
                $returnObject->status = FALSE;
                $returnObject->status_type = 'registration_hold';
-               $returnObject->head_message = 'Registration On Hold';
-               $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-               $returnObject->sub_message = 'Kindly contact your HR for more details.';
+               if($lang == "malay") {
+                $message = \MalayTranslation::malayMessages('spending_block_user');
+                $returnObject->head_message = $message['head'];
+                $returnObject->message = $message['message'];
+                $returnObject->sub_message = $message['sub'];
+              } else {
+                $returnObject->head_message = 'Registration On Hold';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+              }
                return Response::json($returnObject);
              }
 
@@ -6706,9 +6768,16 @@ public function payCreditsNew( )
               if($limit <= 0) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'exceed_limit';
-                $returnObject->head_message = '14/14 visits used';
-                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
-                $returnObject->sub_message = '';
+                if($lang == "malay") {
+                  $message = \MalayTranslation::malayMessages('enterprise_execeed_limit');
+                  $returnObject->head_message = $message['head'];
+                  $returnObject->message = $message['sub'];
+                  $returnObject->sub_message = '';
+                } else {
+                  $returnObject->head_message = '14/14 visits used';
+                  $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
+                  $returnObject->sub_message = '';
+                }
                 return Response::json($returnObject);
               }
             }
@@ -6724,18 +6793,33 @@ public function payCreditsNew( )
             if($deactivated) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-Claim Unavailable';
-              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
-              $returnObject->sub_message = '';
+              if($lang == "malay") {
+                $message = \MalayTranslation::malayMessages('e_claim_block');
+                $returnObject->head_message = $message['head'];
+                $returnObject->message = $message['sub'];
+                $returnObject->sub_message = '';
+              } else {
+                $returnObject->head_message = 'E-Claim Unavailable';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment. Kindly contact your HR for more detail';
+                $returnObject->sub_message = '';
+              }
               return Response::json($returnObject);
             }
 
             if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-Claim Unavailable';
-              $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
+              if($lang == "malay") {
+                $message = \MalayTranslation::malayMessages('e_claim_block_no_credits');
+                $returnObject->head_message = $message['head'];
+                $returnObject->message = $message['message'];
+                $returnObject->sub_message = $message['sub'];
+              } else {
+                $returnObject->head_message = 'E-Claim Unavailable';
+                $returnObject->message = 'Sorry, you have no credits to access this feature at the moment.';
+                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+              }
+              
               return Response::json($returnObject);
             }
 
@@ -6743,24 +6827,31 @@ public function payCreditsNew( )
               if($spending['wellness_enabled'] == false) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'without_e_claim';
-                $returnObject->head_message = 'E-Claim Unavailable';
-                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
+                if($lang == "malay") {
+                  $message = \MalayTranslation::malayMessages('e_claim_block_no_wellness');
+                  $returnObject->head_message = $message['head'];
+                  $returnObject->message = $message['message'];
+                  $returnObject->sub_message = $message['sub'];
+                } else {
+                  $returnObject->head_message = 'E-Claim Unavailable';
+                  $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+                  $returnObject->sub_message = 'Kindly contact your HR for more details.';
+                }
                 return Response::json($returnObject);
               }
             }
 
-            // check if e-claim platform is enable
-            $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+            // // check if e-claim platform is enable
+            // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-            if($customer && (int)$customer->access_e_claim == 0) {
-              $returnObject->status = FALSE;
-              $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-Claim Disabled';
-              $returnObject->message = 'The E-Claim function has been disabled for your company.';
-              $returnObject->sub_message = 'Kindly contact your HR for more details.';
-              return Response::json($returnObject);
-            }
+            // if($customer && (int)$customer->access_e_claim == 0) {
+            //   $returnObject->status = FALSE;
+            //   $returnObject->status_type = 'without_e_claim';
+            //   $returnObject->head_message = 'E-Claim Disabled';
+            //   $returnObject->message = 'The E-Claim function has been disabled for your company.';
+            //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
+            //   return Response::json($returnObject);
+            // }
 
             // check for member transaction
             $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
@@ -6768,9 +6859,16 @@ public function payCreditsNew( )
             if($transaction_access)	{
               $returnObject->status = FALSE;
               $returnObject->status_type = 'without_e_claim';
-              $returnObject->head_message = 'E-claim Disabled';
-              $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
-              $returnObject->sub_message = 'Kindly contact your HR.';
+              if($lang == "malay") {
+                $message = \MalayTranslation::malayMessages('e_claim_block_no_wellness');
+                $returnObject->head_message = $message['head'];
+                $returnObject->message = $message['message'];
+                $returnObject->sub_message = $message['sub'];
+              } else {
+                $returnObject->head_message = 'E-claim Disabled';
+                $returnObject->message = 'Sorry, your account is not enabled to access this feature at the moment.';
+                $returnObject->sub_message = 'Kindly contact your HR.';
+              }
               return Response::json($returnObject);
             }
 
@@ -6793,9 +6891,16 @@ public function payCreditsNew( )
               if($limit <= 0) {
                 $returnObject->status = FALSE;
                 $returnObject->status_type = 'exceed_limit';
-                $returnObject->head_message = '14/14 visits used';
-                $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
-                $returnObject->sub_message = '';
+                if($lang == "malay") {
+                  $message = \MalayTranslation::malayMessages('enterprise_execeed_limit');
+                  $returnObject->head_message = $message['head'];
+                  $returnObject->message = $message['sub'];
+                  $returnObject->sub_message = '';
+                } else {
+                  $returnObject->head_message = '14/14 visits used';
+                  $returnObject->message = "Looks like you've reached the maximum of 14 visits this term.";
+                  $returnObject->sub_message = '';
+                }
                 return Response::json($returnObject);
               }
             }
@@ -6928,25 +7033,41 @@ public function payCreditsNew( )
         return Response::json($returnObject);
     }
 
+    $lang = isset($input['lang']) ? $input['lang'] : "en";
+
     $checker = DB::table('user')
       ->select('UserID', 'Name as name', 'member_activated')
-      ->where('UserID', $input['user_id'])->first();
+      ->where('UserID', $input['user_id'])
+      ->where('UserType', 5)
+      ->first();
     
       if(!$checker) {
         $returnObject->status = false;
-        $returnObject->message = 'User not found!';
+        if($lang == "malay") {
+          $returnObject->message = \MalayTranslation::malayMessages('user_not_exist');
+        } else {
+          $returnObject->message = 'User not exist.';
+        }
         return Response::json($returnObject);
       }
-
-      if($checker->member_activated) {
+      
+      if((int)$checker->member_activated == 1) {
         $returnObject->status = false;
-        $returnObject->message = 'User was active, please sign in!';
+        if($lang == "malay") {
+          $returnObject->message = \MalayTranslation::malayMessages('user_active_login');
+        } else {
+          $returnObject->message = 'User was active, please sign in!';
+        }
         return Response::json($returnObject);
       }
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
-        $returnObject->message = 'Password Mismatched.';
+        if($lang == "malay") {
+          $returnObject->message = \MalayTranslation::malayMessages('password_mismatch');
+        } else {
+          $returnObject->message = 'Password Mismatched.';
+        }
         return Response::json($returnObject);
       }
 
@@ -7045,13 +7166,18 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     }
 
+    $lang = isset($keys['lang']) && $keys['lang'] == "malay" ? $keys['lang'] : "en";
     $checker = DB::table('user')
     ->select('UserID as user_id', 'Name as name', 'member_activated', 'Zip_Code as postal_code', 'disabled_otp')
     ->where('PhoneNo', $keys['mobile'])->first();
 
     if(!$checker) {
         $returnObject->status = false;
-        $returnObject->message = 'Unregistered Member.';
+        if($lang == "malay") {
+          $returnObject->message = \MalayTranslation::malayMessages('unregistered');
+        } else {
+          $returnObject->message = 'Unregistered Member.'; 
+        }
         return Response::json($returnObject);
     }
 
@@ -7072,6 +7198,7 @@ public function payCreditsNew( )
     $returnObject = new stdClass();
     $userModel = new User();
     
+    $lang = isset($keys['lang']) && $keys['lang'] == "malay" ? $keys['lang'] : "en";
     // Login using Mobile number
     if (isset($keys['mobile'])) {
         // Check Member mobile number if already registered
@@ -7082,8 +7209,11 @@ public function payCreditsNew( )
 
         if (!$userDetails || $keys['PhoneCode'] != '+60') {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered Member.';
-
+          if($lang == "malay") {
+            $returnObject->message = \MalayTranslation::malayMessages('unregistered');
+          } else {
+            $returnObject->message = 'Unregistered Member.';
+          }
           return Response::json($returnObject);
         } else  {
           $returnObject->status = true;
@@ -7102,7 +7232,11 @@ public function payCreditsNew( )
         
       if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered Member.';
+          if($lang == "malay") {
+            $returnObject->message = \MalayTranslation::malayMessages('unregistered');
+          } else {
+            $returnObject->message = 'Unregistered Member.';
+          }
 
           return Response::json($returnObject);
       } else {
@@ -7122,7 +7256,11 @@ public function payCreditsNew( )
 
       if (!$userDetails) {
           $returnObject->status = false;
-          $returnObject->message = 'Unregistered Member.';
+          if($lang == "malay") {
+            $returnObject->message = \MalayTranslation::malayMessages('unregistered');
+          } else {
+            $returnObject->message = 'Unregistered Member.';
+          }
 
           return Response::json($returnObject);
       } else {
@@ -7157,6 +7295,7 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     }
 
+    $lang = isset($input['lang']) ? $input['lang'] : "en";
     // Check if user id exist.
     $userRecord = $userDetails->checkMemberExistence(array( 
                                   array( 'paramKey' => 'UserID', 'paramKeyValue'=> $input['user_id'])
@@ -7164,7 +7303,11 @@ public function payCreditsNew( )
 
     if(!$userRecord) {
       $returnObject->status = false;
-      $returnObject->message = 'User not exist.';
+      if($lang == "malay") {
+        $returnObject->message = \MalayTranslation::malayMessages('user_not_exist');
+      } else {
+        $returnObject->message = 'User not exist.';
+      }
       return Response::json($returnObject);
     } 
     
@@ -7194,7 +7337,11 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     } else {
       $returnObject->status = false;
-      $returnObject->message = 'Invalid OTP';
+      if($lang == "malay") {
+        $returnObject->message = \MalayTranslation::malayMessages('invalid_otp');
+      } else {
+        $returnObject->message = 'Invalid OTP';
+      }
       return Response::json($returnObject);
     }
   }
@@ -7214,13 +7361,18 @@ public function payCreditsNew( )
       return Response::json($returnObject);
     }
 
+    $lang = isset($input['lang']) ? $input['lang'] : "en";
     $checker = DB::table('user')
                 ->select('UserID as user_id', 'Name as name', 'member_activated')
                 ->where('UserID', $input['user_id'])->first();
 
     if(!$checker) {
       $returnObject->status = false;
-      $returnObject->message = 'User not found!';
+      if($lang == "malay") {
+        $returnObject->message = \MalayTranslation::malayMessages('user_not_exist');
+      } else {
+        $returnObject->message = 'User not exist.';
+      }
       return Response::json($returnObject);
     }
 
@@ -7228,7 +7380,11 @@ public function payCreditsNew( )
     $result = DB::table('user')->where('UserID', $member_id)->where('OTPCode', $input['otp_code'])->first();
     if(!$result) {
         $returnObject->status = false;
-        $returnObject->message = 'Invalid OTP.';
+        if($lang == "malay") {
+          $returnObject->message = \MalayTranslation::malayMessages('invalid_otp');
+        } else {
+          $returnObject->message = 'Invalid OTP';
+        }
         return Response::json($returnObject);
     }
 

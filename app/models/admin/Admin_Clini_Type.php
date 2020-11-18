@@ -61,12 +61,18 @@ class Admin_Clinic_Type extends Eloquent implements UserInterface, RemindableInt
 	public function GetAllClinicTypes()
 	{
 		$input = Input::all();
+		$lang = isset($input['lang']) ? $input['lang'] : "en";
+		
 		$clinicTypeData = DB::table('clinic_types')
 						->select('ClinicTypeID','Name', 'clinic_type_image_url')
 			    		->where('Active',1)
 			    		->where('head',1)
 			    		->orderBy('position', 'asc')
 			    		->get();
+
+		foreach($clinicTypeData as $type) {
+			$type->Name = $lang == "malay" ? \MalayTranslation::benefitsCategoryTranslate($type->Name) : $type->Name;
+		}
 
 		if(!empty($input['type']) && $input['type'] != null) {
 			$format = [];
