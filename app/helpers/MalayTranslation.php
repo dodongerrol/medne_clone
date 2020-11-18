@@ -163,10 +163,137 @@
             return $category;
         }
 
+        public static function benefitsPlanCategory($category)
+        {
+            if(strtolower($category) == "general practice" || strtolower($category) == "general practices" || strtolower($category) == "outpatient gp") {
+                return "Doktor Umum";
+            }
+
+            if(strtolower($category) == "health screening") {
+                return "Permeriksaan";
+            }
+
+            if(strtolower($category) == "dental" || strtolower($category) == "dental care") {
+                return "Pergigian";
+            }
+
+            if(strtolower($category) == "traditional chinese medicine" || strtolower($category) == "tcm") {
+                return "Perubatan Tradisional Cina";
+            }
+
+            if(strtolower($category) == "medical specialist") {
+                return "Pakar Perubatan";
+            }
+
+            if(strtolower($category) == "health specialist") {
+                return "Pakar";
+            }
+
+            if(strtolower($category) == "other") {
+                return "Lain-lain";
+            }
+
+            if(strtolower($category) == "accident & emergency") {
+                return "Kemalangan dan Kecemasan";
+            }
+
+            if(strtolower($category) == "specialist") {
+                return "Pakar";
+            }
+
+            if(strtolower($category) == "vision") {
+                return "Penglihatan";
+            }
+
+            if(strtolower($category) == "fitness") {
+                return "Kecergasan";
+            }
+
+            if(strtolower($category) == "wellness benefits") {
+                return "Kesihatan";
+            }
+
+            if(strtolower($category) == "as charged") {
+                return "Seperti Yang Dikenakan";
+            }
+
+            if(strtolower($category) == "out_of_pocket_description") {
+                return "Ini menunjukkan bahawa tidak ada rancangan yang berlaku untuk membolehkan peruntukan hak faedah pekerja, yang bermaksud semua pekerja akan dikenakan bayaran untuk kos penggunaan faedah mereka sendiri.";
+            }
+
+            return $category;
+        }
+
         public static function currencyTranslation($currency)
         {
             if($currency == "sgd") {
                 return "SGD - Singapura Dollar";
+            }
+        }
+
+        public static function monthTransalation($month)
+        {
+            if(strtolower($month) == "jan") {
+                return "Januari";
+            }
+
+            if(strtolower($month) == "feb") {
+                return "Februari";
+            }
+
+            if(strtolower($month) == "mar") {
+                return "Mac";
+            }
+
+            if(strtolower($month) == "apr") {
+                return "April";
+            }
+
+            if(strtolower($month) == "may") {
+                return "Mei";
+            }
+
+            if(strtolower($month) == "jun") {
+                return "Jun";
+            }
+
+            if(strtolower($month) == "jul") {
+                return "Julai";
+            }
+
+            if(strtolower($month) == "aug") {
+                return "Ogos";
+            }
+
+            if(strtolower($month) == "sep") {
+                return "September";
+            }
+
+            if(strtolower($month) == "oct") {
+                return "Oktober";
+            }
+
+            if(strtolower($month) == "nov") {
+                return "November";
+            }
+
+            if(strtolower($month) == "dec") {
+                return "Desimber";
+            }
+        }
+
+        public static function statusTextTranslate($text) 
+        {
+            if(strtolower($text) == "approved") {
+                return "Diluluskan";
+            }
+
+            if(strtolower($text) == "pending") {
+                return "Pang belum selesai";
+            }
+
+            if(strtolower($text) == "rejected") {
+                return "Ditolak";
             }
         }
 	}

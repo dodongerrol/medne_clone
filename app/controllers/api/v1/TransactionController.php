@@ -1167,6 +1167,7 @@ class Api_V1_TransactionController extends \BaseController
 		$authSession = new OauthSessions();
 		$getRequestHeader = StringHelper::requestHeader();
 		$input = Input::all();
+		$lang = isset($input['lang']) ? $input['lang'] : "en";
 		if(!empty($getRequestHeader['Authorization'])){
 			$getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
 			if($getAccessToken){
@@ -1340,6 +1341,10 @@ class Api_V1_TransactionController extends \BaseController
 								'type'              => $type,
 								'refunded'          => (int)$trans->refunded == 1 ? TRUE : FALSE
 							);
+
+							if($lang == "malay") {
+								$format['date_of_transaction'] =  date('d ', strtotime($trans->created_at)).\MalayTranslation::monthTransalation(date('M', strtotime($trans->created_at))).date(' Y, h:ia', strtotime($trans->created_at));
+							}
 
 							array_push($transaction_details, $format);
 						}

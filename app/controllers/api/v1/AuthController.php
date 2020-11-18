@@ -4961,6 +4961,7 @@ public function getEclaimTransactions( )
  $authSession = new OauthSessions();
  $getRequestHeader = StringHelper::requestHeader();
  $input = Input::all();
+ $lang = isset($input['lang']) ? $input['lang'] : "en";
  if(!empty($getRequestHeader['Authorization'])){
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
@@ -5072,7 +5073,7 @@ public function getEclaimTransactions( )
           'status'            => $res->status,
           'claim_date'        => date('d F Y', strtotime($res->created_at)),
           'time'              => $res->time,
-          'service'           => ucwords($res->service),
+          'service'           => $lang == "malay" ? \MalayTranslation::eclaimCategory($res->service): ucwords($res->service),
           'merchant'          => ucwords($res->merchant),
           'amount'            => number_format($res->amount, 2),
           'member'            => ucwords($member->Name),
@@ -5088,6 +5089,10 @@ public function getEclaimTransactions( )
           'spending_type'     => $res->spending_type,
           'currency_symbol'   => $currency_symbol
         );
+
+        if($lang == "malay") {
+          $temp['visit_date'] = date('d ', strtotime($res->date)).\MalayTranslation::monthTransalation(date('M', strtotime($res->date))).date(' Y', strtotime($res->date)).', '.$res->time;
+        }
 
         array_push($e_claim, $temp);
       }
@@ -5131,6 +5136,7 @@ public function getEclaimDetails($id)
  $authSession = new OauthSessions();
  $getRequestHeader = StringHelper::requestHeader();
  $input = Input::all();
+ $lang = isset($input['lang']) ? $input['lang'] : "en";
  if(!empty($getRequestHeader['Authorization'])){
   $getAccessToken = $AccessToken->FindToken($getRequestHeader['Authorization']);
   if($getAccessToken){
@@ -5146,15 +5152,15 @@ public function getEclaimDetails($id)
 
     if($transaction) {
      if($transaction->status == 0) {
-      $status_text = 'Pending';
+      $status_text = $lang == "malay" ? \MalayTranslation::statusTextTranslate('pending') : 'Pending';
     } else if($transaction->status == 1) {
-      $status_text = 'Approved';
+      $status_text = $lang == "malay" ? \MalayTranslation::statusTextTranslate('approved') : 'Approved';
       // $transaction->amount = $transaction->claim_amount > 0 ? $transaction->claim_amount : $transaction->amount;
     } else if($transaction->status == 2) {
-      $status_text = 'Rejected';
+      $status_text = $lang == "malay" ? \MalayTranslation::statusTextTranslate('rejected') : 'Rejected';
       $rejected_status = true;
     } else {
-      $status_text = 'Pending';
+      $status_text = $lang == "malay" ? \MalayTranslation::statusTextTranslate('pending') : 'Pending';
     }
 
     if($transaction->currency_type == "myr" && $transaction->default_currency == "myr") {
@@ -5250,6 +5256,13 @@ $temp = array(
   'currency_symbol'   => $currency_symbol,
   'status'            => $transaction->status
 );
+
+if($lang == "malay") {
+  $temp['date'] = date('d ', strtotime($transaction->date)).\MalayTranslation::monthTransalation(date('M', strtotime($transaction->date))).date(' Y', strtotime($transaction->date)).', '.$transaction->time;
+  $temp['claim_date'] = date('d ', strtotime($transaction->created_at)).\MalayTranslation::monthTransalation(date('M', strtotime($transaction->created_at))).date(' Y', strtotime($transaction->created_at));
+  $temp['visit_date'] = date('d ', strtotime($transaction->date)).\MalayTranslation::monthTransalation(date('M', strtotime($transaction->date))).date(' Y', strtotime($transaction->date)).', '.$transaction->time;
+}
+
 $returnObject->status = TRUE;
 $returnObject->data = $temp;
 } else {
