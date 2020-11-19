@@ -166,7 +166,7 @@ class Api_V1_TransactionController extends \BaseController
 							$user_credits = TransactionHelper::floatvalue($wallet_user->wellness_balance);
 							$spending_type = "wellness";
 						}
-
+						
 						if($user_credits == 0) {
 							$returnObject->status = FALSE;
 							$returnObject->head_message = 'Insufficient Credits';
@@ -377,7 +377,7 @@ class Api_V1_TransactionController extends \BaseController
 					if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 						$data['enterprise_visit_deduction'] = 1;
 					}
-					
+					return $data;
 					try {
 						$result = $transaction->createTransaction($data);
 						$transaction_id = $result->id;

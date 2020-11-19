@@ -2517,9 +2517,9 @@ class PlanHelper
 				$total_deduction_credits += $deducted_credits;
 			}
 
-			// if($e_wallet->balance != $medical_balance) {
-			//  DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
-			// }
+			if($e_wallet->balance != $medical_balance) {
+			 DB::table('e_wallet')->where('wallet_id', $wallet_id)->update(['balance' => $medical_balance]);
+			}
 
 			return array(
 				'allocation' => $allocation,
