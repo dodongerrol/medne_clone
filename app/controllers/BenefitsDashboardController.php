@@ -11776,7 +11776,7 @@ class BenefitsDashboardController extends \BaseController {
 							->groupBy('user.Name')
 							->get();
 			
-			if ( count($dependents) > 0 ) {
+			if ( count($dependents) > 0 && Config::get('config.seven_eleven_id') == $result->customer_buy_start_id) {
 				foreach ($dependents as $key => $item) {
 					$temp = array(
 						'Status'	=> $status,
@@ -11883,6 +11883,7 @@ class BenefitsDashboardController extends \BaseController {
 		return array('status' => TRUE, 'data' => $final_user, 'last_term_credits' => $last_term_credits, 'medical' => (int)$spending_accounts->medical_enable == 1 ? true : false, 'wellness' => (int)$spending_accounts->wellness_enable == 1 ? true : false);
 
 	}
+
 
 	public function getCompanyEmployeeWithCredits( )
 	{
