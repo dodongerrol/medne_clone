@@ -167,19 +167,16 @@
     $code ='';
     $mobileCode = '';
 
-    $code = $clinicdetails['phone_code'];
-    $length = strlen($code);
-
-    $phone = substr($clinicdetails['phone'],$length);
-
+    
     if ($clinicdetails['phone_code'] != ''){
-
+        $code = $clinicdetails['phone_code'];
+        $length = strlen($code);
+        $phone = substr($clinicdetails['phone'],$length);
         $mobileCode = $clinicdetails['phone_code'];
-
     }else {
 
         $mobileCode = '+65';
-
+        $phone = $clinicdetails['phone'];
     }
     ?>
 
