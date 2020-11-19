@@ -1201,10 +1201,9 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
 			// create tap ready on boarding
 			Route::get('user/ready_on_boarding', 'Api_V1_AuthController@updateReadyOnBoarding');
+			// get member spending account status feature
+			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 		 });
-		 
-		 // get member spending account status feature
-		 Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 	});
 });
 

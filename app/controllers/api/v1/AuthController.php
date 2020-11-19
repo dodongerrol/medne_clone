@@ -6632,7 +6632,6 @@ public function payCreditsNew( )
           $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
 
           $config = Config::get('config.deployment');
-          $type = !empty($input['type']) && $input['type'] == 'spending' ? 'spending' : 'e_claim';
           if($config == "Production") {
             return MemberHelper::getMemberSpendingStatusLive($getRequestHeader['Authorization'], $type);
           } else {
