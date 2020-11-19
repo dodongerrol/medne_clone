@@ -207,14 +207,13 @@ Route::filter('auth.v2', function($request, $response)
         // return StringHelper::requestHeader();
         // check if there is a header authorization
         $token = StringHelper::getToken();
-
         if(!$token) {
             $returnObject->expired = true;
           return Response::json($returnObject, 200);
         }
 
         $findUserID = AuthLibrary::validToken();
-
+        
         if(!$findUserID) {
           $returnObject->status = FALSE;
           $returnObject->expired = true;

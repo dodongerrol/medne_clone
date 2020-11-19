@@ -31,7 +31,7 @@ class StringHelper{
             $thirdPartyAuthorization = '';
             // $getRequestHeader = getallheaders();
             $getRequestHeader = self::getHeaders();
-            // return $getRequestHeader;
+            
             if (
                 (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
                 || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
@@ -1441,7 +1441,7 @@ public static function get_random_password($length)
 
     public static function verifyXAccessKey () {
         
-        $getRequestHeader = getallheaders();
+        $getRequestHeader = self::getHeaders();
         $returnObject = new stdClass();
         $todate =  date("Y-m-d H:i:s");
 
