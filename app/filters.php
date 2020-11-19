@@ -213,7 +213,7 @@ Route::filter('auth.v2', function($request, $response)
         }
 
         $findUserID = AuthLibrary::validToken();
-        
+        // return $findUserID;
         if(!$findUserID) {
           $returnObject->status = FALSE;
           $returnObject->expired = true;

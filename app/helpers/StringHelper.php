@@ -31,7 +31,7 @@ class StringHelper{
             $thirdPartyAuthorization = '';
             // $getRequestHeader = getallheaders();
             $getRequestHeader = self::getHeaders();
-            
+            // return $getRequestHeader;
             if (
                 (!empty($getRequestHeader['X-ACCESS-KEY']) && !empty($getRequestHeader['X-MEMBER-ID']))
                 || (!empty($getRequestHeader['x-access-key']) && !empty($getRequestHeader['x-member-id']))
@@ -1656,18 +1656,24 @@ public static function get_random_password($length)
     {
         if (!function_exists('getallheaders'))
         {
-                function getallheaders()
-                {
-                            $headers = '';
-                    foreach ($_SERVER as $name => $value)
-                    {
-                            if (substr($name, 0, 5) == 'HTTP_')
-                            {
-                                    $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
-                            }
+            function getallheaders()
+            {
+                $headers = array();
+                // return $_SERVER;
+                foreach($_SERVER as $key => $value) {
+                    if (substr($key, 0, 5) <> 'HTTP_') {
+                        continue;
                     }
-                    return $headers;
+                    $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+                    if($header == "Authorization" || $header == "authorization") {
+                        $headers[$header] = $value;
+                    } else {
+                        $headers[strtoupper($header)] = $value;
+                    }
+                   
                 }
+                return $headers;
+            }
         } else {
             return getallheaders();
         }
