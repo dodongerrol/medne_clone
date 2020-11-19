@@ -2952,7 +2952,7 @@ public function getActivityOutNetworkTransactions( )
 			return $paginate;
 		}
 	}
-
+	
 	$paginate['current_page'] = $e_claim_result->getCurrentPage();
 	$paginate['from'] = $e_claim_result->getFrom();
 	$paginate['last_page'] = $e_claim_result->getLastPage();
