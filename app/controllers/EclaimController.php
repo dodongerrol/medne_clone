@@ -3209,8 +3209,8 @@ public function getActivityInNetworkTransactions( )
 
 		if($trans) {
 
-			if($trans->procedure_cost >= 0 && $trans->paid == 1 || $trans->procedure_cost >= 0 && $trans->paid == "1") {
-				if($trans->deleted == 0 || $trans->deleted == "0") {
+			if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
+				if((int)$trans->deleted == 0) {
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 						$in_network_spent += $trans->credit_cost * $trans->currency_amount;
 					} else {
@@ -3219,8 +3219,6 @@ public function getActivityInNetworkTransactions( )
 					$total_in_network_transactions++;
 
 					if($trans->lite_plan_enabled == 1) {
-
-
 						$logs_lite_plan = DB::table($table_wallet_history)
 						->where('logs', 'deducted_from_mobile_payment')
 						->where('lite_plan_enabled', 1)
@@ -3429,7 +3427,7 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
-       	// check user if it is spouse or dependent
+       			// check user if it is spouse or dependent
 				if($customer->UserType == 5 && $customer->access_type == 2 || $customer->UserType == 5 && $customer->access_type == 3) {
 					$temp_sub = DB::table('employee_family_coverage_sub_accounts')->where('user_id', $customer->UserID)->first();
 					$temp_account = DB::table('user')->where('UserID', $temp_sub->owner_id)->first();
@@ -3512,7 +3510,7 @@ public function getActivityInNetworkTransactions( )
 						}
 					}
 				}
-
+				
 				$bill_amount = 0;
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
@@ -3593,6 +3591,10 @@ public function getActivityInNetworkTransactions( )
 					}
 				}
 
+				if($consultation_credits == false) {
+					$total_amount = $trans->procedure_cost;
+				}
+
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 					$total_amount = $total_amount * $trans->currency_amount;
@@ -3603,10 +3605,10 @@ public function getActivityInNetworkTransactions( )
 					$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
+					$bill_amount = $bill_amount * $trans->currency_amount;
 				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
 					$trans->currency_type = "sgd";
 				}
-
 
 				$format = array(
 					'clinic_name'       => $clinic->Name,
