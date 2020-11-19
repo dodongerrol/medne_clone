@@ -7,8 +7,8 @@ login.run(function($http) {
 login.factory('serverUrl',[
     function factory(){
       return {
-        url: window.location.origin,
-        // url: 'https://hrapi.medicloud.sg',
+        // url: window.location.origin,
+        url: 'https://hrapi.medicloud.sg',
       }
     }
 ]);
