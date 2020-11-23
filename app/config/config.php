@@ -1,8 +1,8 @@
 <?php
 
 return array(
-      'deployment' => "Production",
-   // 'deployment' => "Development",
+    //   'deployment' => "Production",
+   'deployment' => "Development",
    // 'deployment' => "Testing",
 
 
