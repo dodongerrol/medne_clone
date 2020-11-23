@@ -328,7 +328,7 @@ class EclaimController extends \BaseController {
 				}
 			}
 		}
-
+		
 		try {
 			$result = $claim->createEclaim($data);
 			$id = $result->id;
