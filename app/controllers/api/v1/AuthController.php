@@ -5588,7 +5588,7 @@ public function createEclaim( )
   }
 
   $date = date('Y-m-d', strtotime($input['date']));
-  if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+  if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $input['spending_type'] == "wellness") {
     $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
     $balance = number_format($spending['balance'], 2);
     $amount = trim($input_amount);
