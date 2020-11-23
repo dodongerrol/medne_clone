@@ -173,6 +173,7 @@
         $length = strlen($code);
         $phone = substr($clinicdetails['phone'],$length);
         $mobileCode = $clinicdetails['phone_code'];
+        console.log();
     }else {
 
         $mobileCode = '+65';
