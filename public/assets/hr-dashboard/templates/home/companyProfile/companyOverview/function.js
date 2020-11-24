@@ -38,6 +38,13 @@ app.directive("companyProfileDirective", [
         }
         scope.prevAddContact = function () {
           if ( scope.business_ctr != 0 ) {
+            // if (scope.business_arr[scope.business_ctr]) {
+						// 	scope.business_arr[scope.business_ctr] = scope.business_data;
+            // }
+            console.log( scope.business_ctr );
+            // if ( scope.business_ctr >= (scope.business_arr.length-1 ) ) {
+            //   console.log('push dayun sa previous');
+            // }
             scope.business_ctr -= 1;
             // scope.business_arr.push( scope.business_data );
             // if ( scope.business_ctr == (scope.business_arr.length-1 ) ) { 
@@ -48,7 +55,12 @@ app.directive("companyProfileDirective", [
             //   console.log( scope.business_ctr );
             //   console.log( scope.business_arr.length-1 );
             // }
-            
+            // if ( scope.business_arr[scope.business_ctr] ) {
+            //   scope.business_data = scope.business_arr[scope.business_ctr];
+            // }
+            // if ( scope.business_ctr == (scope.business_arr.length-1 ) ) {
+            //   console.log('push dayun sa previous');
+            // }
             scope.business_data = scope.business_arr[scope.business_ctr];
             console.log(scope.business_arr);
             console.log( scope.business_ctr );
@@ -62,14 +74,14 @@ app.directive("companyProfileDirective", [
           if (scope.business_arr[scope.business_ctr]) {
             scope.business_data = scope.business_arr[scope.business_ctr];
           
-            if ( scope.business_ctr == (scope.business_arr.length-1 ) ) {
-              scope.business_arr.splice( scope.business_ctr,1 );
-              console.log( scope.business_arr );
-            } else {
-              scope.business_arr.splice( scope.business_ctr,1 );
-            }
+            // if ( scope.business_ctr == (scope.business_arr.length-1 ) ) {
+            //   scope.business_arr.splice( scope.business_ctr,1 );
+            //   console.log( scope.business_arr );
+            // } else {
+            //   scope.business_arr.splice( scope.business_ctr,1 );
+            // }
           } else {
-            // scope.business_data = {};
+            scope.business_data = {};
           }          
         }
        
