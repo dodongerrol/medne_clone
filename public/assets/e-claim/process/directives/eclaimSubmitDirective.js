@@ -526,7 +526,8 @@ app.directive('eclaimSubmitDirective', [
 				    	format : 'DD MMMM, YYYY',
 				    	// maxDate : new Date( moment().subtract( 1, 'days' ) ),
 				    	minDate : new Date( moment( scope.user_status.valid_start_claim ) ),
-				    	maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
+				    	// maxDate : new Date( moment( scope.user_status.valid_end_claim ) ),
+				    	maxDate : new Date(),
 				    	useCurrent : false,
 				    });
 

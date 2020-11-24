@@ -383,7 +383,7 @@ class CustomerHelper
 			if ($status['account_type'] == "out_of_pocket" ) {
 				return array_merge($response, $excelUrls->getUrls());
 			}
-			if($status['account_type'] == "lite_plan" && $status['paid_status'] == true)	{
+			if($status['account_type'] == "lite_plan")	{
 				if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
 					if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
 						return array(
@@ -630,10 +630,10 @@ class CustomerHelper
 				);
 			}
 		} else {
-			if ($status['account_type'] == "out_of_pocket" ) {
+			if ($status['account_type'] == "out_of_pocket") {
 				return array_merge($response, $excelUrls->getUrls());
 			}
-			if($status['account_type'] == "lite_plan" && $status['paid_status'] == true)	{
+			if($status['account_type'] == "lite_plan")	{
 				if($status['medical_enabled'] == true && $status['wellness_enabled'] == true) {
 					if($status['medical_reimbursement'] == true || $status['wellness_reimbursement'] == true) {
 						return array(

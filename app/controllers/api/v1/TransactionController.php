@@ -130,7 +130,7 @@ class Api_V1_TransactionController extends \BaseController
 					}
 
 					// check if enable to access feature
-					$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
+					$transaction_access = MemberHelper::checkMemberAccessTransactionStatusPanel($user_id);
 
 					if($transaction_access)	{
 						$returnObject->status = FALSE;
@@ -166,7 +166,7 @@ class Api_V1_TransactionController extends \BaseController
 							$user_credits = TransactionHelper::floatvalue($wallet_user->wellness_balance);
 							$spending_type = "wellness";
 						}
-
+						
 						if($user_credits == 0) {
 							$returnObject->status = FALSE;
 							$returnObject->head_message = 'Insufficient Credits';

@@ -1201,10 +1201,9 @@ Route::group(array('prefix' => 'v2'), function()
 			Route::get('user/get_dates_coverage', 'Api_V1_AuthController@getDatesCoverage');
 			// create tap ready on boarding
 			Route::get('user/ready_on_boarding', 'Api_V1_AuthController@updateReadyOnBoarding');
+			// get member spending account status feature
+			Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 		 });
-		 
-		 // get member spending account status feature
-		 Route::get('user/get_spending_feature_status', 'Api_V1_AuthController@getMemberAccountSpendingStatus');
 	});
 });
 
@@ -1283,7 +1282,9 @@ Route::group(array('prefix' => 'app'), function()
 		/*
 			Refactor API for gettting providers information for the first time.
 		*/
-		Route::get('clinic/getProvidersDetail', '@DashboardController@getProvidersDetail');
+		Route::get('clinic/getProviderBreakHours', 'DashboardController@getProviderBreakHours');
+		Route::get('clinic/getProviderOperatingHours', 'DashboardController@getProviderOperatingHours');
+		Route::get('clinic/getProvidersDetail', 'DashboardController@getProvidersDetail');
 		/* End Here. */
 		
 		Route::get('clinic/appointment-home-view1','App_ClinicController@ClinicHomeAppointmentPage');
@@ -1344,7 +1345,7 @@ Route::group(array('prefix' => 'app'), function()
 		
 		/*****************Clinic : PUT*****************/
 		//Refactor API for gettting providers information for the first time.
-			Route::put('clinic/updateProvidersDetail', '@DashboardController@updateProvidersDetail');
+			Route::put('clinic/updateProvidersDetail', 'DashboardController@updateProvidersDetail');
 		/* End Here. */
 	   
 		

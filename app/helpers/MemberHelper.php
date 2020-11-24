@@ -701,9 +701,14 @@ class MemberHelper
 		} else {
 			$customer_id = \PlanHelper::getCustomerId($member_id);
 			$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
-			if($spending['medical_reimbursement'] == false || $spending['wellness_reimbursement'] == false) {
+			// if($spending['medical_reimbursement'] == false || $spending['wellness_reimbursement'] == false) {
+			// 	return true;
+			// }
+			if($spending['medical_enabled'] == false && $spending['medical_enabled'] == false) {
 				return true;
 			}
+
+			return false;
 		}
 	}
 
@@ -1931,6 +1936,13 @@ class MemberHelper
 		}
 
 		return $emp_status;
+	}
+
+	public static function getMemberSpendingStatusLive($token, $type)
+	{
+		$api = Config::get('config.api_node_live');
+		$api = $api.'/employees/get_spending_feature_status?token='.$token.'&type='.$type;
+		return httpLibrary::getHttp($api, []);
 	}
 }
 ?>

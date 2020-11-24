@@ -33,6 +33,8 @@
 
 RewriteEngine On
 RewriteBase /
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
 RewriteRule ^index\.php$ / [R=301,L] 
  
