@@ -1,6 +1,11 @@
 
 {{ HTML::script('assets/settings/profile/profile.js') }}
 {{ HTML::style('assets/settings/profile/profile.css') }}
+<div id="config_alert_box">
+    message goes here
+</div>
+
+<div id='cover-spin'></div>
 
 <div class="col-md-12" style="padding: 0px;">
 
@@ -23,7 +28,7 @@
 				<div class="col-md-12 staff-doctor">
 					<img src="{{ URL::asset('assets/images/Business Hours.png') }}" width="30" height="30" style="float: left;">
 					<div style="padding: 10px 0 10px 10px;display: inline-block;">
-						<b id="clinic-hours" class="profile-settings">BUSINESS HOURS</b>
+						<b id="clinic-hours" class="profile-settings">OPERATING HOURS</b>
 					</div>
 				</div>
 				<div class="col-md-12 staff-doctor">
@@ -55,19 +60,14 @@
 					<img src="{{ URL::asset('assets/images/qr-code.png') }}" width="30" height="30" style="float: left;">
 					<div style="padding: 10px 0 10px 10px;display: inline-block;"><b id="qr" class="profile-settings">QR CODE</b></div>
 				</div>
-				<!-- <div class="col-md-11 staff-doctor">
-					<span class="col-md-1"><i class="glyphicon glyphicon-time" style="font-size: 25px; color: #777676;"></i></span>
-					<div class="col-md-7" style="padding-top: 3px;"><b id="social" class="profile-settings">SOCIAL PLUGINS</b></div>
-				</div> -->
-
 			</div>
 		</div>
 
 	</div>
 
 
-	<div id="profile-detail-wrapper" class="detail-wrapper" style="padding: 0px;">
-		
+	<div id="profile-detail-wrapper" class="detail-wrapper" style="padding: 0px;"></div>
+	<div class="operatingHours-div">
+			@include('settings.profile.clinic-hours-main')
 	</div>
-	
 </div>

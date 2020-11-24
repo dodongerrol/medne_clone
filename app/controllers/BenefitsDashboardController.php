@@ -13451,18 +13451,18 @@ class BenefitsDashboardController extends \BaseController {
 			$result['spending_feature_status_type'] = true;
 			// check for spending feature
 			$customer_id = PlanHelper::getCustomerId($id);
-			$spending = CustomerHelper::getAccountSpendingBasicPlanStatus($customer_id);
+			$spending = CustomerHelper::getAccountSpendingStatus($customer_id);
 			
 			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $spending['paid_status'] == false || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid" && $spending['paid_status'] == false) {
 				$result['spending_feature_status_type'] = false;
 			}
 
-			if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
-				$current_balance = PlanHelper::reCalculateEmployeeBalance($id);
-				if($current_balance <= 0) {
-					$result['spending_feature_status_type'] = false;
-				}
-			}
+			// if($spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" || $spending['account_type'] == "lite_plan" && $spending['wellness_method'] == "pre_paid") {
+			// 	$current_balance = PlanHelper::reCalculateEmployeeBalance($id);
+			// 	if($current_balance <= 0) {
+			// 		$result['spending_feature_status_type'] = false;
+			// 	}
+			// }
 
 			if($spending['account_type'] == "enterprise_plan" && $spending['currency_type'] == "myr") {
 				if($spending['wellness_enabled'] == false) {
@@ -13471,7 +13471,6 @@ class BenefitsDashboardController extends \BaseController {
 			}
 
 			$transaction_access = MemberHelper::checkMemberAccessTransactionStatus($id);
-
 			if($transaction_access)	{
 				$result['spending_feature_status_type'] = false;
 			}

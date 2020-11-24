@@ -504,19 +504,8 @@ public function getFavouriteClinics($userID)
         }
         
         public function UpdateClinicDetails($dataArray){
-
-            // $findClinicType = \DB::table('clinic_types')->where('ClinicTypeID', $dataArray['Clinic_Type'])->first();
-
-            // if($findClinicType->discount_type == "fixed") {
-            //     $dataArray['co_paid_status'] = 1;
-            //     $dataArray['discount'] = '$'.$findClinicType->discount_amount;
-            //     $dataArray['co_paid_amount'] = $findClinicType->discount_amount;
-            // } else if($findClinicType->discount_type == "percent"){
-            //     $dataArray['co_paid_status'] = 0;
-            //     $dataArray['medicloud_transaction_fees'] = $findClinicType->discount_amount;
-            //     $dataArray['discount'] = $findClinicType->discount_amount.'%';
-            // }
-
+            unset($dataArray['speciality']);
+            
             $allData = DB::table('clinic')
                 ->where('ClinicID', '=', $dataArray['clinicid'])
                 ->update($dataArray);
@@ -581,7 +570,7 @@ public function getFavouriteClinics($userID)
             DB::table('user')
                 ->where('Ref_ID', $clinic_id)
                 ->where('UserType', 3)
-                ->update($data);
+                ->update(array( 'Name' => $data['Name'] ));
             
             // Update Clinic Table.
            return Clinic::where('ClinicID', $clinic_id)
@@ -593,21 +582,55 @@ public function getFavouriteClinics($userID)
             $manageTime = DB::table('manage_times')
                             ->where('PartyID', $clinic_id)
                             ->first();
+            
             // Delete existing time record
             DB::table('clinic_time')
-                ->where('ManageTimeID', $manageTime['ManageTimeID'])
+                ->where('ManageTimeID', $manageTime->ManageTimeID)
                 ->delete();
+
             // Insert new record
-           return  DB::table('clinic_time')
-                ->insert($data); 
+            for ($i = 0; $i < count($data); $i++) { 
+                $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1, 'Created_on' => time()));
+                    DB::table('clinic_time')
+                        ->insert($data[$i]);    
+            }
+
+            return true;
         }
 
         public function updateBreakHours($data, $clinic_id) {
-            // update manage events
-           return  DB::table('extra_events')
+            // Delete existing time record
+            DB::table('extra_events')
                 ->where('clinic_id', $clinic_id)
-                ->update($data);
+                ->delete();
+            
+            // update manage events
+            for ($x = 0; $x < count($data); $x++) {
+                $guid = StringHelper::getGUID();
+                if (!isset($data[$x]['clinic_id'])) {
+                    $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
+                } else {
+                    $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
+                }
+                
+                DB::table('extra_events')
+                    ->insert($data[$x]);
+            }
+            
+            return true;
+        }
+
+        public function getProviderOperatingHour($clinic_id) {
+            return DB::table('clinic_time')
+                        ->where('ClinicID', $clinic_id)
+                        ->where('Active', 1)
+                        ->get();
         }
        
+        public function getProviderBreakHours($clinic_id) {
+            return DB::table('extra_events')
+                        ->where('clinic_id', $clinic_id)
+                        ->get();
+        }
 
 }

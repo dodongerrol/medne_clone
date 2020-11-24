@@ -5497,8 +5497,15 @@ public function createEclaim( )
   $customer_id = PlanHelper::getCustomerId($user_id);
   // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
+  
+  // if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
+  //   $returnObject->status = FALSE;
+  //   $returnObject->head_message = 'Non-Panel Error';
+  //   $returnObject->message = 'Member not eligible for Non-Panel transactions';
+  //   return Response::json($returnObject);
+  // }
 
-  if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
+  if($input['spending_type'] == "medical" && $spending['medical_enabled'] == false || $input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false) {
     $returnObject->status = FALSE;
     $returnObject->head_message = 'Non-Panel Error';
     $returnObject->message = 'Member not eligible for Non-Panel transactions';
@@ -5581,7 +5588,7 @@ public function createEclaim( )
   }
 
   $date = date('Y-m-d', strtotime($input['date']));
-  if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan") {
+  if($customer_active_plan && $customer_active_plan->account_type != "enterprise_plan" || $input['spending_type'] == "wellness") {
     $spending = EclaimHelper::getSpendingBalance($user_id, $date, strtolower($input['spending_type']));
     $balance = number_format($spending['balance'], 2);
     $amount = trim($input_amount);

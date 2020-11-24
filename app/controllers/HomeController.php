@@ -493,8 +493,12 @@ public function showCalender()
   }
 
   $clinic = new Admin_Clinic();
-  $clinics = $clinic->getClinicdata($getSessionData->Ref_ID);
-
+  $clinics = $clinic->getClinicInfo($getSessionData->Ref_ID);
+  
+  // get operating hours
+  Calendar_Library::addClinicManageTimeSlots($getSessionData->Ref_ID);
+  $clinicTimes = General_Library::FindAllClinicTimesNew(3,$getSessionData->Ref_ID,strtotime(date('d-m-Y'))); 
+  
         // return $clinics;
   	if ($clinics[0]->Name == "" || $clinics[0]->configure == 0) { //first time login
 
@@ -876,53 +880,7 @@ public function loadClinicDetails(){
    Calendar_Library::addClinicManageTimeSlots($getSessionData->Ref_ID);
    $clinicTimes = General_Library::FindAllClinicTimesNew(3,$getSessionData->Ref_ID,strtotime(date('d-m-Y')));
 
-   if ($clinicTimes) {
-
-     $select = '';
-
-     foreach ($clinicTimes as $value) {
-
-      if($value->Mon==1){ $day = "Monday";}
-      if($value->Tue==1){ $day = "Tuesday";}
-      if($value->Wed==1){ $day = "Wednesday";}
-      if($value->Thu==1){ $day = "Thursday";}
-      if($value->Fri==1){ $day = "Friday";}
-      if($value->Sat==1){ $day = "Saturday";}
-      if($value->Sun==1){ $day = "Sunday";}
-
-      if ($value->Active==1) {
-        $checked = 'checked';
-      } else {
-        $checked = '';
-      }
-
-      $select .=  '<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-      <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-
-      <div class="row col-md-12"><br>
-      <div class="col-md-2" style="clear: both">
-      <label class="con-detail-lbl day-name" style="padding-top: 8px;">'.$day.'</label>
-      </div>
-      <div class="col-md-1" style="padding-top: 3px;">
-      <input type="checkbox" data-toggle="toggle" data-size="mini" style="float: right;" name="'.$value->ClinicTimeID.'" class="chk_activate"' .$checked.' data-onstyle="info">
-      </div>
-      <div class="col-md-2" style="padding-left: 50px;">
-      <input type="button" class="timepicker time-from" value="'.$value->StartTime.'" style="float: right; font-size: 12px;">
-      </div>
-      <span class="col-md-1 text-center con-detail-lbl" style="padding: 0;width: 12px; padding-top: 8px;">to</span>
-      <div class="col-md-2">
-      <input type="button" class="timepicker time-to" value="'.$value->EndTime.'" style="font-size: 12px;">
-      </div>
-      </div>';
-
-    }
-
-  }
-
-
-    	// dd($select);
-
-  return $select;
+  return $clinicTimes;
 
 }else{
   return Redirect::to('provider-portal-login');
