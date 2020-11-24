@@ -639,6 +639,7 @@ class AuthLibrary{
         $email = Input::get ('email');
         $send_type = !empty(Input::get ('send_type')) ? Input::get ('send_type') : "both";
         $lang = isset($input['lang']) ? $input['lang'] : "en";
+        
         $returnObject = new stdClass();
         if(!empty($email)){
           $findUserID = null;
@@ -655,7 +656,7 @@ class AuthLibrary{
             } else {
               $returnObject->status = false;
               if($lang == "malay") {
-                $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass');
+                $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_email');
               } else {
                 $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
               }
@@ -715,7 +716,7 @@ class AuthLibrary{
               }
             }
           }
-
+          
           if($findUserID){
             $returnObject->status = TRUE;
             //$returnObject->data['userid'] = $findUserID;
@@ -753,7 +754,11 @@ class AuthLibrary{
                   return $returnObject;
                 } else {
                   $returnObject->status = false;
-                  $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                  if($lang == "malay") {
+                    $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_email');
+                  } else {
+                    $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                  }
                   return $returnObject;
                 }
              } else if($send_type == "sms"){
@@ -783,7 +788,11 @@ class AuthLibrary{
                     return $returnObject;
                   } else {
                     $returnObject->status = false;
-                    $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                    if($lang == "malay") {
+                      $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_mobile');
+                    } else {
+                      $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                    }
                     return $returnObject;
                   }
                 }
@@ -827,7 +836,11 @@ class AuthLibrary{
                       return $returnObject;
                     } else {
                       $returnObject->status = false;
-                      $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                      if($lang == "malay") {
+                        $returnObject->message = \MalayTranslation::malayMessages('issue_reset_pass_email');
+                      } else {
+                        $returnObject->message = "Sorry, your email address has not been signed up with Mednefits";
+                      }
                       return $returnObject;
                     }
                   }
