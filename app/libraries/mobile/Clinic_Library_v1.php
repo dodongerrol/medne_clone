@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Input;
+
 class Clinic_Library_v1{
     public static function FindClinic($clinicid){
         $clinic = new Clinic();
@@ -39,7 +40,6 @@ class Clinic_Library_v1{
             $clinicData->ClinicHolidays = $findClinicHolidays;
             $clinicData->Email = $clinicData->Email;
             $jsonArray = ArrayHelperMobile::ClinicProfile($clinicData,$currentTime,$findUserID);
-            
             $doctorsForClinic = Doctor_Library_v1::FindAllClinicDoctors($clinicData->ClinicID); 
             if($doctorsForClinic){
                 $jsonArray['doctor_count'] = count($doctorsForClinic);

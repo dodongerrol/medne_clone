@@ -28,11 +28,11 @@
             }
 
             if($type == "issue_reset_pass_email") {
-                return "Maaf, alamat e-mel anda belum didaftarkan dengan Mednefits";
+                return "Harap maaf, alamat e-mel anda belum didaftarkan dengan Mednefits";
             }
 
             if($type == "issue_reset_pass_mobile") {
-                return "Maaf, telefon anda belum didaftarkan dengan Mednefits";
+                return "Harap maaf, telefon anda belum didaftarkan dengan Mednefits";
             }
 
             if($type == "spending_hold_registration") {
@@ -224,6 +224,23 @@
             return $category;
         }
 
+        public static function servicesCategory($category)
+        {
+            if(strtolower($category) == "medicine & treatment" || strtolower($category) == "medicine and treatment") {
+                return "Ubat & Rawatan";
+            }
+
+            if(strtolower($category) == "consultation" || strtolower($category) == "consultations") {
+                return "Perundingan";
+            }
+
+            if(strtolower($category) == "health screening") {
+                return "Permeriksaan";
+            }
+
+            return $category;
+        }
+
         public static function currencyTranslation($currency)
         {
             if($currency == "sgd") {
@@ -282,6 +299,37 @@
             }
         }
 
+        public static function dayTransalation($day)
+        {
+            if(strtolower($day) == "mon") {
+                return "Isnin";
+            }
+
+            if(strtolower($day) == "tue") {
+                return "Selasa";
+            }
+
+            if(strtolower($day) == "wed") {
+                return "Rabu";
+            }
+
+            if(strtolower($day) == "thu") {
+                return "Khamis";
+            }
+
+            if(strtolower($day) == "fri") {
+                return "Jumaat";
+            }
+
+            if(strtolower($day) == "sat") {
+                return "Sabtu";
+            }
+
+            if(strtolower($day) == "sun") {
+                return "Ahad";
+            }
+        }
+
         public static function statusTextTranslate($text) 
         {
             if(strtolower($text) == "approved") {
@@ -289,12 +337,35 @@
             }
 
             if(strtolower($text) == "pending") {
-                return "Pang belum selesai";
+                return "Untuk Diselesai";
             }
 
             if(strtolower($text) == "rejected") {
                 return "Ditolak";
             }
+
+            return $text;
+        }
+        
+        public static function extraTextTranslate($text) 
+        {
+            if(strtolower($text) == "not applicable") {
+                return "Tidak Berkenaan”";
+            }
+
+            if(strtolower($text) == "open") {
+                return "Beroperasi”";
+            }
+
+            if(strtolower($text) == "closed") {
+                return "Tutup”";
+            }
+
+            if(strtolower($text) == "as charged") {
+                return "Seperti Yang Dikenakan";
+            }
+
+            return $text;
         }
 	}
 ?>

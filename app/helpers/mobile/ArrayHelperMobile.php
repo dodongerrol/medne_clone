@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Input;
 
 class ArrayHelperMobile{
     
@@ -296,10 +297,6 @@ class ArrayHelperMobile{
         if(!empty($clinicprocedures)){
             foreach($clinicprocedures as $clProcedure){
                 $dataArray = self::ClinicProcedureDetails($clProcedure);
-                //$dataArray['procedureid'] = $clProcedure->ProcedureID;
-                //$dataArray['name'] = $clProcedure->Name;
-                //$dataArray['duration'] = $clProcedure->Duration.' '.$clProcedure->Duration_Format;
-                //$dataArray['price'] = $clProcedure->Price;
                 $procedureArray[] = $dataArray;
             }
             return $procedureArray;
@@ -309,11 +306,13 @@ class ArrayHelperMobile{
         }
     }
     public static function ClinicProcedureDetails($clinicprocedures){
+        $input = Input::all();
+        $lang = isset($input['lang']) ? $input['lang'] : "en";
         if(!empty($clinicprocedures)){
                 $dataArray['procedureid'] = $clinicprocedures->ProcedureID;
-                $dataArray['name'] = $clinicprocedures->Name;
+                $dataArray['name'] = $lang == "malay" ? \MalayTranslation::servicesCategory($clinicprocedures->Name) : $clinicprocedures->Name;
                 $dataArray['duration'] = $clinicprocedures->Duration.' '.$clinicprocedures->Duration_Format;
-                $dataArray['price'] = $clinicprocedures->Price;
+                $dataArray['price'] = $lang == "malay" && strtolower($clinicprocedures->Price) == "as charged" ?  \MalayTranslation::extraTextTranslate($clinicprocedures->Price) : $clinicprocedures->Price;
             return $dataArray;
         }else{
             $dataArray = null;
@@ -344,13 +343,12 @@ class ArrayHelperMobile{
 
     public static function newProcessClinicOpeningTimes($clinicopentimes, $clinic_id){
         $clinictime = [];
+        $input = Input::all();
+        $lang = isset($input['lang']) ? $input['lang'] : "en";
+
         if($clinicopentimes!=false){
             foreach($clinicopentimes as $CLTimeValue){
-
-                
                 $weeks = StringHelper::GetOpenWeeks($CLTimeValue);
-                
-                
                 $results = Settings_Library::getNewClinicBreaksByWeek($clinic_id, $weeks);
 
                 if($results) {
@@ -380,14 +378,14 @@ class ArrayHelperMobile{
                             $temp_first_times['starttime'] = $starttime;
                             $temp_first_times['endtime'] = $result->start_time;
                             $temp_first_times['timeid'] = $cltime['timeid'];
-                            $temp_first_times['weeks'] = $cltime['weeks'];
+                            $temp_first_times['weeks'] = $lang == "malay" ? \MalayTranslation::dayTransalation($cltime['weeks']) : $cltime['weeks'];
                             $clinictime[] = $temp_first_times;
                             $temp_break = $result;
                         }else{
                             $temp_first_times['starttime'] = $temp_break->end_time;
                             $temp_first_times['endtime'] = $result->start_time;
                             $temp_first_times['timeid'] = $cltime['timeid'];
-                            $temp_first_times['weeks'] = $cltime['weeks'];
+                            $temp_first_times['weeks'] = $lang == "malay" ? \MalayTranslation::dayTransalation($cltime['weeks']) : $cltime['weeks'];
                             $clinictime[] = $temp_first_times;
                             $temp_break = $result;
                         }
@@ -396,64 +394,12 @@ class ArrayHelperMobile{
                             $temp_second_times['starttime'] = $result->end_time;
                             $temp_second_times['endtime'] = $endtime;
                             $temp_second_times['timeid'] = $cltime['timeid'];
-                            $temp_second_times['weeks'] = $cltime['weeks'];
+                            $temp_second_times['weeks'] = $lang == "malay" ? \MalayTranslation::dayTransalation($cltime['weeks']) : $cltime['weeks'];
                             $clinictime[] = $temp_second_times;
                         }
-                        
-
-                        // if($starttime_str <= $start_break && $endtime_str >= $end_break) {
-                        //     $temp_first_times['starttime'] = $starttime;
-                        //     $temp_first_times['endtime'] = $result->start_time;
-                        //     $temp_first_times['timeid'] = $cltime['timeid'];
-                        //     $temp_first_times['weeks'] = $cltime['weeks'];
-                        //     $clinictime[] = $temp_first_times;
-
-                        //     $temp_second_times['starttime'] = $result->end_time;
-                        //     $temp_second_times['endtime'] = $endtime;
-                        //     $temp_second_times['timeid'] = $cltime['timeid'];
-                        //     $temp_second_times['weeks'] = $cltime['weeks'];
-                        //     $clinictime[] = $temp_second_times;
-                        // } 
-                        // else {
-                        //     $cltime['starttime'] = $CLTimeValue->StartTime;
-                        //     $cltime['endtime'] =  $CLTimeValue->EndTime;
-                        //     $clinictime[] = $cltime;
-                        // }
                     }
-
-                    // foreach ($results as $key => $result) {
-                    //     $start_break = strtotime(date('Y-m-d h:i A', strtotime($result->start_time)));
-                    //     $end_break = strtotime(date('Y-m-d h:i A', strtotime($result->end_time)));
-
-                    //     if($starttime_str <= $start_break && $endtime_str >= $end_break) {
-                    //         $temp_first_times['starttime'] = $starttime;
-                    //         $temp_first_times['endtime'] = $result->start_time;
-                    //         $temp_first_times['timeid'] = $cltime['timeid'];
-                    //         $temp_first_times['weeks'] = $cltime['weeks'];
-                    //         $clinictime[] = $temp_first_times;
-
-                    //         $temp_second_times['starttime'] = $result->end_time;
-                    //         $temp_second_times['endtime'] = $endtime;
-                    //         $temp_second_times['timeid'] = $cltime['timeid'];
-                    //         $temp_second_times['weeks'] = $cltime['weeks'];
-                    //         $clinictime[] = $temp_second_times;
-                    //     } 
-                    //     else {
-                    //         $cltime['starttime'] = $CLTimeValue->StartTime;
-                    //         $cltime['endtime'] =  $CLTimeValue->EndTime;
-                    //         $clinictime[] = $cltime;
-                    //     }
-                    // }
-
-
-                    // $cltime['start_break'] = $result->start_time;
-                    // $cltime['start_break_str'] = $start_break;
-                    // $cltime['end_break'] = $result->end_time;
-                    // $cltime['end_break_str'] = $end_break;
-                    
-                    // $clinictime[] = $temp_times;
                 } else {
-                    $cltime['weeks'] =  $weeks;
+                    $cltime['weeks'] =  $lang == "malay" ? \MalayTranslation::dayTransalation($weeks) : $weeks;
                     $cltime['timeid'] = $CLTimeValue->ClinicTimeID;
                     $cltime['starttime'] = $CLTimeValue->StartTime;
                     $cltime['endtime'] =  $CLTimeValue->EndTime;

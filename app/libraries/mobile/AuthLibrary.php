@@ -1,5 +1,6 @@
 <?php
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Input;
 
 class AuthLibrary{
 

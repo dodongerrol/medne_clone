@@ -55,13 +55,8 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-<<<<<<< HEAD
 			'host' => '127.0.0.1',
 			'database'  => 'medicloud_v3',
-=======
-			'host' => 'localhost',
-			'database'  => 'medicloud_staging',
->>>>>>> 6cf0c23e... Merge pull request #351 from nagajingkrak/Feature-4hpbez
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',
