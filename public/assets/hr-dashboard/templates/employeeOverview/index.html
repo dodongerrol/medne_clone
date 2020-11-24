@@ -227,7 +227,7 @@
                   <div class="emp-opt-drop-container">
                     <img  class="three-dot-icon" src="../assets/hr-dashboard/img/three-dot.png">
                     <div x-show="open" @click.away="open = false" @click="open = false" class="emp-opt-drop-wrapper">
-                      <div ng-click="assignAdmin()" data-toggle="modal" data-target="#add-administrator-modal" class="opt-item">Assign Administrator</div>
+                      <div ng-click="assignAdmin( list )" data-toggle="modal" data-target="#add-administrator-modal" class="opt-item">Assign Administrator</div>
                       <div ng-if="false" data-toggle="modal" data-target="#edit-administrator-modal" class="opt-item">Edit Administrator</div>
                       <div class="opt-item" ng-click="selectTransferBtn(list)">Transfer</div>
                       <div class="opt-item" ng-click="_goToRemoveEmployee_(list)">Terminate</div>
@@ -432,7 +432,7 @@
                 <form>
                   <div class="emp-name-input-wrapper emp-overview-employee-input">
                     <i class="fa fa-search"></i>
-                    <input type="type" placeholder="Search by name" ng-model="add_admin_data.employee_name" readonly>
+                    <input type="type" placeholder="Search by name" ng-model="get_employee_data.name" readonly>
                     <i class="fa fa-angle-down"></i>
 
                   </div>

@@ -532,7 +532,7 @@ app.directive("employeeOverviewDirective", [
             scope.hideLoading();
           });
         }
-        scope.assignAdmin = function () {
+        scope.assignAdmin = function ( data ) {
           scope.isAddAdministratorConfirm = false;
           scope.isAddAdministratorSuccess = false;
           scope.chooseSelectorLocation = false;
@@ -543,6 +543,7 @@ app.directive("employeeOverviewDirective", [
           scope.permission_data = 'All Employees & Dependents'
           scope.selected_location_data = [];
           scope.selected_department_data = [];
+          scope.get_employee_data = data;
         }
         scope.fetchCompanyDetails = async function () {
           await hrSettings.fetchBusinessInformation()
@@ -550,6 +551,62 @@ app.directive("employeeOverviewDirective", [
               console.log(response);
               scope.get_company_details = response.data.data;
           });
+        }
+        scope.get_dept_id = [];
+        scope.get_loc_id = [];
+        scope.isAddAdministratorConfirm = false;
+        scope.isAddAdministratorSuccess = false;
+        scope.addAdministrator = function () {
+          scope.isAddAdministratorConfirm = true;
+        }
+        scope.confirmAdmininistrator = function ( ) {
+          console.log(scope.add_admin_data.is_mednefits_emp);
+          scope.selected_location_data.map((value, key) => {
+            scope.get_loc_id.push( value.LocationID )
+            console.log(value)
+          });
+          scope.selected_department_data.map((value, key) => {
+            scope.get_dept_id.push( value.id )
+            console.log(value)
+          });
+          // console.log( scope.get_loc_id );
+          // console.log( scope.get_dept_id );
+          scope.add_admin_data.is_mednefits_emp = parseInt(scope.add_admin_data.is_mednefits_emp);
+          let data = {
+            fullname: scope.add_admin_data.is_mednefits_emp == 1 ? scope.add_admin_data.employee_name : scope.add_admin_data.fullname,
+            email: scope.add_admin_data.email,
+            phone_code: scope.add_admin_data.phone_code,
+            phone_no: scope.add_admin_data.mobile_number,
+            is_mednefits_employee: scope.add_admin_data.is_mednefits_emp == true ? 1 : 0,
+            employee_id: scope.add_admin_data.employee_id,
+            locations: scope.get_loc_id,
+            departments: scope.get_dept_id,
+            edit_employee_dependent: scope.add_admin_data.edit_employee_dependent == true ? 1: 0,
+            enroll_terminate_employee: scope.add_admin_data.enroll_terminate_employee == true ? 1: 0,
+            approve_reject_edit_non_panel_claims: scope.add_admin_data.approve_reject_edit_non_panel_claims == true ? 1: 0,
+            create_remove_edit_admin_unlink_account: scope.add_admin_data.create_remove_edit_admin_unlink_account == true ? 1: 0,
+            manage_billing_and_payments: scope.add_admin_data.manage_billing_and_payments == true ? 1: 0,
+            add_location_departments: scope.add_admin_data.add_location_departments == true ? 1: 0,
+          }
+        
+          // scope.showLoading();
+          // hrSettings.updateAdditionalAdmin( data ).then(async function (response) {
+          //   console.log(response);
+          //   scope.additional_admin_data = response.data;
+
+          //   if ( response.data.status ) {
+          //     scope.isAddAdministratorSuccess = true;
+
+          //     await scope.getAdditionalAdmin();
+          //     scope.hideLoading();
+          //   } else {
+          //     swal("Error!", response.data.message, "error");
+          //     scope.hideLoading();
+          //   }
+            
+          // });
+
+          console.log(data);
         }
 
         $('.modal').on('hidden.bs.modal', function (e) {
