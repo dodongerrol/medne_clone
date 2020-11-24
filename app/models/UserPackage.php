@@ -163,6 +163,7 @@ class UserPackage extends Eloquent
                             }
                         }
 
+                        $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $owner_id);
                         $data['fullname'] = ucwords($user_details->Name);
                         $data['member_id'] = $user_details->UserID;
                         $data['nric'] = $user_details->NRIC;
@@ -191,7 +192,7 @@ class UserPackage extends Eloquent
                             $data['plan_add_on'] = "N.A.";
                             $data['annual_entitlement'] = 'Not applicable';
                         } else {
-                            $data['annual_entitlement'] = strtoupper($wallet->currency_type).' '.number_format($wallet_entitlement->medical_entitlement, 2);
+                            $data['annual_entitlement'] = strtoupper($wallet->currency_type).' '.number_format($credit_data['allocation'], 2);
                         }
                         // get cap per visit
                         // check if their is a plan tier
@@ -283,10 +284,11 @@ class UserPackage extends Eloquent
                             $active_plan_data = $active_plan_first;
                         }
                         
-                        $wallet_entitlement = DB::table('employee_wallet_entitlement')
-                        ->where('member_id', $id)
-                        ->orderBy('created_at', 'desc')
-                        ->first();
+                        // $wallet_entitlement = DB::table('employee_wallet_entitlement')
+                        // ->where('member_id', $id)
+                        // ->orderBy('created_at', 'desc')
+                        // ->first();
+                        $credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $id);
                         $plan_type = 'Corporate';
                         $data['plan_add_on'] = PlanHelper::getCompanyAccountType($user_details->UserID);
                         $data['packages'] = PlanHelper::getUserPackages($active_plan_data, $id, $data['plan_add_on'], $plan_user);
@@ -315,7 +317,7 @@ class UserPackage extends Eloquent
                             $data['plan_add_on'] = "N.A.";
                             $data['annual_entitlement'] = 'Not applicable';
                         } else {
-                            $data['annual_entitlement'] = strtoupper($wallet->currency_type).' '.number_format($wallet_entitlement->medical_entitlement, 2);
+                            $data['annual_entitlement'] = strtoupper($wallet->currency_type).' '.number_format($credit_data['allocation'], 2);
                         }
                         // get cap per visit
                         // check if their is a plan tier
