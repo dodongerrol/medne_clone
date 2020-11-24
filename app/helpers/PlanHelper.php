@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Input;
 
 class PlanHelper
 {
@@ -683,6 +684,8 @@ class PlanHelper
 
 	public static function getDependentsPackages($dependent_plan_id, $dependent_plan_history, $owner_id)
 	{
+		$input = Input::all();
+		$lang = isset($input['lang']) ? $input['lang'] : "en";
 		$user_wallet = DB::table('e_wallet')->where('UserID', $owner_id)->orderBy('created_at', 'desc')->first();
 		$dependent_plan = DB::table('dependent_plans')
 			->where('dependent_plan_id', $dependent_plan_id)
@@ -736,6 +739,13 @@ class PlanHelper
 			->where('care_package.currency_type', $user_wallet->currency_type)
 			->orderBy('care_package.position', 'desc')
 			->get();
+
+		foreach($package_bundle as $bundle) {
+			$bundle->package_name = $lang == "malay" ? \MalayTranslation::benefitsPlanCategory($bundle->package_name) : $bundle->package_name;
+			$bundle->package_discount = $lang == "malay" ? \MalayTranslation::benefitsPlanCategory($bundle->package_discount) : $bundle->package_discount;
+			$bundle->package_description = $lang == "malay" && $bundle->package_name == "out_of_pocket" ? \MalayTranslation::benefitsPlanCategory('out_of_pocket_description') : $bundle->package_discount;
+		}
+		
 		return $package_bundle;
 	}
 
@@ -791,6 +801,8 @@ class PlanHelper
 	public static function getUserPackages($active_plan_data, $user_id, $plan_add_on, $user_plan)
 	{
 
+		$input = Input::all();
+		$lang = isset($input['lang']) ? $input['lang'] : "en";
 		$user_wallet = DB::table('e_wallet')->where('UserID', $user_id)->orderBy('created_at', 'desc')->first();
 		// $active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $customer_active_plan_id)->first();
 		$active_plan = $active_plan_data;
@@ -865,6 +877,13 @@ class PlanHelper
 			->where('care_package.currency_type', $user_wallet->currency_type)
 			->orderBy('care_package.position', 'asc')
 			->get();
+
+		foreach($package_bundle as $bundle) {
+			$bundle->package_name = $lang == "malay" ? \MalayTranslation::benefitsPlanCategory($bundle->package_name) : $bundle->package_name;
+			$bundle->package_discount = $lang == "malay" ? \MalayTranslation::benefitsPlanCategory($bundle->package_discount) : $bundle->package_discount;
+			$bundle->package_description = $lang == "malay" && $bundle->package_name == "out_of_pocket" ? \MalayTranslation::benefitsPlanCategory('out_of_pocket_description') : $bundle->package_discount;
+		}
+
 		return $package_bundle;
 	}
 

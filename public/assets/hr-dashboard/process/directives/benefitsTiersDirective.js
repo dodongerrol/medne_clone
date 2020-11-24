@@ -1505,10 +1505,16 @@ app.directive('benefitsTiersDirective', [
 				}
 				scope.goToCommunication	=	function(){
 					console.log(scope.hasEmailOrMobile);
+					console.log(scope.temp_employees);
 					if(scope.hasEmailOrMobile == false){
-						scope.saveTempUser();
-						scope.isReviewEnroll = false;
-						scope.isCommunicationShow = false;
+						if ( scope.temp_employees.length == 0 ) {
+							swal('Error!', 'Please enroll alteast 1 employee', 'error');
+						} else {
+							scope.saveTempUser();
+							scope.isReviewEnroll = false;
+							scope.isCommunicationShow = false;
+							console.log('true ni ');	
+						}
 					}else{
 						scope.isReviewEnroll = false;
 						scope.isCommunicationShow = true;

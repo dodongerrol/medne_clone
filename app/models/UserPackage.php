@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Input;
 
 class UserPackage extends Eloquent
 {
@@ -73,7 +74,9 @@ class UserPackage extends Eloquent
         $data = [];
         $dependent_user = false;
         $type = StringHelper::checkUserType($id);
-        
+        $input = Input::all();
+        $lang = isset($input['lang']) ? $input['lang'] : "en";
+
         if((int)$type['user_type'] == 5 && (int)$type['access_type'] == 0 || (int)$type['user_type'] == 5 && (int)$type['access_type'] == 1)
         {
             $owner_id = $id;
@@ -87,12 +90,11 @@ class UserPackage extends Eloquent
             $user_id = $id;
             $dependent_user = true;
         }
-        // return $user_id;
+        
         $corporate_member = DB::table('corporate_members')->where('user_id', $owner_id)->first();
-        // return array('result' => $corporate_member);
         $data['plan_add_on'] = "NIL";
         $data['dependent_user'] = $dependent_user;
-        $cap_per_visit = "Not Applicable";
+        $cap_per_visit = $lang == "malay" ?  \MalayTranslation::extraTextTranslate("Not Applicable") : "Not Applicable";
         if($corporate_member) {
             $user_details = $user->getUserProfileMobile($user_id);
             $company = DB::table('corporate')
@@ -325,7 +327,6 @@ class UserPackage extends Eloquent
                         ->join('plan_tiers', 'plan_tiers.plan_tier_id', '=', 'plan_tier_users.plan_tier_id')
                         ->where('plan_tier_users.user_id', $user_id)
                         ->first();
-                        // $cap_per_visit = $wallet->cap_per_visit_medical;
 
                         if($plan_tier) {
                             if($wallet->cap_per_visit_medical > 0) {
