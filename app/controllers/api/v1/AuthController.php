@@ -6764,17 +6764,17 @@ public function payCreditsNew( )
                 }
               }
 
-              // check if e-claim platform is enable
-              $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
+              // // check if e-claim platform is enable
+              // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 
-              if($customer && (int)$customer->access_e_claim == 0) {
-                $returnObject->status = FALSE;
-                $returnObject->status_type = 'without_e_claim';
-                $returnObject->head_message = 'E-Claim Disabled';
-                $returnObject->message = 'The E-Claim function has been disabled for your company.';
-                $returnObject->sub_message = 'Kindly contact your HR for more details.';
-                return Response::json($returnObject);
-              }
+              // if($customer && (int)$customer->access_e_claim == 0) {
+              //   $returnObject->status = FALSE;
+              //   $returnObject->status_type = 'without_e_claim';
+              //   $returnObject->head_message = 'E-Claim Disabled';
+              //   $returnObject->message = 'The E-Claim function has been disabled for your company.';
+              //   $returnObject->sub_message = 'Kindly contact your HR for more details.';
+              //   return Response::json($returnObject);
+              // }
 
               // check for member transaction
               $transaction_access = MemberHelper::checkMemberAccessTransactionStatus($user_id);
