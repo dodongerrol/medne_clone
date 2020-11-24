@@ -560,7 +560,7 @@ Route::filter('strip_tags', function()
     Input::merge(Utility::array_strip_tags(Input::all()));
 });
 
-if (Config::get('app.debug')) {
+if (Config::get('database.enable_logging')) {
     Event::listen('illuminate.query', function($query, $bindings, $time, $name) {
       $data = compact('bindings', 'time', 'name');
       Log::useDailyFiles(storage_path().'/logs/sql-' . date('Y-m-d') . '.log');
