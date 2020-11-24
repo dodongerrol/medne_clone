@@ -448,6 +448,9 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 		'hr/create_company_block_lists',
 		'CreateCompanyBlockClinicList@create'
 	);
+
+	// reverse employee plan withdraw schedule
+	Route::post('employee_reverse_account_withdraw', 'EmployeeController@reverseEmployeeDeletion');
 	// create employee block
 	// Route::post('hr/create_employee_company_block_lists', 'EmployeeController@createCompanyBlockClinicListsEmployee');
 	Route::post('hr/create_employee_company_block_lists', 'CreateCompanyBlockClinicList@create');
