@@ -3632,6 +3632,290 @@ class EmployeeController extends \BaseController {
 			'status'	=> FALSE,
 			'message'	=> 'Invalid Password.'
 		);
+  }
+  
+  public function reverseEmployeeDeletion()
+	{
+		$input = Input::all();
+
+		if(empty($input['employee_id']) || $input['employee_id'] == null) {
+			return array('status' => false, 'message' => 'Employee ID is required.');
+		}
+
+		$employee = DB::table('user')->where('UserID', $input['employee_id'])->where('UserType', 5)->first();
+
+		if(!$employee) {
+			return array('status' => false, 'message' => 'Employee does not exists.');
+		}
+		$date = date('Y-m-d');
+
+		// check for employee withdraw
+		$check_plan_withdraw = DB::table('customer_plan_withdraw')->where('user_id', $input['employee_id'])->first();
+
+		// plan withdraw
+		if($check_plan_withdraw) {
+			if((int)$check_plan_withdraw->refund_status == 1) {
+				// check if payment refund is paid
+				$payment_refund = DB::table('payment_refund')->where('payment_refund_id', $check_plan_withdraw->payment_refund_id)->first();
+
+				if($payment_refund) {
+					if((int)$payment_refund->status == 1 && (int)$check_plan_withdraw->paid == 1) {
+						return array('status' => false, 'message' => 'Unable to reverse account back to active since this employee was refunded.');
+					}
+				}
+			}
+
+			// remove or delete plan withdraw data
+			$result = DB::table('customer_plan_withdraw')->where('plan_withdraw_id', $check_plan_withdraw->plan_withdraw_id)->delete();
+
+			if($result) {
+				$user_plan_history = DB::table('user_plan_history')
+				->where('user_id', $input['employee_id'])
+				->where('type', 'deleted_expired')
+				->orderBy('created_at', 'desc')
+				->first();
+				if($user_plan_history) {
+					DB::table('user_plan_history')->where('user_plan_history_id', $user_plan_history->user_plan_history_id)->delete();
+				} else {
+					$user_plan_history = DB::table('user_plan_history')
+					->where('user_id', $input['employee_id'])
+					->where('type', 'started')
+					->orderBy('created_at', 'desc')
+					->first();
+				}
+
+				$active_plan = DB::table('customer_active_plan')
+				->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+				->first();
+
+				DB::table('corporate_members')->where('user_id', $input['employee_id'])->update(['removed_status' => 0]);
+				DB::table('user')->where('UserID', $input['employee_id'])->update(['Active' => 1]);
+				// if($active_plan->account_type != "insurance_bundle") {
+				// 	CustomerPlanStatus::where('customer_plan_id', $active_plan->plan_id)->increment('enrolled_employees', 1);
+				// }
+
+				// check refund_status type
+				if((int)$check_plan_withdraw->refund_status == 0) {
+					if($date >= $check_plan_withdraw->date_withdraw) {
+						// restore back the employee total head count
+						if($active_plan->account_type == "stand_alone_plan" || $active_plan->account_type == "lite_plan" || $active_plan->account_type == "trial_plan") {
+							// restore the head count
+							CustomerPlanStatus::where('customer_plan_id', $active_plan->plan_id)->increment('employees_input', 1);
+							CustomerPlanStatus::where('customer_plan_id', $active_plan->plan_id)->increment('enrolled_employees', 1);
+						}
+					}
+				} else if((int)$check_plan_withdraw->refund_status == 2) {
+					if($date >= $check_plan_withdraw->date_withdraw) {
+						// restore back the employee total head count
+						if($active_plan->account_type == "stand_alone_plan" || $active_plan->account_type == "lite_plan" || $active_plan->account_type == "trial_plan") {
+							// restore the head count
+							CustomerPlanStatus::where('customer_plan_id', $active_plan->plan_id)->increment('enrolled_employees', 1);
+						}
+					}
+				}
+
+				// remove pro allocation if any
+				$wallet = DB::table('e_wallet')->where('UserID', $input['employee_id'])->first();
+				// medical
+				DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->delete();
+				DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation_deduction')
+				->delete();
+				DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'deducted_by_hr')
+				->where('from_pro_allocation', 1)
+				->delete();
+
+				// medical
+				DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->delete();
+				DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation_deduction')
+				->delete();
+				DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'deducted_by_hr')
+				->where('from_pro_allocation', 1)
+				->delete();
+
+				$admin_id = \AdminHelper::getAdminID();
+				if($admin_id) {
+					$admin_logs = array(
+						'admin_id'  => $admin_id,
+						'type'      => 'admin_reverse_employee_account_withdraw',
+						'data'      => \AdminHelper::serializeData($check_plan_withdraw)
+					);
+					\AdminHelper::createAdminLog($admin_logs);
+				}
+				\DependentHelper::getEmployeeDependentID($input['employee_id']);
+
+				//trigger request api, send atribute delete_at to custify
+				$custifyPeole = [
+					'user_id' => $employee->UserID,
+					'email' =>  $employee->Email,
+					'companies' => [
+						[
+							'company_id' => $active_plan->customer_start_buy_id
+						]
+					],
+					'custom_attributes' => [
+						'employee_churned' => 'No'
+					]
+				];
+
+				if(env('APP_ENV') == "production") {
+					$api_endpoint = "https://api.custify.com/people";
+					$headers = array();
+					$headers['Authorization'] = 'Bearer 8a6ndoxR0cy6FnsJhASw7oRX8oUp5NtQZm9Um1XuLyTwjnOdnxsCU769FRl3';
+					$result = \httpLibrary::sendDataToCustify($api_endpoint, $custifyPeole, $headers, $headers['Authorization']);
+				}
+
+				return array('status' => true, 'message' => 'Employee Successfully reactivated and deleted plan withdraw schedule.');
+			}
+		}
+
+		// employee replace
+		$employee_replace = DB::table('customer_replace_employee')
+		->where('old_id', $input['employee_id'])
+		->first();
+		if($employee_replace) {
+			$new_user = DB::table('user')->where('UserID', $employee_replace->new_id)->first();
+
+			if((int)$new_user->pending == 0) {
+				return array('status' => false, 'message' => 'Unable to create the process. New User under Employee Replace is activated.');
+			}
+
+			$result_remove_replace = DB::table('customer_replace_employee')->where('old_id', $input['employee_id'])->delete();
+
+			if($result_remove_replace) {
+				// delete new user
+				$e_wallet_new_user = DB::table('e_wallet')
+				->where('UserID', $new_user->UserID)
+				->first();
+
+				// delete wallet logs
+				DB::table('wallet_history')->where('wallet_id', $e_wallet_new_user->wallet_id)->delete();
+				DB::table('wellness_wallet_history')->where('wellness_wallet_history_id', $e_wallet_new_user->wallet_id)->delete();
+				DB::table('e_wallet')->where('UserID', $new_user->UserID)->delete();
+				DB::table('corporate_members')->where('user_id', $new_user->UserID)->delete();
+				DB::table('user')->where('UserID', $employee_replace->new_id)->delete();
+				DB::table('user_plan_history')->where('user_id', $employee_replace->new_id)->delete();
+
+				$user_plan_history = DB::table('user_plan_history')
+				->where('user_id', $request->get('employee_id'))
+				->where('type', 'deleted_expired')
+				->orderBy('created_at', 'desc')
+				->first();
+
+				if($user_plan_history) {
+					DB::table('user_plan_history')->where('user_plan_history_id', $user_plan_history->user_plan_history_id)->delete();
+				} else {
+					$user_plan_history = DB::table('user_plan_history')
+					->where('user_id', $request->get('employee_id'))
+					->where('type', 'started')
+					->orderBy('created_at', 'desc')
+					->first();
+				}
+
+				$active_plan = DB::table('customer_active_plan')
+				->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+				->first();
+
+				DB::table('corporate_members')->where('user_id', $input['employee_id'])->update(['removed_status' => 0]);
+				DB::table('user')->where('UserID', $input['employee_id'])->update(['Active' => 1]);
+
+				// if($active_plan->account_type != "insurance_bundle") {
+				// 	CustomerPlanStatus::where('customer_plan_id', $active_plan->plan_id)->increment('enrolled_employees', 1);
+				// }
+
+				// remove pro allocation if any
+				$wallet = DB::table('e_wallet')->where('UserID', $input['employee_id'])->first();
+				// medical
+				DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->delete();
+				DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation_deduction')
+				->delete();
+				DB::table('wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'deducted_by_hr')
+				->where('from_pro_allocation', 1)
+				->delete();
+
+				// medical
+				DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation')
+				->delete();
+				DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'pro_allocation_deduction')
+				->delete();
+				DB::table('wellness_wallet_history')
+				->where('wallet_id', $wallet->wallet_id)
+				->where('logs', 'deducted_by_hr')
+				->where('from_pro_allocation', 1)
+				->delete();
+
+				$admin_id = \AdminHelper::getAdminID();
+				if($admin_id) {
+					$admin_logs = array(
+						'admin_id'  => $admin_id,
+						'type'      => 'admin_reverse_employee_account_withdraw',
+						'data'      => \AdminHelper::serializeData($user_plan_history)
+					);
+					\AdminHelper::createAdminLog($admin_logs);
+				}
+				\DependentHelper::getEmployeeDependentID($input['employee_id']);
+				return array('status' => true, 'message' => 'Employee Successfully Account reactivated.');
+			}
+		} else {
+		// check if user is deleted
+			if((int)$employee->Active == 0) {
+				// restore account
+				$user_plan_history = DB::table('user_plan_history')
+				->where('user_id', $input['employee_id'])
+				->where('type', 'expired')
+				->orderBy('created_at', 'desc')
+				->first();
+
+				if($user_plan_history) {
+					// delete data
+					DB::table('user_plan_history')
+					->where('user_plan_history_id', $user_plan_history->user_plan_history_id)
+					->delete();
+					DB::table('corporate_members')->where('user_id', $input['employee_id'])->update(['removed_status' => 0, 'updated_at' => date('Y-m-d H:i:s')]);
+					DB::table('user')->where('UserID', $input['employee_id'])->update(['Active' => 1]);
+					$admin_id = \AdminHelper::getAdminID();
+					if($admin_id) {
+						$admin_logs = array(
+							'admin_id'  => $admin_id,
+							'type'      => 'admin_reverse_employee_account_withdraw',
+							'data'      => \AdminHelper::serializeData($user_plan_history)
+						);
+						\AdminHelper::createAdminLog($admin_logs);
+					}
+					\DependentHelper::getEmployeeDependentID($input['employee_id']);
+				}
+				return array('status' => true, 'message' => 'Employee Successfully Account reactivated.');
+			}
+		}
+
+		// restore employee account
+		return array('status' => false, 'message' => 'Employee was not in plan withdraw schedule deletion.');
+
+		// check for employee replace
 	}
 
 }
