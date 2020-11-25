@@ -11897,7 +11897,6 @@ class BenefitsDashboardController extends \BaseController {
 			$final_user[] = $temp;
 		}
 		
-		return $final_user;
 		return Excel::create('Employee Information', function($excel) use($final_user) {
 			$excel->sheet('Sheetname', function($sheet) use($final_user) {
 				$sheet->fromArray( $final_user );
