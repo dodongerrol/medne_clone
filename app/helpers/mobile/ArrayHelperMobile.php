@@ -312,7 +312,7 @@ class ArrayHelperMobile{
                 $dataArray['procedureid'] = $clinicprocedures->ProcedureID;
                 $dataArray['name'] = $lang == "malay" ? \MalayTranslation::servicesCategory($clinicprocedures->Name) : $clinicprocedures->Name;
                 $dataArray['duration'] = $clinicprocedures->Duration.' '.$clinicprocedures->Duration_Format;
-                $dataArray['price'] = $lang == "malay" && strtolower($clinicprocedures->Price) == "as charged" ?  \MalayTranslation::extraTextTranslate($clinicprocedures->Price) : $clinicprocedures->Price;
+                $dataArray['price'] = $lang == "malay" && strtolower($clinicprocedures->Price) == "as charged" || $lang == "malay" && strtolower($clinicprocedures->Price) == "as charge" ?  \MalayTranslation::extraTextTranslate($clinicprocedures->Price) : $clinicprocedures->Price;
             return $dataArray;
         }else{
             $dataArray = null;
