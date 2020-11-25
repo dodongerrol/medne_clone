@@ -625,5 +625,10 @@ service.factory("hrActivity", function($http, serverUrl, Upload) {
   hrFactory.memberCredits = function( id  ) {
     return $http.get( serverUrl.url + "/hr/member_credits?member_id=" + id );
   };
+  hrFactory.restoreEmployee = data => {
+    return $http.post(serverUrl.url + "/employee_reverse_account_withdraw", data);
+   };
+
+  
   return hrFactory;
 });

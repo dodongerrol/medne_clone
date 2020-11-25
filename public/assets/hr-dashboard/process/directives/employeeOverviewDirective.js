@@ -2943,6 +2943,35 @@ app.directive("employeeOverviewDirective", [
           return passport_pattern.test(value);
         };
 
+        scope.HrRestoreEmployee = ()=>{
+          swal({
+            title: "Confirm!",
+            text: "Do you want to restore this employee?",
+            type: "warning",
+            showCancelButton: true,
+            cancelButtonText: "No",
+            confirmButtonColor: "#25306C",
+            confirmButtonText: "Yes",
+            closeOnConfirm: true
+          },
+            function(isConfirmed){
+              if(isConfirmed){
+                hrActivity.restoreEmployee({employee_id:scope.selectedEmployee.user_id})
+                .then( response =>{
+                  console.log(response);
+                  console.log(scope.selectedEmployee.user_id);
+                  if (response.data.status) {
+                    swal('Success!',  response.data.message, 'success');
+                    scope.getSession();
+                  }else{
+                    swal('Error!',  response.data.message, 'error');
+                  }
+                })
+              }
+            }
+          ) 
+        }
+
         scope.onLoad = function () {
           console.log($state.current);
           if( $state.current.name != 'employee-overview' && $state.current.name.indexOf('employee-overview') > -1 ){

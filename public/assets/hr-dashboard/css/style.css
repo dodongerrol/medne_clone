@@ -10736,3 +10736,17 @@ span.dropdown-entitlement.disabled {
 .employee-details.tier-feature-item .iti__country-list {
   z-index: 1000;
 }
+.dependent-and-remove{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.employee-restore-btn {
+  background-color: transparent !important;
+  border: 2px solid #7864e4;
+  color: #6248f1;
+  font-weight: 700;
+  border-radius: 2px;
+  padding: 7px 14px;
+  margin-right: 10px;
+}
