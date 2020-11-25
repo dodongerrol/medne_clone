@@ -709,6 +709,14 @@ class MemberHelper
 				return true;
 			}
 
+			if($spending['medical_enabled'] == true && $spending['wellness_enabled'] == true) {
+				return false;
+			}
+
+			if($spending['medical_enabled'] == false && $spending['wellness_enabled'] == true) {
+				return false;
+			}
+
 			if($spending['medical_enabled'] == false && $spending['wellness_enabled'] == false) {
 				return true;
 			}
