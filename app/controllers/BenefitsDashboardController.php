@@ -2308,6 +2308,14 @@ class BenefitsDashboardController extends \BaseController {
 				$emp_status = 'pending';
 			}
 
+			// check ang parse dob format
+			if($user->DOB) {
+				$user->DOB = \Utility::convert_date_format($user->DOB);
+				$user->DOB = date('d/m/Y', strtotime($user->DOB));
+			} else {
+				$user->DOB = null;
+			}
+
 			$temp = array(
 				'spending_account'	=> array(
 					'medical' 	=> $medical,
@@ -2336,7 +2344,7 @@ class BenefitsDashboardController extends \BaseController {
 				'phone_no'				=> $phone_no,
 				'country_code'			=> $country_code,
 				'job_title'				=> $user->Job_Title,
-				'dob'					=> $user->DOB ? date('Y-m-d', strtotime($user->DOB)) : null,
+				'dob'					=> $user->DOB,
 				'postal_code'			=> $user->Zip_Code,
 				'bank_account'			=> $user->bank_account,
 				'bank_code'				=> $user->bank_code,
@@ -11766,6 +11774,14 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
+			// check ang parse dob format
+			if($users[$x]->DOB) {
+				$users[$x]->DOB = \Utility::convert_date_format($users[$x]->DOB);
+				$users[$x]->DOB = date('d/m/Y', strtotime($users[$x]->DOB));
+			} else {
+				$users[$x]->DOB = null;
+			}
+
 			$dependents = DB::table('employee_family_coverage_sub_accounts')
 							->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
 							->where('employee_family_coverage_sub_accounts.owner_id', $users[$x]->UserID)
@@ -11778,6 +11794,13 @@ class BenefitsDashboardController extends \BaseController {
 			
 			if ( count($dependents) > 0 && Config::get('config.seven_eleven_id') == $result->customer_buy_start_id) {
 				foreach ($dependents as $key => $item) {
+					// check ang parse dob format
+					if($item->DOB) {
+						$item->DOB = \Utility::convert_date_format($item->DOB);
+						$item->DOB = date('d/m/Y', strtotime($item->DOB));
+					} else {
+						$item->DOB = null;
+					}
 					$temp = array(
 						'Status'	=> $status,
 						'Name'		=> ucwords( $users[$x]->Name),
@@ -11874,14 +11897,12 @@ class BenefitsDashboardController extends \BaseController {
 			$final_user[] = $temp;
 		}
 		
-		return $excel = Excel::create('Employee Information', function($excel) use($final_user) {
+		return $final_user;
+		return Excel::create('Employee Information', function($excel) use($final_user) {
 			$excel->sheet('Sheetname', function($sheet) use($final_user) {
 				$sheet->fromArray( $final_user );
 			});
 		})->export('xls');
-
-		return array('status' => TRUE, 'data' => $final_user, 'last_term_credits' => $last_term_credits, 'medical' => (int)$spending_accounts->medical_enable == 1 ? true : false, 'wellness' => (int)$spending_accounts->wellness_enable == 1 ? true : false);
-
 	}
 
 

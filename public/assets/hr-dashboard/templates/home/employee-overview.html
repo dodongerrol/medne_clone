@@ -729,12 +729,16 @@
 							</div>
 						</div>
 
-						<div ng-if="dependents_status.dependent_status" class="employee-btn-add-seat-wrapper"
+						<div class="dependent-and-remove">
+							<div ng-if="dependents_status.dependent_status" class="employee-btn-add-seat-wrapper"
 							ng-click="toggleAddDependent()">
 							<h3 class="weight-700">Add a Dependent?</h3>
 							<button class="btn-add-seat" ng-click="toggleAddDependents()"><img
 									src="../assets/hr-dashboard/img/icons/add-employee.svg">Add</button>
 						</div>
+						<button class="employee-restore-btn" ng-if="!selectedEmployee.account_status || selectedEmployee.deletion || selectedEmployee.schedule" ng-click="HrRestoreEmployee()">Restore Employee</button>
+						</div>
+						
 					</div>
 					<div ng-if="empTabSelected == 1" class="dependent-information">
 
