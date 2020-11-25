@@ -92,7 +92,7 @@
         public static function benefitsCategoryTranslate($category)
         {
             if(strtolower($category) == "screening") {
-                return "Permeriksaan";
+                return "Pemeriksaan Kesihatan";
             }
 
             if(strtolower($category) == "gp") {
@@ -238,6 +238,10 @@
                 return "Permeriksaan";
             }
 
+            if(strtolower($category) == "procedure") {
+                return "Prosedur";
+            }
+
             return $category;
         }
 
@@ -361,7 +365,7 @@
                 return "Tutup”";
             }
 
-            if(strtolower($text) == "as charged") {
+            if(strtolower($text) == "as charged" || strtolower($text) == "as charge") {
                 return "Seperti Yang Dikenakan";
             }
 

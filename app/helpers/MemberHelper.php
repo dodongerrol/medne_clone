@@ -704,7 +704,16 @@ class MemberHelper
 			// if($spending['medical_reimbursement'] == false || $spending['wellness_reimbursement'] == false) {
 			// 	return true;
 			// }
-			if($spending['medical_enabled'] == false && $spending['medical_enabled'] == false) {
+			
+			if($spending['medical_enabled'] == true && $spending['medical_reimbursement'] == false) {
+				return true;
+			}
+
+			if($spending['medical_enabled'] == false && $spending['wellness_enabled'] == false) {
+				return true;
+			}
+
+			if($spending['medical_enabled'] == true && $spending['medical_reimbursement'] == false && $spending['wellness_enabled'] == false) {
 				return true;
 			}
 
