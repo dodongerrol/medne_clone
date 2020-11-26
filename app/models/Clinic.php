@@ -590,13 +590,18 @@ public function getFavouriteClinics($userID)
             
             // Insert new record
             for ($i = 0; $i < count($data); $i++) { 
-                if ( $data[$i]['active'] == true ) {
-                    $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1, 'Created_on' => time()));
-                    $r = DB::table('clinic_time')
-                        ->insert($data[$i]);
-                } 
+                // Assign Active Value
+                $active = $data[$i]['active'];
+                // Remove active key
+                unset( $data[$i]['active'] );
+                // Deconstruct Data
+                $newData = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => $active, 'Created_on' => time()));
+                 
+                // Insert New data to clinic_time table
+                DB::table('clinic_time')
+                        ->insert( $newData );
             }
-            return "Providers operating hours successfully updated.";
+            return true;
         }
 
         public function updateBreakHours($data, $clinic_id) {
@@ -609,16 +614,6 @@ public function getFavouriteClinics($userID)
             for ($x = 0; $x < count($data); $x++) {
                 if ($data[$x]['active'] == true) {
 <<<<<<< HEAD
-                    $guid = StringHelper::getGUID();
-                    if (!isset($data[$x]['clinic_id'])) {
-                        $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
-                    } else {
-                        $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
-                    }
-                    
-                    DB::table('extra_events')
-                        ->insert($data[$x]);
-=======
                     // Remove active key
                     unset( $data[$x]['active'] );
                     
@@ -631,7 +626,17 @@ public function getFavouriteClinics($userID)
                     
                     DB::table('extra_events')
                         ->insert( $newData );
->>>>>>> 1a1b70ab... Hotfix 59vvkc (#616)
+=======
+                    $guid = StringHelper::getGUID();
+                    if (!isset($data[$x]['clinic_id'])) {
+                        $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
+                    } else {
+                        $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
+                    }
+                    
+                    DB::table('extra_events')
+                        ->insert($data[$x]);
+>>>>>>> f97901d057352d3c7b4081c8b35b21dffe3f086e
                 }
             }
             

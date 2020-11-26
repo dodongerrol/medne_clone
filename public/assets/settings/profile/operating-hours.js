@@ -241,7 +241,7 @@ jQuery(document).ready(function ($) {
         "friday",
         "saturday",
         "sunday",
-        "publicHoliday",
+        // "publicHoliday",
       ],
       operatingAvailableDaysKey = [
         "Mon",
@@ -251,7 +251,7 @@ jQuery(document).ready(function ($) {
         "Fri",
         "Sat",
         "Sun",
-        "publicHoliday",
+        // "publicHoliday",
       ],
       operatingHours = [];
 
@@ -276,7 +276,7 @@ jQuery(document).ready(function ($) {
           [operatingAvailableDaysKey[x]]: 1,
           updated_at: new Date().getFullYear(),
           created_at: new Date().getFullYear(),
-          active: true,
+          active: 1,
         });
       } else {
         operatingHours.push({
@@ -293,7 +293,7 @@ jQuery(document).ready(function ($) {
           [operatingAvailableDaysKey[x]]: 1,
           updated_at: new Date().getFullYear(),
           created_at: new Date().getFullYear(),
-          active: false,
+          active: 0,
         });
       }
     }
