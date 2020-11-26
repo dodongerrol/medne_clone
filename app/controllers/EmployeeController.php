@@ -3592,7 +3592,7 @@ class EmployeeController extends \BaseController {
 			'message'	=> 'Invalid Password.'
 		);
   }
-  
+  // restore employee
   public function reverseEmployeeDeletion()
 	{
 		$input = Input::all();
