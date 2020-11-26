@@ -167,7 +167,17 @@ jQuery(document).ready(function($) {
 					EndTime:  $('#'+operatingAvailableDays[i]+'-div input.timepicker.time-to.ui-timepicker-input').val(),
 					[operatingAvailableDaysKey[i]]: 1,
 					updated_at: new Date().getFullYear(),
-					created_at: new Date().getFullYear()
+					created_at: new Date().getFullYear(),
+					active: true
+				});
+			} else {
+				providersOperatingHours.push({
+					StartTime: $('#'+operatingAvailableDays[i]+'-div input.timepicker.time-from.ui-timepicker-input').val(),
+					EndTime:  $('#'+operatingAvailableDays[i]+'-div input.timepicker.time-to.ui-timepicker-input').val(),
+					[operatingAvailableDaysKey[i]]: 1,
+					updated_at: new Date().getFullYear(),
+					created_at: new Date().getFullYear(),
+					active: false
 				});
 			}
 		}
@@ -184,9 +194,20 @@ jQuery(document).ready(function($) {
                         day: breakAvailableDaysKey[x]+i,
                         type: 3,
                         updated_at: new Date().getFullYear(),
-                        created_at: new Date().getFullYear()
+						created_at: new Date().getFullYear(),
+						active: true
                     });
-                }
+                } else {
+					providersBreakHours.push({
+                        start_time: $('div#setupBreakHours #'+breakAvailableDays[x]+'-mainCollapsibleDiv .row.'+breakAvailableDays[x]+i+' input.timepicker.profile-breakHours-time-from.ui-timepicker-input').val(),
+                        end_time:  $('div#setupBreakHours #'+breakAvailableDays[x]+'-mainCollapsibleDiv .row.'+breakAvailableDays[x]+i+' input.timepicker.profile-breakHours-time-to.ui-timepicker-input').val(),
+                        day: breakAvailableDaysKey[x]+i,
+                        type: 3,
+                        updated_at: new Date().getFullYear(),
+						created_at: new Date().getFullYear(),
+						active: false
+                    });
+				}
             }
 		}
 		

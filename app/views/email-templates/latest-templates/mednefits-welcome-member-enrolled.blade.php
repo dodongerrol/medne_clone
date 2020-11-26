@@ -104,7 +104,7 @@
           <p style="margin:0;font-weight: 700">You may ring us</p>
           <p style="margin:0;">+65 3163 5403</p>
           <p style="margin:0;">+60 330 995 774</p>
-          <p style="margin-top:0;">Mon - Fri 10:00 to 19:00</p>
+          <p style="margin-top:0;">Mon - Fri 9:00am to 6:00pm</p>
 
           <p style="margin:0;font-weight: 700">Drop us a note, anytime</p>
           <p style="margin-top:0;margin-bottom: 40px;">happiness@mednefits.com</p>

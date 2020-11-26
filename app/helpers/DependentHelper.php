@@ -26,5 +26,21 @@ class DependentHelper
 		}
 		return $dep;
 	}
+
+	public static function getEmployeeDependentID($employee_id)
+	{
+		$dependent_account = DB::table('employee_family_coverage_sub_accounts')
+														->where('owner_id', $employee_id)
+														->first();
+
+		if($dependent_account) {
+			$dependent_plan = DB::table('dependent_plan_history')
+													->where('user_id', $dependent_account->user_id)->first();
+
+			if($dependent_plan) {
+				\BenefitsPlanHelper::updateDependentPlanStatusCount($dependent_plan->dependent_plan_id);
+			}
+		}
+	}
 }
 ?>

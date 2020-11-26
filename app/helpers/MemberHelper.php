@@ -89,7 +89,7 @@ class MemberHelper
 					// $entitlement = DB::table('employee_wallet_entitlement')->where('member_id', $member_id)->orderBy('created_at', 'desc')->first();
 				}
 				$first_plan = PlanHelper::getUserFirstPlanByCreatedAt($member_id);
-				return ['start' => date('Y-m-d', strtotime($first_plan)), 'end' => PlanHelper::endDate($spending_accounts->medical_spending_end_date), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($first_plan)), 'end' => $today, 'id' => null];
 			}
 		} else {
 			$credit_resets = DB::table('credit_reset')

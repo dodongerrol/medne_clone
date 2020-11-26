@@ -316,7 +316,7 @@
                 <span class="child-one" style="display: inline-block;vertical-align: middle;margin: 0 10px 0 0;height: 40px;max-height: 40px;">
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/envelope.png" style="width: 40px;">
                 </span>
-                <span style="text-decoration: none;display: inline-block;vertical-align: middle;">happiness@mednefits.com</span>
+                <span style="text-decoration: none;display: inline-block;vertical-align: middle;">support@mednefits.com</span>
               </div>
             </div>
 

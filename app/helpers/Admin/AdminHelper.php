@@ -14,4 +14,19 @@ class AdminHelper{
         $returnAdmin = Admin_AuthController::FindAdmin($adminvalue);
         return $returnAdmin;
     }
+
+    public static function getAdminID( )
+	{	
+		// return Session::flush();
+		$result = Session::get('admin');
+		if($result) {
+			try {
+				return $result['admin_id'][0];
+			} catch(Exception $e) {
+				return $result['admin_id'][0];
+			}	
+		}
+
+		return false;
+	}
 }

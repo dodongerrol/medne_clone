@@ -587,15 +587,16 @@ public function getFavouriteClinics($userID)
             DB::table('clinic_time')
                 ->where('ManageTimeID', $manageTime->ManageTimeID)
                 ->delete();
-
+            
             // Insert new record
             for ($i = 0; $i < count($data); $i++) { 
-                $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1, 'Created_on' => time()));
-                    DB::table('clinic_time')
-                        ->insert($data[$i]);    
+                if ( $data[$i]['active'] == true ) {
+                    $data[$i] = array_merge($data[$i], array( 'ManageTimeID' => $manageTime->ManageTimeID, 'ClinicID' => $clinic_id, 'Active' => 1, 'Created_on' => time()));
+                    $r = DB::table('clinic_time')
+                        ->insert($data[$i]);
+                } 
             }
-
-            return true;
+            return "Providers operating hours successfully updated.";
         }
 
         public function updateBreakHours($data, $clinic_id) {
@@ -606,18 +607,20 @@ public function getFavouriteClinics($userID)
             
             // update manage events
             for ($x = 0; $x < count($data); $x++) {
-                $guid = StringHelper::getGUID();
-                if (!isset($data[$x]['clinic_id'])) {
-                    $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
-                } else {
-                    $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
+                if ($data[$x]['active'] == true) {
+                    $guid = StringHelper::getGUID();
+                    if (!isset($data[$x]['clinic_id'])) {
+                        $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
+                    } else {
+                        $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
+                    }
+                    
+                    DB::table('extra_events')
+                        ->insert($data[$x]);
                 }
-                
-                DB::table('extra_events')
-                    ->insert($data[$x]);
             }
             
-            return true;
+            return "Providers break hours successfully updated.";
         }
 
         public function getProviderOperatingHour($clinic_id) {

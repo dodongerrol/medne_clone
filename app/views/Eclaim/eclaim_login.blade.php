@@ -53,7 +53,7 @@
 					<h3 class="tooltip-phone-email-title">You may ring us</h3>
 					<h3 class="tooltip-phone-email-details">+65 3163 5403</h3>
 					<h3 class="tooltip-phone-email-details">+60 330 995 774</h3>
-					<h3 class="tooltip-phone-email-details">Mon - Fri 9:30am to 6:30pm</h3>
+					<h3 class="tooltip-phone-email-details">Mon - Fri 9:00am to 6:00pm</h3>
 					<br>
 					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
 					<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>

@@ -9407,6 +9407,7 @@ public function downloadEclaimCsv( )
 					'APPROVED DATE'			=> $approved_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED DATE'			=> $rejected_status == TRUE ? date('d F Y h:i A', strtotime($res->updated_at)) : null,
 					'REJECTED REASON'		=> $res->rejected_reason,
+					'BANK NAME'				=> (string)$bank_name,
 					'BANK ACCOUNT NUMBER'	=> (string)$bank_account_number,
 					'BANK CODE'					=> $bank_code,
 					'BRANCH CODE'				=> $bank_brh

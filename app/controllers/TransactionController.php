@@ -254,11 +254,19 @@ class TransactionController extends BaseController {
 			}
 
 			if((int)$input['back_date'] == 1) {
-
-				$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
-				$customer_active_plan = DB::table('customer_active_plan')
-				->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
-				->first();
+				$user_type = PlanHelper::getUserAccountType($input['id']);
+				$user_id = $input['id'];
+				if($user_type == "employee") {
+					$user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('customer_active_plan')
+					->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
+					->first();
+				} else {
+					$user_plan_history = DB::table('dependent_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+					$customer_active_plan = DB::table('dependent_plans')
+					->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
+					->first();
+				}
 
 				if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 					$limit = $user_plan_history->total_visit_limit - $user_plan_history->total_visit_created;
@@ -359,7 +367,7 @@ class TransactionController extends BaseController {
 				if($customer_active_plan->account_type == "enterprise_plan" && (int)$clinic_type->visit_deduction == 1)	{
 					$temp['enterprise_visit_deduction'] = 1;
 				}
-
+				
 				try {
 					$result = $transaction->createTransaction($temp);
 
@@ -3282,7 +3290,7 @@ class TransactionController extends BaseController {
 		->get();
 
 		if(sizeof($check) == 0) {
-			return array('status' => FALSE, 'error' => 0, );
+			return array('status' => FALSE, 'error' => 0);
 		}
 
 		foreach ($check as $key => $trans) {

@@ -2102,9 +2102,16 @@ class BenefitsDashboardController extends \BaseController {
 			} else if($active_plan->account_type == 'trial_plan'){
 				$plan_name = "Trial Plan";
 			} else if($active_plan->account_type == 'lite_plan') {
-				$plan_name = "Basic Plan";
+				$plan_name = "Basic Plan (Post-paid)";
+				if($active_plan->plan_method == "pre_paid")	{
+					$plan_name = "Basic Plan (Pre-paid)";
+				}
+			} else if($active_plan->account_type == 'super_pro_plan') {
+				$plan_name = "Super Pro Plan";
 			} else if($active_plan->account_type == 'enterprise_plan') {
 				$plan_name = "Enterprise Plan";
+			} else if($active_plan->account_type == 'out_of_pocket') {
+				$plan_name = "Ouf Of Pocket";
 			}
 
 			$employee_status = PlanHelper::getEmployeeStatus($user->UserID);
@@ -11897,7 +11904,6 @@ class BenefitsDashboardController extends \BaseController {
 			$final_user[] = $temp;
 		}
 		
-		return $final_user;
 		return Excel::create('Employee Information', function($excel) use($final_user) {
 			$excel->sheet('Sheetname', function($sheet) use($final_user) {
 				$sheet->fromArray( $final_user );
