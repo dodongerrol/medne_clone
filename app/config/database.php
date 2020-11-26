@@ -56,7 +56,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host' => '127.0.0.1',
-			'database'  => 'medicloud_v3',
+			'database'  => 'master',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',
