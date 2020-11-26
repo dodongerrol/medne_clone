@@ -276,6 +276,24 @@ jQuery(document).ready(function ($) {
           [operatingAvailableDaysKey[x]]: 1,
           updated_at: new Date().getFullYear(),
           created_at: new Date().getFullYear(),
+          active: true,
+        });
+      } else {
+        operatingHours.push({
+          StartTime: $(
+            "#profile-operatingHours-" +
+              availableDays[x] +
+              "-div input.timepicker.profile-operatingHours-time-from.ui-timepicker-input"
+          ).val(),
+          EndTime: $(
+            "#profile-operatingHours-" +
+              availableDays[x] +
+              "-div input.timepicker.profile-operatingHours-time-to.ui-timepicker-input"
+          ).val(),
+          [operatingAvailableDaysKey[x]]: 1,
+          updated_at: new Date().getFullYear(),
+          created_at: new Date().getFullYear(),
+          active: false,
         });
       }
     }
