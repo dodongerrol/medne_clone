@@ -1332,6 +1332,7 @@ public function getAllUsers( )
   $results = DB::table('user')
   ->where('PhoneNo', 'LIKE', '%'.$input['q'].'%')
   ->where('Active', 1)
+  ->where('UserType', 5)
   ->orderBy('UserType', 'desc')
   ->select('UserID as id', 'Name as name', 'NRIC as nric', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type')
   ->orderBy('UserID')
@@ -1351,7 +1352,21 @@ public function getAllUsers( )
           $user->company_name = ucwords($info->company_name);
         }
       }
+
+      // get dependents
+      $dependents = DB::table('employee_family_coverage_sub_accounts')
+                  ->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
+                  ->where('employee_family_coverage_sub_accounts.owner_id', $user_id)
+                  ->select('UserID as id', 'Name as name', 'NRIC as nric', 'Image as image', 'Email as email', 'UserType as user_type', 'access_type')
+                  ->get();
+      
       $format[] = $user;
+      if(sizeof($dependents) > 0) {
+        foreach($dependents as $dependent) {
+          $dependent->company_name = $user->company_name ? $user->company_name : null;
+          $format[] = $dependent;
+        }
+      }
     }
   }
 
