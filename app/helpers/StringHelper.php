@@ -291,7 +291,7 @@ class StringHelper{
             $member = DB::table('user')->where('UserID', $result->UserID)->first();
             if($member) {
                 if(isset($result->admin_id)) {
-                    $member->admin_id = $result->admin_id;
+                    $member->admin_id = $result->admin_id[0];
                 }
                 return $member;
             } else {
