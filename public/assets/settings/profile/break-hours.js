@@ -267,6 +267,31 @@ jQuery(document).ready(function ($) {
             type: 3,
             updated_at: new Date().getFullYear(),
             created_at: new Date().getFullYear(),
+            active: true,
+          });
+        } else {
+          breakHours.push({
+            start_time: $(
+              "div#profile-breakHours-time-panel #" +
+                availableDays[x] +
+                "-mainCollapsibleDiv .row." +
+                availableDays[x] +
+                i +
+                " input.timepicker.profile-breakHours-time-from.ui-timepicker-input"
+            ).val(),
+            end_time: $(
+              "div#profile-breakHours-time-panel #" +
+                availableDays[x] +
+                "-mainCollapsibleDiv .row." +
+                availableDays[x] +
+                i +
+                " input.timepicker.profile-breakHours-time-to.ui-timepicker-input"
+            ).val(),
+            day: operatingAvailableDaysKey[x] + i,
+            type: 3,
+            updated_at: new Date().getFullYear(),
+            created_at: new Date().getFullYear(),
+            active: false,
           });
         }
       }
@@ -277,7 +302,7 @@ jQuery(document).ready(function ($) {
       type: "PUT",
       data: {
         providersDetails: {
-          providersBreakHours: breakHours,
+          providersBreakHours: breakHours ? breakHours : "",
         },
       },
     }).done(function (data) {
