@@ -608,6 +608,7 @@ public function getFavouriteClinics($userID)
             // update manage events
             for ($x = 0; $x < count($data); $x++) {
                 if ($data[$x]['active'] == true) {
+<<<<<<< HEAD
                     $guid = StringHelper::getGUID();
                     if (!isset($data[$x]['clinic_id'])) {
                         $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
@@ -617,6 +618,20 @@ public function getFavouriteClinics($userID)
                     
                     DB::table('extra_events')
                         ->insert($data[$x]);
+=======
+                    // Remove active key
+                    unset( $data[$x]['active'] );
+                    
+                    $guid = StringHelper::getGUID();
+                    if (!isset($data[$x]['clinic_id'])) {
+                        $newData = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
+                    } else {
+                        $newData = array_merge($data[$x], array( 'id' => $guid));    
+                    }
+                    
+                    DB::table('extra_events')
+                        ->insert( $newData );
+>>>>>>> 1a1b70ab... Hotfix 59vvkc (#616)
                 }
             }
             
