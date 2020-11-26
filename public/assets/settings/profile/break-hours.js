@@ -46,52 +46,128 @@ jQuery(document).ready(function ($) {
           let dayKey = availableDaysKeys.indexOf(
             breakHoursData[i]["day"].replace(/\d+/g, "")
           );
-          // Trigger button click event
-          if (!$("#" + availableDays[dayKey] + "-div").is(":visible")) {
-            $("#" + availableDays[dayKey] + "-addBreak").click();
+
+          // Check if operating hours day toggle is on
+          const operatingHoursDayToggleOn = $(
+            "#profile-operatingHours-" +
+              availableDays[dayKey] +
+              "-div .profile-operatingHours-chk_activate"
+          ).prop("checked");
+
+          if (operatingHoursDayToggleOn) {
+            // Enable Add Break Button
+            $("#" + availableDays[dayKey] + "-addBreak").prop(
+              "disabled",
+              false
+            );
+
+            // Trigger button click event
+            if (!$("#" + availableDays[dayKey] + "-div").is(":visible")) {
+              $("#" + availableDays[dayKey] + "-addBreak").click();
+            }
+
+            // Show row
+            $(
+              "div#profile-breakHours-time-panel #" +
+                availableDays[dayKey] +
+                "-mainCollapsibleDiv .row." +
+                availableDays[dayKey] +
+                breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
+                ""
+            ).css("display", "block");
+
+            // Set Toggle ON
+            $(
+              "div#profile-breakHours-time-panel #" +
+                availableDays[dayKey] +
+                "-mainCollapsibleDiv .row." +
+                availableDays[dayKey] +
+                breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
+                " .profile-breakHours-chk_activate"
+            ).bootstrapToggle("on");
+
+            // Populate Time from and to
+            $(
+              "div#profile-breakHours-time-panel #" +
+                availableDays[dayKey] +
+                "-mainCollapsibleDiv .row." +
+                availableDays[dayKey] +
+                breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
+                " input.timepicker.profile-breakHours-time-from.ui-timepicker-input"
+            ).val(breakHoursData[i]["start_time"]);
+            $(
+              "div#profile-breakHours-time-panel #" +
+                availableDays[dayKey] +
+                "-mainCollapsibleDiv .row." +
+                availableDays[dayKey] +
+                breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
+                "  input.timepicker.profile-breakHours-time-to.ui-timepicker-input"
+            ).val(breakHoursData[i]["end_time"]);
+          } else {
+            // Disable Add Break Button for Day that is Toggle OFF
+            $("#" + availableDays[dayKey] + "-addBreak").prop("disabled", true);
           }
-
-          // Show row
-          $(
-            "div#profile-breakHours-time-panel #" +
-              availableDays[dayKey] +
-              "-mainCollapsibleDiv .row." +
-              availableDays[dayKey] +
-              breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
-              ""
-          ).css("display", "block");
-
-          // Set Toggle ON
-          $(
-            "div#profile-breakHours-time-panel #" +
-              availableDays[dayKey] +
-              "-mainCollapsibleDiv .row." +
-              availableDays[dayKey] +
-              breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
-              " .profile-breakHours-chk_activate"
-          ).bootstrapToggle("on");
-
-          // Populate Time from and to
-          $(
-            "div#profile-breakHours-time-panel #" +
-              availableDays[dayKey] +
-              "-mainCollapsibleDiv .row." +
-              availableDays[dayKey] +
-              breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
-              " input.timepicker.profile-breakHours-time-from.ui-timepicker-input"
-          ).val(breakHoursData[i]["start_time"]);
-          $(
-            "div#profile-breakHours-time-panel #" +
-              availableDays[dayKey] +
-              "-mainCollapsibleDiv .row." +
-              availableDays[dayKey] +
-              breakHoursData[i]["day"].toString().match(/[0-9]/g)[0] +
-              "  input.timepicker.profile-breakHours-time-to.ui-timepicker-input"
-          ).val(breakHoursData[i]["end_time"]);
         }
       } else {
         $("#config_alert_box").css("display", "block");
         $("#config_alert_box").html("No record found.");
+
+        // Disable Add Break Button for Day that is Toggle OFF
+
+        const availableDays = [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+          "publicHoliday",
+        ];
+
+        for (let x = 0; x < availableDays.length; x++) {
+          // Check if operating hours day toggle is on
+          const operatingHoursDayToggleOn = $(
+            "#profile-operatingHours-" +
+              availableDays[x] +
+              "-div .profile-operatingHours-chk_activate"
+          ).prop("checked");
+
+          if (operatingHoursDayToggleOn) {
+            $("#" + availableDays[x] + "-addBreak").prop("disabled", false);
+          } else {
+            // Set toggle Off all days row
+            for (let y = 0; y < 5; y++) {
+              if (y == 4) {
+                $(
+                  ".row." +
+                    availableDays[x] +
+                    "" +
+                    0 +
+                    " ." +
+                    availableDays[x] +
+                    "" +
+                    0 +
+                    ".profile-breakHours-chk_activate"
+                ).bootstrapToggle("off");
+              } else {
+                $(
+                  ".row." +
+                    availableDays[x] +
+                    "" +
+                    y +
+                    " ." +
+                    availableDays[x] +
+                    "" +
+                    y +
+                    ".profile-breakHours-chk_activate"
+                ).bootstrapToggle("off");
+              }
+            }
+
+            $("#" + availableDays[x] + "-addBreak").prop("disabled", true);
+          }
+        }
 
         setTimeout(function () {
           $("#config_alert_box").css("display", "none");
