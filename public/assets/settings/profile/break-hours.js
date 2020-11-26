@@ -306,7 +306,7 @@ jQuery(document).ready(function ($) {
         "fri",
         "sat",
         "sun",
-        "publicHoliday",
+        // "publicHoliday",
       ],
       breakHours = [];
 
@@ -343,7 +343,7 @@ jQuery(document).ready(function ($) {
             type: 3,
             updated_at: new Date().getFullYear(),
             created_at: new Date().getFullYear(),
-            active: true,
+            active: 1,
           });
         } else {
           breakHours.push({
@@ -367,7 +367,7 @@ jQuery(document).ready(function ($) {
             type: 3,
             updated_at: new Date().getFullYear(),
             created_at: new Date().getFullYear(),
-            active: false,
+            active: 0,
           });
         }
       }
