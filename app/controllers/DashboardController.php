@@ -206,8 +206,7 @@ class DashboardController extends \BaseController {
 				- providersBreakHours (for public holiday day value must be 'br')
 	*/
 	function updateProvidersDetail() {
-		try {
-			$payload = Input::all();
+		$payload = Input::all();
 
 			if (!isset($payload['provider_id'])) {
 				$getSessionData = StringHelper::getMainSession(3);
@@ -242,13 +241,6 @@ class DashboardController extends \BaseController {
 					'success' => false
 				);
 			}
-
-		} catch(Exception $error) {print_r($error);
-			return array(
-				'message' => $error,
-				'success' => false
-			);
-		}
 	}
 
 	function getProviderOperatingHours () {

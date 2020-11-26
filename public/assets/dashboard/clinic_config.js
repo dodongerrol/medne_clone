@@ -152,10 +152,10 @@ jQuery(document).ready(function($) {
 		// get All modal value and populate it to a array holder
 		var providersPhone = $('#con-mobile').val(),
 			providersName = $('#con-clinic-name').val(),
-			operatingAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
-			operatingAvailableDaysKey = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'publicHoliday'],
-			breakAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'publicHoliday'],
-			breakAvailableDaysKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun', 'publicHoliday'],
+			operatingAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+			operatingAvailableDaysKey = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+			breakAvailableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+			breakAvailableDaysKey = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
 			providersOperatingHours = [],
 			providersBreakHours = [];
 			
@@ -168,7 +168,7 @@ jQuery(document).ready(function($) {
 					[operatingAvailableDaysKey[i]]: 1,
 					updated_at: new Date().getFullYear(),
 					created_at: new Date().getFullYear(),
-					active: true
+					active: 1
 				});
 			} else {
 				providersOperatingHours.push({
@@ -177,7 +177,7 @@ jQuery(document).ready(function($) {
 					[operatingAvailableDaysKey[i]]: 1,
 					updated_at: new Date().getFullYear(),
 					created_at: new Date().getFullYear(),
-					active: false
+					active: 0
 				});
 			}
 		}
@@ -195,7 +195,7 @@ jQuery(document).ready(function($) {
                         type: 3,
                         updated_at: new Date().getFullYear(),
 						created_at: new Date().getFullYear(),
-						active: true
+						active: 1
                     });
                 } else {
 					providersBreakHours.push({
@@ -205,7 +205,7 @@ jQuery(document).ready(function($) {
                         type: 3,
                         updated_at: new Date().getFullYear(),
 						created_at: new Date().getFullYear(),
-						active: false
+						active: 0
                     });
 				}
             }
