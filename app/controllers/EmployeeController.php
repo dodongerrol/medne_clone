@@ -3730,12 +3730,12 @@ class EmployeeController extends \BaseController {
 					]
 				];
 
-				if(env('APP_ENV') == "production") {
-					$api_endpoint = "https://api.custify.com/people";
-					$headers = array();
-					$headers['Authorization'] = 'Bearer 8a6ndoxR0cy6FnsJhASw7oRX8oUp5NtQZm9Um1XuLyTwjnOdnxsCU769FRl3';
-					$result = \httpLibrary::sendDataToCustify($api_endpoint, $custifyPeole, $headers, $headers['Authorization']);
-				}
+				// if(env('APP_ENV') == "production") {
+				// 	$api_endpoint = "https://api.custify.com/people";
+				// 	$headers = array();
+				// 	$headers['Authorization'] = 'Bearer 8a6ndoxR0cy6FnsJhASw7oRX8oUp5NtQZm9Um1XuLyTwjnOdnxsCU769FRl3';
+				// 	$result = \httpLibrary::sendDataToCustify($api_endpoint, $custifyPeole, $headers, $headers['Authorization']);
+				// }
 
 				return array('status' => true, 'message' => 'Employee Successfully reactivated and deleted plan withdraw schedule.');
 			}
