@@ -462,7 +462,7 @@
                   <span>
                     <a href=""><img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/envelope.png"></a>
                   </span>
-                  <span style="text-decoration: none; font-size: 15px;">happiness@mednefits.com</span>
+                  <span style="text-decoration: none; font-size: 15px;">support@mednefits.com</span>
                 </div>
               </p>
             </div>

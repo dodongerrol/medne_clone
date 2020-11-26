@@ -425,7 +425,7 @@
                 <div class="child-one">
                   <img class="contact-img" src="https://mednefits.s3-ap-southeast-1.amazonaws.com/e-template-img/envelope.png">
                 </div>
-                <div class="child-two" style="text-decoration: none;">happiness@mednefits.com</div>
+                <div class="child-two" style="text-decoration: none;">support@mednefits.com</div>
               </div>
             </div>
 
