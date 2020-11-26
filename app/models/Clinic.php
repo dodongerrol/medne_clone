@@ -613,7 +613,6 @@ public function getFavouriteClinics($userID)
             // update manage events
             for ($x = 0; $x < count($data); $x++) {
                 if ($data[$x]['active'] == true) {
-<<<<<<< HEAD
                     // Remove active key
                     unset( $data[$x]['active'] );
                     
@@ -626,17 +625,6 @@ public function getFavouriteClinics($userID)
                     
                     DB::table('extra_events')
                         ->insert( $newData );
-=======
-                    $guid = StringHelper::getGUID();
-                    if (!isset($data[$x]['clinic_id'])) {
-                        $data[$x] = array_merge($data[$x], array( 'id' => $guid, 'clinic_id' => $clinic_id));
-                    } else {
-                        $data[$x] = array_merge($data[$x], array( 'id' => $guid));    
-                    }
-                    
-                    DB::table('extra_events')
-                        ->insert($data[$x]);
->>>>>>> f97901d057352d3c7b4081c8b35b21dffe3f086e
                 }
             }
             
