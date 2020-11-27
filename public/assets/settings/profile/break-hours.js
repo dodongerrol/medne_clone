@@ -134,7 +134,22 @@ jQuery(document).ready(function ($) {
           ).prop("checked");
 
           if (operatingHoursDayToggleOn) {
+            // Disable Button
             $("#" + availableDays[x] + "-addBreak").prop("disabled", false);
+            // Change CSS
+            $("#" + availableDays[x] + "-mainCollapsibleDiv").css(
+              "color",
+              "black"
+            );
+            $("#" + availableDays[x] + "-addBreak").css(
+              "background",
+              "#1b9bd7"
+            );
+            $("#" + availableDays[x] + "-addBreak").css("color", "white");
+            $("#" + availableDays[x] + "-addBreak").css(
+              "border",
+              "1px solid #1b9bd7"
+            );
           } else {
             // Set toggle Off all days row
             for (let y = 0; y < 5; y++) {
@@ -165,7 +180,22 @@ jQuery(document).ready(function ($) {
               }
             }
 
+            // Disable Button
             $("#" + availableDays[x] + "-addBreak").prop("disabled", true);
+            // Change CSS
+            $("#" + availableDays[x] + "-mainCollapsibleDiv").css(
+              "color",
+              "#ACACAA"
+            );
+            $("#" + availableDays[x] + "-addBreak").css(
+              "background",
+              "#ACACAA"
+            );
+            $("#" + availableDays[x] + "-addBreak").css("color", "#ACACAA");
+            $("#" + availableDays[x] + "-addBreak").css(
+              "border",
+              "1px solid #ACACAA"
+            );
           }
         }
 
