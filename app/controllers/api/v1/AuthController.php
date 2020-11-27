@@ -5514,12 +5514,19 @@ public function createEclaim( )
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
   if($user_type == "employee") {
-    $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->orderBy('created_at', 'desc')->first();
+    $user_plan_history = DB::table('user_plan_history')->where('user_id', $user_id)
+                            ->where('type', 'started')
+                            ->orderBy('created_at', 'desc')
+                            ->first();
     $customer_active_plan = DB::table('customer_active_plan')
     ->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
     ->first();
   } else {
-    $user_plan_history = DB::table('dependent_plan_history')->where('user_id', $input['user_id'])->orderBy('created_at', 'desc')->first();
+    $user_plan_history = DB::table('dependent_plan_history')
+                              ->where('user_id', $input['user_id'])
+                              ->where('type', 'started')
+                              ->orderBy('created_at', 'desc')
+                              ->first();
     $customer_active_plan = DB::table('dependent_plans')
     ->where('dependent_plan_id', $user_plan_history->dependent_plan_id)
     ->first();
