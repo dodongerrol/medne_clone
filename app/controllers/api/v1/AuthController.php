@@ -5506,12 +5506,6 @@ public function createEclaim( )
   //   return Response::json($returnObject);
   // }
 
-  if($input['spending_type'] == "medical" && $spending['medical_enabled'] == false || $input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false) {
-    $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Member not eligible for Non-Panel transactions';
-    return Response::json($returnObject);
-  }
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
   if($user_type == "employee") {
@@ -5564,6 +5558,15 @@ public function createEclaim( )
       $returnObject->status = FALSE;
       $returnObject->head_message = '2/2 A&E used';
       $returnObject->message = "Looks like you've reached the maximum of 2 approved A&E this term.";
+      return Response::json($returnObject);
+    }
+  }
+
+  if($customer_active_plan->account_type != "enterprise_plan") {
+    if($input['spending_type'] == "medical" && $spending['medical_enabled'] == false || $input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false) {
+      $returnObject->status = FALSE;
+      $returnObject->head_message = 'Non-Panel Error';
+      $returnObject->message = 'Member not eligible for Non-Panel transactions';
       return Response::json($returnObject);
     }
   }
