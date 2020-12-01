@@ -6964,11 +6964,11 @@ public function payCreditsNew( )
         return Response::json($returnObject);
       }
 
-      if($checker->member_activated) {
-        $returnObject->status = false;
-        $returnObject->message = 'User was active, please sign in!';
-        return Response::json($returnObject);
-      }
+      // if($checker->member_activated) {
+      //   $returnObject->status = false;
+      //   $returnObject->message = 'User was active, please sign in!';
+      //   return Response::json($returnObject);
+      // }
 
       if($input['password'] !== $input['password_confirm']) {
         $returnObject->status = false;
