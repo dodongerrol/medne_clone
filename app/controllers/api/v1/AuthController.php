@@ -7132,6 +7132,9 @@ public function payCreditsNew( )
 
           return Response::json($returnObject);
       } else {
+        if($userDetails->PhoneNo == null) {
+          $userDetails->member_activated = 0;
+        }
         $returnObject->status = true;
         $returnObject->data = $userDetails;
 
