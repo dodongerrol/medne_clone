@@ -55,8 +55,8 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'read' 		=> array( 'host' => 'host.docker.internal', ),
-			'write' 		=> array( 'host' => 'host.docker.internal', ),
+			'read' 		=> array( 'host' => '127.0.0.1', ),
+			'write' 		=> array( 'host' => '127.0.0.1', ),
 			'database'  => 'medicloud_v3',
 			'username'  => 'root',
 			'password'  => '',
