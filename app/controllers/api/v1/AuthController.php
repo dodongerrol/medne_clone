@@ -663,6 +663,7 @@ return Response::json($returnObject);
             $user_plan_history = DB::table('user_plan_history')
                       ->where('user_id', $user_id)
                       ->where('type', 'started')
+                      ->orderBy('created_at', 'desc')
                       ->first();
 
             $customer_active_plan = DB::table('customer_active_plan')
