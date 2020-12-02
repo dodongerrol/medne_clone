@@ -1087,6 +1087,19 @@ class CustomerHelper
 		return $cost_plan_and_days * $default_price;
 	}
 
+	public static function calculateInvoicePlanPricePerPlan($default_price, $start, $end, $plan_start, $plan_end)
+	{
+		$diff = date_diff(new \DateTime(date('Y-m-d', strtotime($start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($end)))));
+		$days = $diff->format('%a');
+		$total_days = date_diff(new \DateTime(date('Y-m-d', strtotime($plan_start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($plan_end)))));
+		$total_days = $total_days->format('%a');
+		$remaining_days = $days;
+
+		$cost_plan_and_days = ($remaining_days / $total_days);
+		// return ['total_days' => $total_days, 'remaining_days' => $remaining_days, 'default_price' => $default_price, 'cost_plan_and_days' => ($remaining_days / $total_days)];
+		return $cost_plan_and_days * $default_price;
+	}
+
 	public static function getCompanyPlanDates($customer_id) 
 	{
 		$plan = DB::table('customer_plan')
