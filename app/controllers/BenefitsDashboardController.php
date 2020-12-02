@@ -5096,11 +5096,10 @@ class BenefitsDashboardController extends \BaseController {
 
 		foreach ($active_plans as $key => $plan) {
 			$data = [];
-			$get_active_plan = $active_plan->getActivePlan($plan->customer_active_plan_id);
-			// $check = $invoice->checkCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
-			// $get_invoice = $invoice->getCorporateInvoiceActivePlan($get_active_plan->customer_active_plan_id);
+			$get_active_plan = $plan;
+			$customerPlan = DB::table('customer_plan')->where('customer_plan_id', $get_active_plan->plan_id)->first();
 			$get_invoice = DB::table('corporate_invoice')->where('customer_active_plan_id', $get_active_plan->customer_active_plan_id)->first();
-
+			
 			if($plan->paid == "true") {
 				$data['paid'] = true;
 			} else {
@@ -5155,13 +5154,13 @@ class BenefitsDashboardController extends \BaseController {
 				$data['amount'] = number_format($data['amount'], 2);
 				$data['total'] = $data['amount'];
 			} else {
-				$calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
-				$end_plan_date = $calculated_prices_end_date['plan_end'];
-				$calculated_prices_end_date = $calculated_prices_end_date['plan_end'];
+				// $calculated_prices_end_date = PlanHelper::getCompanyPlanDates($get_active_plan->customer_start_buy_id);
+				$end_plan_date = $customerPlan->plan_end;
+				$calculated_prices_end_date = $customerPlan->plan_end;
 				if((int)$get_invoice->override_total_amount_status == 1) {
 					$calculated_prices = $get_invoice->override_total_amount;
 				} else {
-					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($get_invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+					$calculated_prices = CustomerHelper::calculateInvoicePlanPricePerPlan($get_invoice->individual_price, $get_active_plan->plan_start, date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date))), $customerPlan->plan_start, $calculated_prices_end_date);
 				}
 				// $calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 				// $duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
@@ -6505,7 +6504,7 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = PlanHelper::calculateInvoicePlanPrice($invoice->individual_price, $get_active_plan->plan_start, $calculated_prices_end_date);
+					$calculated_prices = $calculated_prices = CustomerHelper::calculateInvoicePlanPricePerPlan($invoice->individual_price, $get_active_plan->plan_start, date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date))), $plan->plan_start, $calculated_prices_end_date);
 				}
 				$calculated_prices = \DecimalHelper::formatDecimal($calculated_prices);
 				$duration = PlanHelper::getPlanDuration($get_active_plan->customer_start_buy_id, $get_active_plan->plan_start);
@@ -16078,7 +16077,7 @@ class BenefitsDashboardController extends \BaseController {
 				if((int)$invoice->override_total_amount_status == 1) {
 					$calculated_prices = $invoice->override_total_amount;
 				} else {
-					$calculated_prices = CustomerHelper::calculateInvoicePlanPrice($invoice->individual_price, $active->plan_start, $calculated_prices_end_date);
+					$calculated_prices = CustomerHelper::calculateInvoicePlanPricePerPlan($invoice->individual_price, $active->plan_start, date('Y-m-d', strtotime('-1 day', strtotime($calculated_prices_end_date))), $plan->plan_start, $calculated_prices_end_date);
 					$calculated_prices = $calculated_prices;
 				}
 				$plan_amount = $calculated_prices * $invoice->employees;
