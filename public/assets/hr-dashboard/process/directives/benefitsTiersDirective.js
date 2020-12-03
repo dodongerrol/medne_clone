@@ -87,6 +87,7 @@ app.directive('benefitsTiersDirective', [
 				scope.isAllPreviewEmpChecked = false;
 				scope.showDependentsAdded = false;
 				scope.isEditDetailModalOpen = false;
+				scope.selected_customer_id = null;
 				
 				scope.spending_account_status = {}
 
@@ -129,6 +130,13 @@ app.directive('benefitsTiersDirective', [
 				scope.toggleGPcapStatus = function (opt) {
 
 					scope.tier_data.gp_cap_status = opt;
+				}
+
+				scope.checkSession = function () {
+					hrSettings.getSession()
+						.then(function (response) {
+							scope.selected_customer_id = response.data.customer_buy_start_id;
+						});
 				}
 
 				scope.nextBtn = function () {
@@ -915,72 +923,80 @@ app.directive('benefitsTiersDirective', [
 				}
 
 				scope.downloadTemplate = function () {
-					var med_spending_acct = scope.spending_account_status.medical;
-					var well_spending_acct = scope.spending_account_status.wellness;
+					// var med_spending_acct = scope.spending_account_status.medical;
+					// var well_spending_acct = scope.spending_account_status.wellness;
 					// var med_spending_acct = false;
 					// var well_spending_acct = true;
 					// var medical_entitlement = localStorage.getItem('hasMedicalEntitlementBalance');
 					// var wellness_entitlement = localStorage.getItem('hasWellnessEntitlementBalance');
 
+					const customer_id = scope.selected_customer_id;
 
-					if ( scope.excelTemplate.status == true) {
-						if (scope.downloadWithDependents != null) {
+					let url = `${serverUrl.url}/hr/api/export/employee-excel-template?customer_id=${customer_id}`;
 
-							if (scope.downloadWithDependents == false) {
-								console.log('w/out dependents','prepaid');
-								
-								window.location.href = `${scope.excelTemplate.employee}`;
-							} else {
-
-								console.log('w/dependents','prepaid');
-								window.location.href = `${scope.excelTemplate.dependent}`;
-							}
-							
-						} else {
-							swal('Error!', 'Please select an option for you template.', 'error');
-						}
-					} else {
-						if (scope.downloadWithDependents != null) {
-							if (scope.downloadWithDependents == false) {
-								// window.location.href = '/excel/Employee Enrollment Listing.xlsx';
-								console.log('w/out dependents', med_spending_acct, well_spending_acct);
-	
-								if (med_spending_acct == true && well_spending_acct == true ) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Medical-With-Wellness.xlsx';
-									console.log('scenario 1');
-								} else if (med_spending_acct == true && well_spending_acct == false) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Medical.xlsx';
-									console.log('scenario 2');
-								} else if (med_spending_acct == false && well_spending_acct == true) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Wellness.xlsx';
-									console.log('scenario 3');
-								} else if (med_spending_acct == false || well_spending_acct == false) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing.xlsx';
-									console.log('scenario 4');
-								}
-							} else {
-								console.log('w/dependents');
-								// window.location.href = '/excel/Employees and Dependents.xlsx';
-								// window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents.xlsx';
-	
-								if (med_spending_acct == true && well_spending_acct == true ) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Medical-With-Wellness.xlsx';
-									console.log('scenario 1');
-								} else if (med_spending_acct == true && well_spending_acct == false) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Medical.xlsx';
-									console.log('scenario 2');
-								} else if (med_spending_acct == false && well_spending_acct == true) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Wellness.xlsx';
-									console.log('scenario 3');
-								} else if (med_spending_acct == false || well_spending_acct == false) {
-									window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents.xlsx';
-									console.log('scenario 4');
-								}
-							}
-						} else {
-							swal('Error!', 'Please select an option for you template.', 'error');
-						}
+					if (scope.downloadWithDependents) {
+						url += '&with_dependents=true';
 					}
+
+					window.open(url);
+					// if ( scope.excelTemplate.status == true) {
+					// 	if (scope.downloadWithDependents != null) {
+
+					// 		if (scope.downloadWithDependents == false) {
+					// 			console.log('w/out dependents','prepaid');
+								
+					// 			window.location.href = `${scope.excelTemplate.employee}`;
+					// 		} else {
+
+					// 			console.log('w/dependents','prepaid');
+					// 			window.location.href = `${scope.excelTemplate.dependent}`;
+					// 		}
+							
+					// 	} else {
+					// 		swal('Error!', 'Please select an option for you template.', 'error');
+					// 	}
+					// } else {
+					// 	if (scope.downloadWithDependents != null) {
+					// 		if (scope.downloadWithDependents == false) {
+					// 			// window.location.href = '/excel/Employee Enrollment Listing.xlsx';
+					// 			console.log('w/out dependents', med_spending_acct, well_spending_acct);
+	
+					// 			if (med_spending_acct == true && well_spending_acct == true ) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Medical-With-Wellness.xlsx';
+					// 				console.log('scenario 1');
+					// 			} else if (med_spending_acct == true && well_spending_acct == false) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Medical.xlsx';
+					// 				console.log('scenario 2');
+					// 			} else if (med_spending_acct == false && well_spending_acct == true) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing-With-Wellness.xlsx';
+					// 				console.log('scenario 3');
+					// 			} else if (med_spending_acct == false || well_spending_acct == false) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/employees/Employee-Enrollment-Listing.xlsx';
+					// 				console.log('scenario 4');
+					// 			}
+					// 		} else {
+					// 			console.log('w/dependents');
+					// 			// window.location.href = '/excel/Employees and Dependents.xlsx';
+					// 			// window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/Employees+and+Dependents.xlsx';
+	
+					// 			if (med_spending_acct == true && well_spending_acct == true ) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Medical-With-Wellness.xlsx';
+					// 				console.log('scenario 1');
+					// 			} else if (med_spending_acct == true && well_spending_acct == false) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Medical.xlsx';
+					// 				console.log('scenario 2');
+					// 			} else if (med_spending_acct == false && well_spending_acct == true) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents-With-Wellness.xlsx';
+					// 				console.log('scenario 3');
+					// 			} else if (med_spending_acct == false || well_spending_acct == false) {
+					// 				window.location.href = 'https://mednefits.s3-ap-southeast-1.amazonaws.com/excel/v2/dependents/Employees-and-Dependents.xlsx';
+					// 				console.log('scenario 4');
+					// 			}
+					// 		}
+					// 	} else {
+					// 		swal('Error!', 'Please select an option for you template.', 'error');
+					// 	}
+					// }
 					
 				}
 
@@ -1918,7 +1934,7 @@ app.directive('benefitsTiersDirective', [
 					scope.getSpendingAccountStatus();
 					scope.getExcelLink();
 					scope.getPrePostStatus();
-
+					scope.checkSession();
 
 					$timeout(function () {
 						loading_trap = false;
