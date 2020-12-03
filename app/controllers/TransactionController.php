@@ -1607,6 +1607,18 @@ class TransactionController extends BaseController {
 				$table_wallet_history = 'wellness_wallet_history';
 			}
 
+			if((int)$trans->lite_plan_enabled == 1) {
+	            $logs_lite_plan = DB::table($table_wallet_history)
+	            ->where('logs', 'deducted_from_mobile_payment')
+	            ->where('lite_plan_enabled', 1)
+	            ->where('id', $trans->transaction_id)
+	            ->first();
+
+	            if($logs_lite_plan) {
+	                $mednefits_credits += floatval($trans->co_paid_amount);
+	            }
+	        }
+
 			if($trans->co_paid_status == 0 || $trans->co_paid_status == "0") {
 				
 				if(strrpos($trans->clinic_discount, '%')) {
@@ -1884,19 +1896,17 @@ class TransactionController extends BaseController {
 				$table_wallet_history = 'wellness_wallet_history';
 			}
 
-	        // if((int)$trans->lite_plan_enabled == 1) {
-	        //     $logs_lite_plan = DB::table($table_wallet_history)
-	        //     ->where('logs', 'deducted_from_mobile_payment')
-	        //     ->where('lite_plan_enabled', 1)
-	        //     ->where('id', $trans->transaction_id)
-	        //     ->first();
+	        if((int)$trans->lite_plan_enabled == 1) {
+	            $logs_lite_plan = DB::table($table_wallet_history)
+	            ->where('logs', 'deducted_from_mobile_payment')
+	            ->where('lite_plan_enabled', 1)
+	            ->where('id', $trans->transaction_id)
+	            ->first();
 
-	        //     if($logs_lite_plan && floatval($trans->credit_cost) > 0 && (int)$trans->lite_plan_use_credits == 0) {
-	        //         $mednefits_credits += floatval($trans->co_paid_amount);
-	        //     } else if($logs_lite_plan && floatval($trans->procedure_cost) >= 0 && (int)$trans->lite_plan_use_credits == 1){
-	        //         $mednefits_credits += floatval($trans->co_paid_amount);
-	        //     }
-	        // }
+	            if($logs_lite_plan) {
+	                $mednefits_credits += floatval($trans->co_paid_amount);
+	            }
+	        }
 
 			if((int)$trans->co_paid_status == 0) {
 				if(strrpos($trans->clinic_discount, '%')) {
