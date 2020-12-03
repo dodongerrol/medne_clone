@@ -322,6 +322,17 @@ class PlanHelper
 			$data['pending'] = false;
 		}
 
+		$data['deactivated'] = false;
+		// check if company is deactivated
+		$hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $customer_id)->first();
+		if($hr) {
+			$hrDeactivated = DB::table('hr_deactivate_activated')->where('hr_id', $hr->hr_dashboard_id)->first();
+
+			if($hrDeactivated) {
+				$data['deactivated'] = true;
+			}
+		}
+
 		return $data;
 	}
 
@@ -6302,6 +6313,17 @@ class PlanHelper
 			$data['pending'] = true;
 		} else {
 			$data['pending'] = false;
+		}
+
+		$data['deactivated'] = false;
+		// check if company is deactivated
+		$hr = DB::table('customer_hr_dashboard')->where('customer_buy_start_id', $plan->customer_buy_start_id)->first();
+		if($hr) {
+			$hrDeactivated = DB::table('hr_deactivate_activated')->where('hr_id', $hr->hr_dashboard_id)->first();
+
+			if($hrDeactivated) {
+				$data['deactivated'] = true;
+			}
 		}
 
 		$data['user_type'] = "dependents";

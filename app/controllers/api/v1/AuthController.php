@@ -2081,6 +2081,16 @@ public function getNewClinicDetails($id)
      return Response::json($returnObject);
    }
 
+   if($plan_coverage['deactivated'] == true) {
+    $returnObject->status = FALSE;
+    $returnObject->status_type = 'access_block';
+    $returnObject->head_message = 'Registration Unavailable';
+    $returnObject->message = 'Company is deactivated';
+    $returnObject->data = $plan_coverage;
+    $returnObject->employee_status = false;
+    return Response::json($returnObject);
+  }
+
    $current_balance = 0;
    if($customer_active_plan->account_type != "super_pro_plan") {
     //  check if lite plan user
