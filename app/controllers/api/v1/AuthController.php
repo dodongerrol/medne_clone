@@ -5325,6 +5325,9 @@ public function getHealthLists( )
           ->where('active', 1)
           ->get();
           if(sizeof($get_company_e_claim_services) > 0) {
+            foreach($get_company_e_claim_services as $service) {
+              $service->health_type_id = $service->e_claim_service_type_id;
+            }
             $spending_types = $get_company_e_claim_services;
           } else { 
             $spending_types = DB::table('health_types')->where('type', $input['spending_type'])->where('active', 1)->get();
