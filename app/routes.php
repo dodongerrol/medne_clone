@@ -1518,6 +1518,11 @@ Route::group(array('prefix' => 'app'), function()
 
 });
 
+/**
+ * @todo transfer this to route group with middleware
+ */
+Route::get('hr/api/export/employee-excel-template', 'EmployeeExportTemplateController@generate');
+
 // admin login for all platforms
 Route::get('app/login_clininic_from_admin','App_AuthController@loginClinicAdmin');
 Route::get('app/login_hr_from_admin', 'BenefitsDashboardController@hrLoginAdmin');

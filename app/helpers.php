@@ -115,3 +115,17 @@ if (!function_exists('isNotEqual')) {
         return $value1 != $value2;
     }
 }
+
+if (!function_exists('collect')) {
+    function collect($data): Collection
+    {
+        return Collection::make($data);
+    }
+}
+
+if (!function_exists('isNullOrEmptyString')) {
+    function isNullOrEmptyString($str): bool
+    {
+        return (!isset($str) || trim($str) === '');
+    }
+}

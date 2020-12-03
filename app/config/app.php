@@ -201,6 +201,7 @@ return array(
 		'PDF' => 'Barryvdh\DomPDF\Facade',
 		'AWS' => 'Aws\Laravel\AwsFacade',
 		// 'Twilio' 						=> 'Aloha\Twilio\Support\Laravel\Facade',
+		'Collection' => 'Tightenco\Collect\Support\Collection',
 	),
 
     \Cloudinary::config(array(
