@@ -139,7 +139,7 @@ body, tr, td, input, textarea, select {
     </div>
  
              <div id="title-detail" style=" word-wrap:break-word;" >
-                 We are sorry your appointment has been cancelled, if you wish to re-schedule please login to your account and place a new booking. Or feel free to get in touch with us on happiness@mednefits.com and let us know if we can be of any assistance. Here is a summary of your appointment details.
+                 We are sorry your appointment has been cancelled, if you wish to re-schedule please login to your account and place a new booking. Or feel free to get in touch with us on support@mednefits.com and let us know if we can be of any assistance. Here is a summary of your appointment details.
             </div>
   </div>
   <!--end of detail-container-->
@@ -254,7 +254,7 @@ body, tr, td, input, textarea, select {
     </div>
       
     <div id="title-detail" style=" font-size:14px; word-wrap:break-word; padding-bottom:10px;" >
-                If you have any questions, feel free to contact us at <span style="color:#156aaf;"><a style="text-decoration:none;" href="mailto:happiness@mednefits.com">happiness@mednefits.com</a></span>, we are
+                If you have any questions, feel free to contact us at <span style="color:#156aaf;"><a style="text-decoration:none;" href="mailto:support@mednefits.com">support@mednefits.com</a></span>, we are
 always happy to hear from you!
     </div> -->
       
@@ -292,7 +292,7 @@ always happy to hear from you!
        <span> +65 3163 5403 </span> 
        <span> +60 330 995 774 </span> 
        <span> 
-           <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:happiness@mednefits.com">        happiness@mednefits.com
+           <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:support@mednefits.com">        support@mednefits.com
            </a>
        </span> 
        </div>

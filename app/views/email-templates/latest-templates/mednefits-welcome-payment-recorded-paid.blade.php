@@ -67,7 +67,7 @@
 
             <p style="color: #807b7b;margin: 0;font-size: 17px;">+65 3163 5403</p>
             <p style="color: #807b7b;margin: 0;font-size: 17px;">+60 330 995 774</p>
-            <p style="color: #807b7b;margin: 0;font-size: 17px;">happiness@mednefits.com</p>
+            <p style="color: #807b7b;margin: 0;font-size: 17px;">support@mednefits.com</p>
           </div>
 
           <div class="social-icons" style="">

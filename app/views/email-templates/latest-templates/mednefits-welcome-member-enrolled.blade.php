@@ -107,7 +107,7 @@
           <p style="margin-top:0;">Mon - Fri 9:00am to 6:00pm</p>
 
           <p style="margin:0;font-weight: 700">Drop us a note, anytime</p>
-          <p style="margin-top:0;margin-bottom: 40px;">happiness@mednefits.com</p>
+          <p style="margin-top:0;margin-bottom: 40px;">support@mednefits.com</p>
 
 
           <p style="">Thank you</p>

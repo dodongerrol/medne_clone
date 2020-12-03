@@ -108,7 +108,7 @@
 				<p style="color: #464d52;">Singapore</p> 
 				<p style="color: #464d52;">Tel: +6562547889</p>
 				<p style="color: #464d52;">mednefits.com</p> 
-				<p style="color: #464d52;">happiness@mednefits.com</p>
+				<p style="color: #464d52;">support@mednefits.com</p>
 			</div>
 
 			<div class="body">

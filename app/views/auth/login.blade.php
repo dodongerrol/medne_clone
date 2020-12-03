@@ -134,7 +134,7 @@ color: #999999 !important;
       <p style="font-size: 16px; color: #565656;">+60 330 995 774</p>
       <br>
       <p style="margin-bottom: 0px;">or send us an email</p>
-      <p style="font-size: 16px; color: #00AFF0;">happiness@mednefits.com</p>
+      <p style="font-size: 16px; color: #00AFF0;">support@mednefits.com</p>
       <br>
       <p>our friendly support team will assist you.</p>
     </div>  

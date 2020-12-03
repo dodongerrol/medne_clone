@@ -65,7 +65,7 @@
           </li>
         </ol>
 
-        <p style="margin: 35px 0;">If you have any queries, feel free to contact us at happiness@mednefits.com, we are always happy to hear from you.</p>
+        <p style="margin: 35px 0;">If you have any queries, feel free to contact us at support@mednefits.com, we are always happy to hear from you.</p>
 
         <p style="font-weight: 700">Thank you</p>
         <p style="font-weight: 700;margin-bottom: 50px;">Your Mednefits Team</p>
@@ -76,7 +76,7 @@
 
             <p style="color: #807b7b;margin: 0;font-size: 17px;">+65 3163 5403</p>
             <p style="color: #807b7b;margin: 0;font-size: 17px;">+60 330 995 774</p>
-            <p style="color: #807b7b;margin: 0;font-size: 17px;">happiness@mednefits.com</p>
+            <p style="color: #807b7b;margin: 0;font-size: 17px;">support@mednefits.com</p>
           </div>
 
           <div class="social-icons" style="">
