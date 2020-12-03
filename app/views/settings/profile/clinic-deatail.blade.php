@@ -172,6 +172,24 @@
     //     $mobileCode = '+65';
     //     $phone = $clinicdetails['phone'];
     // }
+
+    if($phone[0] == '+'){
+        if($phone.strpos($phone, '+65') > -1){
+          $phone = str_replace('+65', '', $phone);
+        }
+        if($phone.strpos($phone, '+60') > -1){
+          $phone = str_replace('+60', '', $phone);
+        }
+        if($phone.strpos($phone, '+65') < 0 && $phone.strpos($phone, '+60') < 0){
+          $phone = str_replace('+', '', $phone);
+        }
+      }else{
+        $temp_code = substr($phone, 0, 2);
+        echo $temp_code;
+        if($temp_code == '65' || $temp_code == '60'){
+          $phone = substr($phone, 2);
+        }
+      }
     ?>
 
     <tr>
