@@ -158,21 +158,20 @@
 
     <?php
 
-    $phone = '';
-    $code ='';
-    $mobileCode = '';
-
+    $phone = $clinicdetails['phone'];
+    $code = $clinicdetails['code'];
+    $mobileCode = $clinicdetails['code'];
     
-    if ($clinicdetails['phone_code'] != ''){
-        $code = $clinicdetails['phone_code'];
-        $length = strlen($code);
-        $phone = substr($clinicdetails['phone'],$length);
-        $mobileCode = $clinicdetails['phone_code'];
-    }else {
+    // if ($clinicdetails['phone_code'] != ''){
+    //     $code = $clinicdetails['phone_code'];
+    //     $length = strlen($code);
+    //     $phone = substr($clinicdetails['phone'],$length);
+    //     $mobileCode = $clinicdetails['phone_code'];
+    // }else {
 
-        $mobileCode = '+65';
-        $phone = $clinicdetails['phone'];
-    }
+    //     $mobileCode = '+65';
+    //     $phone = $clinicdetails['phone'];
+    // }
     ?>
 
     <tr>

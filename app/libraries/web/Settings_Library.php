@@ -785,7 +785,8 @@ class Settings_Library {
 
         $inputdata = Input::all();
 
-        $mobile = $inputdata['code'] . $inputdata['Phone'];
+        // $mobile = $inputdata['code'] . $inputdata['Phone'];
+        $mobile = $inputdata['Phone'];
 
         if(!empty($inputdata)){
             $dataArray['clinicid'] = $clinicdata->Ref_ID;

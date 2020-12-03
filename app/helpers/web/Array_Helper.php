@@ -24,15 +24,16 @@ class Array_Helper{
             $data['lat']= $clinicDetails->Lat;
             $data['lng']= $clinicDetails->Lng;
             $data['phone_code']= $clinicDetails->Phone_Code;
+            $data['code']= $clinicDetails->Phone_Code;
             $data['phone']= $clinicDetails->Phone;
             $data['website']= $clinicDetails->Website;
             $data['clinic_type']= $clinicDetails->Clinic_Type;
             $data['message']= $clinicDetails->Personalized_Message;
-            if($clinicDetails->Country == 'Singapore'){
-                $data['code']= "+65";
-            }else{
-                $data['code']= null;
-            }
+            // if($clinicDetails->Country == 'Singapore'){
+            //     $data['code']= "+65";
+            // }else{
+            //     $data['code']= null;
+            // }
             return $data;
         }else{
             return FALSE;
