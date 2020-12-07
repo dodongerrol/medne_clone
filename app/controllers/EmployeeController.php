@@ -3399,6 +3399,7 @@ class EmployeeController extends \BaseController {
       $newPassword = [
         'Password' => StringHelper::encode($input['password_confirm']),
         'member_activated' => 1,
+        'Status' => 1,
         'account_update_status' => 1,
         'account_already_update'  => 1
       ];
