@@ -2543,6 +2543,18 @@ class TransactionController extends BaseController {
 					$table_wallet_history = 'wellness_wallet_history';
 				}
 
+				if((int)$trans->lite_plan_enabled == 1) {
+					$logs_lite_plan = DB::table($table_wallet_history)
+					->where('logs', 'deducted_from_mobile_payment')
+					->where('lite_plan_enabled', 1)
+					->where('id', $trans->transaction_id)
+					->first();
+	
+					if($logs_lite_plan) {
+						$mednefits_credits += floatval($trans->co_paid_amount);
+					}
+				}
+
 				if($trans->co_paid_status == 0) {
 					if(strrpos($trans->clinic_discount, '%')) {
 						$percentage = chop($trans->clinic_discount, '%');
