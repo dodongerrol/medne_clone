@@ -269,7 +269,7 @@
             @endif
           @endif
 
-          <p style="margin: 15px 0 0 0;font-size: 15px;">Please contact us for any questions related to your invoice/contract at happiness@mednefits.com</p>
+          <p style="margin: 15px 0 0 0;font-size: 15px;">Please contact us for any questions related to your invoice/contract at support@mednefits.com</p>
           <p style="font-size: 12px;">Please send all payment advice to finance@mednefits.com</p>
         </div>
 

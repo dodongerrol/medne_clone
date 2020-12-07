@@ -208,7 +208,7 @@ body, tr, td, input, textarea, select {
 										<tbody>
 										<tr>
 											<td valign="middle" width="100%" style="text-align: left; font-family: Helvetica, Arial, sans-serif, 'Open Sans'; font-size: 14px; color: #9c9c9c; line-height: 24px; font-weight: 400;" class="fullCenter">
-												<p><span style="color:#666666;"><strong>Hello {{$emailName}}!</strong></span><span style="color:#000000;"><strong><br></strong></span></p><p><br></p><p>We are sorry your appointment has been cancelled, if you wish to re-schedule please login to your account and place a new booking. Or feel free to get in touch with us on happiness@mednefits.com and let us know if we can be of any assistance. Here is a summary of your appointment details.</p>
+												<p><span style="color:#666666;"><strong>Hello {{$emailName}}!</strong></span><span style="color:#000000;"><strong><br></strong></span></p><p><br></p><p>We are sorry your appointment has been cancelled, if you wish to re-schedule please login to your account and place a new booking. Or feel free to get in touch with us on support@mednefits.com and let us know if we can be of any assistance. Here is a summary of your appointment details.</p>
 
 											</td>
 										</tr>

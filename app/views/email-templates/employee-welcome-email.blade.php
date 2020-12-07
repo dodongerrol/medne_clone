@@ -97,7 +97,7 @@ increasing number of partners updated in this list.
        <span> +65 3163 5403 </span> 
        <span> +60 330 995 774 </span> 
        <span> 
-           <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:happiness@mednefits.com">        happiness@mednefits.com
+           <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:support@mednefits.com">        support@mednefits.com
            </a>
        </span> 
        </div>

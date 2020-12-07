@@ -176,7 +176,7 @@
           <p style="margin-bottom: 0;">Account No.: 3743069399</p>
           <p style="margin-bottom: 20px;">ACRA 201415681W</p>
           
-          <p style="margin-bottom: 0;font-size: 12px">Please contact us for any questions related to your invoice/contract at happiness@mednefits.com</p>
+          <p style="margin-bottom: 0;font-size: 12px">Please contact us for any questions related to your invoice/contract at support@mednefits.com</p>
           <p>Please send all payment advice to finance@mednefits.com</p>
     		</div>
     	</div>

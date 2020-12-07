@@ -50,7 +50,7 @@
         <p style="margin-top:0;">Mon - Fri 9:00am to 6:00pm</p>
 
         <p style="margin:0;font-weight: 700">Drop us a note, anytime</p>
-        <p style="margin-top:0;margin-bottom: 40px;">happiness@mednefits.com</p>
+        <p style="margin-top:0;margin-bottom: 40px;">support@mednefits.com</p>
 
 
         <p style="">Thank you</p>
@@ -99,7 +99,7 @@
             <p style="color: #807b7b;font-weight:700;margin-top: 0;font-size: 18px;">Contact support</p>
 
             <p style="color: #807b7b;margin: 0;font-size: 17px;">+65 3163 5403</p>
-            <p style="color: #807b7b;margin: 0;font-size: 17px;">happiness@mednefits.com</p>
+            <p style="color: #807b7b;margin: 0;font-size: 17px;">support@mednefits.com</p>
           </div>
 
           <div class="social-icons" style="">

@@ -130,7 +130,7 @@
     </div> -->
 
     <div id="title-detail" style=" font-size:14px; word-wrap:break-word; padding-bottom:10px;" >
-                If it wasn't you, then please report to <span style="color:#156aaf;"><a style="text-decoration:none;" href="mailto:happiness@mednefits.com">happiness@mednefits.com</a></span>.
+                If it wasn't you, then please report to <span style="color:#156aaf;"><a style="text-decoration:none;" href="mailto:support@mednefits.com">support@mednefits.com</a></span>.
 
     <div id="title-detail" style=" font-size:14px; word-wrap:break-word; padding-bottom:10px;" >
               Thank you, <br />
@@ -166,7 +166,7 @@
        <span> +65 3163 5403 </span>
        <span> +60 330 995 774 </span>
        <span>
-           <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:happiness@mednefits.com">happiness@mednefits.com
+           <a style="text-decoration:none;  color:#9c9c9c; border-left: 1px solid; margin-left: 3px; padding-left: 6px;" href="mailto:support@mednefits.com">support@mednefits.com
            </a>
        </span>
        </div>

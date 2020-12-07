@@ -56,7 +56,7 @@
 					<h3 class="tooltip-phone-email-details">Mon - Fri 9:00am to 6:00pm</h3>
 					<br>
 					<h3 class="tooltip-phone-email-title">Drop us a note, anytime</h3>
-					<h3 class="tooltip-phone-email-details">happiness@mednefits.com</h3>
+					<h3 class="tooltip-phone-email-details">support@mednefits.com</h3>
 				</div>
 			</a>
 		</div>

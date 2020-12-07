@@ -158,21 +158,38 @@
 
     <?php
 
-    $phone = '';
-    $code ='';
-    $mobileCode = '';
-
+    $phone = $clinicdetails['phone'];
+    $code = $clinicdetails['code'];
+    $mobileCode = $clinicdetails['code'];
     
-    if ($clinicdetails['phone_code'] != ''){
-        $code = $clinicdetails['phone_code'];
-        $length = strlen($code);
-        $phone = substr($clinicdetails['phone'],$length);
-        $mobileCode = $clinicdetails['phone_code'];
-    }else {
+    // if ($clinicdetails['phone_code'] != ''){
+    //     $code = $clinicdetails['phone_code'];
+    //     $length = strlen($code);
+    //     $phone = substr($clinicdetails['phone'],$length);
+    //     $mobileCode = $clinicdetails['phone_code'];
+    // }else {
 
-        $mobileCode = '+65';
-        $phone = $clinicdetails['phone'];
-    }
+    //     $mobileCode = '+65';
+    //     $phone = $clinicdetails['phone'];
+    // }
+
+    if($phone[0] == '+'){
+        if($phone.strpos($phone, '+65') > -1){
+          $phone = str_replace('+65', '', $phone);
+        }
+        if($phone.strpos($phone, '+60') > -1){
+          $phone = str_replace('+60', '', $phone);
+        }
+        if($phone.strpos($phone, '+65') < 0 && $phone.strpos($phone, '+60') < 0){
+          $phone = str_replace('+', '', $phone);
+        }
+      }else{
+        $temp_code = substr($phone, 0, 2);
+        echo $temp_code;
+        if($temp_code == '65' || $temp_code == '60'){
+          $phone = substr($phone, 2);
+        }
+      }
     ?>
 
     <tr>
