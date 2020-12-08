@@ -168,7 +168,15 @@ class UserPackage extends Eloquent
                         $data['member_id'] = $user_details->UserID;
                         $data['nric'] = $user_details->NRIC;
                         $data['employee_id'] = $user_details->emp_no;
-                        $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
+                        
+                        if($user_details->DOB) {
+                            $user_details->DOB = \Utility::convert_date_format($user_details->DOB);
+                            $user_details->DOB = date('d/m/Y', strtotime($user_details->DOB));
+                        } else {
+                            $user_details->DOB = date('d/m/Y', strtotime($user_details->DOB));;
+                        }
+
+                        $data['dob'] = $user_details->DOB;
                         $data['plan_type'] = PlanHelper::getDependentPlanType($dependent_plan_history->dependent_plan_id);
                         $data['care_online'] = TRUE;
                         $data['packages'] = PlanHelper::getDependentsPackages($dependent_plan_history->dependent_plan_id, $dependent_plan_history, $owner_id);
@@ -302,7 +310,15 @@ class UserPackage extends Eloquent
                             $data['plan_type'] = PlanHelper::getEmployeePlanType($active_plan->customer_active_plan_id);
                         }
                         $data['care_online'] = TRUE;
-                        $data['dob'] = date('d/m/Y', strtotime($user_details->DOB));
+                        
+                        if($user_details->DOB) {
+                            $user_details->DOB = \Utility::convert_date_format($user_details->DOB);
+                            $user_details->DOB = date('d/m/Y', strtotime($user_details->DOB));
+                        } else {
+                            $user_details->DOB = date('d/m/Y', strtotime($user_details->DOB));;
+                        }
+
+                        $data['dob'] = $user_details->DOB;
                         $data['mobile'] = (string)$user_details->PhoneCode." ".(string)$user_details->PhoneNo;
                         if($data['plan_type'] == "Enterprise Plan") {
                             $data['plan_add_on'] = "N.A.";
