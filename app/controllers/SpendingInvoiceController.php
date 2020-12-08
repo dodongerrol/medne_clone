@@ -404,18 +404,22 @@ class SpendingInvoiceController extends \BaseController {
             if(date('Y-m-d') >= date('Y-m-d', strtotime($data->statement_date))) {
                 $statement = SpendingInvoiceLibrary::getInvoiceSpending($data->statement_id, true);
                 $statement['total_due'] = $statement['statement_amount_due'];
-            
-                $temp = array(
-                    'transaction'       => 'Invoice - '.$data->statement_number,
-                    'date_issue'        => date('d/m/Y', strtotime($data->statement_date)),
-                    'type'              => 'Invoice',
-                    'amount'            => 'S$'.$statement['statement_total_amount'],
-                    'status'            => (int)$data->statement_status,
-                    'statement_id'      => $data->statement_id,
-                    'currency_type'     => $statement['currency_type']
-                );
-
-                array_push($format, $temp);
+                
+                if($statement['statement_total_amount'] > 0) {
+                    $temp = array(
+                        'transaction'       => 'Invoice - '.$data->statement_number,
+                        'date_issue'        => date('d/m/Y', strtotime($data->statement_date)),
+                        'type'              => 'Invoice',
+                        'amount'            => $statement['statement_total_amount'],
+                        'status'            => (int)$data->statement_status,
+                        'statement_id'      => $data->statement_id,
+                        'currency_type'     => $statement['currency_type']
+                    );
+    
+                    array_push($format, $temp);
+                } else {
+                    $minus++;
+                }
             }
         }
 
