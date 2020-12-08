@@ -1094,7 +1094,11 @@ app.directive("employeeOverviewDirective", [
         scope.perPage = function (num) {
           scope.page_ctr = num;
           scope.page_active = 1;
-          scope.getEmployeeList(scope.page_active);
+          if(scope.isFilterClicked){
+            scope._empApplyFilter_(scope.global_statusData);
+          }else{
+            scope.getEmployeeList(scope.page_active);
+          }
         };
 
         scope.toggleAddDependents = function () {
@@ -1798,26 +1802,43 @@ app.directive("employeeOverviewDirective", [
         scope.nextPage = function () {
           if (scope.page_active < scope.employees.last_page) {
             scope.page_active++;
-            scope.getEmployeeList(scope.page_active);
+            if(scope.isFilterClicked){
+              scope._empApplyFilter_(scope.global_statusData);
+            }else{
+              scope.getEmployeeList(scope.page_active);
+            }
           }
         };
 
         scope.goToPage = function (page) {
           scope.page_active = page;
-          scope.getEmployeeList(scope.page_active);
+          if(scope.isFilterClicked){
+            scope._empApplyFilter_(scope.global_statusData);
+          }else{
+            scope.getEmployeeList(scope.page_active);
+          }
         };
 
         scope.prevPage = function () {
           if (scope.page_active > 1) {
             scope.page_active--;
-            scope.getEmployeeList(scope.page_active);
+            if(scope.isFilterClicked){
+              scope._empApplyFilter_(scope.global_statusData);
+            }else{
+              scope.getEmployeeList(scope.page_active);
+            }
           }
         };
 
         scope.removeSearchEmp = function () {
           scope.inputSearch = "";
           scope.page_active = 1;
-          scope.getEmployeeList(1);
+
+          if(scope.isFilterClicked){
+            scope._empApplyFilter_(scope.global_statusData);
+          }else{
+            scope.getEmployeeList(1);
+          }
         }
 
         scope.searchEmployee = function (input) {
@@ -2894,10 +2915,14 @@ app.directive("employeeOverviewDirective", [
         
         
         scope._empApplyFilter_ = function ( data ) {
-          
+          if(!scope.isFilterClicked){
+            scope.page_active = 1;
+            scope.isFilterClicked = true;
+          }
+          // scope.global_empLimitList
           console.log( data );
           scope.showLoading();
-          hrSettings.getFilterEmployees ( scope.page_active,scope.global_empLimitList,data.pending,data.logged_in,data.active,data.removed  )
+          hrSettings.getFilterEmployees ( scope.page_active,scope.page_ctr,data.pending,data.logged_in,data.active,data.removed  )
           .then(function( response ) {
             console.log(response);
             scope.employees = response.data;
