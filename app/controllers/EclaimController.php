@@ -3452,7 +3452,11 @@ public function getActivityInNetworkTransactions( )
 					if($trans->credit_cost > 0 && $trans->cash_cost > 0) {
 						$payment_type = 'Mednefits Credits + Cash';
 						$transaction_type = "credit_cash";
+					} else if($trans->credit_cost > 0) {
+						$payment_type = 'Mednefits Credits';
+						$transaction_type = "credits";
 					}
+
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
