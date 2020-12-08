@@ -298,6 +298,9 @@ class DependentController extends \BaseController {
 						if(!empty($user['dependents']) && sizeof($user['dependents']) > 0) {
 							foreach ($user['dependents'] as $key => $dependent) {
 								$dependent['plan_start'] = $plan_start;
+								$dependent['full_name'] = $dependent['full_name'] ?? $dependent['_full_name'];
+								$dependent['date_of_birth'] = $dependent['date_of_birth'] ?? $dependent['_date_of_birth'];
+								$dependent['relationship'] = $dependent['relationship'] ?? $dependent['_relationship'];
 
 								$plan_start = $dependent['plan_start'] ? medi_date_parser($dependent['plan_start']) : null;
 								// $plan_start = $plan_start ? date('Y-m-d', $plan_start) : null;
