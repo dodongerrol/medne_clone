@@ -80,13 +80,13 @@ class EclaimHelper
     }
 
     
-    if($environment == "production") {
+    // if($environment == "production") {
       $email['url'] = "https://medicloud.sg";
-    } else if($environment == "stage") {
-      $email['url'] = "http://staging.medicloud.sg";
-    } else {
-      $email['url'] = "http://medicloud.local";
-    }
+    // } else if($environment == "stage") {
+    //   $email['url'] = "http://staging.medicloud.sg";
+    // } else {
+    //   $email['url'] = "http://medicloud.local";
+    // }
 
     return EmailHelper::sendEmail($email);
   }
