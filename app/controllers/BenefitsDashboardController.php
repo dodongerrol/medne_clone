@@ -1969,7 +1969,7 @@ class BenefitsDashboardController extends \BaseController {
 						}
 					}
 				}
-
+				
 				if($type == "active") {
 					$users = DB::table('user')
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
@@ -2299,14 +2299,17 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			}
 
+			
+
 			if((int)$user->Active == 1 && (int)$user->member_activated == 1) {
 				// statuses
 				$panel = DB::table('transaction_history')->where('UserID', $user->UserID)->first();
 				$non_panel = DB::table('e_claim')->where('user_id', $user->UserID)->first();
 								
-				if($panel || $non_panel) {
+				if($panel || $non_panel && (int)$user->Active == 1) {
 					$emp_status = 'active';
-				} else if((int)$user->Active == 1 && (int)$user->member_activated == 1 && (int)$user->Status == 1){
+				}
+				if((int)$user->member_activated == 1) {
 					$emp_status = 'activated';
 				}
 			}
@@ -2378,8 +2381,6 @@ class BenefitsDashboardController extends \BaseController {
 			);
 			array_push($final_user, $temp);
 		}
-
-		dd(collect($final_user));
 		
 		$paginate['data'] = $final_user;
 		$paginate['with_employee_id'] = $with_employee_id;
