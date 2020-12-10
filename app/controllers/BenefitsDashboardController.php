@@ -1969,7 +1969,12 @@ class BenefitsDashboardController extends \BaseController {
 							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
-							array_push($ids, $user);
+							$panel = DB::table('transaction_history')->where('UserID', $user)->first();
+							$non_panel = DB::table('e_claim')->where('user_id', $user)->first();
+							
+							if(!$panel && !$non_panel) {
+								array_push($ids, $user);
+							}
 						}
 					}
 				}
