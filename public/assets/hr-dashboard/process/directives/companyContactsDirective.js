@@ -244,6 +244,7 @@ app.directive("companyContactsDirective", [
         };
 
         scope.downloadRefundPDF = function(invoice_data) {
+          console.log(invoice_data);
           $(".show-dl").show();
           $(".hide-dl").hide();
           var file = document.getElementById("pdf-print");
@@ -432,7 +433,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.downloadRefund = function(customer_active_plan_id) {
-          window.open(serverUrl.url + '/hr/get_cancellation_details?id=' + scope.activePlanDetails_pagination.data.customer_active_plan_id + '&token=' + window.localStorage.getItem('token'));
+          window.open(`${serverUrl.url}/hr/get_cancellation_details?id=${customer_active_plan_id}&token=${window.localStorage.getItem('token')}`)
         }
 
         scope.getRefundList = function() {
@@ -1196,6 +1197,7 @@ app.directive("companyContactsDirective", [
       }
       $("body").click(function(e){
         if ($(e.target).parents(".invoice-history-drop-click").length === 0) {
+          console.log(scope.getPlanInvoiceData);
           scope.getPlanInvoiceData.map((value,key)  => {
             value.isShowDrop = false;
           })

@@ -2380,8 +2380,7 @@ class BenefitsDashboardController extends \BaseController {
 			);
 			array_push($final_user, $temp);
 		}
-
-
+		
 		$paginate['data'] = $final_user;
 		$paginate['with_employee_id'] = $with_employee_id;
 		$paginate['medical_wallet'] = $medical_wallet;
