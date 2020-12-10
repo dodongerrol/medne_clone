@@ -1948,6 +1948,8 @@ class BenefitsDashboardController extends \BaseController {
 					$users = DB::table('user')
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 							->where('user.member_activated', 0)
+							->where('user.Active', 1)
+							->where('corporate_members.removed_status', 0)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
 							->lists('user.UserID');
 					if(sizeof($users) > 0) {
