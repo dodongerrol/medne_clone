@@ -648,6 +648,7 @@ app.directive("companyContactsDirective", [
         scope.page_active = 1;
         scope.per_page = 3;
         scope.getInvoiceHistoryData = function ( page,per_page,customer_active_plan_id ) {
+          scope.invoiceHistoryType = 'plan';
           page = scope.page_active;
           per_page = scope.per_page;
           customer_active_plan_id = scope.activePlanDetails_pagination.data.customer_active_plan_id;
@@ -850,7 +851,14 @@ app.directive("companyContactsDirective", [
               scope.dependent_acount_details = response.data.dependent_acount_details;
 
               scope.getEnrollmentHistoryData();
-              scope.getInvoiceHistoryData();
+
+              
+              if (scope.invoiceHistoryType === 'plan') {
+                scope.getInvoiceHistoryData();
+              } else {
+                scope.getRefundInvoiceHistory();
+              }
+              
             })
         }
 
@@ -1216,6 +1224,7 @@ app.directive("companyContactsDirective", [
       }
 
       scope.getRefundInvoiceHistory = function(){
+        scope.invoiceHistoryType = 'refund';
         scope.toggleLoading();
         $http.get(serverUrl.url + `/hr/get_refund_invoices?customer_active_plan_id=${scope.activePlanDetails_pagination.data.customer_active_plan_id}&limit=${scope.per_page}&page=${scope.page_active}`)
           .success(function (response) {
