@@ -1948,6 +1948,8 @@ class BenefitsDashboardController extends \BaseController {
 					$users = DB::table('user')
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 							->where('user.member_activated', 0)
+							->where('user.Active', 1)
+							->where('corporate_members.removed_status', 0)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
 							->lists('user.UserID');
 					if(sizeof($users) > 0) {
@@ -1961,11 +1963,18 @@ class BenefitsDashboardController extends \BaseController {
 					$users = DB::table('user')
 							->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
 							->where('user.member_activated', 1)
+							->where('user.Active', 1)
+							->where('corporate_members.removed_status', 0)
 							->where('corporate_members.corporate_id', $account_link->corporate_id)
 							->lists('user.UserID');
 					if(sizeof($users) > 0) {
 						foreach($users as $key => $user) {
-							array_push($ids, $user);
+							$panel = DB::table('transaction_history')->where('UserID', $user)->first();
+							$non_panel = DB::table('e_claim')->where('user_id', $user)->first();
+							
+							if(!$panel && !$non_panel) {
+								array_push($ids, $user);
+							}
 						}
 					}
 				}
@@ -2378,8 +2387,7 @@ class BenefitsDashboardController extends \BaseController {
 			);
 			array_push($final_user, $temp);
 		}
-
-
+		
 		$paginate['data'] = $final_user;
 		$paginate['with_employee_id'] = $with_employee_id;
 		$paginate['medical_wallet'] = $medical_wallet;
