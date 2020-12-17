@@ -79,13 +79,23 @@ class EclaimHelper
       $email['emailSubject'] = 'Rejected: Claim '.$id.' Submitted on '.$submitted_date;
     }
 
-    
+    // get user id and user token
+    $owner_id = StringHelper::getUserId($user_id);
+
+    $member = DB::table('user')->where('UserID', $owner_id)->first();
+    $jwt = new \JWT();
+		// create token
+		$member->signed_in = FALSE;
+		$member->expire_in = strtotime('+15 days', time());
+		$secret = 'w2c5M]=JSE/tpj#4;X';
+		$token = $jwt->encode($member, $secret);
+
     if($environment == "production") {
-      $email['url'] = "https://medicloud.sg";
+      $email['url'] = "https://medicloud.sg/app/login_empoyee_from_admin?token=".$token;
     } else if($environment == "stage") {
-      $email['url'] = "http://staging.medicloud.sg";
+      $email['url'] = "http://staging.medicloud.sg/app/login_empoyee_from_admin?token=".$token;
     } else {
-      $email['url'] = "http://medicloud.local";
+      $email['url'] = "http://medicloud.local/app/login_empoyee_from_admin?token=".$token;
     }
 
     return EmailHelper::sendEmail($email);

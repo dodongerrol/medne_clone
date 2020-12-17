@@ -8877,7 +8877,7 @@ public function loginEmployeeAdmin( )
 		// if($check) {
 			// Session::put('employee-session', $check->UserID);
 	$data['token'] = $input['token'];
-	if(isset($input['admin_id']) || $input['admin_id'] != null) {
+	if(isset($input['admin_id']) && $input['admin_id'] != null) {
 		Session::put('admin-session-id', $input['admin_id']);
 	}
 
