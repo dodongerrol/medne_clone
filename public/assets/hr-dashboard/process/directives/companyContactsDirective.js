@@ -244,6 +244,7 @@ app.directive("companyContactsDirective", [
         };
 
         scope.downloadRefundPDF = function(invoice_data) {
+          console.log(invoice_data);
           $(".show-dl").show();
           $(".hide-dl").hide();
           var file = document.getElementById("pdf-print");
@@ -432,7 +433,7 @@ app.directive("companyContactsDirective", [
         }
 
         scope.downloadRefund = function(customer_active_plan_id) {
-          window.open(serverUrl.url + '/hr/get_cancellation_details?id=' + scope.activePlanDetails_pagination.data.customer_active_plan_id + '&token=' + window.localStorage.getItem('token'));
+          window.open(`${serverUrl.url}/hr/get_cancellation_details?id=${customer_active_plan_id}&token=${window.localStorage.getItem('token')}`)
         }
 
         scope.getRefundList = function() {
@@ -647,6 +648,7 @@ app.directive("companyContactsDirective", [
         scope.page_active = 1;
         scope.per_page = 3;
         scope.getInvoiceHistoryData = function ( page,per_page,customer_active_plan_id ) {
+          scope.invoiceHistoryType = 'plan';
           page = scope.page_active;
           per_page = scope.per_page;
           customer_active_plan_id = scope.activePlanDetails_pagination.data.customer_active_plan_id;
@@ -849,7 +851,14 @@ app.directive("companyContactsDirective", [
               scope.dependent_acount_details = response.data.dependent_acount_details;
 
               scope.getEnrollmentHistoryData();
-              scope.getInvoiceHistoryData();
+
+              
+              if (scope.invoiceHistoryType === 'plan') {
+                scope.getInvoiceHistoryData();
+              } else {
+                scope.getRefundInvoiceHistory();
+              }
+              
             })
         }
 
@@ -1196,6 +1205,7 @@ app.directive("companyContactsDirective", [
       }
       $("body").click(function(e){
         if ($(e.target).parents(".invoice-history-drop-click").length === 0) {
+          console.log(scope.getPlanInvoiceData);
           scope.getPlanInvoiceData.map((value,key)  => {
             value.isShowDrop = false;
           })
@@ -1214,6 +1224,7 @@ app.directive("companyContactsDirective", [
       }
 
       scope.getRefundInvoiceHistory = function(){
+        scope.invoiceHistoryType = 'refund';
         scope.toggleLoading();
         $http.get(serverUrl.url + `/hr/get_refund_invoices?customer_active_plan_id=${scope.activePlanDetails_pagination.data.customer_active_plan_id}&limit=${scope.per_page}&page=${scope.page_active}`)
           .success(function (response) {
