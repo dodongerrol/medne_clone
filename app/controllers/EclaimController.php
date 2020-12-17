@@ -2925,15 +2925,15 @@ public function getActivityOutNetworkTransactions( )
 	$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
 	if(!empty($input['user_id']) && $input['user_id'] != null) {
-		$e_claim_result = DB::table('corporate_members')
-		->join('e_claim', 'e_claim.user_id', '=', 'corporate_members.user_id')
-		->where('corporate_members.corporate_id', $account->corporate_id)
-		->where('corporate_members.user_id', $input['user_id'])
-		->where('e_claim.spending_type', $spending_type)
-		->where('e_claim.status', 1)
-		->where('e_claim.date', '>=', $start)
-		->where('e_claim.date', '<=', $end)
-		->orderBy('e_claim.date', 'desc')
+		$ids = StringHelper::getSubAccountsID($input['user_id']);
+		// get e claim
+		$e_claim_result = DB::table('e_claim')
+		->whereIn('user_id', $ids)
+		->where('spending_type', $spending_type)
+		->where('date', '>=', $start)
+		->where('date', '<=', $end)
+		->where('status', 1)
+		->orderBy('date', 'desc')
 		->paginate($input['per_page']);
 	} else {
 		$user_ids = PlanHelper::getCompanyMemberIds($customer_id);

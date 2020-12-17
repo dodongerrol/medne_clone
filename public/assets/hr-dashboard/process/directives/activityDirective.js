@@ -1026,53 +1026,66 @@ app.directive('activityPage', [
 					activity_search.user_id = user_id;
 					activity_search.spending_type = scope.activitySpendingTypeSelected;
 					scope.search.close = true;
+					scope.in_network_transactions = [];
+					scope.e_claim_transactions = [];
 					hrActivity.searchEmployeeActivity(activity_search)
-						.then(function (response) {
-							scope.hideLoading();
-							if (response.status == 200) {
-								scope.activity_title = response.data.employee + ' Benefits Cost';
-								scope.activity = {};
-								scope.activity.total_lite_plan_consultation = 0;
-								scope.activity_dates = [];
-								scope.eclaim_dates = [];
-								scope.activity = response.data;
-								scope.activity.total_lite_plan_consultation = response.data.total_lite_plan_consultation;
+					.then(function (response) {
+						scope.hideLoading();
+						if (response.status == 200) {
+							scope.activity_title = response.data.employee + ' Benefits Cost';
+							scope.activity = {};
+							scope.activity.total_lite_plan_consultation = 0;
+							scope.activity_dates = [];
+							scope.eclaim_dates = [];
+							scope.activity = response.data;
+							scope.activity.total_lite_plan_consultation = response.data.total_lite_plan_consultation;
 
-								// if (scope.activity.spending_type == "medical") {
-								// 	// scope.activity.total_allocation = scope.credits.total_medical_employee_allocated;
-								// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
-								// } else {
-								// 	// scope.activity.total_allocation = scope.credits.total_wellness_employee_allocated;
-								// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
-								// 	// scope.activity.total_allocation = scope.total_allocation.total_wellness_allocation;
-								// }
+							// if (scope.activity.spending_type == "medical") {
+							// 	// scope.activity.total_allocation = scope.credits.total_medical_employee_allocated;
+							// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
+							// } else {
+							// 	// scope.activity.total_allocation = scope.credits.total_wellness_employee_allocated;
+							// 	scope.activity.total_allocation = scope.total_allocation.total_allocation;
+							// 	// scope.activity.total_allocation = scope.total_allocation.total_wellness_allocation;
+							// }
 
-								if (scope.activity.balance.indexOf(',') > -1) {
-									scope.activity.balance = scope.activity.balance.replace(",", "");
-								}
-								if (scope.activity.allocation.indexOf(',') > -1) {
-									scope.activity.allocation = scope.activity.allocation.replace(",", "");
-								}
-								if (scope.activity.pending_e_claim_amount.indexOf(',') > -1) {
-									scope.activity.pending_e_claim_amount = scope.activity.pending_e_claim_amount.replace(",", "");
-								}
+							// if (scope.activity.balance.indexOf(',') > -1) {
+							// 	scope.activity.balance = scope.activity.balance.replace(",", "");
+							// }
+							// if (scope.activity.allocation.indexOf(',') > -1) {
+							// 	scope.activity.allocation = scope.activity.allocation.replace(",", "");
+							// }
+							// if (scope.activity.pending_e_claim_amount.indexOf(',') > -1) {
+							// 	scope.activity.pending_e_claim_amount = scope.activity.pending_e_claim_amount.replace(",", "");
+							// }
 
-								scope.activity.balance = parseFloat(scope.activity.balance);
-								scope.activity.allocation = parseFloat(scope.activity.allocation);
-								scope.activity.pending_e_claim_amount = parseFloat(scope.activity.pending_e_claim_amount);
+							angular.forEach(response.data.in_network_transactions, function (value, key) {
+								scope.in_network_transactions.push(value);
+							});
 
-								if (scope.activity.total_spent_format_number > 0) {
-									scope.spent_progress_percentage = (scope.activity.in_network_spending_format_number / scope.activity.total_spent_format_number) * 100;
-								} else {
-									scope.spent_progress_percentage = 0;
-								}
-								$(".spent-box .progress-wrapper .progress-bar").css({ 'width': scope.spent_progress_percentage + '%' });
+							angular.forEach(response.data.e_claim_transactions, function (value, key) {
+								scope.e_claim_transactions.push(value);
+							});
 
-								scope.filterActivityByDateInNetwork(scope.activity.in_network_transactions);
-								scope.filterActivityByDateEclaim(scope.activity.e_claim_transactions);
-								scope.searchActivityPagination();
+							scope.activity.balance = parseFloat(scope.activity.balance);
+							scope.activity.allocation = parseFloat(scope.activity.allocation);
+							scope.activity.pending_e_claim_amount = parseFloat(scope.activity.pending_e_claim_amount);
+
+							if (scope.activity.total_spent_format_number > 0) {
+								scope.spent_progress_percentage = (scope.activity.in_network_spending_format_number / scope.activity.total_spent_format_number) * 100;
+							} else {
+								scope.spent_progress_percentage = 0;
 							}
-						});
+							$(".spent-box .progress-wrapper .progress-bar").css({ 'width': scope.spent_progress_percentage + '%' });
+
+							scope.filterActivityByDateInNetwork(scope.activity.in_network_transactions);
+							scope.filterActivityByDateEclaim(scope.activity.e_claim_transactions);
+							scope.searchActivityPagination();
+						}
+					});
+
+					scope.getInNetworkPagination( );
+					scope.getOutNetworkPagination( );
 				};
 
 				scope.closeSeach = function () {
