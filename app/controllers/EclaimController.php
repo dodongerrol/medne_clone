@@ -6146,7 +6146,7 @@ public function searchEmployeeActivity( )
 
 	}
 
-	$total_spent = $e_claim_spent + $in_network_spent;
+	$total_spent = $e_claim_spent + $total_in_network_spent;
 	return array(
 		'total_allocation'  => $total_allocation,
 		'total_balance'  => $total_allocation - $total_spent,
@@ -6155,13 +6155,13 @@ public function searchEmployeeActivity( )
 		'total_spent_format_number'       => $total_spent,
 		// 'balance'           => $balance > 0 ? number_format($balance, 2) : number_format(0, 2),
 		'pending_e_claim_amount' => number_format($e_claim_pending, 2),
-		'in_network_spent'  => number_format($in_network_spent, 2),
+		'in_network_spent'  => number_format($total_in_network_spent, 2),
 		'e_claim_spent'     => number_format($e_claim_spent, 2),
 		// 'in_network_breakdown' => $in_network_breakdown,
 		'in_network_transactions' => $transaction_details,
 		'e_claim_transactions'  => $e_claim,
 		'employee'          => ucwords($check_user->Name),
-		'in_network_spending_format_number' => $in_network_spent,
+		'in_network_spending_format_number' => $total_in_network_spent,
 		'e_claim_spending_format_number' => $total_e_claim_spent,
 		// 'total_in_network_credits_cash' => $grand_total_credits_cash > 0 ? number_format($grand_total_credits_cash, 2) : number_format(0, 2),
 		'total_in_network_spent'    => number_format($total_in_network_spent, 2),
