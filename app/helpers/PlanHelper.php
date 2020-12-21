@@ -2480,14 +2480,64 @@ class PlanHelper
 					$out_network += $history->credit;
 				}
 
-				if ($history->where_spend == "in_network_transaction") {
-					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('paid', 1)->where('deleted', 0)->first();
-					$in_network_temp_spent += $history->credit;
-					if ($transaction) {
-						if ($history->spending_type == "medical") {
-							$in_network += $history->credit;
-						} else {
-							$out_network += $history->credit;
+				// if ($history->where_spend == "in_network_transaction") {
+				// 	$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('paid', 1)->where('deleted', 0)->first();
+				// 	$in_network_temp_spent += $history->credit;
+				// 	if ($transaction) {
+				// 		if ($history->spending_type == "medical") {
+				// 			$in_network += $history->credit;
+				// 		} else {
+				// 			$out_network += $history->credit;
+				// 		}
+				// 	}
+				// }
+				if($history->where_spend == "in_network_transaction") {
+					// $in_network_temp_spent += $history->credit;
+					if($history->lite_plan_enabled == 1) {
+						$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
+						if($transaction) {
+							if($transaction->default_currency == "myr")	{
+								$in_network_temp_spent += (float)$transaction->consultation_fees * $transaction->currency_amount;
+							} else {
+								$in_network_temp_spent += (float)$transaction->consultation_fees;
+							}
+
+							if($history->spending_type == "medical")	{
+								if($transaction->default_currency == "myr")	{
+									$in_network += (float)$transaction->consultation_fees * $transaction->currency_amount;
+								} else {
+									$in_network += (float)$transaction->consultation_fees;
+								}
+							} else {
+								if($transaction->default_currency == "myr")	{
+									$out_network += (float)$transaction->consultation_fees * $transaction->currency_amount;;
+								} else {
+									$out_network += (float)$transaction->consultation_fees;
+								}
+							}
+						}
+					} else {
+						$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
+						if($transaction) {
+							if($transaction->default_currency == "myr")	{
+								$in_network_temp_spent += (float)$transaction->credit_cost * $transaction->currency_amount;
+							} else {
+								$in_network_temp_spent += (float)$transaction->credit_cost;
+							}
+
+							if($history->spending_type == "medical")	{
+								if($transaction->default_currency == "myr")	{
+									$in_network += (float)$transaction->credit_cost * $transaction->currency_amount;
+								} else {
+									$in_network += (float)$transaction->credit_cost;
+								}
+							} else {
+								if($transaction->default_currency == "myr")	{
+									$out_network += (float)$transaction->credit_cost * $transaction->currency_amount;
+								} else {
+									$out_network += (float)$transaction->credit_cost;
+								}
+							}
 						}
 					}
 				}
@@ -2668,6 +2718,8 @@ class PlanHelper
 		$e_claim_spent = 0;
 		$deleted_employee_allocation = 0;
 		$total_deduction_credits = 0;
+		$in_network = 0;
+		$out_network = 0;
 
 		$user = DB::table('user')->where('UserID', $user_id)->first();
 		$e_wallet = DB::table('e_wallet')->where('wallet_id', $wallet_id)->first();
@@ -2690,27 +2742,57 @@ class PlanHelper
 				$e_claim_spent += $history->credit;
 			}
 
-			if ($history->where_spend == "in_network_transaction") {
-				if ($history->lite_plan_enabled == 1) {
+			if($history->where_spend == "in_network_transaction") {
+				// $in_network_temp_spent += $history->credit;
+				if($history->lite_plan_enabled == 1) {
 					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
-					if ($transaction) {
-						if ($transaction->default_currency == "myr") {
-							$in_network_temp_spent += (float)$transaction->consultation_fees * $transaction->currency_amount;
-							$in_network_spent += (float)$transaction->consultation_fees * $transaction->currency_amount;
-						} else {
-							$in_network_temp_spent += (float)$transaction->consultation_fees;
-							$in_network_spent += (float)$transaction->consultation_fees;
+					if($transaction) {
+						// check for history logs
+						$logs = DB::table('wallet_history')->where('id', $history->id)->where('lite_plan_enabled', 1)->first();
+
+						if($logs) {
+							if($transaction->default_currency == "myr")	{
+								$in_network_temp_spent += (float)$transaction->consultation_fees * $transaction->currency_amount;
+							} else {
+								$in_network_temp_spent += (float)$transaction->consultation_fees;
+							}
+	
+							if($history->spending_type == "medical")	{
+								if($transaction->default_currency == "myr")	{
+									$in_network += (float)$transaction->consultation_fees * $transaction->currency_amount;
+								} else {
+									$in_network += (float)$transaction->consultation_fees;
+								}
+							} else {
+								if($transaction->default_currency == "myr")	{
+									$out_network += (float)$transaction->consultation_fees * $transaction->currency_amount;;
+								} else {
+									$out_network += (float)$transaction->consultation_fees;
+								}
+							}
 						}
 					}
 				} else {
 					$transaction = DB::table('transaction_history')->where('transaction_id', $history->id)->where('deleted', 0)->first();
-					if ($transaction) {
-						if ($transaction->default_currency == "myr") {
+					if($transaction) {
+						if($transaction->default_currency == "myr")	{
 							$in_network_temp_spent += (float)$transaction->credit_cost * $transaction->currency_amount;
-							$in_network_spent += (float)$transaction->credit_cost * $transaction->currency_amount;
 						} else {
 							$in_network_temp_spent += (float)$transaction->credit_cost;
-							$in_network_spent += (float)$transaction->credit_cost;
+						}
+
+						if($history->spending_type == "medical")	{
+							if($transaction->default_currency == "myr")	{
+								$in_network += (float)$transaction->credit_cost * $transaction->currency_amount;
+							} else {
+								$in_network += (float)$transaction->credit_cost;
+							}
+						} else {
+							if($transaction->default_currency == "myr")	{
+								$out_network += (float)$transaction->credit_cost * $transaction->currency_amount;
+							} else {
+								$out_network += (float)$transaction->credit_cost;
+							}
 						}
 					}
 				}
