@@ -5939,21 +5939,45 @@ public function searchEmployeeActivity( )
 						$total_cash_transactions++;
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += ($cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								$logs_lite_plan = DB::table($table_wallet_history)
+												->where('logs', 'deducted_from_mobile_payment')
+												->where('lite_plan_enabled', 1)
+												->where('id', $trans->transaction_id)
+												->first();
+
+								if($logs_lite_plan) {
+									$total_in_network_spent += ($cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								}
 							} else {
 								$total_in_network_spent += $cost * $trans->currency_amount;
 							}
 						} else {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += $cost + $trans->consultation_fees;
+								$logs_lite_plan = DB::table($table_wallet_history)
+												->where('logs', 'deducted_from_mobile_payment')
+												->where('lite_plan_enabled', 1)
+												->where('id', $trans->transaction_id)
+												->first();
+
+								if($logs_lite_plan) {
+									$total_in_network_spent += $cost + $trans->consultation_fees;
+								}
 							} else {
 								$total_in_network_spent += $cost;
 							}
 						}
-					} else if((float)$trans->credit_cost > 0 && $trans->deleted == 0) {
+					} else if($trans->deleted == 0) {
 						if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 							if((int)$trans->lite_plan_enabled == 1) {
-								$total_in_network_spent += ((float)$trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								$logs_lite_plan = DB::table($table_wallet_history)
+												->where('logs', 'deducted_from_mobile_payment')
+												->where('lite_plan_enabled', 1)
+												->where('id', $trans->transaction_id)
+												->first();
+
+								if($logs_lite_plan) {
+									$total_in_network_spent += ((float)$trans->credit_cost * $trans->currency_amount) + ($trans->consultation_fees * $trans->currency_amount);
+								}
 							} else {
 								$total_in_network_spent += (float)$trans->credit_cost * $trans->currency_amount;
 							}
