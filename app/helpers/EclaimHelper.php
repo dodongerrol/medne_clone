@@ -109,8 +109,8 @@ class EclaimHelper
       // 'endpoint' => 'https://mednefits.com',
       'bucket_endpoint' => true,
       'credentials' => [
-        'key'    => 'AKIAXK5O7G5SO7RVV7ET',
-        'secret' => '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',
+        'key'    => 'AKIAXK5O7G5SEZSHX7JU',
+        'secret' => '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',
       ],
     ]);
 
