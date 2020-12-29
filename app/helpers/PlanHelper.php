@@ -2730,16 +2730,17 @@ class PlanHelper
 			->get();
 
 		foreach ($wallet_history as $key => $history) {
-			if ($history->logs == "added_by_hr") {
-				$get_allocation += $history->credit;
+			if($history->logs == "added_by_hr") {
+				$get_allocation += (float)$history->credit;
 			}
 
-			if ($history->logs == "deducted_by_hr") {
+			if($history->logs == "deducted_by_hr") {
 				$deducted_credits += $history->credit;
 			}
 
-			if ($history->where_spend == "e_claim_transaction") {
+			if($history->where_spend == "e_claim_transaction") {
 				$e_claim_spent += $history->credit;
+				$out_network += $history->credit;
 			}
 
 			if($history->where_spend == "in_network_transaction") {
@@ -2797,10 +2798,6 @@ class PlanHelper
 					}
 				}
 			}
-
-			// if($history->where_spend == "credits_back_from_in_network") {
-			//  $credits_back += $history->credit;
-			// }
 		}
 
 		// return $wallet_history;
@@ -2811,7 +2808,8 @@ class PlanHelper
 
 		$in_network_spent_temp = $in_network_spent;
 		$get_allocation_spent_temp = $in_network_temp_spent + $e_claim_spent;
-		$in_network_spent = $in_network_spent - $credits_back;
+		// $in_network_spent = $in_network_spent - $credits_back;
+		$in_network_spent = $in_network_temp_spent;
 		$get_allocation_spent = $get_allocation_spent_temp - $credits_back;
 		$medical_balance = 0;
 
