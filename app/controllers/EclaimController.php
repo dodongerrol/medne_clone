@@ -1079,6 +1079,9 @@ class EclaimController extends \BaseController {
 							$consultation_credits = true;
 							$service_credits = true;
 						} else {
+							if($logs_lite_plan) {
+								$in_network_spent += floatval($logs_lite_plan->credit);
+							}
 							if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 								$consultation_fees = floatval($trans->consultation_fees) * $trans->currency_amount;
 								$total_lite_plan_consultation += floatval($trans->consultation_fees) * $trans->currency_amount;
@@ -1314,9 +1317,12 @@ class EclaimController extends \BaseController {
 					}
 				}
 
-				if($consultation_credits)	{
-					$transaction_type = "credit";
+				if($consultation_credits && $trans->credit_cost > 0)	{
+					$transaction_type = "credits";
 					$payment_type = "Mednefits Credits";
+				} else {
+					$transaction_type = "cash";
+					$payment_type = "Mednefits Credits + Cash";
 				}
                 // get clinic type
 				$clinic_type = DB::table('clinic_types')->where('ClinicTypeID', $clinic->Clinic_Type)->first();
@@ -1954,7 +1960,7 @@ class EclaimController extends \BaseController {
 		} else {
 			$credit_data = null;
 		}
-
+		
 		if($credit_data) {
 			$allocation = $credit_data['allocation'];
 			$current_spending = $credit_data['get_allocation_spent'];
