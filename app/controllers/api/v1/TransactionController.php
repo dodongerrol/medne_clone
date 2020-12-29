@@ -1039,6 +1039,10 @@ class Api_V1_TransactionController extends \BaseController
 								} else {
 									$balance = $wallet_data->wellness_balance;
 								}
+
+								if($user_curreny_type == "sgd") {
+									$consultation_fees = 0;
+								}
 								
 								// check user credits and deduct
 								//  || $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" && $balance < $consultation_fee

@@ -116,6 +116,7 @@ class SpendingInvoiceController extends \BaseController {
             'total_transaction_spent'   => number_format($statement['total_in_network_amount'], 2),
             'total_e_claim_spent'       => round($e_claims['total_e_claim_spent'], 2),
             'total_consultation'        => number_format($statement['total_consultation'], 2),
+            'consultation'              => 0,
             'lite_plan'                 => $statement['lite_plan'],
             'sub_total'                 => number_format($sub_total, 2),
             'show_status'               => $show_status

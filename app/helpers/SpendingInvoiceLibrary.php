@@ -801,6 +801,7 @@ class SpendingInvoiceLibrary
 			'payment_amount' => number_format($data->paid_amount, 2),
 			'lite_plan'	=> $lite_plan,
 			'total_consultation'	=> $results['total_consultation'],
+			'consultation'	=> $results['total_consultation'],
 			'currency_type'	=> $data->currency_type
 		);
 	}

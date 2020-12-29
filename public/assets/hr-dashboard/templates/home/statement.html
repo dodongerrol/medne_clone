@@ -307,7 +307,7 @@
 											<span ng-bind="overview.statement.currency_type" class="currency-type">SGD</span> 
 											<span ng-bind="overview.statement.statement_in_network_amount"></span></span></p>
 										<p class="font-12 color-black3 weight-700">Statement for <span ng-bind="monthStart"></span> - <span ng-bind="monthEnd"></span> <span ng-bind="year"></span></p>
-										<p class="color-black3 weight-700" style="padding-left: 40px;" ng-if="overview.lite_plan">Consultation Spent - General Practitioner <span class="pull-right">
+										<p class="color-black3 weight-700" style="padding-left: 40px;" ng-if="overview.lite_plan && overview.consultation > 0">Consultation Spent - General Practitioner <span class="pull-right">
 											<span ng-bind="overview.statement.currency_type" class="currency-type">SGD</span>  
 											<span ng-bind="overview.total_consultation"></span></span></p>
 									</div>
