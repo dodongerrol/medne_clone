@@ -76,7 +76,7 @@ class TransactionHelper
 		$credits = DB::table('e_wallet')->where('UserID', $user_id)->first();
 
 		if($credits->currency_type == "sgd") {
-			return array('co_paid_amount' => 0, 'co_paid_status' => 0, 'peak_amount' => 0, 'consultation_fees' => 0, 'clinic_peak_status' => 0);
+			return array('co_paid_amount' => 0, 'co_paid_status' => 0, 'peak_amount' => 0, 'consultation_fees' => 0, 'clinic_peak_status' => false);
 		}
 
 		// check clinic peak hours
