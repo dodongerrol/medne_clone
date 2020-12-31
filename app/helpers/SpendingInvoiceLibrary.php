@@ -186,7 +186,7 @@ class SpendingInvoiceLibrary
 	
 				$temp_trans = DB::table('transaction_history')
 				->whereIn('UserID', $ids)
-				->where('lite_plan_enabled', 0)
+				// ->where('lite_plan_enabled', 0)
 				->where('credit_cost', '>', 0)
 				->where('deleted', 0)
 				->where('paid', 1)
