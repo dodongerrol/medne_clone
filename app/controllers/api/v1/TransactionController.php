@@ -1085,7 +1085,9 @@ class Api_V1_TransactionController extends \BaseController
 										// if($spending['medical_method'] == "post_paid") {
 											// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
 											$plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "pre_paid" : "post_paid";
-											TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+											if($user_curreny_type == "myr") {
+												TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+											}
 										// }
 									} catch(Exception $e) {
 
