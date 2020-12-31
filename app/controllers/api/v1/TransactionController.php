@@ -1109,7 +1109,9 @@ class Api_V1_TransactionController extends \BaseController
 									// insert to spending invoice
 									// $plan_method = $spending['account_type'] == "lite_plan" && $spending['medical_method'] == "pre_paid" ? "post_paid" : "pre_paid";
 									$plan_method = "post_paid";
-									TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+									if($user_curreny_type == "myr") {
+										TransactionHelper::insertTransactionToCompanyInvoice($transaction_id, $user_id, $plan_method);
+									}
 								}
 							}
 
