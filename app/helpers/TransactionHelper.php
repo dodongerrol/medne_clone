@@ -498,7 +498,7 @@ class TransactionHelper
 					DB::table('spending_invoice_transactions')->insert($data);
 				} else {
 					// create new spending invoice
-					SpendingInvoiceLibrary::createStatement($customer_id, $start, $end, $plan_method);
+					SpendingInvoiceLibrary::createStatement($customer_id, $start, PlanHelper::endDate($end), $plan_method);
 				}
 			}
 		}
