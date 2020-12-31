@@ -3468,9 +3468,8 @@ public function getActivityInNetworkTransactions( )
 							$total_amount = $trans->credit_cost + $trans->consultation_fees;
 							$cash = $trans->cash_cost;
 						} else {
-
-							$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
-							// $total_amount = $trans->procedure_cost + $trans->consultation_fees;
+							// $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+							$total_amount = $trans->procedure_cost;
 							$cash = $trans->procedure_cost;
 						}
 					} else {
