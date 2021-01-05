@@ -207,13 +207,13 @@ app.directive('activityDirective', [
 							var monthStart = currentDate.clone().startOf('month');
 
 
-							if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
-								console.log('follow SA start date');
-								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-							} else {
-								console.log('follow MTD 1st day');
-								scope.min_rangePicker_start = monthStart;
-							}
+							// if (monthStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM') ) {
+							// 	console.log('follow SA start date');
+							// 	scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+							// } else {
+							// 	console.log('follow MTD 1st day');
+							// 	scope.min_rangePicker_start = monthStart;
+							// }
 
 							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
 							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
@@ -230,13 +230,13 @@ app.directive('activityDirective', [
 							var currentDate = moment();
 							var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
 
-							if (quarterStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
-								console.log('follow SA start date');
-								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-							} else {
-								console.log('follow MTD 1st day');
-								scope.min_rangePicker_start = quarterStart;
-							}
+							// if (quarterStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
+							// 	console.log('follow SA start date');
+							// 	scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+							// } else {
+							// 	console.log('follow MTD 1st day');
+							// 	scope.min_rangePicker_start = quarterStart;
+							// }
 
 							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
 							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
@@ -253,14 +253,14 @@ app.directive('activityDirective', [
 							var currentDate = moment();
 							var yearStart = currentDate.clone().startOf('year');
 
-							if (yearStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
-								console.log('follow SA start date');
-								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-							} else {
-								console.log('follow MTD 1st day');
-								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-								// scope.min_rangePicker_start = yearStart;
-							}
+							// if (yearStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
+							// 	console.log('follow SA start date');
+							// 	scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+							// } else {
+							// 	console.log('follow MTD 1st day');
+							// 	scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
+							// 	// scope.min_rangePicker_start = yearStart;
+							// }
 
 							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
 							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
@@ -747,7 +747,7 @@ app.directive('activityDirective', [
 							autoApply: true,
 							singleDatePicker: true,
 							startDate: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
-							// minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
+							minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 							maxDate: moment(scope.max_rangePicker_end, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 						}, function (start, end, label) {
 							scope.currentPage = 1;
