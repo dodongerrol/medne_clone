@@ -215,7 +215,7 @@ app.directive('activityDirective', [
 							// 	scope.min_rangePicker_start = monthStart;
 							// }
 
-							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
+							scope.rangePicker_start = monthStart.format('DD/MM/YYYY');
 							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
@@ -238,7 +238,7 @@ app.directive('activityDirective', [
 							// 	scope.min_rangePicker_start = quarterStart;
 							// }
 
-							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
+							scope.rangePicker_start = quarterStart.format('DD/MM/YYYY');
 							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
@@ -262,7 +262,7 @@ app.directive('activityDirective', [
 							// 	// scope.min_rangePicker_start = yearStart;
 							// }
 
-							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
+							scope.rangePicker_start = yearStart.format('DD/MM/YYYY');
 							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
