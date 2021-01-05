@@ -13,7 +13,14 @@ class MemberHelper
 				return false;
 			}
 		} else {
-			$user_plan_history = DB::table('user_plan_history')->where('user_id', $member_id)->where('type', 'started')->orderBy('created_at', 'desc')->skip(1)->take(1)->first();
+			$user_plan_history = DB::table('user_plan_history')
+									->where('user_id', $member_id)
+									->where('type', 'started')
+									->groupBy('date')
+									->orderBy('created_at', 'desc')
+									->skip(1)
+									->take(1)
+									->first();
 			if($user_plan_history) {
 				$customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)->first();
 				$plan = DB::table('customer_plan')->where('customer_plan_id', $customer_active_plan->plan_id)->first();
