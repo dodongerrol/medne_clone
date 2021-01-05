@@ -313,6 +313,8 @@ app.directive('activityDirective', [
 						scope.applyDates();
 						console.log('ytd', yearStart);
 						// console.log('year start ' + yearStart.format('DD/MM/YYYY'));
+					}else{
+						scope.applyDates();
 					}
 				}
 				// End New Filter Date
