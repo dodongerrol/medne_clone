@@ -13480,7 +13480,8 @@ class BenefitsDashboardController extends \BaseController {
 		if($findUserID){
 			$result = $e_card->newEcardDetails($id);
 			$spending = MemberHelper::getMemberSpendingCoverageDate($id);
-			$result['valid_start_claim'] = $spending['start_date'];
+			$plan_history = DB::table('user_plan_history')->where('user_id', $id)->where('type', 'started')->first();
+			$result['valid_start_claim'] = $plan_history->date;
 			$result['valid_end_claim'] = $spending['end_date'];
 			$result['spending_feature_status_type'] = true;
 			// check for spending feature
