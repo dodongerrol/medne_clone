@@ -747,7 +747,7 @@ app.directive('activityDirective', [
 							autoApply: true,
 							singleDatePicker: true,
 							startDate: moment(scope.rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
-							minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
+							// minDate: moment(scope.min_rangePicker_start, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 							maxDate: moment(scope.max_rangePicker_end, 'DD/MM/YYYY').format('MM/DD/YYYY'),
 						}, function (start, end, label) {
 							scope.currentPage = 1;
