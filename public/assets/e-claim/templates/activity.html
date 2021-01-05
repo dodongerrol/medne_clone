@@ -18,7 +18,7 @@
 				<div class="input-label custom-select withIcon">
 					<select class="select" ng-change="toDate('mtd')" ng-model="select_term" name="term" id="">
 						<option value="current">Current Term</option>
-						<option v-if="isHaveLastTerm" value="last">Last Term</option>
+						<option ng-if="isHaveLastTerm" value="last">Last Term</option>
 					</select>
 					<i class="fa fa-chevron-down" aria-hidden="true"></i>
 				</div>
