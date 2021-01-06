@@ -108,6 +108,7 @@ class MemberHelper
 				$credit_reset_start = DB::table('credit_reset')
 												->where('id', $member_id)->where('user_type', 'employee')
 												->where('spending_type', $spending_type)
+												->groupBy('date_resetted')
 												->orderBy('created_at', 'desc')
 												->skip(1)
 												->take(1)
