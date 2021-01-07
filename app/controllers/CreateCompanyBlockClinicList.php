@@ -39,7 +39,9 @@ class CreateCompanyBlockClinicList extends \BaseController
         $customer_id = $result->customer_buy_start_id;
         $hr_id = $result->hr_dashboard_id;
         $admin_id = Session::get('admin-session-id');
-
+        $env = Config::get('config.environment');
+        $api_url = Config::get('config.api_node_live')."/employees/create_company_block_lists";
+        
         $check = $customer = DB::table('customer_buy_start')
             ->where('customer_buy_start_id', $customer_id)
             ->first();
@@ -94,7 +96,9 @@ class CreateCompanyBlockClinicList extends \BaseController
                     'customer_id' => $customer_id,
                     'ids' => $clinics,
                     'account_type' => 'company',
-                    'status' => Input::get('status')
+                    'status' => Input::get('status'),
+                    'env'    => $env,
+                    'api_url' => $api_url
                 ]);
             }
 
@@ -106,7 +110,7 @@ class CreateCompanyBlockClinicList extends \BaseController
                 \CorporateMembers::select('user_id')
                     ->where('removed_status', 0)
                     ->where('corporate_id', $account->corporate_id)
-                    ->chunk(self::CHUNK, function ($members) use ($customer_id, $chunkClinics)   {
+                    ->chunk(self::CHUNK, function ($members) use ($customer_id, $chunkClinics, $env, $api_url)   {
                         // Queue::push('ProcessBlockClinicAccess', [
                         //     'customer_id' => $customer_id,
                         //     'members' => $members, 
@@ -120,7 +124,9 @@ class CreateCompanyBlockClinicList extends \BaseController
                                 'members' => $members, 
                                 'clinic_ids' => $clinics,
                                 'account_type' => 'employee',
-                                'status' => Input::get('status')
+                                'status' => Input::get('status'),
+                                'env'    => $env,
+                                'api_url' => $api_url
                             ]);
                         }
                     });
@@ -138,7 +144,9 @@ class CreateCompanyBlockClinicList extends \BaseController
                     'customer_id' => $customer_id,
                     'ids' => $clinics,
                     'account_type' => Input::get('account_type'),
-                    'status' => Input::get('status')
+                    'status' => Input::get('status'),
+                    'env'    => $env,
+                    'api_url' => $api_url
                 ]);
 
                 $blocker->execute();
@@ -151,13 +159,15 @@ class CreateCompanyBlockClinicList extends \BaseController
                     \CorporateMembers::select('user_id')
                         ->where('removed_status', 0)
                         ->where('corporate_id', $account->corporate_id)
-                        ->chunk(self::CHUNK, function ($members) use ($customer_id, $clinics) {
+                        ->chunk(self::CHUNK, function ($members) use ($customer_id, $clinics, $env, $api_url) {
                             $blocker = new \BlockClinicAccess([
                                 'customer_id' => $customer_id,
                                 'members' => $members, 
                                 'clinic_ids' => $clinics,
                                 'account_type' => 'employee',
-                                'status' => Input::get('status')
+                                'status' => Input::get('status'),
+                                'env'    => $env,
+                                'api_url' => $api_url
                             ]);
                             $blocker->execute();
                         });

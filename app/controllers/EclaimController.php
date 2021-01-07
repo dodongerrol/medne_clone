@@ -6756,7 +6756,7 @@ public function updateEclaimStatus( )
 		} else {
 			$wallet = DB::table('e_wallet')->where('UserID', $employee)->orderBy('created_at', 'desc')->first();
 		}
-
+		
     	// deduct credit and save logs
 		$wallet_class = new Wallet();
 		$history = new WalletHistory( );

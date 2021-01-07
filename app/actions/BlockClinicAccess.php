@@ -29,12 +29,25 @@ class BlockClinicAccess
                     ->first();
                     
                 if (!$existed) {
-                    $result = \CompanyBlockClinicAccess::create([
-                        'customer_id' => $member['user_id'],
-                        'clinic_id'   => $clinicId,
-                        'account_type' => $this->options['account_type'],
-                        'status' => $this->options['status']
-                    ]);
+                    if($this->options['env'] == "production") {
+                        echo "production babay";
+                        $data = array(
+                            'customer_id'   => $member['user_id'],
+                            'clinic_id'     => $clinicId,
+                            'account_type'     => $this->options['account_type'],
+                            'status'        => $this->options['status'],
+                            'type'          => 'create'
+                        );
+                        $result = \httpLibrary::postHttp($this->options['api_url'], $data, []);
+                    } else {
+                        $result = \CompanyBlockClinicAccess::create([
+                            'customer_id' => $member['user_id'],
+                            'clinic_id'   => $clinicId,
+                            'account_type' => $this->options['account_type'],
+                            'status' => $this->options['status']
+                        ]);
+                    }
+                    
                     // echo $result." created \n";
                     SystemLogLibrary::createAdminLog([
                         'admin_id'  => $admin_id,
@@ -46,8 +59,20 @@ class BlockClinicAccess
                         ])
                     ]);
                 } else {
-                    $result = \CompanyBlockClinicAccess::where('company_block_clinic_access_id', $existed->company_block_clinic_access_id)
-                    ->update(['status' => $this->options['status']]);
+                    if($this->options['env'] == "production") {
+                        $data = array(
+                            'customer_id'   => $member['user_id'],
+                            'clinic_id'     => $clinicId,
+                            'account_type'     => $this->options['account_type'],
+                            'status'        => $this->options['status'],
+                            'type'          => 'update'
+                        );
+                        $result = \httpLibrary::postHttp($this->options['api_url'], $data, []);
+                    } else {
+                        $result = \CompanyBlockClinicAccess::where('company_block_clinic_access_id', $existed->company_block_clinic_access_id)
+                        ->update(['status' => $this->options['status']]);
+                    }
+                    
 
                     SystemLogLibrary::createAdminLog([
                         'admin_id'  => $admin_id,
