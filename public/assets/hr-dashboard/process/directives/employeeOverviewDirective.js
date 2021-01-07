@@ -2426,6 +2426,7 @@ app.directive("employeeOverviewDirective", [
                 value.mobile_no = value.mobile_no.replace('/\+/g', '');
                 value.country_code = value.country_code.replace('/\+/g', '');
               });
+              console.log(scope.employees.data);
               $(".loader-table").hide();
               $(".main-table").fadeIn();
               scope.hideLoading();
