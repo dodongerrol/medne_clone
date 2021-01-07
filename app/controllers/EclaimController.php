@@ -6704,7 +6704,7 @@ public function updateEclaimStatus( )
 	}
 
 	$employee = StringHelper::getUserId($e_claim_details->user_id);
-	$user_plan_history = DB::table('user_plan_history')->where('user_id', $employee)->orderBy('created_at', 'desc')->first();
+	$user_plan_history = DB::table('user_plan_history')->where('user_id', $employee)->where('type', 'started')->orderBy('created_at', 'desc')->first();
 	$customer_active_plan = DB::table('customer_active_plan')
 								->where('customer_active_plan_id', $user_plan_history->customer_active_plan_id)
 								->first();
