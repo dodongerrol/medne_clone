@@ -134,7 +134,10 @@
 							</div>
 						</td>
 						<td class="nric-fin-details">
-							<span ng-bind="emp.mobile_no == 0 ? '-' : emp.mobile_no"></span>
+							<span> 
+								<span ng-bind="emp.mobile_no == 0 ? '' : '+'"></span>
+								<span ng-bind="emp.mobile_no == 0 ? '-' : emp.mobile_no"></span>
+							</span>
 						</td>
 						<!-- <td class="nric-fin-details" ng-bind="emp.nric">S8575893G</td> -->
 						<td class="plan-start-container">
@@ -688,7 +691,7 @@
 							<div class="col-2-employee-information-details">
 								<div>
 									<strong class="font-helvetica-medium">Country Code</strong>
-									<span ng-bind="selectedEmployee.country_code">+63</span>
+									<span>+ <span ng-bind="selectedEmployee.country_code"></span></span>
 								</div>
 								<div>
 									<strong class="font-helvetica-medium">Mobile Number</strong>

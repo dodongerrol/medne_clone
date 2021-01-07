@@ -1259,7 +1259,7 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
           // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-          scope.editEmpCountryCode = scope.selectedEmployee.country_code;
+          scope.editEmpCountryCode = '+' + scope.selectedEmployee.country_code;
           console.log(scope.selectedEmployee.dob);
           $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
           scope.inititalizeGeoCode();
@@ -2423,7 +2423,8 @@ app.directive("employeeOverviewDirective", [
                 value.end_date_format = moment(value.expiry_date).format("DD MMMM YYYY");
                 value.expiry_date = moment(value.expiry_date).format("MM/DD/YYYY");
                 value.dob = moment(value.dob).format('DD/MM/YYYY');
-                value.mobile_no = '+' + value.mobile_no.replace('/\+/g', '');
+                value.mobile_no = value.mobile_no.replace('/\+/g', '');
+                value.country_code = value.country_code.replace('/\+/g', '');
               });
               $(".loader-table").hide();
               $(".main-table").fadeIn();
