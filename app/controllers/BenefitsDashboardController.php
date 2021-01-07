@@ -11815,12 +11815,15 @@ class BenefitsDashboardController extends \BaseController {
 					} else {
 						$item->DOB = null;
 					}
+
+				$phone_code = str_replace('+', '', $users[$x]->PhoneCode);
+
 					$temp = array(
 						'Status'	=> $status,
 						'Name'		=> ucwords( $users[$x]->Name),
 						'NRIC'		=>	 $users[$x]->NRIC,
 						'Family Coverage'	=> count($dependents),
-						'Mobile No'		=>  $users[$x]->PhoneCode. $users[$x]->PhoneNo,
+						'Mobile No'		=>  "+".$phone_code. $users[$x]->PhoneNo,
 						'Email'		=>  $users[$x]->Email,
 						'Date of Birth'		=>  $users[$x]->DOB,
 						'Postal'	=> $users[$x]->Zip_Code,
@@ -11843,11 +11846,13 @@ class BenefitsDashboardController extends \BaseController {
 				}
 			} 
 
+			$phone_code = str_replace('+', '', $users[$x]->PhoneCode);
+
 			$temp = array(
 				'Status'	=> $status,
 				'Name'		=> ucwords($users[$x]->Name),
 				'Family Coverage'	=> count($dependents),
-				'Mobile No'		=> $users[$x]->PhoneCode.$users[$x]->PhoneNo,
+				'Mobile No'		=>  "+".$phone_code. $users[$x]->PhoneNo,
 				'Email'		=> $users[$x]->Email,
 				'Date of Birth'		=> $users[$x]->DOB,
 				'Postal'	=>$users[$x]->Zip_Code,
