@@ -2441,6 +2441,7 @@ class PlanHelper
 		->where('id', $user_id)
 		->where('spending_type', 'medical')
 		->where('user_type', 'employee')
+		->groupBy('date_resetted')
 		->orderBy('created_at', 'desc')
 		->first();
 		$user = DB::table('user')->where('UserID', $user_id)->first();
