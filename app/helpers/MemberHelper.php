@@ -82,6 +82,7 @@ class MemberHelper
 			$credit_resets = DB::table('credit_reset')
 												->where('id', $member_id)->where('user_type', 'employee')
 												->where('spending_type', $spending_type)
+												->groupBy('date_resetted')
 												->orderBy('created_at', 'desc')
 												->first();
 			if($credit_resets) {
@@ -100,9 +101,10 @@ class MemberHelper
 			}
 		} else {
 			$credit_resets = DB::table('credit_reset')
-												->where('id', $member_id)->where('user_type', 'employee')
-												->where('spending_type', $spending_type)
-												->get();
+								->where('id', $member_id)->where('user_type', 'employee')
+								->groupBy('date_resetted')
+								->where('spending_type', $spending_type)
+								->get();
 
 			if(sizeof($credit_resets) > 1) {
 				$credit_reset_start = DB::table('credit_reset')
@@ -117,6 +119,7 @@ class MemberHelper
 					$credit_reset_end = DB::table('credit_reset')
 													->where('id', $member_id)->where('user_type', 'employee')
 													->where('spending_type', $spending_type)
+													->groupBy('date_resetted')
 													->orderBy('created_at', 'desc')
 													->first();
 					if($credit_reset_end) {
