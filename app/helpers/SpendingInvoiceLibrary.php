@@ -344,13 +344,13 @@ class SpendingInvoiceLibrary
 						->first();
 
 						if($logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_use_credits'] == 0 || $logs_lite_plan && floatval($trans['credit_cost']) > 0 && (int)$trans['lite_plan_enabled'] == 1) {
-							$total_consultation += floatval($logs_lite_plan->credit);
-							$consultation = number_format($logs_lite_plan->credit, 2);
+							$total_consultation += floatval($trans['consultation_fees']);
+							$consultation = number_format($trans['consultation_fees'], 2);
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if($logs_lite_plan && floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 1){
-							$total_consultation += floatval($logs_lite_plan->credit);
-							$consultation = $logs_lite_plan->credit;
+							$total_consultation += floatval($trans['consultation_fees']);
+							$consultation = $trans['consultation_fees'];
 							$consultation_credits = true;
 							$service_credits = true;
 						} else if(floatval($trans['procedure_cost']) >= 0 && (int)$trans['lite_plan_use_credits'] == 0){
