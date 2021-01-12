@@ -188,7 +188,7 @@ class CustomerHelper
 						->skip(1)
 						->take(1)
 						->first();
-			return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($plans->plan_end)))), 'id' => null];
+			return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->plan_end)))), 'id' => null];
 		} else {
 			if($customer_id == 766) {
 				$plans = DB::table('spending_account_settings')
@@ -197,9 +197,9 @@ class CustomerHelper
 						->skip(1)
 						->take(1)
 						->first();
-				return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($plans->medical_spending_end_date)))), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->medical_spending_end_date)))), 'id' => null];
 			} else {
-				return ['start' => date('Y-m-d', strtotime($plans[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('-1 day', strtotime($plans[0]->plan_end)))), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($plans[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans[0]->plan_end)))), 'id' => null];
 			}
 		}
 	}
