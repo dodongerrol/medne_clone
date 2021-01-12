@@ -6625,6 +6625,10 @@ public function payCreditsNew( )
          if($findUserID){
           $user_id = StringHelper::getUserId($findUserID);
           $data = MemberHelper::getMemberSpendingCoverageDate($user_id);
+          $plan_history = DB::table('user_plan_history')->where('user_id', $user_id)->where('type', 'started')->first();
+          // get customer_active_plan_id
+          $customer_active_plan = DB::table('customer_active_plan')->where('customer_active_plan_id', $plan_history->customer_active_plan_id)->first();
+          $data['start_date'] = $customer_active_plan->plan_start;
           $returnObject->status = true;
           $returnObject->data = ['start' => date('Y-m-d', strtotime($data['start_date'])), 'end' => date('Y-m-d', strtotime($data['end_date'])), 'today' => $data['today'], 'grace_period' => $data['grace_period']];
           return Response::json($returnObject);
