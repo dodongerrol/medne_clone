@@ -160,7 +160,7 @@ class CorporateController extends BaseController {
 		$result = StringHelper::getJwtHrSession();
 		$user_id = $result->customer_buy_start_id;
 		$current_term = CustomerHelper::getCustomerDateTerms($user_id, 'current_term', 'medical');
-		$last_term = CustomerHelper::getCustomerLastTerm($user_id);
+		$last_term = CustomerHelper::getCustomerLastTerm($user_id, strtotime('+1 days end day'));
 
 		return ['status' => true, 'current_term' => $current_term, 'last_term' => $last_term];
 	}

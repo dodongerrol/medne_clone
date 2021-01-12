@@ -110,7 +110,6 @@ app.directive('activityDirective', [
 								scope.max_rangePicker_end = moment(scope.dateTerms.current_term.end).format('DD/MM/YYYY');
 								console.log('dateTerms',scope.dateTerms);
 								scope.isHaveLastTerm = scope.dateTerms.last_term ? true : false;
-
 								// scope.dateTerms.last_term = false;
 							}
 							scope.initializeNewCustomDatePicker();
@@ -270,7 +269,6 @@ app.directive('activityDirective', [
 							console.log('ytd', yearStart);
 							// console.log('year start ' + yearStart.format('DD/MM/YYYY'));
 						}
-
 					} else {
 						scope.term_value = 1;
 						scope.select_to_date = false;
@@ -298,12 +296,15 @@ app.directive('activityDirective', [
 						// scope.rangePicker_start = maxEnd.clone().subtract(3, 'months').format("DD/MM/YYYY");
 						// scope.rangePicker_end = maxEnd.clone().format("DD/MM/YYYY");
 
+						// scope.rangePicker_start = maxEnd.clone().subtract(3, 'months').format("DD/MM/YYYY");
+						// scope.rangePicker_end = maxEnd.clone().format("DD/MM/YYYY");
+
 						scope.rangePicker_start = scope.min_rangePicker_start;
 						scope.rangePicker_end = scope.max_rangePicker_end;
 						$("#rangePicker_start").text(scope.rangePicker_start);
 						$("#rangePicker_end").text(scope.rangePicker_end);
 
-						console.log(scope.rangePicker_start + ' - ' + scope.rangePicker_end);
+						console.log('- 3 months ', scope.rangePicker_end);
 
 						// scope.initializeNewCustomDatePicker();
 

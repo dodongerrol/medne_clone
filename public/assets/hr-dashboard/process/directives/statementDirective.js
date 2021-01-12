@@ -184,20 +184,20 @@ app.directive('statementPage', [
 				}
 
 			scope.downloadPDF = function(invoice_data) {
-				// if(scope.download_token.live == true) {
-				// 	window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + invoice_data.statement_id + '&token=' + scope.download_token.token);
-				// } else {
+				if(scope.download_token.live == true) {
+					window.open(scope.download_token.download_link + "/spending_invoice_download?id=" + invoice_data.statement_id + '&token=' + scope.download_token.token);
+				} else {
 					window.open(serverUrl.url + '/hr/statement_download?id=' + invoice_data.statement_id + '&token=' + window.localStorage.getItem('token'));
-				// }
+				}
 		  	};
 
 		  	scope.downloadFullINPDF = function(invoice_data, type) {
 		  		if(type == "pdf") {
-			  		// if(scope.download_token.live == true) {
-			  		// 	window.open(scope.download_token.download_link + "/spending_transactions_download?id=" + invoice_data.statement_id + '&token=' + scope.download_token.token);
-			  		// } else {
+			  		if(scope.download_token.live == true) {
+			  			window.open(scope.download_token.download_link + "/spending_transactions_download?id=" + invoice_data.statement_id + '&token=' + scope.download_token.token);
+			  		} else {
 			  			window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + invoice_data.statement_id + '&token=' + window.localStorage.getItem('token') + '&type=' + type);
-			  		// }
+			  		}
 		  		} else {
 		  			window.open(serverUrl.url + '/hr/statement_in_network_download?id=' + invoice_data.statement_id + '&token=' + window.localStorage.getItem('token') + '&type=' + type);
 		  		}
