@@ -318,7 +318,7 @@ app.directive('activityDirective', [
 						// 	console.log(scope.dateTerms,'else');
 						// }
 						// gicomment nako kay kaduha gatawagon ang api
-						// scope.applyDates();
+						scope.applyDates();
 					}
 				}
 				// End New Filter Date
