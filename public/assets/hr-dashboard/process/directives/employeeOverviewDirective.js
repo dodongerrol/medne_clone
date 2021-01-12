@@ -1259,7 +1259,8 @@ app.directive("employeeOverviewDirective", [
           scope.isUpdateEmpInfoModalOpen = true;
           $("#update-employee-modal").modal('show');
           // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-          scope.editEmpCountryCode = scope.selectedEmployee.country_code;
+          // scope.editEmpCountryCode = scope.selectedEmployee.country_code;
+          scope.editEmpCountryCode = '+' + scope.selectedEmployee.country_code;
           console.log(scope.selectedEmployee.dob);
           $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
           scope.inititalizeGeoCode();
@@ -2423,6 +2424,9 @@ app.directive("employeeOverviewDirective", [
                 value.end_date_format = moment(value.expiry_date).format("DD MMMM YYYY");
                 value.expiry_date = moment(value.expiry_date).format("MM/DD/YYYY");
                 value.dob = moment(value.dob).format('DD/MM/YYYY');
+
+                value.mobile_no = value.mobile_no.replace(/\+/g, '');
+                value.country_code = value.country_code.replace(/\+/g, '');
               });
               $(".loader-table").hide();
               $(".main-table").fadeIn();
@@ -2549,7 +2553,7 @@ app.directive("employeeOverviewDirective", [
                   email: data.email,
                   phone_no: data.phone_no,
                   // country_code: data.country_code.replace('+', ''),
-                  country_code: scope.editEmpCountryCode,
+                  country_code: scope.editEmpCountryCode.replace(/\+/g, ''),
                   job_title: data.job_title,
                   postal_code: data.postal_code,
                   bank_account: data.bank_account,
