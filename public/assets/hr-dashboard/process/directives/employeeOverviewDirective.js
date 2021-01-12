@@ -2425,8 +2425,8 @@ app.directive("employeeOverviewDirective", [
                 value.expiry_date = moment(value.expiry_date).format("MM/DD/YYYY");
                 value.dob = moment(value.dob).format('DD/MM/YYYY');
 
-                value.mobile_no = value.mobile_no.replace(/\+/g, '');
-                value.country_code = value.country_code.replace(/\+/g, '');
+                value.mobile_no = value.mobile_no == null || value.mobile_no == 0 ? 0 : value.mobile_no.replace(/\+/g, '');
+                value.country_code = value.country_code == null || value.country_code == 0 ? 0 : value.country_code.replace(/\+/g, '');
               });
               $(".loader-table").hide();
               $(".main-table").fadeIn();
