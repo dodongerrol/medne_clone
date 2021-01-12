@@ -158,7 +158,7 @@ class DoctorWidgetController extends \BaseController {
 		$events = new ExtraEvents();
 		$managetimes = new ManageTimes();
 		$findDoctorTimes = General_Library::FindAllClinicTimes(2,$docID,strtotime($currentDate));
-
+		
 		$findDoctorHoliday = General_Library::FindFullDayHolidays(2,$docID);
 		$findClinicHoliday = General_Library::FindFullDayHolidays(3,$clinicID);
 		$doctorExtraEvents = $events->getDoctorExtraEvents($docID);
@@ -260,12 +260,13 @@ class DoctorWidgetController extends \BaseController {
 		}
 		// return $clinic_holidays_array;
 			if($findDoctorTimes){
-
+				
 				foreach ($findDoctorTimes as $value) {
 					# code...
 
 					// $startDate = $value->From_Date;
 					$startDate = date('Y').'-'.date('m-d', $value->From_Date);
+					$startDate = date('Y-m-d');
 					$startDate = strtotime($startDate);
 					$repeat = $value->Repeat;
 
@@ -369,6 +370,10 @@ class DoctorWidgetController extends \BaseController {
 			foreach ($new_day_slots as $key => $value) {
 				$slots[] = $value;
 			}
+
+			usort($slots, function($a, $b) {
+				return  strtotime($a) - strtotime($b);
+			});
 
 			return $slots;
 	}
