@@ -182,13 +182,23 @@ class CustomerHelper
 		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->get();
 
 		if(sizeof($plans) > 1) {
-			$plans = DB::table('customer_plan')
-						->where('customer_buy_start_id', $customer_id)
-						->orderBy('created_at', 'desc')
+			$settings = DB::table('spending_account_settings')
+						->where('customer_id', $customer_id)
+						->orderBy('medical_spending_start_date', 'desc')
 						->skip(1)
 						->take(1)
 						->first();
-			return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->plan_end)))), 'id' => null];
+			if($settings) {
+				return ['start' => date('Y-m-d', strtotime($settings->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($settings->medical_spending_end_date)))), 'id' => null];
+			} else {
+				$plans = DB::table('customer_plan')
+					->where('customer_buy_start_id', $customer_id)
+					->orderBy('created_at', 'desc')
+					->skip(1)
+					->take(1)
+					->first();
+				return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->plan_end)))), 'id' => null];
+			}
 		} else {
 			if($customer_id == 766) {
 				$plans = DB::table('spending_account_settings')
