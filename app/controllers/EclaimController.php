@@ -1320,7 +1320,7 @@ class EclaimController extends \BaseController {
 				if($consultation_credits && $trans->credit_cost > 0)	{
 					$transaction_type = "credits";
 					$payment_type = "Mednefits Credits";
-				} else {
+				} else if($consultation_credits && $trans->credit_cost > 0 && $trans->cash_cost > 0){
 					$transaction_type = "cash";
 					$payment_type = "Mednefits Credits + Cash";
 				}
