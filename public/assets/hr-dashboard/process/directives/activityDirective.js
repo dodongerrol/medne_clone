@@ -168,11 +168,11 @@ app.directive('activityPage', [
 	
 							if(moment() > moment(scope.dateTerms.current_term.end) ){
 								var termEndDate = moment(scope.dateTerms.current_term.end); 
-								var monthStart = termEndDate.clone().startOf('month').add(1, 'day');
+								var monthStart = termEndDate.clone().startOf('month');
 								scope.max_rangePicker_end = termEndDate.format('DD/MM/YYYY');
 							}else{
 								var termEndDate = moment(); 
-								var monthStart = termEndDate.clone().startOf('month').add(1, 'day');
+								var monthStart = termEndDate.clone().startOf('month');
 								scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
 							}
 
