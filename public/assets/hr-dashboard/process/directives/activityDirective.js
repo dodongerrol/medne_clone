@@ -152,71 +152,57 @@ app.directive('activityPage', [
 								var weekStart = termEndDate.clone().startOf('week').add(1, 'day');
 								scope.max_rangePicker_end = termEndDate.format('DD/MM/YYYY');
 							}else{
-								var termEndDate = moment(scope.dateTerms.current_term.end); 
+								var termEndDate = moment(); 
 								var weekStart = termEndDate.clone().startOf('week').add(1, 'day');
 								scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
 							}
 
 							scope.initializeNewCustomDatePicker();
-
 							scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
 							scope.rangePicker_end = termEndDate.format('DD/MM/YYYY');
-							
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
 							scope.applyDates();
 						} else if (scope.select_to_date == 'mtd') {
-							// scope.select_to_date = data;
-	
 							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
-							scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
-							console.log( scope.min_rangePicker_start );
-							console.log( scope.max_rangePicker_end );
+	
+							if(moment() > moment(scope.dateTerms.current_term.end) ){
+								var termEndDate = moment(scope.dateTerms.current_term.end); 
+								var monthStart = termEndDate.clone().startOf('month').add(1, 'day');
+								scope.max_rangePicker_end = termEndDate.format('DD/MM/YYYY');
+							}else{
+								var termEndDate = moment(); 
+								var monthStart = termEndDate.clone().startOf('month').add(1, 'day');
+								scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
+							}
+
 							scope.initializeNewCustomDatePicker();
 	
-							var currentDate = moment();
-							var monthStart = currentDate.clone().startOf('month');
-							var minStart = moment(scope.dateTerms.current_term.start);
-							var new_date;
-	
-							if (monthStart.format('YYYY/MM') == minStart.format('YYYY/MM')) {
-								console.log('follow SA start date');
-								new_date = moment(scope.dateTerms.current_term.start);
-							} else {
-								console.log('follow MTD 1st day');
-								new_date = monthStart;
-							}
-	
-	
-	
-							scope.rangePicker_start = new_date.format('DD/MM/YYYY');
-							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
+							scope.rangePicker_start = monthStart.format('DD/MM/YYYY');
+							scope.rangePicker_end = termEndDate.format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
 							scope.applyDates();
 						} else if (scope.select_to_date == 'qtd') {
-							// scope.select_to_date = data;
+							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
 	
-							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-							scope.max_rangePicker_end = moment();
-	
-							var currentDate = moment();
-							var quarterStart = currentDate.clone().quarter(currentDate.quarter()).startOf('quarter');
-	
-							if (quarterStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
-								console.log('follow SA start date');
-								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
-							} else {
-								console.log('follow MTD 1st day');
-								scope.min_rangePicker_start = quarterStart;
+							if(moment() > moment(scope.dateTerms.current_term.end) ){
+								var termEndDate = moment(scope.dateTerms.current_term.end); 
+								var quarterStart = termEndDate.clone().quarter(termEndDate.quarter()).startOf('quarter');
+								scope.max_rangePicker_end = termEndDate.format('DD/MM/YYYY');
+							}else{
+								var termEndDate = moment(); 
+								var quarterStart = termEndDate.clone().quarter(termEndDate.quarter()).startOf('quarter');
+								scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
 							}
+
+							scope.initializeNewCustomDatePicker();
 	
-							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
-							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
+							scope.rangePicker_start = quarterStart.format('DD/MM/YYYY');
+							scope.rangePicker_end = termEndDate.format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
 							scope.applyDates();
-							// console.log(currentQuarter,'quarter '+scope.rangePicker_start+ ' to '+scope.rangePicker_end) ;
 						} else if (scope.select_to_date == 'ytd') {
 							// scope.select_to_date = data;
 	
@@ -227,18 +213,28 @@ app.directive('activityPage', [
 							var yearStart = currentDate.clone().startOf('year');
 	
 							if (yearStart.format('YYYY/MM') == scope.min_rangePicker_start.format('YYYY/MM')) {
-								console.log('follow SA start date');
 								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 							} else {
-								console.log('follow MTD 1st day');
 								scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start);
 								// scope.min_rangePicker_start = yearStart;
 							}
+
+							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
 	
-							scope.rangePicker_start = scope.min_rangePicker_start.format('DD/MM/YYYY');
-							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
+							if(moment() > moment(scope.dateTerms.current_term.end) ){
+								var termEndDate = moment(scope.dateTerms.current_term.end); 
+								var yearStart = termEndDate.clone().startOf('year');
+								scope.max_rangePicker_end = termEndDate.format('DD/MM/YYYY');
+							}else{
+								var termEndDate = moment(); 
+								var yearStart = termEndDate.clone().startOf('year');
+								scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
+							}
+
+							scope.initializeNewCustomDatePicker();
 	
-							console.log(currentDate, scope.term_value, '-', scope.rangePicker_start, '-', scope.rangePicker_end);
+							scope.rangePicker_start = yearStart.format('DD/MM/YYYY');
+							scope.rangePicker_end = termEndDate.format('DD/MM/YYYY');
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
 							scope.applyDates();
