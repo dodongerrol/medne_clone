@@ -146,36 +146,25 @@ app.directive('activityPage', [
 						if (scope.select_to_date == 'wtd') {
 
 							scope.min_rangePicker_start = moment(scope.dateTerms.current_term.start).format('DD/MM/YYYY');
-							scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
 	
-							scope.initializeNewCustomDatePicker();
-	
-							var currentDate = moment();
-							var minStart = moment(scope.dateTerms.current_term.start);
-							var monthStart = currentDate.clone().startOf('month');
-							var new_date;
-	
-							// scope.select_to_date = data;
-							var currentDate = moment(); //
-							var weekStart = currentDate.clone().startOf('week').add(1, 'day');
-	
-							if (weekStart.format('YYYY/MM/DD') == minStart.format('YYYY/MM/DD')) {
-								console.log('follow SA start date');
-								new_date = moment(scope.dateTerms.current_term.start);
-							} else {
-								console.log('follow MTD 1st day');
-								new_date = weekStart;
+							if(moment() > moment(scope.dateTerms.current_term.end) ){
+								var termEndDate = moment(scope.dateTerms.current_term.end); 
+								var weekStart = termEndDate.clone().startOf('week').add(1, 'day');
+								scope.max_rangePicker_end = termEndDate.format('DD/MM/YYYY');
+							}else{
+								var termEndDate = moment(scope.dateTerms.current_term.end); 
+								var weekStart = termEndDate.clone().startOf('week').add(1, 'day');
+								scope.max_rangePicker_end = moment().format('DD/MM/YYYY');
 							}
-	
-	
-							scope.rangePicker_start = new_date.format('DD/MM/YYYY');
-							scope.rangePicker_end = currentDate.format('DD/MM/YYYY');
+
+							scope.initializeNewCustomDatePicker();
+
+							scope.rangePicker_start = weekStart.format('DD/MM/YYYY');
+							scope.rangePicker_end = termEndDate.format('DD/MM/YYYY');
+							
 							$("#rangePicker_start").text(scope.rangePicker_start);
 							$("#rangePicker_end").text(scope.rangePicker_end);
-	
 							scope.applyDates();
-							// console.log('weekStart',scope.rangePicker_start);
-							// console.log('week_now', days);
 						} else if (scope.select_to_date == 'mtd') {
 							// scope.select_to_date = data;
 	
