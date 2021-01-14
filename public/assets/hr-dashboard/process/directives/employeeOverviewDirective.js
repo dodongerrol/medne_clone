@@ -1862,6 +1862,11 @@ app.directive("employeeOverviewDirective", [
                   value.start_date_format = moment(value.start_date, 'DD/MM/YYYY').format("DD MMMM YYYY");
                   value.end_date_format = moment(value.expiry_date).format("DD MMMM YYYY");
                   value.expiry_date = moment(value.expiry_date).format("DD/MM/YYYY");
+
+                  value.dob = moment(value.dob).format('DD/MM/YYYY');
+
+                  value.mobile_no = value.mobile_no == null || value.mobile_no == 0 ? 0 : value.mobile_no.replace(/\+/g, '');
+                  value.country_code = value.country_code == null || value.country_code == 0 ? 0 : value.country_code.replace(/\+/g, '');
                 });
                 $(".employee-overview-pagination").hide();
                 scope.hideLoading();
@@ -2845,6 +2850,7 @@ app.directive("employeeOverviewDirective", [
             
             var input3 = document.querySelector("#phoneNum");
             iti3 = intlTelInput(input3, settings_emp_details);
+            iti3.setNumber(scope.editEmpCountryCode);
 
             input3.addEventListener("countrychange", function () {
               console.log(iti3.getSelectedCountryData());

@@ -125,7 +125,7 @@ class CustomerHelper
 			// }
 			$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $member_id)->orderBy('created_at', 'desc')->first();
 			$plan = DB::table('customer_plan')->where('customer_buy_start_id', $member_id)->orderBy('created_at', 'desc')->first();
-			return ['start' => date('Y-m-d', strtotime($plan->plan_start)), 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
+			return ['start' => date('Y-m-d', strtotime($spending_accounts->medical_spending_start_date)), 'end' => date('Y-m-d', strtotime($spending_accounts->medical_spending_end_date)), 'id' => null];
 		} else {
 			$credit_resets = DB::table('credit_reset')
 												->where('id', $member_id)
