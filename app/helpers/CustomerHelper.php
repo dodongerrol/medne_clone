@@ -184,7 +184,7 @@ class CustomerHelper
 		if(sizeof($plans) > 1) {
 			$settings = DB::table('spending_account_settings')
 						->where('customer_id', $customer_id)
-						->orderBy('medical_spending_start_date', 'desc')
+						// ->orderBy('medical_spending_start_date', 'desc')
 						->skip(1)
 						->take(1)
 						->first();
@@ -203,7 +203,7 @@ class CustomerHelper
 			if($customer_id == 766) {
 				$plans = DB::table('spending_account_settings')
 						->where('customer_id', $customer_id)
-						->orderBy('medical_spending_start_date', 'desc')
+						// ->orderBy('medical_spending_start_date', 'desc')
 						->skip(1)
 						->take(1)
 						->first();
@@ -211,7 +211,7 @@ class CustomerHelper
 			} else {
 				$plans = DB::table('spending_account_settings')
 						->where('customer_id', $customer_id)
-						->orderBy('medical_spending_start_date', 'desc')
+						// ->orderBy('medical_spending_start_date', 'desc')
 						->skip(1)
 						->take(1)
 						->first();
