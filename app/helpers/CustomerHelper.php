@@ -177,7 +177,7 @@ class CustomerHelper
 		}
 	}
 
-	public static function getCustomerLastTerm($customer_id)	
+	public static function getCustomerLastTerm($customer_id)
 	{
 		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->get();
 
@@ -189,7 +189,7 @@ class CustomerHelper
 						->take(1)
 						->first();
 			if($settings) {
-				return ['start' => date('Y-m-d', strtotime($settings->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($settings->medical_spending_end_date)))), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($settings->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($settings->medical_spending_end_date))), 'id' => null];
 			} else {
 				$plans = DB::table('customer_plan')
 					->where('customer_buy_start_id', $customer_id)
@@ -197,7 +197,7 @@ class CustomerHelper
 					->skip(1)
 					->take(1)
 					->first();
-				return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->plan_end)))), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans->plan_end))), 'id' => null];
 			}
 		} else {
 			if($customer_id == 766) {
@@ -207,7 +207,7 @@ class CustomerHelper
 						->skip(1)
 						->take(1)
 						->first();
-				return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->medical_spending_end_date)))), 'id' => null];
+				return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans->medical_spending_end_date))), 'id' => null];
 			} else {
 				$plans = DB::table('spending_account_settings')
 						->where('customer_id', $customer_id)
@@ -216,9 +216,9 @@ class CustomerHelper
 						->take(1)
 						->first();
 				if($plans) {
-					return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans->medical_spending_end_date)))), 'id' => null];
+					return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans->medical_spending_end_date))), 'id' => null];
 				} else {
-					return ['start' => date('Y-m-d', strtotime($plans[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime('+1 day', strtotime($plans[0]->plan_end)))), 'id' => null];
+					return ['start' => date('Y-m-d', strtotime($plans[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans[0]->plan_end))), 'id' => null];
 				}
 			}
 		}
@@ -325,8 +325,8 @@ class CustomerHelper
 			return ['status' => false, 'message' => 'key does not exist.'];
 		}
 	}
-	
-	public static function getAccountSpendingStatus($customer_id)	
+
+	public static function getAccountSpendingStatus($customer_id)
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$customer_wallet = DB::table('customer_credits')->where('customer_id', $customer_id)->first();
@@ -912,7 +912,7 @@ class CustomerHelper
 		}
 	}
 
-	public static function getAccountSpendingBasicPlanStatus($customer_id)	
+	public static function getAccountSpendingBasicPlanStatus($customer_id)
 	{
 		$customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -934,7 +934,7 @@ class CustomerHelper
 
 	public static function getCustomerMedicalTotalCredits($customer_id, $user_spending_dates)
   {
-	
+
 	$total_bonus = 0;
 	$temp_total_allocation = 0;
 	$temp_total_deduction = 0;
@@ -993,7 +993,7 @@ class CustomerHelper
 
   public static function getCustomerWellnessTotalCredits($customer_id, $user_spending_dates)
   {
-	
+
 	$total_bonus = 0;
 	$temp_total_allocation = 0;
 	$temp_total_deduction = 0;
@@ -1070,7 +1070,7 @@ class CustomerHelper
 	}
 	return 1;
   }
-  
+
 	public static function addSupplementaryCredits($customer_id, $spending_type, $credits)
 	{
 		$spending = DB::table('spending_account_settings')->where('customer_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -1131,7 +1131,7 @@ class CustomerHelper
 		return $cost_plan_and_days * $default_price;
 	}
 
-	public static function getCompanyPlanDates($customer_id) 
+	public static function getCompanyPlanDates($customer_id)
 	{
 		$plan = DB::table('customer_plan')
 		->where('customer_buy_start_id', $customer_id)
@@ -1171,7 +1171,7 @@ class CustomerHelper
 
 		return array('plan_start' => $plan->plan_start, 'plan_end' => $end_plan_date);
 	}
-	
+
 	public static function getActiveMembers($customer_id)
 	{
 		$account = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
@@ -1182,7 +1182,7 @@ class CustomerHelper
 						->get();
 		return $members;
 	}
-	
+
 	public static function checkCustomerEnterprisePayment($customer_id)
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
@@ -1199,7 +1199,7 @@ class CustomerHelper
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$active_plan_ids = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
-		
+
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
 					->whereIn('customer_active_plan_id', $active_plan_ids)
