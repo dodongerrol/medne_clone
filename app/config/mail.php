@@ -106,7 +106,7 @@ return array(
 	*/
 
 	// 'password' => 'RCbsd724',
-	'password'	=> 'sg.medi.com19',
+	'password'	=> 'sg.medi.com21',
 	// 'password'	=> 'c0e0797fc017b6c8fd52276d866c9574-39bc661a-95800a3a',
 	/*
 	|--------------------------------------------------------------------------

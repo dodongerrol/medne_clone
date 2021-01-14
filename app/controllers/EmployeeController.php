@@ -2973,11 +2973,11 @@ class EmployeeController extends \BaseController {
         $invoice = DB::table('corporate_invoice')
         ->where('customer_active_plan_id', $active_plan->customer_active_plan_id)
         ->first();
-        $plan_start = $plan->plan_start;
+        $plan_start = $active_plan->date;
       }
 
-      $diff = date_diff(new DateTime(date('Y-m-d', strtotime('+1 day', strtotime($expiry_date)))), new DateTime(date('Y-m-d', strtotime($customer_plan->plan_end))));
-      $days = $diff->format('%a') + 1;
+      $diff = date_diff(new \DateTime(date('Y-m-d', strtotime($plan_start))), new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($expiry_date)))));
+      $days = $diff->format('%a');
       // $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
       $total_days = MemberHelper::getMemberTotalDaysSubscription($customer_plan->plan_start, date('Y-m-d', strtotime("+1 day", strtotime($customer_plan->plan_end))));
       $remaining_days = $total_days - $days;
