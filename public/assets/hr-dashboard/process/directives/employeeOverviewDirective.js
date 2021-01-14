@@ -2850,6 +2850,7 @@ app.directive("employeeOverviewDirective", [
             
             var input3 = document.querySelector("#phoneNum");
             iti3 = intlTelInput(input3, settings_emp_details);
+            iti3.setNumber(scope.editEmpCountryCode);
 
             input3.addEventListener("countrychange", function () {
               console.log(iti3.getSelectedCountryData());
