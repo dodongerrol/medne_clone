@@ -139,9 +139,10 @@ class EclaimHelper
                 ->where('id', $user_id)
                 ->where('spending_type', $spending_type)
                 ->where('user_type', 'employee')
+                ->groupBy('date_resetted')
                 ->orderBy('created_at', 'asc')
                 ->get();
-    
+    // return $reset;
     if(sizeof($reset) > 0) {
       $temp_end_date = date('Y-m-d');
       $temp_end_date = PlanHelper::endDate($temp_end_date);
@@ -169,7 +170,7 @@ class EclaimHelper
       $start_date = $first_plan;
       $end_date = date('Y-m-d H:i:s');
     }
-    
+    // return ['start' => $start_date, 'end' => $end_date];
     if($spending_type == "medical") {
       $result = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $start_date, $end_date);
     } else {

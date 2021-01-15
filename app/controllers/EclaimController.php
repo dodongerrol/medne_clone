@@ -1951,11 +1951,13 @@ class EclaimController extends \BaseController {
 			if($spending_type == 'medical') {
 				$table_wallet_history = 'wallet_history';
 				$history_column_id = "wallet_history_id";
-				$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				// $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				$credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
 			} else {
 				$table_wallet_history = 'wellness_wallet_history';
 				$history_column_id = "wellness_wallet_history_id";
-				$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				// $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				$credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id);
 			}
 		} else {
 			$credit_data = null;
