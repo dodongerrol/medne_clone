@@ -180,7 +180,7 @@ class CustomerHelper
 	public static function getCustomerLastTerm($customer_id)
 	{
 		$plans = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->get();
-
+		$plan = $plans;
 		if(sizeof($plans) > 1) {
 			$settings = DB::table('spending_account_settings')
 						->where('customer_id', $customer_id)
@@ -218,7 +218,7 @@ class CustomerHelper
 				if($plans) {
 					return ['start' => date('Y-m-d', strtotime($plans->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans->medical_spending_end_date))), 'id' => null];
 				} else {
-					return ['start' => date('Y-m-d', strtotime($plans[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans[0]->plan_end))), 'id' => null];
+					return ['start' => date('Y-m-d', strtotime($plan[0]->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plan[0]->plan_end))), 'id' => null];
 				}
 			}
 		}
