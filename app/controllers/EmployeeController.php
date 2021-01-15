@@ -2980,7 +2980,9 @@ class EmployeeController extends \BaseController {
       $days = $diff->format('%a');
       // $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
       $total_days = MemberHelper::getMemberTotalDaysSubscription($customer_plan->plan_start, date('Y-m-d', strtotime("+1 day", strtotime($customer_plan->plan_end))));
-      $remaining_days = $total_days - $days;
+      // $remaining_days = $total_days - $days;
+      $remaining_days = date_diff(new \DateTime(date('Y-m-d', strtotime($expiry_date))), new \DateTime(date('Y-m-d', strtotime($customer_plan->plan_end))));
+	    $remaining_days = $remaining_days->format('%a');
       $cost_plan_and_days = ($invoice->individual_price/$total_days);
       $temp_total = $cost_plan_and_days * $remaining_days;
       $total_refund = $temp_total * 0.70;
