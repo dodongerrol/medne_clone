@@ -7759,11 +7759,10 @@ class BenefitsDashboardController extends \BaseController {
 								} else {
 									$individual_price = $invoice->individual_price;
 								}
-			
-								$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
-								$days = $diff->format('%a');
+								$diff = date_diff(new \DateTime(date('Y-m-d', strtotime('+1 day', strtotime($user->date_withdraw)))), new \DateTime(date('Y-m-d', strtotime($cplan->plan_end))));
+								$days = $diff->format('%a') + 1;
 								// $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
-								$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $cplan->plan_end);
+								$total_days = MemberHelper::getMemberTotalDaysSubscription($cplan->plan_start, $cplan->plan_end);
 								$remaining_days = $total_days - $days;
 			
 								$cost_plan_and_days = ($individual_price/$total_days);
@@ -10381,9 +10380,9 @@ class BenefitsDashboardController extends \BaseController {
 						$individual_price = $invoice->individual_price;
 					}
 					
-					$diff = date_diff(new DateTime(date('Y-m-d', strtotime($plan->plan_start))), new DateTime(date('Y-m-d', strtotime($user->date_withdraw))));
-					$days = $diff->format('%a');
-					$total_days = MemberHelper::getMemberTotalDaysSubscription($plan->plan_start, $company_plan->plan_end);
+					$diff = date_diff(new DateTime(date('Y-m-d', strtotime("+1 day", strtotime($user->date_withdraw)))), new DateTime(date('Y-m-d', strtotime($company_plan->plan_end))));
+					$days = $diff->format('%a') + 1;
+					$total_days = MemberHelper::getMemberTotalDaysSubscription($company_plan->plan_start, $company_plan->plan_end);
 					// $total_days = date("z", mktime(0,0,0,12,31,date('Y')));
 					$remaining_days = $total_days - $days;
 

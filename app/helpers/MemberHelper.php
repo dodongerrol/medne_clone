@@ -700,7 +700,7 @@ class MemberHelper
 	public static function getMemberTotalDaysSubscription($plan_start, $plan_end)	
 	{
 		$total_days = date_diff(new \DateTime(date('Y-m-d', strtotime($plan_start))), new \DateTime(date('Y-m-d', strtotime($plan_end))));
-		return $total_days->format('%a');
+		return $total_days->format('%a') + 1;
 	}
 
 	public static function checkMemberAccessTransactionStatus($member_id)
