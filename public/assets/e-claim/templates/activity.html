@@ -455,10 +455,15 @@
 											<div></div>
 											<div class="procedure-indicator"
 												ng-class="list.service_credits && list.transaction_type == 'credits' ? 'blue' : 'green'"
-												ng-if="list.lite_plan && activity_results.wallet_status">
+												ng-if="list.lite_plan && activity_results.wallet_status && list.transaction_type != 'cash_credits'">
 												<span
 													ng-if="!list.service_credits && list.transaction_type == 'cash' || list.service_credits && list.transaction_type == 'cash'">Cash</span>
 												<span ng-if="list.service_credits && list.transaction_type == 'credits'">Credits</span>
+											</div>
+											<div class="procedure-indicator"
+												ng-class="list.service_credits && list.transaction_type == 'cash_credits' ? 'blue' : 'green'"
+												ng-if="list.lite_plan && activity_results.wallet_status && list.transaction_type == 'cash_credits'" style="width: 100px;">
+												<span>Credits + Cash</span>
 											</div>
 											<div ng-if="list.lite_plan && activity_results.wallet_status"
 												style="border-bottom: 1px solid #999;width: 50px;margin: 0 20px 8px auto;"></div>

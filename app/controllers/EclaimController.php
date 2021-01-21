@@ -1224,8 +1224,10 @@ class EclaimController extends \BaseController {
 					$credit_status = FALSE;
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->consultation_fees;
-							$cash = $transation->cash_cost;
+							$transaction_type = "cash_credits";
+							$payment_type = 'Mednefits Credits + Cash';
+							$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
+							$cash = $trans->cash_cost;
 							$treatment = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$total_amount = (float)$trans->procedure_cost + $trans->consultation_fees;
@@ -1322,6 +1324,9 @@ class EclaimController extends \BaseController {
 					$payment_type = "Mednefits Credits";
 				} else if($trans->credit_cost > 0 && $trans->cash_cost > 0){
 					$transaction_type = "cash";
+					if((int)$trans->half_credits == 1) {
+						$transaction_type = "cash_credits";
+					}
 					$payment_type = "Mednefits Credits + Cash";
 				}
                 // get clinic type
@@ -3467,7 +3472,7 @@ public function getActivityInNetworkTransactions( )
 
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->consultation_fees;
+							$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 						} else {
 							// $total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
@@ -3526,7 +3531,7 @@ public function getActivityInNetworkTransactions( )
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->health_provider_done == 1) {
-							$bill_amount = $trans->procedure_cost;
+							$bill_amount = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$bill_amount = $trans->credit_cost + $trans->cash_cost;
 						}
@@ -3654,7 +3659,6 @@ public function getActivityInNetworkTransactions( )
 					'consultation_credits' => $consultation_credits,
 					'service_credits'   => $service_credits,
 					'transaction_type'  => $transaction_type,
-					'logs_lite_plan'    => isset($logs_lite_plan) ? $logs_lite_plan : null,
 					'dependent_relationship'    => $dependent_relationship,
 					'cap_transaction'   => $half_credits,
 					'cap_per_visit'     => number_format($trans->cap_per_visit, 2),

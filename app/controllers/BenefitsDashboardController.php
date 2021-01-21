@@ -11922,6 +11922,220 @@ class BenefitsDashboardController extends \BaseController {
 		})->export('xls');
 	}
 
+	public function getMemberDetailsPagination( )
+	{
+		$input = Input::all();
+
+		if(empty($input['token']) || $input['token'] == null) {
+			return ['status' => false, 'message' => 'token is required'];
+		}
+		$result = self::checkToken($input['token']);
+
+		if(!$result) {
+			return array('status' => FALSE, 'message' => 'Invalid Token.');
+		}
+
+		$limit = $input['limit'] ?? 500;
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $result->customer_buy_start_id)->first();
+	    // get user plan
+		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $result->customer_buy_start_id)->orderBy('created_at', 'desc')->first();
+		$spending_accounts = DB::table('spending_account_settings')->where('customer_id', $result->customer_buy_start_id)->first();
+		$final_user = [];
+		$paginate = [];
+
+		$users = DB::table('user')
+		->join('corporate_members', 'corporate_members.user_id', '=', 'user.UserID')
+		->join('corporate', 'corporate.corporate_id', '=', 'corporate_members.corporate_id')
+		->where('corporate.corporate_id', $account_link->corporate_id)
+		->where('corporate_members.removed_status', 0)
+		->select('user.UserID', 'user.Name', 'user.Email', 'user.PhoneCode', 'user.PhoneNo', 'user.Job_Title', 'user.DOB', 'user.created_at', 
+				'corporate.company_name', 'corporate_members.removed_status', 'user.Active', 'user.emp_no', 'user.member_activated', 'user.Zip_Code', 
+				'user.bank_name', 'user.bank_account', 'user.NRIC', 'user.Status')
+		->paginate($limit);
+		
+		$users_count = sizeOf($users);
+		$last_term_credits = false;
+
+		$paginate['current_page'] = $users->getCurrentPage();
+		$paginate['from'] = $users->getFrom();
+		$paginate['last_page'] = $users->getLastPage();
+		$paginate['per_page'] = $users->getPerPage();
+		$paginate['to'] = $users->getTo();
+		$paginate['total'] = $users->getTotal();
+
+		for($x = 0; $x < $users_count; $x++) {
+			$get_allocation = 0;
+			$deducted_credits = 0;
+			$e_claim_spent = 0;
+			$in_network_temp_spent = 0;
+			$credits_back = 0;
+
+			$get_allocation_wellness = 0;
+			$deducted_credits_wellness = 0;
+			$e_claim_spent_wellness = 0;
+			$in_network_temp_spent_wellness = 0;
+			$credits_back_wellness = 0;
+
+			$wallet = DB::table('e_wallet')->where('UserID', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
+			$medical_credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
+			$wellness_credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $users[$x]->UserID);
+			$plan_dates = PlanHelper::getEmployeePlanCoverageDate($users[$x]->UserID, $result->customer_buy_start_id);
+			$status = 'Active';
+			$get_employee_plan = DB::table('user_plan_type')->where('user_id', $users[$x]->UserID)->orderBy('created_at', 'desc')->first();
+
+			if((int)$users[$x]->Active == 0) {
+				$status = 'Removed';
+			}
+
+			if(date('Y-m-d', strtotime($get_employee_plan->plan_start)) > date('Y-m-d') || (int)$users[$x]->member_activated == 0 || (int)$users[$x]->member_activated == 1 && (int)$users[$x]->Status == 0) {
+				$status = 'Pending';
+			}
+
+			if((int)$users[$x]->Active == 1 && (int)$users[$x]->member_activated == 1) {
+				// statuses
+				$panel = DB::table('transaction_history')->where('UserID', $users[$x]->UserID)->first();
+				$non_panel = DB::table('e_claim')->where('user_id', $users[$x]->UserID)->first();
+								
+				if($panel || $non_panel) {
+					$status = 'Active';
+				} else if((int)$users[$x]->Active == 1 && (int)$users[$x]->member_activated == 1 && (int)$users[$x]->Status == 1){
+					$status = 'Logged In';
+				}
+			}
+
+			// check ang parse dob format
+			if($users[$x]->DOB) {
+				$users[$x]->DOB = \Utility::convert_date_format($users[$x]->DOB);
+				$users[$x]->DOB = date('d/m/Y', strtotime($users[$x]->DOB));
+			} else {
+				$users[$x]->DOB = null;
+			}
+
+			$dependents = DB::table('employee_family_coverage_sub_accounts')
+							->join('user', 'user.UserID', '=', 'employee_family_coverage_sub_accounts.user_id')
+							->where('employee_family_coverage_sub_accounts.owner_id', $users[$x]->UserID)
+							->where('employee_family_coverage_sub_accounts.deleted', 0)
+							->where('user.access_type', 2)
+							->where('user.Active', 1)
+							->select('user.Name', 'user.DOB')
+							->groupBy('user.Name')
+							->get();
+			
+			if ( count($dependents) > 0 && Config::get('config.seven_eleven_id') == $result->customer_buy_start_id) {
+				foreach ($dependents as $key => $item) {
+					// check ang parse dob format
+					if($item->DOB) {
+						$item->DOB = \Utility::convert_date_format($item->DOB);
+						$item->DOB = date('d/m/Y', strtotime($item->DOB));
+					} else {
+						$item->DOB = null;
+					}
+
+				$phone_code = str_replace('+', '', $users[$x]->PhoneCode);
+
+					$temp = array(
+						'Status'	=> $status,
+						'Name'		=> ucwords( $users[$x]->Name),
+						'NRIC'		=>	 $users[$x]->NRIC,
+						'Family Coverage'	=> count($dependents),
+						'Mobile No'		=>  "+".$phone_code. $users[$x]->PhoneNo,
+						'Email'		=>  $users[$x]->Email,
+						'Date of Birth'		=>  $users[$x]->DOB,
+						'Postal'	=> $users[$x]->Zip_Code,
+						'Employee ID' => $users[$x]->emp_no,
+						'Bank Name'			=>  $users[$x]->bank_name,
+						'Bank Account'		=>  $users[$x]->bank_account,
+						'Plan Type' => \PlanHelper::getAccountType($plan->account_type)." (Corporate)",
+						'Start Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
+						'End Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
+						'Medical Allocation' => number_format($medical_credit_data['allocation'], 2),
+						'Medical Usage' => number_format($medical_credit_data['get_allocation_spent'], 2),
+						'Medical Balance' => number_format($medical_credit_data['balance'], 2),
+						'Wellness Allocation' => number_format($wellness_credit_data['allocation'], 2),
+						'Wellness Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
+						'Wellness Balance' => number_format($wellness_credit_data['balance'], 2),
+						'Dependent Name' => $item->Name,
+						'Dependent DOB' => $item->DOB,
+					);
+					$final_user[] = $temp;	
+				}
+			} 
+
+			$phone_code = str_replace('+', '', $users[$x]->PhoneCode);
+
+			$temp = array(
+				'Status'	=> $status,
+				'Name'		=> ucwords($users[$x]->Name),
+				'Family Coverage'	=> count($dependents),
+				'Mobile No'		=>  "+".$phone_code. $users[$x]->PhoneNo,
+				'Email'		=> $users[$x]->Email,
+				'Date of Birth'		=> $users[$x]->DOB,
+				'Postal'	=>$users[$x]->Zip_Code,
+				'Employee ID' =>$users[$x]->emp_no,
+				'Bank Name'			=> $users[$x]->bank_name,
+				'Bank Account'		=> $users[$x]->bank_account,
+				'Plan Type' => PlanHelper::getAccountType($plan->account_type)." (Corporate)",
+				'Start Date' => date('d F Y', strtotime($plan_dates['plan_start'])),
+				'End Date'	=> date('d F Y', strtotime($plan_dates['plan_end'])),
+				'Medical Allocation' => number_format($medical_credit_data['allocation'], 2),
+				'Medical Usage' => number_format($medical_credit_data['get_allocation_spent'], 2),
+				'Medical Balance' => number_format($medical_credit_data['balance'], 2),
+				'Wellness Allocation' => number_format($wellness_credit_data['allocation'], 2),
+				'Wellness Usage' => number_format($wellness_credit_data['get_allocation_spent'], 2),
+				'Wellness Balance' => number_format($wellness_credit_data['balance'], 2),
+				'Dependent Name' => null,
+				'Dependent DOB' => null,
+			);
+
+			// if((int)$spending_accounts->wellness_enable == 1) {
+			// 	$temp['Wellness Allocation Last Term'] = number_format($wellness_credit_data['allocation'], 2);
+			// 	$temp['Wellness Usage Last Term'] = number_format($wellness_credit_data['get_allocation_spent'], 2);
+			// 	$temp['Wellness Balance Last Term'] = number_format($wellness_credit_data['balance'], 2);
+			// }
+
+			$medical_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'medical');
+			if($medical_last_term_credits) {
+				$last_term_credits = true;
+				// $temp['medical_last_term_credits'] = $medical_last_term_credits;
+				$medical_last_term_credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $users[$x]->UserID, $medical_last_term_credits['start'], PlanHelper::endDate($medical_last_term_credits['end']));
+
+				$temp['Medical Allocation Last Term'] = DecimalHelper::formatDecimal($medical_last_term_credit_data['allocation']);
+				$temp['Medical Usage_Last Term'] = DecimalHelper::formatDecimal($medical_last_term_credit_data['total_spent']);
+				$temp['Medical Balance_Last Term'] = DecimalHelper::formatDecimal($medical_last_term_credit_data['balance']);
+			} else {
+				$temp['Medical Allocation Last Term'] = 0;
+				$temp['Medical Usage_Last Term'] = 0;
+				$temp['Medical Balance_Last Term'] = 0;
+			}
+			
+
+			if((int)$spending_accounts->wellness_enable == 1) {
+				$wellness_last_term_credits = PlanHelper::getMemberCreditReset($users[$x]->UserID, 'wellness');
+				if($wellness_last_term_credits) {
+					$last_term_credits = true;
+					$wellness_last_term_credit_data = PlanHelper::memberWellnessAllocatedCreditsBydates($wallet->wallet_id, $users[$x]->UserID, $wellness_last_term_credits['start'], PlanHelper::endDate($wellness_last_term_credits['end']));
+
+					$temp['Wellness Allocation Last_Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['allocation']);
+					$temp['Wellness Usage Last Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['total_spent']);
+					$temp['Wellness Balance_Last Term'] = DecimalHelper::formatDecimal($wellness_last_term_credit_data['balance']);
+				}
+			} else {
+				$temp['Wellness Allocation Last Term'] = 0;
+				$temp['Wellness Usage Last Term'] = 0;
+				$temp['Wellness Balance_Last Term'] = 0;
+			}		
+			// if($spending->medical_reimbursement == 1 || $spending->wellness_reimbursement == 1) {
+			// 	$temp['Bank_Name'] = $users[$x]->bank_name;
+			// 	$temp['Bank_Account'] =  $users[$x]->bank_account;
+			// } 
+			$final_user[] = $temp;
+		}
+		
+		$paginate['data'] = $final_user;
+		$paginate['status'] = true;
+		return $paginate;
+	}
+
 
 	public function getCompanyEmployeeWithCredits( )
 	{

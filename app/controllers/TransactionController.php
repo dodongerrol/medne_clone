@@ -2635,7 +2635,7 @@ class TransactionController extends BaseController {
 
 				if($trans->credit_cost > 0) {
 					$mednefits_credits += $trans->credit_cost;
-					$cash = 0;
+					$cash = $trans->cash_cost;
 				} else {
 					$mednefits_credits += 0;
 					$cash = $trans->procedure_cost;

@@ -514,6 +514,7 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::post('hr/get_member_refund_calculation', 'EmployeeController@getRefundEmployeeSummary');
 	// get refund invoice
 	Route::get('hr/get_refund_invoices', 'InvoiceController@getListCompanyPlanWithdrawal');
+	
 });
 
 	// downloand plan invoice
@@ -524,6 +525,8 @@ Route::group(array('before' => 'auth.jwt_hr'), function( ){
 	Route::get('hr/download_bulk_allocation_employee_lists', 'EmployeeController@downloadEmployeeBulkLists');
 	// download spending invoice details
 	Route::get('hr/download_spending_purchase_invoice', 'BenefitsDashboardController@downloadSpendingInvoice');
+	// download member details for thousand users
+	Route::get('hr/member_download_details', 'BenefitsDashboardController@getMemberDetailsPagination');
 
 // download employee cap per visit
 Route::get('hr/download_out_of_network_csv', 'EclaimController@downloadEclaimCsv');

@@ -1527,8 +1527,8 @@ class Api_V1_TransactionController extends \BaseController
 							$payment_type = 'Cash';
 							if((int)$transaction->lite_plan_enabled == 1 && $wallet_status == true) {
 								if((int)$transaction->half_credits == 1) {
-									$total_amount = $transaction->credit_cost + $transaction->consultation_fees;
-									$cash_cost = $transation->cash_cost;
+									$total_amount = $transaction->credit_cost + $transaction->consultation_fees + $transaction->cash_cost;
+									$cash_cost = $transaction->cash_cost;
 								} else {
 									$total_amount = $transaction->procedure_cost + $transaction->consultation_fees + $transaction->cash_cost;
 									$cash_cost = $transaction->procedure_cost;
@@ -1578,7 +1578,7 @@ class Api_V1_TransactionController extends \BaseController
 						if((int)$transaction->half_credits == 1) {
 							if((int)$transaction->lite_plan_enabled == 1) {
 								if((int)$transaction->health_provider_done == 1) {
-									$bill_amount = $transaction->procedure_cost;
+									$bill_amount = $transaction->credit_cost + $transaction->cash_cost;
 								} else {
 									$bill_amount = $transaction->procedure_cost - $transaction->consultation_fees;
 								}
