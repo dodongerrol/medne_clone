@@ -3219,6 +3219,7 @@ public function getActivityInNetworkTransactions( )
 		$service_cash = false;
 		$service_credits = false;
 		$consultation = 0;
+		$total_amount_credits = 0;
 
 		if($trans) {
 
@@ -3611,6 +3612,7 @@ public function getActivityInNetworkTransactions( )
 					$total_amount = $trans->procedure_cost;
 				}
 
+				$total_amount_credits = $trans->credit_cost + $trans->consultation_fees;
 				$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 				if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 					$total_amount = $total_amount * $trans->currency_amount;
@@ -3622,6 +3624,7 @@ public function getActivityInNetworkTransactions( )
 					$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 					$trans->currency_type = "myr";
 					$bill_amount = $bill_amount * $trans->currency_amount;
+					$total_amount_credits = $total_amount_credits * $trans->currency_amount;
 				} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
 					$trans->currency_type = "sgd";
 				}
@@ -3631,6 +3634,7 @@ public function getActivityInNetworkTransactions( )
 					'clinic_image'      => $clinic->image,
 					'amount'            => number_format($total_amount, 2),
 					'procedure_cost'    => number_format($bill_amount, 2),
+					'total_amount_credits'	=> $total_amount_credits,
 					'clinic_type_and_service' => $clinic_name,
 					'procedure'         => $procedure,
 					'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
@@ -4909,6 +4913,7 @@ public function getHrActivity( )
 			$service_cash = false;
 			$service_credits = false;
 			$consultation = 0;
+			$total_amount_credits = 0;
 
 			if($trans) {
 				if($trans->procedure_cost >= 0 && (int)$trans->paid == 1) {
@@ -5272,6 +5277,7 @@ public function getHrActivity( )
 						}
 					}
 
+					$total_amount_credits = $trans->credit_cost + $trans->consultation_fees;
 					if($trans->default_currency == $trans->currency_type && $trans->default_currency == "myr") {
 						$total_amount = $total_amount * $trans->currency_amount;
 						$trans->credit_cost = (float)$trans->credit_cost * $trans->currency_amount;
@@ -5280,6 +5286,7 @@ public function getHrActivity( )
 						$consultation_credits = $consultation_credits * $trans->currency_amount;
 						$paid_by_credits = $paid_by_credits * $trans->currency_amount;
 						$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
+						$total_amount_credits = $total_amount_credits * $trans->currency_amount;
 					}
 
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
@@ -5290,6 +5297,7 @@ public function getHrActivity( )
 						'clinic_image'      => $clinic->image,
 						'amount'            => number_format($total_amount, 2),
 						'procedure_cost'    => number_format((float)$trans->credit_cost, 2),
+						'total_amount_credits' => $total_amount_credits,
 						'clinic_type_and_service' => $clinic_name,
 						'procedure'         => $procedure,
 						'date_of_transaction' => date('d F Y, h:ia', strtotime($trans->date_of_transaction)),
@@ -9463,6 +9471,7 @@ public function downloadEclaimCsv( )
 					$service_cash = false;
 					$service_credits = false;
 					$consultation = 0;
+					$total_amount_credits = 0;
 
 					if($trans) {
 						if($spending_type == 'medical') {
@@ -9755,6 +9764,7 @@ public function downloadEclaimCsv( )
 								}
 							}
 
+							$total_amount_credits = $trans->credit_cost + $trans->consultation_fees;
 							if($trans->currency_type == "myr" && $trans->default_currency == "myr" || $trans->default_currency == "myr" && $trans->currency_type == "sgd") {
 								$total_amount = $total_amount * $trans->currency_amount;
 								$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
@@ -9765,6 +9775,7 @@ public function downloadEclaimCsv( )
 								$trans->consultation_fees = $trans->consultation_fees * $trans->currency_amount;
 								$trans->currency_type = "myr";
 								$procedure_cost = $procedure_cost * $trans->currency_amount;
+								$total_amount_credits = $total_amount_credits * $trans->currency_amount;
 							} else  if($trans->default_currency == "sgd" || $trans->currency_type == "myr") {
 								$trans->currency_type = "sgd";
 							}
@@ -9782,7 +9793,7 @@ public function downloadEclaimCsv( )
 									'ITEM/SERVICE'		=> $clinic_name,
 									'MEDICINE & TREATMENT' => number_format((float) $procedure_cost, 2),
 									'CONSULTATION'		=> (int)$trans->lite_plan_enabled == 1 ?number_format($trans->consultation_fees, 2) : "0.00",
-									'TOTAL AMOUNT'		=> number_format($total_amount, 2),
+									'TOTAL AMOUNT'		=> number_format($total_amount_credits, 2),
 									'TYPE'						=> 'Panel',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
