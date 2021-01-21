@@ -2729,7 +2729,7 @@ class PlanHelper
 			->where('created_at',  '>=', $start)
 			->where('created_at',  '<=', $end)
 			->get();
-
+		
 		foreach ($wallet_history as $key => $history) {
 			if($history->logs == "added_by_hr") {
 				$get_allocation += (float)$history->credit;
