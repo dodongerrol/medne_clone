@@ -296,7 +296,7 @@ class TransactionHelper
 					$transaction_type = "cash";
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->half_credits == 1) {
-							$total_amount = $trans->credit_cost + $trans->consultation_fees;
+							$total_amount = $trans->credit_cost + $trans->consultation_fees + $trans->cash_cost;
 							$cash = $trans->cash_cost;
 						} else {
 							$total_amount = $trans->procedure_cost;
@@ -353,7 +353,7 @@ class TransactionHelper
 				if((int)$trans->half_credits == 1) {
 					if((int)$trans->lite_plan_enabled == 1) {
 						if((int)$trans->health_provider_done == 1) {
-							$bill_amount = $trans->procedure_cost;
+							$bill_amount = $trans->credit_cost + $trans->cash_cost;
 						} else {
 							$bill_amount = $trans->credit_cost + $trans->cash_cost;
 						}
