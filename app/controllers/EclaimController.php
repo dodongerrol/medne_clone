@@ -9660,7 +9660,7 @@ public function downloadEclaimCsv( )
 								if((int)$trans->lite_plan_enabled == 1) {
 									if((int)$trans->half_credits == 1) {
 										$total_amount = $trans->credit_cost + $trans->consultation_fees;
-										$cash = $transation->cash_cost;
+										$cash = $transactions->cash_cost;
 									} else {
 										$total_amount = $trans->procedure_cost;
 										$total_amount = $trans->procedure_cost + $trans->consultation_fees;
