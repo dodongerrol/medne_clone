@@ -2119,7 +2119,7 @@ class EclaimController extends \BaseController {
 					if((int)$trans->lite_plan_enabled == 1 && $wallet_status == true) {
 						if((int)$trans->half_credits == 1) {
 							$total_amount = (float)$trans->credit_cost + $trans->consultation_fees;
-							$cash_cost = (float)$transactions->cash_cost;
+							$cash_cost = (float)$trans->cash_cost;
 						} else {
 							if($trans->credit_cost > 0) {
 								$total_amount = $trans->procedure_cost;
@@ -9660,7 +9660,7 @@ public function downloadEclaimCsv( )
 								if((int)$trans->lite_plan_enabled == 1) {
 									if((int)$trans->half_credits == 1) {
 										$total_amount = $trans->credit_cost + $trans->consultation_fees;
-										$cash = $transactions->cash_cost;
+										$cash = $trans->cash_cost;
 									} else {
 										$total_amount = $trans->procedure_cost;
 										$total_amount = $trans->procedure_cost + $trans->consultation_fees;
