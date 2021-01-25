@@ -9782,7 +9782,7 @@ public function downloadEclaimCsv( )
 
 							$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
-							if((int) $trans->lite_plan_enabled == 1) {
+							// if((int) $trans->lite_plan_enabled == 1) {
 								$in_network_transactions[] = array(
 									'EMPLOYEE ID'					=> $customer->emp_no,
 									'EMPLOYEE'				=> $employee,
@@ -9797,7 +9797,7 @@ public function downloadEclaimCsv( )
 									'TYPE'						=> 'Panel',
 									'REFUNDED/REMOVED'	=> $refund_text
 								);
-							}
+							// }
 							//  else {
 							// 	$in_network_transactions[] = array(
 							// 		'EMPLOYEE ID'					=> $customer->emp_no,
