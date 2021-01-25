@@ -5512,12 +5512,12 @@ public function createEclaim( )
   // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
   
-  // if($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false || $input['spending_type'] == "wellness" && $spending['wellness_reimbursement'] == false) {
-  //   $returnObject->status = FALSE;
-  //   $returnObject->head_message = 'Non-Panel Error';
-  //   $returnObject->message = 'Member not eligible for Non-Panel transactions';
-  //   return Response::json($returnObject);
-  // }
+  if(($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false) || ($input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false)) {
+    $returnObject->status = FALSE;
+    $returnObject->head_message = 'Non-Panel Error';
+    $returnObject->message = 'Member not eligible for Non-Panel transactions';
+    return Response::json($returnObject);
+  }
 
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
@@ -5593,6 +5593,8 @@ public function createEclaim( )
     $returnObject->message = 'Non-Panel function is disabled for your company.';
     return Response::json($returnObject);
   }
+
+
 
   $input_amount = 0;
   if($check_user_balance->currency_type == strtolower($input['currency_type']) && $check_user_balance->currency_type == "myr") {
