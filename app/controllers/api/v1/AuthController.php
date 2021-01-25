@@ -5512,12 +5512,12 @@ public function createEclaim( )
   // $customer = DB::table('customer_buy_start')->where('customer_buy_start_id', $customer_id)->first();
   $spending = CustomerHelper::getAccountSpendingStatus($customer_id);
   
-  if(($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false) || ($input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false)) {
-    $returnObject->status = FALSE;
-    $returnObject->head_message = 'Non-Panel Error';
-    $returnObject->message = 'Member not eligible for Non-Panel transactions';
-    return Response::json($returnObject);
-  }
+  // if(($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false) || ($input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false)) {
+  //   $returnObject->status = FALSE;
+  //   $returnObject->head_message = 'Non-Panel Error';
+  //   $returnObject->message = 'Member not eligible for Non-Panel transactions';
+  //   return Response::json($returnObject);
+  // }
 
   $user_type = PlanHelper::getUserAccountType($input['user_id']);
 
@@ -5576,7 +5576,7 @@ public function createEclaim( )
   }
 
   if($customer_active_plan->account_type != "enterprise_plan") {
-    if($input['spending_type'] == "medical" && $spending['medical_enabled'] == false || $input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false) {
+    if(($input['spending_type'] == "medical" && $spending['medical_reimbursement'] == false) || ($input['spending_type'] == "wellness" && $spending['wellness_enabled'] == false)) {
       $returnObject->status = FALSE;
       $returnObject->head_message = 'Non-Panel Error';
       $returnObject->message = 'Member not eligible for Non-Panel transactions';
