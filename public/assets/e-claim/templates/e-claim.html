@@ -32,7 +32,7 @@
 						<div ng-if="user_details.plan_type != 'enterprise_plan' || (user_details.plan_type == 'enterprise_plan' && user_details.wellness == true)" class="form-group col-md-12 ">
 							<label>Spending Account<span>*</span></label>
 							<div class="input-wrapper">
-								<button ng-click="setSpendingType(0)" ng-class="{'active' : spendingTypeOpt == 0, 'disable-spending-account-btn' : user_details.wellness == true && user_details.currency_type == 'myr' && user_details.plan_type == 'enterprise_plan'}"
+								<button ng-click="setSpendingType(0)" ng-class="{'active' : spendingTypeOpt == 0, 'disable-spending-account-btn' : (user_details.wellness == true && user_details.currency_type == 'myr' && user_details.plan_type == 'enterprise_plan') || (user_details.medical_reimbursement == false)}"
 									class="btn btn-default btn-medical" style="margin-right: 5px;">Medical</button>
 								<button ng-click="setSpendingType(1)" ng-class="{'active' : spendingTypeOpt == 1}"
 									class="btn btn-default btn-wellness">Wellness</button>
