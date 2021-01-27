@@ -999,9 +999,11 @@ class EclaimController extends \BaseController {
 		$user_spending_dates = MemberHelper::getMemberCreditReset($user_id, $filter, $spending_type);
 		if($user_spending_dates) {
 			if($spending_type == 'medical') {
-				$credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				// $credit_data = PlanHelper::memberMedicalAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				$credit_data = PlanHelper::memberMedicalAllocatedCredits($wallet->wallet_id, $user_id);
 			} else {
-				$credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				$credit_data = PlanHelper::memberWellnessAllocatedCredits($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
+				// $credit_data = PlanHelper::memberWellnessAllocatedCreditsByDates($wallet->wallet_id, $user_id, $user_spending_dates['start'], $user_spending_dates['end']);
 			}
 		} else {
 			$credit_data = null;
