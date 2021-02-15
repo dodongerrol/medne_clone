@@ -775,6 +775,17 @@ class ClinicLibrary{
             return FALSE;
         }
     }
+
+    public static function FindClinicSearchWithCurrency($search, $user_id){
+        $clinic = new Clinic();
+        $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+        $clinicData = $clinic->searchWithCurrency($search, $wallet->currency_type);
+        if($clinicData){
+            return $clinicData;
+        }else{
+            return FALSE;
+        }
+    }
     
     /* use          :   Used to find appointment details 
      * Access       :   Public 

@@ -69,6 +69,38 @@ class Clinic extends Eloquent implements UserInterface, RemindableInterface {
                 return false;
             } 
         }
+
+        public function searchWithCurrency ($search, $currency_type){
+
+            if($currency_type == "myr") {
+                $clinicData = DB::table('clinic')    
+                    ->select('clinic.ClinicID','clinic.Name as CLName','clinic.Clinic_Type','clinic.Description','clinic.Custom_title','clinic.Website','clinic.image as CLImage','clinic.Address as CLAddress','clinic.State as CLState','clinic.City as CLCity','clinic.Postal as CLPostal','clinic.Phone','clinic.Lat as CLLat','clinic.Lng as CLLng','clinic.Clinic_Price','clinic.Favourite', 'clinic.Phone_Code')
+                    ->where('Active', '=', 1)
+                    ->where(function ($clinicData) use ($search) {
+                        $clinicData->where('Name', 'LIKE', "%{$search}%")
+                        ->orWhere('District', 'LIKE', "%{$search}%")
+                        ->orWhere('MRT', 'LIKE', "%{$search}%");
+                    })
+                    ->where('currency_type', 'myr')
+                    ->get();
+            } else {
+                $clinicData = DB::table('clinic')    
+                    ->select('clinic.ClinicID','clinic.Name as CLName','clinic.Clinic_Type','clinic.Description','clinic.Custom_title','clinic.Website','clinic.image as CLImage','clinic.Address as CLAddress','clinic.State as CLState','clinic.City as CLCity','clinic.Postal as CLPostal','clinic.Phone','clinic.Lat as CLLat','clinic.Lng as CLLng','clinic.Clinic_Price','clinic.Favourite', 'clinic.Phone_Code')
+                    ->where('Active', '=', 1)
+                    ->where(function ($clinicData) use ($search) {
+                        $clinicData->where('Name', 'LIKE', "%{$search}%")
+                        ->orWhere('District', 'LIKE', "%{$search}%")
+                        ->orWhere('MRT', 'LIKE', "%{$search}%");
+                    })
+                    ->get();
+            }
+
+            if($clinicData){
+                return $clinicData;
+            }else{
+                return false;
+            } 
+        }
         
         
         public function ClinicDetails($value){

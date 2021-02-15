@@ -304,7 +304,7 @@ class Clinic_Library_v1{
         $search = Input::get('search');
         $returnObject = new stdClass();
         if(!empty($search)){
-            $clinicData = ClinicLibrary::FindClinicSearch($search);
+            $clinicData = ClinicLibrary::FindClinicSearchWithCurrency($search, $UserID);
             if($clinicData){
                 //$panelCount = null;
                 foreach($clinicData as $cdata){ 
