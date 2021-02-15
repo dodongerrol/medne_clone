@@ -238,24 +238,9 @@ class CustomerHelper
 		$settings = DB::table('spending_account_settings')
 						->where('customer_id', $customer_id)
 						->orderBy('medical_spending_start_date', 'asc')
-						->skip(1)
-						->take(1)
-						->get();
+						->first();
 
-		if(sizeof($settings) > 0) {
-			$size =  sizeof($settings) - 1;
-			if($size == 0) {
-				$settings = $settings[0];
-			} else {
-				$settings = $settings[sizeof($settings) - 2];
-			}
-			return ['start' => date('Y-m-d', strtotime($settings->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($settings->medical_spending_end_date))), 'id' => null];
-		} else {
-			$plans = DB::table('customer_plan')
-				->where('customer_buy_start_id', $customer_id)
-				->first();
-			return ['start' => date('Y-m-d', strtotime($plans->plan_start)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($plans->plan_end))), 'id' => null];
-		}
+		return ['start' => date('Y-m-d', strtotime($settings->medical_spending_start_date)), 'end' => PlanHelper::endDate(date('Y-m-d', strtotime($settings->medical_spending_end_date))), 'id' => null];
 	}
 
 	public static function customerMedicalAllocatedCreditsByDates($customer_id, $start, $end, $wallet_history_id)
