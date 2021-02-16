@@ -105,7 +105,7 @@ return array(
 	|
 	*/
 
-	'password'	=> 'qcxcudsdilydhkok',
+	'password'	=> 'kqxtgcopopocufnp',
 	/*
 	|--------------------------------------------------------------------------
 	| Sendmail System Path
