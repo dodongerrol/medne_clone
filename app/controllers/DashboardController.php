@@ -246,11 +246,13 @@ class DashboardController extends \BaseController {
 	function getProviderOperatingHours () {
 		try {
 			
-			$clinic  = new Clinic;
+			// $clinic  = new Clinic;
+			$managetimes = new ManageTimes();
 			
 			$getSessionData = StringHelper::getMainSession(3);
 			
-			$operatingHours = $clinic->getProviderOperatingHour($getSessionData->Ref_ID);
+			// $operatingHours = $clinic->getProviderOperatingHour($getSessionData->Ref_ID);
+			$operatingHours = $managetimes->FindAllClinicTimes1(3, $getSessionData->Ref_ID);
 
 			return array(
 				'data' => $operatingHours,
