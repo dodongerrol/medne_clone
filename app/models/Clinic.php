@@ -452,6 +452,28 @@ class Clinic extends Eloquent implements UserInterface, RemindableInterface {
                 return $Data;
         }
 
+        public function getClinicsCurrency($search, $user_id)
+        {   
+            $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+            
+            if($wallet->currency_type == "myr") {
+                $Data = DB::table('clinic')
+                ->where('Name', 'like', "%$search%")
+                ->where('Active', '=', 1) 
+                ->where('currency_type', 'myr')
+                ->groupBy('Name')   
+                ->get();
+            } else {
+                $Data = DB::table('clinic')
+                ->where('Name', 'like', "%$search%")
+                ->where('Active', '=', 1) 
+                ->groupBy('Name')   
+                ->get();
+            }
+
+            return $Data;
+        }
+
         public function getClinicsByType($key)
         {
             $Data = DB::table('clinic')

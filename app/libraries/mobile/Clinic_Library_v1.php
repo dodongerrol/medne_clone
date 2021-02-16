@@ -741,16 +741,16 @@ public static function mainSearch()
 {   
     $returnObject = new stdClass();
     $search = Input::get('search');
-
+    $findUserID = AuthLibrary::validToken();
     $specialty = self::getSpeciality($search);
     $procedure = self::getProcedure($search);
     $district = self::getDistrict($search);
     $mrt = self::getMrt($search);
-    $clinics =  self::getClinics($search);
-    $doctors =  self::getDoctors($search);
+    $clinics =  self::getClinicsCurrency($search, $findUserID);
+    // $clinics =  self::getClinics($search);
+    // $doctors =  self::getDoctors($search);
+    $doctors =  self::getDoctorsCurrency($search, $findUserID);
 
-
-    // return $procedure;
     if (empty($specialty->data) && empty($procedure->data) && empty($district->data) & empty($mrt->data) && ($clinics==NULL) && ($doctors==NULL)) {
         $returnObject->status = 0;
         $returnObject->data = array();
@@ -827,6 +827,7 @@ public static function getSpeciality($search)
     return $returnObject;
 }
 
+
 public static function getProcedure($search)
 {   
     $returnObject = new stdClass();
@@ -898,7 +899,30 @@ public static function getClinics($search)
 }
 
 
+public static function getClinicsCurrency($search, $user_id)
+{   
+    $sp = new Clinic();
+    $clinics = $sp->getClinicsCurrency($search, $user_id);
+     
+    if ($clinics) {
+        foreach ($clinics as $value) {
+            $data['clinic_id'] = $value->ClinicID;
+            $data['name'] = $value->Name;
+            $data['address'] = $value->Address. ' '.$value->Postal;
+            $data['district'] = $value->District;
+            $data['country'] = $value->Country;
+            $data['telephone'] = $value->Phone;
+            $data['clinic_image'] = $value->image;
+            $data['open_status'] = self::openStatus($value->ClinicID);;
 
+            $dataarr[] = $data;
+        }
+        
+   return $dataarr;  
+    } else {
+       return null;
+    }
+}
 
 public static function getDoctors($search)
 {
@@ -940,6 +964,43 @@ public static function getDoctors($search)
 
 }
 
+public static function getDoctorsCurrency($search, $user_id)
+{
+    $doc = new Doctor();
+    $doctors = $doc->getDoctorsCurrency($search, $user_id);
+
+    if ($doctors) {
+        foreach ($doctors as $value) {
+            $sp = new Clinic();
+            $clinic = $sp->ClinicDetails($value->ClinicID);
+            
+            if ($clinic) {
+                $address = $clinic->Address;
+            } else {
+                $address = null;
+            }
+            
+
+            $data['clinic_id'] = $value->ClinicID;
+            $data['name'] = $value->Name;
+            $data['address'] = $address;
+            $data['qualifications'] = $value->Qualifications;
+            $data['specialty'] = $value->Specialty;
+            $data['phone'] = $value->Phone;
+            $data['clinic_image'] = $value->image;
+            $data['open_status'] = self::openStatus($value->ClinicID);;
+
+            $dataarr[] = $data;
+        }
+    
+    return $dataarr;  
+    } else {
+       return null;
+    }
+    
+   
+
+}
 
 public static function getSubClinics($type,$key)
 {   

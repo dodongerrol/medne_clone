@@ -195,6 +195,27 @@ class Doctor extends Eloquent implements UserInterface, RemindableInterface {
             return $doctorData; 
     }
 
+    public function getDoctorsCurrency($search, $user_id)
+    {
+        $wallet = DB::table('e_wallet')->where('UserID', $user_id)->first();
+
+        if($wallet->currency_type == "myr") {
+            $doctorData = DB::table('doctor')
+            ->join('doctor_availability','doctor_availability.DoctorID','=','doctor.DoctorID')
+            ->join('clinic', 'clinic.ClinicID', '=', 'doctor_availability.ClinicID')
+            ->where('doctor.Name', 'like', "%{$search}%")
+            ->where('doctor.Active', '=', 1)
+            ->where('clinic.currency_type', 'myr')
+            ->get();
+        } else {
+            $doctorData = DB::table('doctor')
+            ->join('doctor_availability','doctor_availability.DoctorID','=','doctor.DoctorID')
+            ->where('doctor.Name', 'like', "%{$search}%")
+            ->where('doctor.Active', '=', 1)
+            ->get();
+        }
+        return $doctorData; 
+    }
 
     public function getDoctorByProcedure($key)
     {
