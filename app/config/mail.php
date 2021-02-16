@@ -31,9 +31,9 @@ return array(
 	*/
 
 	//'host' => 'smtp.mailgun.org',
-        //'host' => 'smtp.gmail.com',
+        'host' => 'smtp.gmail.com',
         //'host' => 'smtp.mail.yahoo.com',
-        'host' => 'smtp.office365.com',
+        // 'host' => 'smtp.office365.com',
         // 'host' => 'smtp.mailgun.org',
 	/*
 	|--------------------------------------------------------------------------
@@ -61,7 +61,7 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => null, 'name' => null),
+	'from' => array('address' => 'no_reply@mednefits.com', 'name' => 'Mednefits'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -90,8 +90,8 @@ return array(
 	*/
 
 	//'username' => 'riz_ris@yahoo.com',
-        'username' => 'info@medicloud.sg',
-        // 'username' => 'postmaster@mg.medicloud.sg',
+        // 'username' => 'info@medicloud.sg',
+        'username' => 'no_reply@mednefits.com',
     
 
 	/*
@@ -105,9 +105,7 @@ return array(
 	|
 	*/
 
-	// 'password' => 'RCbsd724',
-	'password'	=> 'sg.medi.com21',
-	// 'password'	=> 'c0e0797fc017b6c8fd52276d866c9574-39bc661a-95800a3a',
+	'password'	=> 'qcxcudsdilydhkok',
 	/*
 	|--------------------------------------------------------------------------
 	| Sendmail System Path
