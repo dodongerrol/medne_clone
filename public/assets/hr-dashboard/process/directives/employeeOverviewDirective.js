@@ -2936,6 +2936,20 @@ app.directive("employeeOverviewDirective", [
           .then(function( response ) {
             console.log(response);
             scope.employees = response.data;
+
+
+            angular.forEach(scope.employees.data, function (value, key) {
+              value.fname = scope.employees.data[key].name.substring(0, value.name.lastIndexOf(" "));
+              value.lname = scope.employees.data[key].name.substring(value.name.lastIndexOf(" ") + 1);
+              value.start_date = moment(value.start_date).format("DD/MM/YYYY");
+              value.start_date_format = moment(value.start_date, 'DD/MM/YYYY').format("DD MMMM YYYY");
+              value.end_date_format = moment(value.expiry_date).format("DD MMMM YYYY");
+              value.expiry_date = moment(value.expiry_date).format("MM/DD/YYYY");
+              value.dob = moment(value.dob, ['YYYY-MM-DD', 'DD/MM/YYYY']).format('DD/MM/YYYY');
+
+              value.mobile_no = value.mobile_no == null || value.mobile_no == 0 ? 0 : value.mobile_no.replace(/\+/g, '');
+              value.country_code = value.country_code == null || value.country_code == 0 ? 0 : value.country_code.replace(/\+/g, '');
+            });
             // scope.getEmployeeList( scope.page_active );
             scope.hideLoading();
             $('#add-filter-modal').modal('hide');            
