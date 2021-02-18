@@ -4162,25 +4162,16 @@ public function getFamilCoverageAccounts( )
      $returnObject->status = TRUE;
      foreach ($users as $key => $value) {
       $temp_profile = DB::table('user')->where('UserID', $value->user_id)->first();
-                            // if($value->relationship == 'spouse') {
-      $profile = array(
-        'user_id'   => $temp_profile->UserID,
-        'name'      => ucwords($temp_profile->Name),
-        'dob'       => date('d/m/Y', strtotime($temp_profile->DOB)),
-        'nric'      => $temp_profile->NRIC,
-        'type'      => ucwords($value->relationship)
-      );
-      $returnObject->data['users'][] = $profile;
-                            // } else if($value->relationship == "dependent") {
-                            //     $profile = array(
-                            //         'user_id'   => $temp_profile->UserID,
-                            //         'name'      => ucwords($temp_profile->Name),
-                            //         'nric'      => $temp_profile->NRIC,
-                            //         'type'      => $value->relationship
-                            //     );
-                            //     $returnObject->data['users']['all'][] = $profile;
-                            //     $returnObject->data['users']['dependents'][] = $profile;
-                            // }
+      if($temp_profile) {
+        $profile = array(
+          'user_id'   => $temp_profile->UserID,
+          'name'      => ucwords($temp_profile->Name),
+          'dob'       => date('d/m/Y', strtotime($temp_profile->DOB)),
+          'nric'      => $temp_profile->NRIC,
+          'type'      => ucwords($value->relationship)
+        );
+        $returnObject->data['users'][] = $profile;
+      }
     }
   } 
                     // else {
