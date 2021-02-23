@@ -1036,6 +1036,8 @@ class Transaction extends Eloquent {
                 ->where('transaction_history.ClinicID', '=', $clinic_id)
                 ->count();
         if($data == 0) {
+            $start_date = date('Y-m-d', $start_date);
+            $end_date = date('Y-m-d', $end_date);
             return DB::table('transaction_history')
                 ->where('date_of_transaction', '>=', $start_date)
                 ->where('date_of_transaction', '<=', $end_date)
