@@ -3342,6 +3342,9 @@ class PlanHelper
 	{
 
 		$customer_id = \PlanHelper::getCustomerId($user_id);
+		if(!$customer_id) {
+			return false;
+		}
 		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 		$get_allocation = 0;
 		$deducted_credits = 0;
@@ -3481,6 +3484,10 @@ class PlanHelper
 	public static function memberWellnessUpdatedCreditsSummary($wallet_id, $user_id, $start, $end)
 	{
 		$customer_id = \PlanHelper::getCustomerId($user_id);
+
+		if(!$customer_id) {
+			return false;
+		}
 		$spending = \CustomerHelper::getAccountSpendingStatus($customer_id);
 		$get_wellness_allocation = 0;
 		$deducted_by_hr_wellness = 0;
