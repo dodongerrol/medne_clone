@@ -3772,7 +3772,7 @@ class PlanHelper
 	{
 		$plan = DB::table('customer_plan')->where('customer_buy_start_id', $customer_id)->orderBy('created_at', 'desc')->first();
 		$customer_active_plans = DB::table('customer_active_plan')->where('plan_id', $plan->customer_plan_id)->lists('customer_active_plan_id');
-		// $active_plan_ids = [];
+		$account_link = DB::table('customer_link_customer_buy')->where('customer_buy_start_id', $customer_id)->first();
 
 		foreach ($customer_active_plans as $key => $customer_active_plan) {
 			$active_plan_ids[] = $customer_active_plan;
@@ -3780,10 +3780,12 @@ class PlanHelper
 		
 		// get users base on the customer active plan ids
 		$ids = DB::table('user_plan_history')
-			->whereIn('customer_active_plan_id', $active_plan_ids)
-			->where('type', 'started')
-			->groupBy('user_id')
-			->get();
+						->join('corporate_members', 'corporate_members.user_id', '=', 'user_plan_history.user_id')
+						->whereIn('user_plan_history.customer_active_plan_id', $active_plan_ids)
+						->where('user_plan_history.type', 'started')
+						->where('corporate_members.corporate_id', $account_link->corporate_id)
+						->groupBy('user_plan_history.user_id')
+						->get();
 		
 		$user_ids = [];
 		foreach ($ids as $key => $id) {
