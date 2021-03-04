@@ -615,7 +615,7 @@ class InvoiceController extends \BaseController {
 					$procedure_temp = "";
 					$procedure = "";
 					$procedure_ids = [];
-					$mednefits_total_fee += $trans->credit_cost;
+					
 					if($trans->paid == 1 && $trans->deleted == 0 || $trans->paid == "1" && $trans->deleted == "0") {
 						$mednefits_total_credits += $trans->credit_cost;
 					}
@@ -692,8 +692,10 @@ class InvoiceController extends \BaseController {
 						$fee = $fee * $trans->currency_amount;
 						$cash = $cash * $trans->currency_amount;
 						$trans->procedure_cost = $trans->procedure_cost * $trans->currency_amount;
+						$trans->credit_cost = $trans->credit_cost * $trans->currency_amount;
 					}
 
+					$mednefits_total_fee += $trans->credit_cost;
 					$total_fees += $fee;
 					$mednefits_total_fee += $fee;
 
@@ -773,7 +775,7 @@ class InvoiceController extends \BaseController {
 	    // 	$amount_due = number_format(0, 2);
 	    // }
 		$transactions['amount_due'] = $amount_due;
-		$transactions['currency_type'] = "SGD";
+		$transactions['currency_type'] = strtoupper($check_clinic->currency_type);
 
 		return $transactions;
 	}
