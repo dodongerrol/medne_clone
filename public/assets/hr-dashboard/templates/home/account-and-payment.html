@@ -277,11 +277,11 @@
 								<span><span ng-bind="global_hrData.phone_code"> </span> <span ng-bind="global_hrData.phone">6587671541</span></span>
 							</div>
 							<div class="btn-edit-container">
-								<button ng-click="_editDetailsBtn_( global_hrData )" data-toggle="modal" data-target="#edit_details" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<button ng-click="_editDetailsBtn_( global_hrData )" data-toggle="modal" data-target="#update-info-modal" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
 							</div>
 						</div>
 						<div>
-							<button ng-click="_updatePasswordBtn_()" data-toggle="modal" data-target="#update_password" class="btn-update-password">Update Password</button>
+							<button ng-click="_updatePasswordBtn_()" class="btn-update-password">Update Password</button>
 						</div>
 					</div>
 				</div>
@@ -334,7 +334,7 @@
 								<span ng-bind="employee_acount_details.total_enrolled_employees"></span>
 							</div>
 							<div class="btn-edit-container">
-								<button ng-click="_editDetails_('employee', employee_acount_details)" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<button ng-click="_editDetails_('employee', employee_acount_details)" data-toggle="modal" data-target="#update-info-modal" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
 							</div>
 						</div>
 						<div class="account-card-container">
@@ -352,7 +352,7 @@
 								<span ng-bind="dependent_acount_details.total_enrolled_employees">0</span>
 							</div>
 							<div class="btn-edit-container">
-								<button ng-click="_editDetails_('dependent', dependent_acount_details)" data-toggle="modal" data-target="#edit_employee_plan" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
+								<button ng-click="_editDetails_('dependent', dependent_acount_details)" data-toggle="modal" data-target="#update-info-modal" class="btn-edit-details"><img src="../assets/hr-dashboard/img/edit.png">Edit Details</button>
 							</div>
 						</div>
 					</div>

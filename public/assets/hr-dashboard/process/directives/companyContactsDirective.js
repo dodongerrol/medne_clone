@@ -618,31 +618,33 @@ app.directive("companyContactsDirective", [
         scope.global_passwordSuccess = false;
 
         scope._updatePasswordBtn_ = function ( ) {
-          scope.global_passwordSuccess = false;
-          scope.passwordData.newPassword = "";
-          scope.passwordData.confirmPassword = "";
-          scope.passwordCheck = false;
+          $('#update-info-modal').modal('show');
+          // scope.global_passwordSuccess = false;
+          // scope.passwordData.newPassword = "";
+          // scope.passwordData.confirmPassword = "";
+          // scope.passwordCheck = false;
         }
 
         scope.passwordCheck = false;
         scope._updatePassword_ = function ( data ) {
-          let params = {
-            new_password: data.newPassword,
-            confirm_password: data.confirmPassword,
-          }
+          $('#update-info-modal').modal('show');
+          // let params = {
+          //   new_password: data.newPassword,
+          //   confirm_password: data.confirmPassword,
+          // }
 
-          if ( data.newPassword == data.confirmPassword ) {
-            scope.toggleLoading();
-            hrSettings.updateHrPassword( params )
-              .then(function (response) {
-                if ( response.status ) {
-                  scope.global_passwordSuccess = true;
-                }
-                scope.toggleOff();
-              });
-          } else {
-            scope.passwordCheck = true;
-          }
+          // if ( data.newPassword == data.confirmPassword ) {
+          //   scope.toggleLoading();
+          //   hrSettings.updateHrPassword( params )
+          //     .then(function (response) {
+          //       if ( response.status ) {
+          //         scope.global_passwordSuccess = true;
+          //       }
+          //       scope.toggleOff();
+          //     });
+          // } else {
+          //   scope.passwordCheck = true;
+          // }
           
         }
         scope.page_active = 1;
