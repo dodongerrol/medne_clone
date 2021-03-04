@@ -570,7 +570,7 @@ class InvoiceController extends \BaseController {
 			$result_inserted_invoice = $invoice->insertOrUpdate($transaction_list, $check_invoice['invoice_id'], $check_invoice['clinic_id']);
 			$check_payment_record = $payment_record->insertOrGet($check_invoice['invoice_id'], $input['clinic_id']);
 		} else {
-	    	// return "hi";
+	    	return "hi";
 			$result_create = $invoice->createInvoice($input);
 			$invoice_data = $result_create;
 	    	// return $result_create->id;
@@ -683,18 +683,19 @@ class InvoiceController extends \BaseController {
 						$total_cash += $trans->procedure_cost;
 					}
 
-					$mednefits_total_fee += $fee;
+					
 					$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
 
 					if($trans->default_currency == "myr") {
 						$mednefits_credits = $mednefits_credits * $trans->currency_amount;
-						$fee = $mednefits_credits * $trans->currency_amount;
+						$fee = $fee * $trans->currency_amount;
 						$cash = $cash * $trans->currency_amount;
 						$trans->procedure_cost = $trans->procedure_cost * $trans->currency_amount;
 					}
 
 					$total_fees += $fee;
+					$mednefits_total_fee += $fee;
 
 					$temp = array(
 						'ClinicID'							=> $trans->ClinicID,

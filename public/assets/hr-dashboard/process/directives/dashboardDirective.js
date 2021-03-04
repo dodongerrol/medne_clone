@@ -46,7 +46,8 @@ app.directive('dashboardDirective', [
 				}
 
 				scope.goToEnroll = function () {
-					localStorage.setItem('fromEmpOverview', false);
+					$('#update-info-modal').modal('show');
+					// localStorage.setItem('fromEmpOverview', false);
 
 					// if(scope.spending_account_status.medical == true || scope.spending_account_status.wellness == true) {
 					// 	$state.go('enrollment-options');
@@ -54,7 +55,7 @@ app.directive('dashboardDirective', [
 					// 	$state.go( 'create-team-benefits-tiers' );
 					// }
 					
-					$state.go('create-team-benefits-tiers');
+					// $state.go('create-team-benefits-tiers');
 				}
 
 				scope.selectSpending = (opt) => {

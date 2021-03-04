@@ -694,29 +694,30 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.enrollMoreEmployees = function () {
+          $('#update-info-modal').modal('show');
           // localStorage.setItem('fromEmpOverview', false);
           // $state.go('create-team-benefits-tiers');
           // $state.go('enrollment-options');
-          localStorage.setItem('fromEmpOverview', true);
+          // localStorage.setItem('fromEmpOverview', true);
 
-          hrSettings.getSpendingAccountStatus()
-						.then(function (response) {
-							console.log(response);
-              var spending_account_status = response.data;
+          // hrSettings.getSpendingAccountStatus()
+					// 	.then(function (response) {
+					// 		console.log(response);
+          //     var spending_account_status = response.data;
 
-              // if(spending_account_status.medical == true || spending_account_status.wellness == true) {
-              //   $state.go('enrollment-options');
-              //   $('body').css('overflow', 'auto');
-              // } else {
-              //   $state.go( 'create-team-benefits-tiers' );
-              //   $('body').css('overflow', 'auto');
-              // }
-              // $state.go('enrollment-options');
-              // $('body').css('overflow', 'auto');
+          //     // if(spending_account_status.medical == true || spending_account_status.wellness == true) {
+          //     //   $state.go('enrollment-options');
+          //     //   $('body').css('overflow', 'auto');
+          //     // } else {
+          //     //   $state.go( 'create-team-benefits-tiers' );
+          //     //   $('body').css('overflow', 'auto');
+          //     // }
+          //     // $state.go('enrollment-options');
+          //     // $('body').css('overflow', 'auto');
               
-              $state.go( 'create-team-benefits-tiers' );
-              $('body').css('overflow', 'auto');
-						});
+          //     $state.go( 'create-team-benefits-tiers' );
+          //     $('body').css('overflow', 'auto');
+					// 	});
         }
 
         scope.resetRemoveBtn  = function(){
@@ -726,26 +727,28 @@ app.directive("employeeOverviewDirective", [
         }
 
         scope.removeBtn = function () {
-          scope.showLoading();
-          $('.employee-information-wrapper').hide();
-          // $('.prev-next-buttons-container').fadeIn();
-          // $('.remove-employee-wrapper').fadeIn();
-          scope.selectedEmployee.last_day_coverage = moment().add('days', 1).format('DD/MM/YYYY');
-          scope.reset();
-          scope.isRemoveEmployeeShow = true;
-          scope.isDeleteDependent = false;
-          $state.go('employee-overview.remove-emp-inputs');
+          $('#update-info-modal').modal('show');
+          // scope.showLoading();
+          // $('.employee-information-wrapper').hide();
+          // // $('.prev-next-buttons-container').fadeIn();
+          // // $('.remove-employee-wrapper').fadeIn();
+          // scope.selectedEmployee.last_day_coverage = moment().add('days', 1).format('DD/MM/YYYY');
+          // scope.reset();
+          // scope.isRemoveEmployeeShow = true;
+          // scope.isDeleteDependent = false;
+          // $state.go('employee-overview.remove-emp-inputs');
         }
 
         scope.removeDependentBtn = function (data) {
-          // console.log( data );
-          $('.employee-information-wrapper').hide();
-          $('.prev-next-buttons-container').fadeIn();
-          $('.remove-employee-wrapper').fadeIn();
-          scope.reset();
-          scope.isRemoveEmployeeShow = true;
-          scope.isDeleteDependent = true;
-          scope.selectedDependent = data;
+          $('#update-info-modal').modal('show');
+          // // console.log( data );
+          // $('.employee-information-wrapper').hide();
+          // $('.prev-next-buttons-container').fadeIn();
+          // $('.remove-employee-wrapper').fadeIn();
+          // scope.reset();
+          // scope.isRemoveEmployeeShow = true;
+          // scope.isDeleteDependent = true;
+          // scope.selectedDependent = data;
         }
 
         scope.getUsage = function (x, y) {
@@ -1102,58 +1105,59 @@ app.directive("employeeOverviewDirective", [
         };
 
         scope.toggleAddDependents = function () {
-          if (scope.isAddDependentsShow == false) {
-            if (scope.selectedEmployee.plan_tier) {
-              if (scope.selectedEmployee.plan_tier.dependent_enrolled_count == scope.selectedEmployee.plan_tier.dependent_head_count) {
-                swal({
-                  title: "Info",
-                  text: "Number of dependents head count is already zero. Please contact mednefits for assistance.",
-                  type: "info",
-                  showCancelButton: false,
-                  confirmButtonColor: "#0392CF",
-                  closeOnConfirm: true,
-                  customClass: "updateEmp"
-                },
-                  function (isConfirm) {
-                    if (isConfirm) {
+          $('#update-info-modal').modal('show');
+          // if (scope.isAddDependentsShow == false) {
+          //   if (scope.selectedEmployee.plan_tier) {
+          //     if (scope.selectedEmployee.plan_tier.dependent_enrolled_count == scope.selectedEmployee.plan_tier.dependent_head_count) {
+          //       swal({
+          //         title: "Info",
+          //         text: "Number of dependents head count is already zero. Please contact mednefits for assistance.",
+          //         type: "info",
+          //         showCancelButton: false,
+          //         confirmButtonColor: "#0392CF",
+          //         closeOnConfirm: true,
+          //         customClass: "updateEmp"
+          //       },
+          //         function (isConfirm) {
+          //           if (isConfirm) {
 
-                    }
-                  });
-              } else {
-                $('.employee-information-wrapper').hide();
-                $('.add-dependent-wrapper').fadeIn();
-                scope.isAddDependentsShow = true;
-              }
-            } else {
-              // $('.employee-information-wrapper').fadeIn();
-              // $('.add-dependent-wrapper').hide();
-              // scope.isAddDependentsShow = false; 
-              if (scope.dependents.total_number_of_seats == scope.dependents.occupied_seats) {
-                swal({
-                  title: "Info",
-                  text: "Number of dependents head count is already zero. Please contact mednefits for assistance.",
-                  type: "info",
-                  showCancelButton: false,
-                  confirmButtonColor: "#0392CF",
-                  closeOnConfirm: true,
-                  customClass: "updateEmp"
-                },
-                  function (isConfirm) {
-                    if (isConfirm) {
+          //           }
+          //         });
+          //     } else {
+          //       $('.employee-information-wrapper').hide();
+          //       $('.add-dependent-wrapper').fadeIn();
+          //       scope.isAddDependentsShow = true;
+          //     }
+          //   } else {
+          //     // $('.employee-information-wrapper').fadeIn();
+          //     // $('.add-dependent-wrapper').hide();
+          //     // scope.isAddDependentsShow = false; 
+          //     if (scope.dependents.total_number_of_seats == scope.dependents.occupied_seats) {
+          //       swal({
+          //         title: "Info",
+          //         text: "Number of dependents head count is already zero. Please contact mednefits for assistance.",
+          //         type: "info",
+          //         showCancelButton: false,
+          //         confirmButtonColor: "#0392CF",
+          //         closeOnConfirm: true,
+          //         customClass: "updateEmp"
+          //       },
+          //         function (isConfirm) {
+          //           if (isConfirm) {
 
-                    }
-                  });
-              } else {
-                $('.employee-information-wrapper').hide();
-                $('.add-dependent-wrapper').fadeIn();
-                scope.isAddDependentsShow = true;
-              }
-            }
-          } else {
-            $('.employee-information-wrapper').fadeIn();
-            $('.add-dependent-wrapper').hide();
-            scope.isAddDependentsShow = false;
-          }
+          //           }
+          //         });
+          //     } else {
+          //       $('.employee-information-wrapper').hide();
+          //       $('.add-dependent-wrapper').fadeIn();
+          //       scope.isAddDependentsShow = true;
+          //     }
+          //   }
+          // } else {
+          //   $('.employee-information-wrapper').fadeIn();
+          //   $('.add-dependent-wrapper').hide();
+          //   scope.isAddDependentsShow = false;
+          // }
         };
 
         scope.med_effective_date = moment().format('DD/MM/YYYY');
@@ -1256,24 +1260,26 @@ app.directive("employeeOverviewDirective", [
         };
 
         scope.openUpdateEmployeeModal = function () {
-          scope.isUpdateEmpInfoModalOpen = true;
-          $("#update-employee-modal").modal('show');
-          // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
-          // scope.editEmpCountryCode = scope.selectedEmployee.country_code;
-          scope.editEmpCountryCode = '+' + scope.selectedEmployee.country_code;
-          console.log(scope.selectedEmployee.dob);
-          $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
-          scope.inititalizeGeoCode();
-          console.log(scope.selectedEmployee);
-          console.log(scope.editEmpCountryCode);
+          $('#update-info-modal').modal('show');
+          // scope.isUpdateEmpInfoModalOpen = true;
+          // $("#update-employee-modal").modal('show');
+          // // scope.selectedEmployee.dob = moment( scope.selectedEmployee.dob ).format('DD/MM/YYYY');
+          // // scope.editEmpCountryCode = scope.selectedEmployee.country_code;
+          // scope.editEmpCountryCode = '+' + scope.selectedEmployee.country_code;
+          // console.log(scope.selectedEmployee.dob);
+          // $('.datepicker').datepicker('setDate', scope.selectedEmployee.dob);
+          // scope.inititalizeGeoCode();
+          // console.log(scope.selectedEmployee);
+          // console.log(scope.editEmpCountryCode);
         }
 
         scope.openUpdateDependentModal = function (data) {
-          // console.log( data );
-          scope.selectedDependent = data;
-          scope.selectedDependent.dob = data.dob;
-          $("#update-dependent-modal").modal('show');
-          $('.datepicker').datepicker('setDate', scope.selectedDependent.dob);
+          $('#update-info-modal').modal('show');
+          // // console.log( data );
+          // scope.selectedDependent = data;
+          // scope.selectedDependent.dob = data.dob;
+          // $("#update-dependent-modal").modal('show');
+          // $('.datepicker').datepicker('setDate', scope.selectedDependent.dob);
         }
 
         scope.toggleEmployee = function (emp, index) {
@@ -1526,65 +1532,66 @@ app.directive("employeeOverviewDirective", [
         console.log(scope.effective_date);
 
         scope.updateEntitlement = function () {
-          scope.effective_date = {
-            med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-            well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-            // med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-            // well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
-          }
+          $('#update-info-modal').modal('show');
+          // scope.effective_date = {
+          //   med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+          //   well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+          //   // med_date : moment( $('.medical-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+          //   // well_date : moment( $('.wellness-entitlement-date').val(), 'DD/MM/YYYY' ).format('YYYY-MM-DD'),
+          // }
 
-          console.log(scope.emp_entitlement.medical_new_entitlement, scope.emp_entitlement.wellness_new_entitlement);
+          // console.log(scope.emp_entitlement.medical_new_entitlement, scope.emp_entitlement.wellness_new_entitlement);
 
-          console.log(scope.effective_date);
-          var text;
+          // console.log(scope.effective_date);
+          // var text;
 
-          if ((scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0)|| (scope.emp_entitlement.medical_new_entitlement === 0 && scope.emp_entitlement.wellness_new_entitlement === 0)) {
-            console.log('1 if');
-            text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
-          } else if ((scope.emp_entitlement.medical_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0)) {
-            console.log('2 if');
-            text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
-          } else if ((scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.wellness_new_entitlement === 0)) {
-            console.log('3 if');
-            text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
-          }
+          // if ((scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0)|| (scope.emp_entitlement.medical_new_entitlement === 0 && scope.emp_entitlement.wellness_new_entitlement === 0)) {
+          //   console.log('1 if');
+          //   text = `<span>Please note that</span> <br><br> <span>_ The new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span><br><span>_ The new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+          // } else if ((scope.emp_entitlement.medical_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0)) {
+          //   console.log('2 if');
+          //   text = `<span> Please note that the new Medical Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.medical_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_medical_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+          // } else if ((scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.wellness_new_entitlement === 0)) {
+          //   console.log('3 if');
+          //   text = `<span>Please note that the new Wellness Allocation of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.wellness_new_entitlement}</span> will override the current amount of <span style="text-transform: uppercase; font-weight:bold;">${scope.emp_entitlement.currency_type} ${scope.emp_entitlement.original_wellness_entitlement}</span>.</span> <br><br> <span>Please confirm to proceed.</span>`;
+          // }
 
-          swal({
-            title: '',
-            text: text,
-            html: true,
-            showCancelButton: true,
-            confirmButtonText: 'Confirm',
-            reverseButtons: true,
-            customClass : 'allocationEntitlementModal'
-          }, function(result) {
-            console.log(result);
-            setTimeout(function(){
-              if(result) {
+          // swal({
+          //   title: '',
+          //   text: text,
+          //   html: true,
+          //   showCancelButton: true,
+          //   confirmButtonText: 'Confirm',
+          //   reverseButtons: true,
+          //   customClass : 'allocationEntitlementModal'
+          // }, function(result) {
+          //   console.log(result);
+          //   setTimeout(function(){
+          //     if(result) {
                 
-                if ((scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0 && scope.emp_entitlement.wellness_new_entitlement === 0)) {
-                  console.log('both');
-                  scope.updateAllEntitlement();
-                } else if ((scope.emp_entitlement.medical_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0)) {
-                  console.log('medical');
-                  scope.updateMedicalEntitlement();
-                } else if ((scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.wellness_new_entitlement === 0)) {
-                  console.log('wellness');
-                  scope.updateWellnessEntitlement();
-                }
+          //       if ((scope.emp_entitlement.medical_new_entitlement > 0 && scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0 && scope.emp_entitlement.wellness_new_entitlement === 0)) {
+          //         console.log('both');
+          //         scope.updateAllEntitlement();
+          //       } else if ((scope.emp_entitlement.medical_new_entitlement > 0) || (scope.emp_entitlement.medical_new_entitlement === 0)) {
+          //         console.log('medical');
+          //         scope.updateMedicalEntitlement();
+          //       } else if ((scope.emp_entitlement.wellness_new_entitlement > 0) || (scope.emp_entitlement.wellness_new_entitlement === 0)) {
+          //         console.log('wellness');
+          //         scope.updateWellnessEntitlement();
+          //       }
 
 
-                // swal({
-                //   title: '',
-                //   text: '<span>The allocation amount has been successfully updated.</span>',
-                //   html: true,
-                //   showCancelButton: false,
-                //   confirmButtonText: 'Close',
-                //   customClass : 'allocationEntitlementSuccessModal'
-                // });
-              }
-            }, 500)
-          })
+          //       // swal({
+          //       //   title: '',
+          //       //   text: '<span>The allocation amount has been successfully updated.</span>',
+          //       //   html: true,
+          //       //   showCancelButton: false,
+          //       //   confirmButtonText: 'Close',
+          //       //   customClass : 'allocationEntitlementSuccessModal'
+          //       // });
+          //     }
+          //   }, 500)
+          // })
         }
 
         scope.updateMedicalEntitlement = function () {
@@ -2671,7 +2678,8 @@ app.directive("employeeOverviewDirective", [
 
         scope.last_term_credits = false;
         scope.empDetailsLoadingState = function(){
-          window.open(serverUrl.url + '/hr/get_company_employee_lists_credits?token=' + window.localStorage.getItem('token'));
+          $('#update-info-modal').modal('show');
+          // window.open(serverUrl.url + '/hr/get_company_employee_lists_credits?token=' + window.localStorage.getItem('token'));
           // scope.showLoading();
           // $(".export-emp-details-message").show();
           // hrSettings.getEployeeDetails()

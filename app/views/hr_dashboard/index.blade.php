@@ -160,6 +160,22 @@
 		</div>
 	</div>
 
+
+	<div style="padding-top: 70px;border-radius: 0;" class="modal fade" id="update-info-modal" tabindex="-1" role="dialog" aria-labelledby="update-info-modal" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="width: 450px;">
+        <div class="modal-content" style="border-radius: 0;">
+            <div class="modal-header" style="padding: 20px; text-align: center; border-bottom: unset !important;">
+                <h4 class="modal-title weight-700" id="exampleModalLabel" style="color: #2E4057; margin-top: 30px; font-family: 'Helvetica Medium'; font-size: 20px;">Oops, update in progress...</h4>
+            </div>
+            <div class="modal-body" style="padding: 25px 30px 25px 30px;">
+				<p class="text-center weight-700" style="color: #2E4057;margin-top: 20px;font-family: 'Helvetica Light'; font-size: 16px;">We are currently working on some updates, sorry for the inconvenient caused.</p>
+            </div>
+            <div class="modal-footer" style="border: 0;padding: 25px 30px 25px 30px; text-align: center;">
+                <button class="edit-employee-details-button" style="border: solid 1px #0392cf;background-color: #0392cf;color: #fff;  width: 160px;"  data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 	<span id="siteseal" style="position: fixed; bottom: 8px; left: 8px;"><script async type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=UJjiOv0ThIvbJiVEP3Csx2qHmSWwQ1FP3QkB55XTnkysyqGC2w3u7kKI5k7o"></script></span>
 </body>
 

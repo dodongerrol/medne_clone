@@ -85,7 +85,7 @@
 							<h6 class="company-address-details">Singapore 038987</h6> -->
 						</td>
 						<td style="border-left: 0;" class="v-align">
-							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-business-info-modal" ng-click="openEditInfoModal(company_contacts.business_information)">Edit</button>
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#update-info-modal" ng-click="openEditInfoModal(company_contacts.business_information)">Edit</button>
 						</td>
 					</tr>
 				</tbody>
@@ -107,7 +107,7 @@
 						<td ng-bind="company_contacts.business_contact.work_email">filber@mednefits.com</td>
 						<td ng-bind="company_contacts.business_contact.phone">6254 7889</td>
 						<td>
-							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-business-contact-modal" ng-click="openEditContactModal(company_contacts.business_contact)">Edit</button>
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#update-info-modal" ng-click="openEditContactModal(company_contacts.business_contact)">Edit</button>
 						</td>
 					</tr>
 				</tbody>
@@ -127,7 +127,7 @@
 						<td ng-bind="company_contacts.billing_contact.last_name">Tan</td>
 						<td ng-bind="company_contacts.billing_contact.work_email">filber@mednefits.com</td>
 						<td class="v-align">
-							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-billing-contact-and-address-modal" ng-click="openEditBillingModal(company_contacts)">Edit</button>
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#update-info-modal" ng-click="openEditBillingModal(company_contacts)">Edit</button>
 						</td>
 					</tr>
 				</tbody>
@@ -151,7 +151,7 @@
 						<td class="v-align" ng-if="company_contacts.payment_method.cheque == 'true'">Cheque</td>
 						<td class="v-align" ng-if="company_contacts.payment_method.credit_card == 'true'">Credit Card</td>
 						<td class="v-align">
-							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#account-billing-edit-billing-contact-and-address-modal-2" ng-click="openEditBillingAddressModal(company_contacts)">Edit</button>
+							<button class="edit-button-in-table pull-right" data-toggle="modal" data-target="#update-info-modal" ng-click="openEditBillingAddressModal(company_contacts)">Edit</button>
 						</td>
 					</tr>
 				</tbody>
