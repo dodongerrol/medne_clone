@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
 
 var invoice_selected_date;
 
-var currencyType = localStorage.getItem("currency_type");
+
 
 
 
