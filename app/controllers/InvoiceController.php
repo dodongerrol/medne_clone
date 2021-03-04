@@ -551,7 +551,7 @@ class InvoiceController extends \BaseController {
 		$bank = new PartnerDetails();
 
 		$check_transaction = $transaction->checkTransaction($input['clinic_id'], $input);
-	    // return $check_transaction;
+	    
 		if($check_transaction == 0) {
 			return array(
 				'status'	=> 400,
@@ -570,7 +570,7 @@ class InvoiceController extends \BaseController {
 			$result_inserted_invoice = $invoice->insertOrUpdate($transaction_list, $check_invoice['invoice_id'], $check_invoice['clinic_id']);
 			$check_payment_record = $payment_record->insertOrGet($check_invoice['invoice_id'], $input['clinic_id']);
 		} else {
-	    	// return "hi";
+	    	return "hi";
 			$result_create = $invoice->createInvoice($input);
 			$invoice_data = $result_create;
 	    	// return $result_create->id;
