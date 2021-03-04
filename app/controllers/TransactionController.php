@@ -2486,7 +2486,8 @@ class TransactionController extends BaseController {
 		$getSessionData = StringHelper::getMainSession(3);
 		$input = Input::all();
 		$start = date('Y-m-d', strtotime($input['start']));
-		$end = date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($input['end'])));
+		// $end = date('Y-m-d H:i:s', strtotime('+24 hours', strtotime($input['end'])));
+		$end = PlanHelper::endDate($input['end']);
 
 	    // return $end;
 		$clinic_id = $getSessionData->Ref_ID;
