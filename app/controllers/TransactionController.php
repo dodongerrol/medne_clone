@@ -2516,14 +2516,14 @@ class TransactionController extends BaseController {
 		->where(function($query) use ($clinic_id, $start, $end){
 			$query->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.paid', 1)
-			->where('transaction_history.procedure_cost', ">=", 0)
+			// ->where('transaction_history.procedure_cost', ">=", 0)
 			->where('transaction_history.claim_date', '>=', $start)
 			->where('transaction_history.claim_date', '<=', $end);
 		})
 		->orWhere(function($query) use ($clinic_id, $start, $end){
 			$query->where('transaction_history.ClinicID', $clinic_id)
 			->where('transaction_history.paid', 1)
-			->where('transaction_history.procedure_cost', ">=", 0)
+			// ->where('transaction_history.procedure_cost', ">=", 0)
 			->where('transaction_history.created_at', '>=', $start)
 			->where('transaction_history.created_at', '<=', $end);
 		})
@@ -2713,7 +2713,8 @@ class TransactionController extends BaseController {
 			'transactions' 				=> $format,
 			'total_transactions'	=> $transaction_size,
 			'mednefits_wallet'		=> number_format($mednefits_total_fee, 2),
-			'clinic_details'			=> $details
+			'clinic_details'			=> $details,
+			'clinic_id'				=> $clinic_id
 		);
 
 		return array('status' => TRUE, 'data' => $data);
