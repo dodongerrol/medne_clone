@@ -668,7 +668,6 @@ class InvoiceController extends \BaseController {
 							}
 						}
 					}
-					$total_fees += $fee;
 
 					if($trans->credit_cost > 0) {
 						$mednefits_credits = $trans->credit_cost;
@@ -687,6 +686,15 @@ class InvoiceController extends \BaseController {
 					$mednefits_total_fee += $fee;
 					$clinic = DB::table('clinic')->where('ClinicID', $trans->ClinicID)->first();
 					$transaction_id = str_pad($trans->transaction_id, 6, "0", STR_PAD_LEFT);
+
+					if($trans->default_currency == "myr") {
+						$mednefits_credits = $mednefits_credits * $trans->currency_amount;
+						$fee = $mednefits_credits * $trans->currency_amount;
+						$cash = $cash * $trans->currency_amount;
+						$trans->procedure_cost = $trans->procedure_cost * $trans->currency_amount;
+					}
+
+					$total_fees += $fee;
 
 					$temp = array(
 						'ClinicID'							=> $trans->ClinicID,
