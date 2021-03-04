@@ -1040,8 +1040,8 @@ class Transaction extends Eloquent {
             // $end_date = date('Y-m-d', strtotime($end_date));
             // return $start_date.' - '.$end_date;
             return DB::table('transaction_history')
-                ->where('date_of_transaction', '>=', $start_date)
-                ->where('date_of_transaction', '<=', $end_date)
+                ->where('claim_date', '>=', $start_date)
+                ->where('claim_date', '<=', $end_date)
                 ->where('paid', 1)
                 ->where('ClinicID', $clinic_id)
                 ->count();
