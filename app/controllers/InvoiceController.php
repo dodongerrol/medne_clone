@@ -550,7 +550,7 @@ class InvoiceController extends \BaseController {
 		$user = new User();
 		$bank = new PartnerDetails();
 
-		$check_transaction = $transaction->checkTransaction($input['clinic_id'], $input);
+		$check_transaction = $transaction->checkTransaction((int)$input['clinic_id'], $input);
 	    // return $check_transaction;
 		if($check_transaction == 0) {
 			return array(

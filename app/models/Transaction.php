@@ -1027,7 +1027,7 @@ class Transaction extends Eloquent {
     {
         $start_date = strtotime(date('Y-m-01', strtotime($data['start_date'])));
         $end_date = SpendingInvoiceLibrary::getEndDate($data['start_date']);
-        // return $end_date;
+        
         $data = DB::table('transaction_history')
                 ->join('user_appoinment', 'user_appoinment.UserAppoinmentID', '=', 'transaction_history.AppointmenID')
                 ->where('user_appoinment.BookDate', '>=', $start_date)
@@ -1038,6 +1038,7 @@ class Transaction extends Eloquent {
         if($data == 0) {
             $start_date = date('Y-m-d', $start_date);
             // $end_date = date('Y-m-d', strtotime($end_date));
+            // return $start_date.' - '.$end_date;
             return DB::table('transaction_history')
                 ->where('date_of_transaction', '>=', $start_date)
                 ->where('date_of_transaction', '<=', $end_date)
