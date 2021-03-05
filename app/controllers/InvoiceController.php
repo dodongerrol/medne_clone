@@ -570,7 +570,6 @@ class InvoiceController extends \BaseController {
 			$result_inserted_invoice = $invoice->insertOrUpdate($transaction_list, $check_invoice['invoice_id'], $check_invoice['clinic_id']);
 			$check_payment_record = $payment_record->insertOrGet($check_invoice['invoice_id'], $input['clinic_id']);
 		} else {
-	    	return "hi";
 			$result_create = $invoice->createInvoice($input);
 			$invoice_data = $result_create;
 	    	// return $result_create->id;
